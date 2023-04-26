@@ -1,0 +1,32 @@
+{
+  "kind": "collectionType",
+  "collectionName": "my_quizs",
+  "info": {
+    "singularName": "my-quiz",
+    "pluralName": "my-quizs",
+    "displayName": "MyQuiz",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 30,
+      "minLength": 3
+    },
+    "description": {
+      "type": "text",
+      "required": false,
+      "maxLength": 100
+    },
+    "owner": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}
