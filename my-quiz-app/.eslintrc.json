@@ -1,3 +1,6 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": ["airbnb"],
+  "rules": {
+    "unused-imports/no-unused-imports": "error"
+  }
 }
