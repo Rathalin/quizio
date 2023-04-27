@@ -1,6 +1,3 @@
 {
-  "extends": ["airbnb"],
-  "rules": {
-    "unused-imports/no-unused-imports": "error"
-  }
+  "extends": ["next", "prettier", "airbnb"]
 }
