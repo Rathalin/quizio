@@ -1,6 +1,7 @@
 import GradientWord from '@/components/GradientWord';
 import LinkButton from '@/components/LinkButton';
 import { useQuizDraft } from '@/stores/quiz-draft.store';
+import { ArrowForwardOutlined } from '@mui/icons-material';
 import {
   Box,
   Card,
@@ -10,13 +11,19 @@ import {
   Typography,
 } from '@mui/material';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { shallow } from 'zustand/shallow';
 
 export default function CreateQuizGeneralPage() {
-  const router = useRouter();
-  const { draft, setDraft } = useQuizDraft();
-  const [titleInput, setTitleInput] = useState(draft.title);
-  const [descriptionInput, setDescriptionInput] = useState(draft.description);
+  const { title, setTitle, description, setDescription } = useQuizDraft(
+    (state) => ({
+      title: state.title,
+      setTitle: state.setTitle,
+      description: state.description,
+      setDescription: state.setDescription,
+      questions: state.questions,
+    }),
+    shallow
+  );
   return (
     <Box>
       <Typography variant="h1">
@@ -25,69 +32,58 @@ export default function CreateQuizGeneralPage() {
         <span>.</span>
       </Typography>
       <Card>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            console.log('setDraft');
-            setDraft({
-              title: titleInput,
-              description: descriptionInput,
-              questions: [],
-            });
-            router.push('/create/2-questions');
-          }}
-        >
-          <CardContent>
-            <Box>
-              <Box sx={{ marginBottom: 2 }}>
-                <TextField
-                  id="quiz-title"
-                  name="title"
-                  label="Title"
-                  value={titleInput}
-                  onChange={(e) => setTitleInput(e.target.value)}
-                  required
-                  fullWidth
-                />
-              </Box>
-              <Box sx={{ marginBottom: 2 }}>
-                <TextField
-                  id="quiz-desc"
-                  name="description"
-                  label="Description"
-                  value={descriptionInput}
-                  onChange={(e) => setDescriptionInput(e.target.value)}
-                  fullWidth
-                />
-              </Box>
+        <CardContent>
+          <Box>
+            <Box sx={{ marginBottom: 2 }}>
+              <TextField
+                id="quiz-title"
+                name="title"
+                label="Title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+                fullWidth
+              />
             </Box>
-          </CardContent>
-          <CardActions
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              margin: 1,
-            }}
+            <Box sx={{ marginBottom: 2 }}>
+              <TextField
+                id="quiz-desc"
+                name="description"
+                label="Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                fullWidth
+              />
+            </Box>
+          </Box>
+        </CardContent>
+        <CardActions
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            margin: 1,
+          }}
+          disableSpacing
+        >
+          <LinkButton
+            hrefObserver="/"
+            navigateOnClick
+            iconSide="right"
+            variant="outlined"
           >
-            <LinkButton
-              hrefObserver="/"
-              navigateOnClick
-              iconSide="right"
-              variant="outlined"
-            >
-              Cancel
-            </LinkButton>
-            <LinkButton
-              hrefObserver="/create/2-questions"
-              sx={{ marginLeft: 'auto' }}
-              variant="contained"
-              type="submit"
-            >
-              Next
-            </LinkButton>
-          </CardActions>
-        </form>
+            Cancel
+          </LinkButton>
+          <LinkButton
+            hrefObserver="/create/2-questions"
+            navigateOnClick
+            sx={{ marginLeft: 'auto' }}
+            variant="contained"
+            endIcon={<ArrowForwardOutlined />}
+          >
+            Add questions
+          </LinkButton>
+        </CardActions>
       </Card>
     </Box>
   );

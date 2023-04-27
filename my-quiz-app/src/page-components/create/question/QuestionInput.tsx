@@ -14,90 +14,103 @@ import {
 import { useState } from 'react';
 import AnswerInput from './answer/AnswerInput';
 import { AddOutlined } from '@mui/icons-material';
+import {
+  type QuestionDraft,
+  useQuizDraft,
+  AnswerDraft,
+} from '@/stores/quiz-draft.store';
 
-export default function QuestionInput() {
-  const [question, setQuestion] = useState<string>('');
-  // const [isMultipleChoice, setIsMultipleChoice] = useState(false);
-  const [answers, setAnswers] = useState<string[]>(['', '']);
+type QuestionInputProps = {
+  index: number;
+  question: QuestionDraft;
+  setQuestion: (question: QuestionDraft) => void;
+  onDelete: () => void;
+};
 
-  function addAnswer() {
-    setAnswers([...answers, '']);
+export default function QuestionInput({
+  index,
+  question,
+  setQuestion,
+  onDelete,
+}: QuestionInputProps) {
+  const minAnswers = 2;
+
+  function setTitle(title: string) {
+    setQuestion({ title, answers: question.answers });
+  }
+
+  function addAnswer(answer: AnswerDraft) {
+    setQuestion({
+      title: question.title,
+      answers: [...question.answers, answer],
+    });
+  }
+
+  function setAnswer(answer: AnswerDraft, index: number) {
+    setQuestion({
+      title: question.title,
+      answers: question.answers.map((a, i) => (i === index ? answer : a)),
+    });
   }
 
   function deleteAnswer(index: number) {
-    const newAnswers = [...answers];
-    newAnswers.splice(index, 1);
-    setAnswers(newAnswers);
+    setQuestion({
+      title: question.title,
+      answers: question.answers.filter((_, i) => i !== index),
+    });
   }
-
-  const minAnswers = 2;
 
   return (
     <Box>
-      <Box sx={{ marginBottom: 4 }}>
-        <TextField
-          id={`question-`}
-          name={`question-`}
-          label={`Question`}
-          fullWidth
-          required
-        />
-      </Box>
-      {/* <Box sx={{ marginBottom: 4 }}>
-        <FormControl>
-          <FormLabel id="multiple-choice">
-            Are multiple answers correct?
-          </FormLabel>
-          <RadioGroup
-            defaultValue={isMultipleChoice ? 'yes' : 'no'}
-            onChange={(e) => setIsMultipleChoice(e.target.value === 'yes')}
-            name="multiple-choice"
-            sx={{ flexDirection: 'row' }}
-          >
-            <FormControlLabel value="yes" control={<Radio />} label="Yes" />
-            <FormControlLabel value="No" control={<Radio />} label="No" />
-          </RadioGroup>
-        </FormControl>
-      </Box> */}
-      <Box>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-            marginBottom: 2,
-          }}
-        >
-          {answers.map((answer, index) => (
-            <AnswerInput
-              key={index}
-              index={index + 1}
-              answer={answer}
-              onAnswerChange={(newText) => {
-                const newAnswers = [...answers];
-                newAnswers[index] = newText;
-                setAnswers(newAnswers);
-              }}
-              onDelete={() => deleteAnswer(index)}
-              minAnswers={minAnswers}
-            />
-          ))}
+      <Box key={`question-${index}`}>
+        <Box sx={{ marginBottom: 4 }}>
+          <TextField
+            id={`question-title-${index}`}
+            name={`question-title-${index}`}
+            label={`Question`}
+            value={question.title}
+            onChange={(e) => setTitle(e.target.value)}
+            fullWidth
+            required
+          />
         </Box>
-        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <Button
-            variant="outlined"
-            startIcon={<AddOutlined />}
-            onClick={() => addAnswer()}
+        <Box>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2,
+              marginBottom: 2,
+            }}
           >
-            Answer
-          </Button>
+            {question.answers.map((answer, index) => (
+              <AnswerInput
+                key={index}
+                index={index + 1}
+                text={answer.text}
+                onTextChange={(text) =>
+                  setAnswer({ text, isCorrect: answer.isCorrect }, index)
+                }
+                isCorrect={answer.isCorrect}
+                onIsCorrectChange={(isCorrect) =>
+                  setAnswer({ text: answer.text, isCorrect }, index)
+                }
+                onDelete={() => deleteAnswer(index)}
+                minAnswers={minAnswers}
+              />
+            ))}
+          </Box>
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Button
+              variant="outlined"
+              startIcon={<AddOutlined />}
+              onClick={() => addAnswer({ text: '', isCorrect: false })}
+            >
+              Answer
+            </Button>
+          </Box>
         </Box>
-      </Box>
-      <Divider sx={{ marginBlock: 4 }} />
-      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
-        <Button startIcon={<AddOutlined />} variant="outlined">
-          Another Question
-        </Button>
+        <Divider sx={{ marginBlock: 4 }} />
       </Box>
     </Box>
   );

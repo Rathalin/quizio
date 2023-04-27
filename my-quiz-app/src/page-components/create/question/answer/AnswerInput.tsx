@@ -16,21 +16,23 @@ import DeleteAnswerButton from './DeleteAnswerButton';
 
 type AnswerInputProps = {
   index: number;
-  answer: string;
-  onAnswerChange: (answer: string) => void;
+  text: string;
+  onTextChange: (text: string) => void;
+  isCorrect: boolean;
+  onIsCorrectChange: (isCorrect: boolean) => void;
   onDelete: () => void;
   minAnswers: number;
 };
 
 export default function AnswerInput({
   index,
-  answer,
-  onAnswerChange,
+  text,
+  onTextChange,
+  isCorrect,
+  onIsCorrectChange,
   onDelete,
   minAnswers,
 }: AnswerInputProps) {
-  const [isCorrect, setIsCorrect] = useState(false);
-
   return (
     <Box
       sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}
@@ -40,11 +42,11 @@ export default function AnswerInput({
         name={`answer-${index}`}
         label={`Answer ${index}`}
         color={isCorrect ? 'success' : 'error'}
-        value={answer}
-        onChange={(e) => onAnswerChange(e.target.value)}
+        value={text}
+        onChange={(e) => onTextChange(e.target.value)}
         sx={{ flex: 1 }}
       />
-      <CorrectToggle isCorrect={isCorrect} onChange={setIsCorrect} />
+      <CorrectToggle isCorrect={isCorrect} onChange={onIsCorrectChange} />
       <DeleteAnswerButton
         index={index}
         minAnswers={minAnswers}

@@ -1,5 +1,5 @@
 import { usePageTransition } from '@/stores/page-transition.store';
-import { Button, ButtonProps, CircularProgress } from '@mui/material';
+import { Box, Button, ButtonProps, CircularProgress } from '@mui/material';
 import Link from 'next/link';
 
 type LinkButtonProps = {
@@ -15,6 +15,7 @@ export default function LinkButton({
   iconSide = 'left',
   reason,
   children,
+  sx,
   ...props
 }: LinkButtonProps) {
   const { transitionHref, transitionReason } = usePageTransition();
@@ -35,5 +36,9 @@ export default function LinkButton({
     </Button>
   );
 
-  return navigateOnClick ? <Link href={hrefObserver}>{button}</Link> : button;
+  return (
+    <Box sx={sx}>
+      {navigateOnClick ? <Link href={hrefObserver}>{button}</Link> : button}
+    </Box>
+  );
 }
