@@ -1,15 +1,7 @@
 import GradientWord from '@/components/GradientWord';
-import QuestionInput from '@/page-components/create/question-input/QuestionInput';
-import {
-  Box,
-  Card,
-  CardContent,
-  TextField,
-  Button,
-  Typography,
-  CardActions,
-} from '@mui/material';
-import Link from 'next/link';
+import LinkButton from '@/components/LinkButton';
+import QuestionInput from '@/page-components/create/question/QuestionInput';
+import { Box, Card, CardContent, Typography, CardActions } from '@mui/material';
 
 export default function CreateQuizQuestionsPage() {
   return (
@@ -31,12 +23,21 @@ export default function CreateQuizQuestionsPage() {
             margin: 1,
           }}
         >
-          <Link href="/create/1-general">
-            <Button type="button">Back</Button>
-          </Link>
-          <Button sx={{ marginLeft: 'auto' }} variant="contained">
+          <LinkButton
+            hrefObserver="/create/1-general"
+            navigateOnClick
+            variant="outlined"
+            iconSide="right"
+          >
+            Back
+          </LinkButton>
+          <LinkButton
+            hrefObserver="#"
+            sx={{ marginLeft: 'auto' }}
+            variant="contained"
+          >
             Next
-          </Button>
+          </LinkButton>
         </CardActions>
       </Card>
     </Box>

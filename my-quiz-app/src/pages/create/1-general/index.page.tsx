@@ -1,16 +1,14 @@
 import GradientWord from '@/components/GradientWord';
+import LinkButton from '@/components/LinkButton';
 import { useQuizDraft } from '@/stores/quiz-draft.store';
 import {
   Box,
-  Button,
   Card,
   CardActions,
   CardContent,
-  CardHeader,
   TextField,
   Typography,
 } from '@mui/material';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
@@ -72,16 +70,22 @@ export default function CreateQuizGeneralPage() {
               margin: 1,
             }}
           >
-            <Link href="/">
-              <Button type="button">Cancel</Button>
-            </Link>
-            <Button
+            <LinkButton
+              hrefObserver="/"
+              navigateOnClick
+              iconSide="right"
+              variant="outlined"
+            >
+              Cancel
+            </LinkButton>
+            <LinkButton
+              hrefObserver="/create/2-questions"
               sx={{ marginLeft: 'auto' }}
               variant="contained"
               type="submit"
             >
               Next
-            </Button>
+            </LinkButton>
           </CardActions>
         </form>
       </Card>

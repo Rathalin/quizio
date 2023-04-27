@@ -7,6 +7,9 @@ export const theme = responsiveFontSizes(
       primary: {
         main: '#d09c5c',
       },
+      loading: {
+        main: '#009376',
+      },
     },
     typography: {
       fontFamily: [
@@ -47,3 +50,24 @@ export const theme = responsiveFontSizes(
     },
   })
 );
+
+declare module '@mui/material/styles/createPalette' {
+  interface Palette {
+    loading: Palette['primary'];
+  }
+  interface PaletteOptions {
+    loading: PaletteOptions['primary'];
+  }
+}
+
+// declare module '@mui/material/Button' {
+//   export interface ButtonPropsColorOverrides {
+//     loading: true;
+//   }
+// }
+
+declare module '@mui/material/CircularProgress' {
+  export interface CircularProgressPropsColorOverrides {
+    loading: true;
+  }
+}

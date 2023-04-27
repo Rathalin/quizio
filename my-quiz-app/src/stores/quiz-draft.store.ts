@@ -1,12 +1,22 @@
 import { create } from 'zustand';
 
-type QuizDraft = {
-  title: string;
-  description: string;
-  questions: string[];
+export type AnswerDraft = {
+  text: string;
+  correct: boolean;
 };
 
-type QuizDraftState = {
+export type QuestionDraft = {
+  title: string;
+  answers: AnswerDraft[];
+};
+
+export type QuizDraft = {
+  title: string;
+  description: string;
+  questions: QuestionDraft[];
+};
+
+export type QuizDraftState = {
   draft: QuizDraft;
   setDraft: (draft: QuizDraft) => void;
 };
