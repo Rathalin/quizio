@@ -38,7 +38,7 @@ export const theme = responsiveFontSizes(
       },
       h5: {
         fontSize: '1.25rem',
-        marginBlock: '75rem',
+        marginBlock: '0.75rem',
       },
       h6: {
         fontSize: '1rem',

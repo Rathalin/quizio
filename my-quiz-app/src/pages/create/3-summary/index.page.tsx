@@ -1,10 +1,33 @@
 import GradientWord from '@/components/GradientWord';
 import LinkButton from '@/components/LinkButton';
-import QuestionInput from '@/page-components/create/question/QuestionInput';
-import { ArrowBackOutlined } from '@mui/icons-material';
-import { Box, Card, CardActions, CardContent, Typography } from '@mui/material';
+import { useQuizDraft } from '@/stores/quiz-draft.store';
+import {
+  ArrowBackOutlined,
+  CheckOutlined,
+  ClearOutlined,
+} from '@mui/icons-material';
+import {
+  Box,
+  Card,
+  CardActions,
+  CardContent,
+  Divider,
+  List,
+  ListItem,
+  Typography,
+} from '@mui/material';
+import { shallow } from 'zustand/shallow';
 
 export default function CreateQuizSummaryPage() {
+  const { title, description, questions } = useQuizDraft(
+    (state) => ({
+      title: state.title,
+      description: state.description,
+      questions: state.questions,
+    }),
+    shallow
+  );
+
   return (
     <Box>
       <Typography variant="h1">
@@ -14,7 +37,43 @@ export default function CreateQuizSummaryPage() {
       </Typography>
       <Card>
         <CardContent>
-          <Box>summary</Box>
+          <Typography variant="h3" component="h2">
+            {title}
+          </Typography>
+          <Typography variant="body1">{description}</Typography>
+          <List>
+            {questions.map((question, qIndex) => (
+              <>
+                {qIndex > 0 && <Divider />}
+                <ListItem key={`question-${qIndex}`}>
+                  <Box>
+                    <Typography variant="h5" component="h3">{`${qIndex + 1}) ${
+                      question.title
+                    }`}</Typography>
+                    <List>
+                      {question.answers.map((answer, aIndex) => (
+                        <ListItem
+                          key={`question-${aIndex}-answer-${aIndex}`}
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            columnGap: 3,
+                          }}
+                        >
+                          {answer.isCorrect ? (
+                            <CheckOutlined color="success" />
+                          ) : (
+                            <ClearOutlined color="error" />
+                          )}
+                          <Box>{answer.text}</Box>
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Box>
+                </ListItem>
+              </>
+            ))}
+          </List>
         </CardContent>
         <CardActions
           sx={{
