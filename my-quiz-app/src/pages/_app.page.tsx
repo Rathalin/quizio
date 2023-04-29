@@ -7,8 +7,11 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { usePageTransition } from '@/stores/page-transition.store';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 export default function App({ Component, pageProps }: AppProps) {
+  const queryClient = new QueryClient();
+
   const router = useRouter();
   const { startTransitioning, stopTransitioning } = usePageTransition();
 
@@ -39,13 +42,15 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Head>
-        <title>Quizio</title>
-      </Head>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <QueryClientProvider client={queryClient}>
+        <CssBaseline />
+        <Head>
+          <title>Quizio</title>
+        </Head>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </QueryClientProvider>
     </ThemeProvider>
   );
 }
