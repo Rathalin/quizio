@@ -66,6 +66,7 @@ $RECYCLE.BIN/
 ############################
 
 .tmp
+data.db
 *.log
 *.sql
 *.sqlite
