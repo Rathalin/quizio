@@ -1,5 +1,5 @@
 import { CheckOutlined, ClearOutlined } from '@mui/icons-material';
-import { Box, IconButton } from '@mui/material';
+import { Box, IconButton, Tooltip } from '@mui/material';
 
 type CorrectToggleProps = {
   isCorrect: boolean;
@@ -10,13 +10,15 @@ export default function CorrectToggle({
   isCorrect,
   onChange,
 }: CorrectToggleProps) {
+  const tooltipTitle = isCorrect ? 'Marked as correct' : 'Marked as incorrect';
+  const icon = isCorrect ? (
+    <CheckOutlined color="success" />
+  ) : (
+    <ClearOutlined color="error" />
+  );
   return (
-    <IconButton onClick={() => onChange(!isCorrect)}>
-      {isCorrect ? (
-        <CheckOutlined color="success" />
-      ) : (
-        <ClearOutlined color="error" />
-      )}
-    </IconButton>
+    <Tooltip title={tooltipTitle} arrow>
+      <IconButton onClick={() => onChange(!isCorrect)}>{icon}</IconButton>
+    </Tooltip>
   );
 }

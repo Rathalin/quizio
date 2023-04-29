@@ -1,6 +1,8 @@
 import {
   Box,
   Button,
+  Card,
+  CardContent,
   Divider,
   FormControl,
   FormControlLabel,
@@ -9,16 +11,22 @@ import {
   Radio,
   RadioGroup,
   TextField,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
 import AnswerInput from './answer/AnswerInput';
-import { AddOutlined } from '@mui/icons-material';
+import {
+  AddOutlined,
+  DeleteOutline,
+  DeleteOutlined,
+} from '@mui/icons-material';
 import {
   type QuestionDraft,
   useQuizDraft,
   AnswerDraft,
 } from '@/stores/quiz-draft.store';
+import DeleteQuestionButton from './DeleteQuestionButton';
 
 type QuestionInputProps = {
   index: number;
@@ -61,57 +69,67 @@ export default function QuestionInput({
   }
 
   return (
-    <Box>
-      <Box key={`question-${index}`}>
-        <Box sx={{ marginBottom: 4 }}>
-          <TextField
-            id={`question-title-${index}`}
-            name={`question-title-${index}`}
-            label={`Question`}
-            value={question.title}
-            onChange={(e) => setTitle(e.target.value)}
-            fullWidth
-            required
-          />
-        </Box>
-        <Box>
+    <Card>
+      <CardContent>
+        <Box key={`question-${index}`}>
           <Box
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
+              marginBottom: 4,
               gap: 2,
-              marginBottom: 2,
+              display: 'flex',
+              alignItems: 'center',
             }}
           >
-            {question.answers.map((answer, index) => (
-              <AnswerInput
-                key={index}
-                index={index + 1}
-                text={answer.text}
-                onTextChange={(text) =>
-                  setAnswer({ text, isCorrect: answer.isCorrect }, index)
-                }
-                isCorrect={answer.isCorrect}
-                onIsCorrectChange={(isCorrect) =>
-                  setAnswer({ text: answer.text, isCorrect }, index)
-                }
-                onDelete={() => deleteAnswer(index)}
-                minAnswers={minAnswers}
-              />
-            ))}
+            <TextField
+              id={`question-title-${index}`}
+              name={`question-title-${index}`}
+              label={`Question`}
+              value={question.title}
+              onChange={(e) => setTitle(e.target.value)}
+              fullWidth
+              required
+            />
+            <DeleteQuestionButton index={index} onDelete={onDelete} />
           </Box>
-          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Button
-              variant="outlined"
-              startIcon={<AddOutlined />}
-              onClick={() => addAnswer({ text: '', isCorrect: false })}
+          <Box>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+                marginBottom: 2,
+              }}
             >
-              Answer
-            </Button>
+              {question.answers.map((answer, aIndex) => (
+                <AnswerInput
+                  key={aIndex}
+                  index={aIndex + 1}
+                  text={answer.text}
+                  onTextChange={(text) =>
+                    setAnswer({ text, isCorrect: answer.isCorrect }, aIndex)
+                  }
+                  isCorrect={answer.isCorrect}
+                  onIsCorrectChange={(isCorrect) =>
+                    setAnswer({ text: answer.text, isCorrect }, aIndex)
+                  }
+                  onDelete={() => deleteAnswer(aIndex)}
+                  minAnswers={minAnswers}
+                />
+              ))}
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Button
+                variant="outlined"
+                startIcon={<AddOutlined />}
+                onClick={() => addAnswer({ text: '', isCorrect: false })}
+              >
+                Answer
+              </Button>
+            </Box>
           </Box>
+          <Divider sx={{ marginBlock: 4 }} />
         </Box>
-        <Divider sx={{ marginBlock: 4 }} />
-      </Box>
-    </Box>
+      </CardContent>
+    </Card>
   );
 }

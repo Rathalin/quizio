@@ -1,7 +1,11 @@
 import GradientWord from '@/components/GradientWord';
 import LinkButton from '@/components/LinkButton';
 import QuestionInput from '@/page-components/create/question/QuestionInput';
-import { useQuizDraft } from '@/stores/quiz-draft.store';
+import {
+  AnswerDraft,
+  QuestionDraft,
+  useQuizDraft,
+} from '@/stores/quiz-draft.store';
 import {
   AddOutlined,
   ArrowBackOutlined,
@@ -18,10 +22,35 @@ import {
 import { shallow } from 'zustand/shallow';
 
 export default function CreateQuizQuestionsPage() {
-  const { questions, setQuestion } = useQuizDraft(
-    (state) => ({ questions: state.questions, setQuestion: state.setQuestion }),
+  const { questions, setQuestions } = useQuizDraft(
+    (state) => ({
+      questions: state.questions,
+      setQuestions: state.setQuestions,
+    }),
     shallow
   );
+  const minAnswers = 2;
+
+  function addQuestion() {
+    setQuestions([
+      ...questions,
+      {
+        title: '',
+        answers: Array<AnswerDraft>(minAnswers).fill({
+          text: '',
+          isCorrect: false,
+        }),
+      },
+    ]);
+  }
+
+  function setQuestion(question: QuestionDraft, index: number) {
+    setQuestions(questions.map((q, i) => (i === index ? question : q)));
+  }
+
+  function deleteQuestion(index: number) {
+    setQuestions(questions.filter((_, i) => i !== index));
+  }
 
   return (
     <Box>
@@ -30,30 +59,39 @@ export default function CreateQuizQuestionsPage() {
         <GradientWord>questions</GradientWord>
         <span>.</span>
       </Typography>
-      <Card>
-        <CardContent>
+      <Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {questions.map((question, index) => (
             <QuestionInput
               index={index}
               question={question}
               setQuestion={(q) => setQuestion(q, index)}
-              onDelete={() => {}}
+              onDelete={() => deleteQuestion(index)}
             />
           ))}
-          <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
-            <Button startIcon={<AddOutlined />} variant="outlined">
-              Another Question
-            </Button>
-          </Box>
-        </CardContent>
-        <CardActions
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: 2,
+            marginBottom: 2,
+          }}
+        >
+          <Button
+            startIcon={<AddOutlined />}
+            variant="outlined"
+            onClick={() => addQuestion()}
+          >
+            Another Question
+          </Button>
+        </Box>
+        <Box
           sx={{
             display: 'flex',
             alignItems: 'center',
             flexWrap: 'wrap',
-            margin: 1,
           }}
-          disableSpacing
         >
           <LinkButton
             hrefObserver="/create/1-general"
@@ -73,8 +111,8 @@ export default function CreateQuizQuestionsPage() {
           >
             View summary
           </LinkButton>
-        </CardActions>
-      </Card>
+        </Box>
+      </Box>
     </Box>
   );
 }
