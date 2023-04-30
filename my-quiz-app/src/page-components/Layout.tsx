@@ -22,7 +22,7 @@ export default function Layout({ children }: LayoutProps) {
           }}
         ></Box>
       </header>
-      <Container maxWidth="md" sx={{ flex: 1 }}>
+      <Container maxWidth="md" sx={{ flex: 1, marginTop: 4 }}>
         <main>{children}</main>
       </Container>
       <footer>

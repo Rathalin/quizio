@@ -10,6 +10,9 @@ export const theme = responsiveFontSizes(
       loading: {
         main: '#009376',
       },
+      placeholder: {
+        main: '#313131',
+      },
     },
     typography: {
       fontFamily: [
@@ -55,9 +58,11 @@ export const theme = responsiveFontSizes(
 declare module '@mui/material/styles/createPalette' {
   interface Palette {
     loading: Palette['primary'];
+    placeholder: Palette['primary'];
   }
   interface PaletteOptions {
     loading: PaletteOptions['primary'];
+    placeholder: PaletteOptions['primary'];
   }
 }
 

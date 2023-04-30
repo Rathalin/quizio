@@ -2,9 +2,9 @@ import request from 'graphql-request';
 import { useQuery } from '@tanstack/react-query';
 import { graphql } from '../generated/gql';
 
-const allMyQuizsQuery = graphql(`
-  query allMyQuizs {
-    myQuizs {
+const myQuizsOverviewOfOwner = graphql(`
+  query myQuizsOverviewOfOwner($ownerId: ID!) {
+    myQuizs(filters: { owner: { id: { eq: $ownerId } } }) {
       data {
         id
         attributes {
@@ -16,9 +16,16 @@ const allMyQuizsQuery = graphql(`
   }
 `);
 
-export function useMyQuizsQuery() {
+export function useMyQuizsOverviewQuery(ownerId: string) {
   return useQuery({
     queryKey: ['myQuizs'],
-    queryFn: () => request('http://localhost:1337/graphql', allMyQuizsQuery),
+    queryFn: () =>
+      request(
+        process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT,
+        myQuizsOverviewOfOwner,
+        {
+          ownerId,
+        }
+      ),
   });
 }
