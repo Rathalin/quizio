@@ -41,8 +41,8 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [router.events, startTransitioning, stopTransitioning]);
 
   return (
-    <ThemeProvider theme={theme}>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
         <CssBaseline />
         <Head>
           <title>Quizio</title>
@@ -50,8 +50,8 @@ export default function App({ Component, pageProps }: AppProps) {
         <Layout>
           <Component {...pageProps} />
         </Layout>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 }

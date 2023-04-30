@@ -482,6 +482,7 @@ export type MyQuiz = {
   createdAt?: Maybe<Scalars['DateTime']>;
   description?: Maybe<Scalars['String']>;
   owner?: Maybe<UsersPermissionsUserEntityResponse>;
+  published?: Maybe<Scalars['Boolean']>;
   questions?: Maybe<QuestionRelationResponseCollection>;
   title: Scalars['String'];
   updatedAt?: Maybe<Scalars['DateTime']>;
@@ -519,6 +520,7 @@ export type MyQuizFiltersInput = {
   not?: InputMaybe<MyQuizFiltersInput>;
   or?: InputMaybe<Array<InputMaybe<MyQuizFiltersInput>>>;
   owner?: InputMaybe<UsersPermissionsUserFiltersInput>;
+  published?: InputMaybe<BooleanFilterInput>;
   questions?: InputMaybe<QuestionFiltersInput>;
   title?: InputMaybe<StringFilterInput>;
   updatedAt?: InputMaybe<DateTimeFilterInput>;
@@ -527,6 +529,7 @@ export type MyQuizFiltersInput = {
 export type MyQuizInput = {
   description?: InputMaybe<Scalars['String']>;
   owner?: InputMaybe<Scalars['ID']>;
+  published?: InputMaybe<Scalars['Boolean']>;
   questions?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
   title?: InputMaybe<Scalars['String']>;
 };
@@ -1121,12 +1124,12 @@ export type UsersPermissionsUserRelationResponseCollection = {
   data: Array<UsersPermissionsUserEntity>;
 };
 
-export type MyQuizsOverviewOfOwnerQueryVariables = Exact<{
+export type MyQuizsOverviewsOfOwnerQueryVariables = Exact<{
   ownerId: Scalars['ID'];
 }>;
 
 
-export type MyQuizsOverviewOfOwnerQuery = { __typename?: 'Query', myQuizs?: { __typename?: 'MyQuizEntityResponseCollection', data: Array<{ __typename?: 'MyQuizEntity', id?: string | null, attributes?: { __typename?: 'MyQuiz', title: string, description?: string | null } | null }> } | null };
+export type MyQuizsOverviewsOfOwnerQuery = { __typename?: 'Query', myQuizs?: { __typename?: 'MyQuizEntityResponseCollection', data: Array<{ __typename?: 'MyQuizEntity', id?: string | null, attributes?: { __typename?: 'MyQuiz', title: string, description?: string | null, published?: boolean | null, questions?: { __typename?: 'QuestionRelationResponseCollection', data: Array<{ __typename?: 'QuestionEntity', id?: string | null }> } | null } | null }> } | null };
 
 
-export const MyQuizsOverviewOfOwnerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"myQuizsOverviewOfOwner"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ownerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myQuizs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filters"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"owner"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ownerId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"attributes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]}}]}}]} as unknown as DocumentNode<MyQuizsOverviewOfOwnerQuery, MyQuizsOverviewOfOwnerQueryVariables>;
+export const MyQuizsOverviewsOfOwnerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"myQuizsOverviewsOfOwner"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ownerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myQuizs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filters"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"owner"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ownerId"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"attributes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"published"}},{"kind":"Field","name":{"kind":"Name","value":"questions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<MyQuizsOverviewsOfOwnerQuery, MyQuizsOverviewsOfOwnerQueryVariables>;

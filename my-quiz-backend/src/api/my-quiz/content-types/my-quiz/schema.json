@@ -33,6 +33,11 @@
       "relation": "oneToMany",
       "target": "api::question.question",
       "mappedBy": "myQuiz"
+    },
+    "published": {
+      "type": "boolean",
+      "default": false,
+      "required": false
     }
   }
 }

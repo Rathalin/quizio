@@ -31,12 +31,13 @@ export default function Home() {
           <Alert severity="error">Could not load your quizes.</Alert>
         )}
         {myQuizsOverviewQuery.isSuccess &&
-          myQuizsOverviewQuery.data.myQuizs?.data.map((quiz, index) => (
+          myQuizsOverviewQuery.data.myQuizs?.data.map((quiz) => (
             <MyQuizOverview
-              key={index}
+              key={quiz.id}
               title={quiz.attributes?.title ?? ''}
               description={quiz.attributes?.description ?? ''}
-              questionCount={2}
+              questionCount={quiz.attributes?.questions?.data?.length ?? 0}
+              published={quiz.attributes?.published ?? false}
             />
           ))}
       </Box>

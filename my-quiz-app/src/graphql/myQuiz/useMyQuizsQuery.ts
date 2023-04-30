@@ -3,13 +3,19 @@ import { useQuery } from '@tanstack/react-query';
 import { graphql } from '../generated/gql';
 
 const myQuizsOverviewOfOwner = graphql(`
-  query myQuizsOverviewOfOwner($ownerId: ID!) {
+  query myQuizsOverviewsOfOwner($ownerId: ID!) {
     myQuizs(filters: { owner: { id: { eq: $ownerId } } }) {
       data {
         id
         attributes {
           title
           description
+          published
+          questions {
+            data {
+              id
+            }
+          }
         }
       }
     }
@@ -27,6 +33,5 @@ export function useMyQuizsOverviewQuery(ownerId: string) {
           ownerId,
         }
       ),
-    staleTime: 1000 * 60,
   });
 }
