@@ -19,6 +19,7 @@ export default function PlaceholderTypography({
           color: 'transparent',
           userSelect: 'none',
           borderRadius: 1,
+          animation: 'flashing 1.5s ease-in-out infinite',
         }}
       >
         I

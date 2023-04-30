@@ -27,5 +27,6 @@ export function useMyQuizsOverviewQuery(ownerId: string) {
           ownerId,
         }
       ),
+    staleTime: 1000 * 60,
   });
 }
