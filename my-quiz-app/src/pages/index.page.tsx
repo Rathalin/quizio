@@ -1,17 +1,9 @@
+import { Alert, Box, Typography } from '@mui/material';
 import GradientWord from '@/components/GradientWord';
 import LinkButton from '@/components/LinkButton';
 import MyQuizOverview from '@/components/MyQuizOverview';
 import MyQuizOverviewPlaceholder from '@/components/MyQuizOverviewPlaceholder';
 import { useMyQuizsOverviewQuery } from '@/graphql/myQuiz/useMyQuizsQuery';
-import {
-  Alert,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Typography,
-} from '@mui/material';
-import Link from 'next/link';
 
 export default function Home() {
   const myQuizsOverviewQuery = useMyQuizsOverviewQuery('1');
@@ -39,8 +31,9 @@ export default function Home() {
           <Alert severity="error">Could not load your quizes.</Alert>
         )}
         {myQuizsOverviewQuery.isSuccess &&
-          myQuizsOverviewQuery.data.myQuizs?.data.map((quiz) => (
+          myQuizsOverviewQuery.data.myQuizs?.data.map((quiz, index) => (
             <MyQuizOverview
+              key={index}
               title={quiz.attributes?.title ?? ''}
               description={quiz.attributes?.description ?? ''}
               questionCount={2}

@@ -15,30 +15,29 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const { startTransitioning, stopTransitioning } = usePageTransition();
 
-  function handleRouteChange(url: any, some: any) {
-    console.log(
-      `App is changing to ${url} ${
-        some.shallow ? 'with' : 'without'
-      } shallow routing`
-    );
-    console.log(some);
-    startTransitioning(url);
-    return;
-  }
-
-  function handleRouteComplete(url: any, { shallow }: { shallow: any }) {
-    stopTransitioning();
-    return;
-  }
-
   useEffect(() => {
+    function handleRouteChange(url: any, some: any) {
+      console.log(
+        `App is changing to ${url} ${
+          some.shallow ? 'with' : 'without'
+        } shallow routing`
+      );
+      console.log(some);
+      startTransitioning(url);
+      return;
+    }
+
+    function handleRouteComplete() {
+      stopTransitioning();
+      return;
+    }
     router.events.on('routeChangeStart', handleRouteChange);
     router.events.on('routeChangeComplete', handleRouteComplete);
 
     return () => {
       router.events.off('routeChangeStart', handleRouteChange);
     };
-  }, []);
+  }, [router.events, startTransitioning, stopTransitioning]);
 
   return (
     <ThemeProvider theme={theme}>

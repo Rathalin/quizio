@@ -63,6 +63,7 @@ export default function CreateQuizQuestionsPage() {
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {questions.map((question, index) => (
             <QuestionInput
+              key={index}
               index={index}
               question={question}
               setQuestion={(q) => setQuestion(q, index)}
