@@ -11,9 +11,11 @@ import {
   Typography,
 } from '@mui/material';
 import { useRouter } from 'next/router';
+import { FormEvent } from 'react';
 import { shallow } from 'zustand/shallow';
 
 export default function CreateQuizGeneralPage() {
+  const router = useRouter();
   const { title, setTitle, description, setDescription } = useQuizDraft(
     (state) => ({
       title: state.title,
@@ -24,6 +26,12 @@ export default function CreateQuizGeneralPage() {
     }),
     shallow
   );
+
+  function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    router.push('/create/2-questions');
+  }
+
   return (
     <Box>
       <Typography variant="h1">
@@ -32,8 +40,8 @@ export default function CreateQuizGeneralPage() {
         <span>.</span>
       </Typography>
       <Card>
-        <CardContent>
-          <Box>
+        <form onSubmit={onSubmit}>
+          <CardContent>
             <Box sx={{ marginBottom: 2 }}>
               <TextField
                 id="quiz-title"
@@ -55,35 +63,35 @@ export default function CreateQuizGeneralPage() {
                 fullWidth
               />
             </Box>
-          </Box>
-        </CardContent>
-        <CardActions
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            margin: 1,
-          }}
-          disableSpacing
-        >
-          <LinkButton
-            hrefObserver="/"
-            navigateOnClick
-            iconSide="right"
-            variant="outlined"
+          </CardContent>
+          <CardActions
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              margin: 1,
+            }}
+            disableSpacing
           >
-            Cancel
-          </LinkButton>
-          <LinkButton
-            hrefObserver="/create/2-questions"
-            navigateOnClick
-            sx={{ marginLeft: 'auto' }}
-            variant="contained"
-            endIcon={<ArrowForwardOutlined />}
-          >
-            Add questions
-          </LinkButton>
-        </CardActions>
+            <LinkButton
+              hrefObserver="/"
+              navigateOnClick
+              iconSide="right"
+              variant="outlined"
+            >
+              Cancel
+            </LinkButton>
+            <LinkButton
+              hrefObserver="/create/2-questions"
+              type="submit"
+              sx={{ marginLeft: 'auto' }}
+              variant="contained"
+              endIcon={<ArrowForwardOutlined />}
+            >
+              Add questions
+            </LinkButton>
+          </CardActions>
+        </form>
       </Card>
     </Box>
   );

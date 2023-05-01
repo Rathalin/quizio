@@ -17,13 +17,12 @@ export default function App({ Component, pageProps }: AppProps) {
   const { startTransitioning, stopTransitioning } = usePageTransition();
 
   useEffect(() => {
-    function handleRouteChange(url: any, some: any) {
+    function handleRouteChange(url: any, { shallow }: { shallow: boolean }) {
       console.log(
         `App is changing to ${url} ${
-          some.shallow ? 'with' : 'without'
+          shallow ? 'with' : 'without'
         } shallow routing`
       );
-      console.log(some);
       startTransitioning(url);
       return;
     }
