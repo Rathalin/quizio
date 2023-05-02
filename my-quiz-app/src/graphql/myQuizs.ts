@@ -1,8 +1,8 @@
 import request from 'graphql-request';
 import { useQuery } from '@tanstack/react-query';
-import { graphql } from '../generated/gql';
+import { graphql } from './generated/gql';
 
-const myQuizsOverviewOfOwner = graphql(`
+export const queryMyQuizsOverviewOfOwner = graphql(`
   query myQuizsOverviewsOfOwner($ownerId: ID!) {
     myQuizs(filters: { owner: { id: { eq: $ownerId } } }) {
       data {
@@ -21,17 +21,3 @@ const myQuizsOverviewOfOwner = graphql(`
     }
   }
 `);
-
-export function useMyQuizsOverviewQuery(ownerId: string) {
-  return useQuery({
-    queryKey: ['myQuizs'],
-    queryFn: () =>
-      request(
-        process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT,
-        myQuizsOverviewOfOwner,
-        {
-          ownerId,
-        }
-      ),
-  });
-}

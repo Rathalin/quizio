@@ -1,64 +1,52 @@
-import { Alert, Box, Typography } from '@mui/material';
+import { Box, Button, Grid, Typography } from '@mui/material';
 import GradientWord from '@/components/GradientWord';
-import LinkButton from '@/components/LinkButton';
-import MyQuizOverview from '@/components/MyQuizOverview';
-import MyQuizOverviewPlaceholder from '@/components/MyQuizOverviewPlaceholder';
-import { useMyQuizsOverviewQuery } from '@/graphql/myQuiz/useMyQuizsQuery';
+import { signIn, signOut, useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import { LoginOutlined, LogoutOutlined } from '@mui/icons-material';
 
 export default function Home() {
-  const myQuizsOverviewQuery = useMyQuizsOverviewQuery('1');
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const isAuthenticated = status === 'authenticated';
 
   return (
     <Box>
-      <Typography
-        component="h1"
-        sx={{
-          fontSize: '4rem',
-          marginBlock: 4,
-          display: 'flex',
-          justifyContent: 'center',
-        }}
-      >
-        <GradientWord>Quizio</GradientWord>
-      </Typography>
-
-      <Typography variant="h2" sx={{ marginTop: 4 }}>
-        Your quizes
-      </Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: 2 }}>
-        {myQuizsOverviewQuery.isLoading && <MyQuizOverviewPlaceholder />}
-        {myQuizsOverviewQuery.isError && (
-          <Alert severity="error">Could not load your quizes.</Alert>
-        )}
-        {myQuizsOverviewQuery.isSuccess &&
-          myQuizsOverviewQuery.data.myQuizs?.data.map((quiz) => (
-            <MyQuizOverview
-              key={quiz.id}
-              title={quiz.attributes?.title ?? ''}
-              description={quiz.attributes?.description ?? ''}
-              questionCount={quiz.attributes?.questions?.data?.length ?? 0}
-              published={quiz.attributes?.published ?? false}
-            />
-          ))}
-      </Box>
-
-      <Box
-        sx={{
-          marginTop: 4,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <LinkButton
-          hrefObserver="/create/1-general"
-          navigateOnClick
-          iconSide="right"
-          variant="contained"
-        >
-          Create a new quiz
-        </LinkButton>
-      </Box>
+      <Grid container sx={{ alignItems: 'center' }}>
+        <Grid item xs={2}></Grid>
+        <Grid item xs={8}>
+          <Typography
+            component="h1"
+            sx={{
+              fontSize: '4rem',
+              marginBlock: 4,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <GradientWord>Quizio</GradientWord>
+          </Typography>
+        </Grid>
+        <Grid item xs={2} sx={{ display: 'flex', justifyContent: 'end' }}>
+          {isAuthenticated ? (
+            <Button
+              variant="outlined"
+              endIcon={<LogoutOutlined />}
+              onClick={() => signOut()}
+            >
+              Sign Out
+            </Button>
+          ) : (
+            <Button
+              variant="outlined"
+              endIcon={<LoginOutlined />}
+              onClick={() => signIn()}
+            >
+              Sign In
+            </Button>
+          )}
+        </Grid>
+      </Grid>
     </Box>
   );
 }

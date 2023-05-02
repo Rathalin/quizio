@@ -1,4 +1,5 @@
 import GradientWord from '@/components/GradientWord';
+import LinkButton from '@/components/LinkButton';
 import {
   Box,
   Button,
@@ -10,20 +11,21 @@ import {
 } from '@mui/material';
 import { FormEvent, useState } from 'react';
 
-export default function LoginPage() {
+export default function RegisterPage() {
   function onSubmit(event: FormEvent<HTMLFormElement>) {}
 
-  const [identifier, setIdentifier] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   return (
     <Box>
       <Typography variant="h1">
-        <span>Enter your </span>
-        <GradientWord>credentials</GradientWord>
+        <span>Create your </span>
+        <GradientWord>account</GradientWord>
         <span>.</span>
       </Typography>
-      <form onSubmit={onSubmit}>
+      <form autoComplete="off" onSubmit={onSubmit}>
         <Card
           sx={{
             marginBottom: 2,
@@ -38,13 +40,24 @@ export default function LoginPage() {
               }}
             >
               <TextField
-                id="identifier"
-                label="Email or username"
+                id="username"
+                label="Username"
                 type="text"
                 fullWidth
                 required
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                autoComplete="new-username"
+              />
+              <TextField
+                id="email"
+                label="Email"
+                type="email"
+                fullWidth
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="new-email"
               />
               <TextField
                 id="password"
@@ -54,6 +67,7 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoComplete="new-password"
               />
             </Box>
           </CardContent>
@@ -61,11 +75,18 @@ export default function LoginPage() {
         <Box
           sx={{
             display: 'flex',
-            justifyContent: 'end',
           }}
         >
-          <Button variant="contained" color="primary">
-            Login
+          <LinkButton hrefObserver="/" navigateOnClick iconSide="right">
+            Back
+          </LinkButton>
+          <Button
+            sx={{ marginLeft: 'auto' }}
+            variant="contained"
+            color="primary"
+            type="submit"
+          >
+            Register
           </Button>
         </Box>
       </form>

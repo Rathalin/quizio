@@ -9,8 +9,12 @@ import { useEffect } from 'react';
 import { usePageTransition } from '@/stores/page-transition.store';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { SessionProvider } from 'next-auth/react';
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps) {
   const queryClient = new QueryClient();
 
   const router = useRouter();
@@ -40,17 +44,19 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [router.events, startTransitioning, stopTransitioning]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Head>
-          <title>Quizio</title>
-        </Head>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </ThemeProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+    <SessionProvider session={session}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Head>
+            <title>Quizio</title>
+          </Head>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </ThemeProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </SessionProvider>
   );
 }
