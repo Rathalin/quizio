@@ -13,7 +13,8 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "\n  query myQuizsOverviewsOfOwner($ownerId: ID!) {\n    myQuizs(filters: { owner: { id: { eq: $ownerId } } }) {\n      data {\n        id\n        attributes {\n          title\n          description\n          published\n          questions {\n            data {\n              id\n            }\n          }\n        }\n      }\n    }\n  }\n": types.MyQuizsOverviewsOfOwnerDocument,
+    "\n  query myQuizsOverviewsOfOwner($ownerId: ID!) {\n    quizzes(filters: { owner: { id: { eq: $ownerId } } }) {\n      data {\n        id\n        attributes {\n          title\n          description\n          published\n          questions {\n            data {\n              id\n            }\n          }\n        }\n      }\n    }\n  }\n": types.MyQuizsOverviewsOfOwnerDocument,
+    "\n  query allPublishedQuizzes {\n    quizzes(filters: { published: { eq: true } }) {\n      data {\n        id\n        attributes {\n          title\n          description\n          published\n          createdAt\n          questions {\n            data {\n              id\n            }\n          }\n          image {\n            data {\n              id\n              attributes {\n                url\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n": types.AllPublishedQuizzesDocument,
 };
 
 /**
@@ -33,7 +34,11 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query myQuizsOverviewsOfOwner($ownerId: ID!) {\n    myQuizs(filters: { owner: { id: { eq: $ownerId } } }) {\n      data {\n        id\n        attributes {\n          title\n          description\n          published\n          questions {\n            data {\n              id\n            }\n          }\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query myQuizsOverviewsOfOwner($ownerId: ID!) {\n    myQuizs(filters: { owner: { id: { eq: $ownerId } } }) {\n      data {\n        id\n        attributes {\n          title\n          description\n          published\n          questions {\n            data {\n              id\n            }\n          }\n        }\n      }\n    }\n  }\n"];
+export function graphql(source: "\n  query myQuizsOverviewsOfOwner($ownerId: ID!) {\n    quizzes(filters: { owner: { id: { eq: $ownerId } } }) {\n      data {\n        id\n        attributes {\n          title\n          description\n          published\n          questions {\n            data {\n              id\n            }\n          }\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query myQuizsOverviewsOfOwner($ownerId: ID!) {\n    quizzes(filters: { owner: { id: { eq: $ownerId } } }) {\n      data {\n        id\n        attributes {\n          title\n          description\n          published\n          questions {\n            data {\n              id\n            }\n          }\n        }\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query allPublishedQuizzes {\n    quizzes(filters: { published: { eq: true } }) {\n      data {\n        id\n        attributes {\n          title\n          description\n          published\n          createdAt\n          questions {\n            data {\n              id\n            }\n          }\n          image {\n            data {\n              id\n              attributes {\n                url\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query allPublishedQuizzes {\n    quizzes(filters: { published: { eq: true } }) {\n      data {\n        id\n        attributes {\n          title\n          description\n          published\n          createdAt\n          questions {\n            data {\n              id\n            }\n          }\n          image {\n            data {\n              id\n              attributes {\n                url\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

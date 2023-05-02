@@ -3,6 +3,7 @@ import GradientWord from '@/components/GradientWord';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { LoginOutlined, LogoutOutlined } from '@mui/icons-material';
+import QuizzesOverview from '@/page-components/QuizzesOverview';
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -47,6 +48,7 @@ export default function Home() {
           )}
         </Grid>
       </Grid>
+      <QuizzesOverview />
     </Box>
   );
 }

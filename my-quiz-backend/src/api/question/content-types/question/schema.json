@@ -24,10 +24,10 @@
       "target": "api::answer.answer",
       "mappedBy": "question"
     },
-    "myQuiz": {
+    "quiz": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::my-quiz.my-quiz",
+      "target": "api::quiz.quiz",
       "inversedBy": "questions"
     }
   }

@@ -2,7 +2,7 @@ import { Card, CardContent, Box, Grid, CardHeader } from '@mui/material';
 import PlaceholderBox from './placeholders/PlaceholderBox';
 import PlaceholderTypography from './placeholders/PlaceholderTypography';
 
-export default function MyQuizOverviewPlaceholder() {
+export default function QuizOverviewPlaceholder() {
   return (
     <Card sx={{ minHeight: '8rem' }}>
       <CardContent>

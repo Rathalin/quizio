@@ -10,6 +10,7 @@ import { useSession } from 'next-auth/react';
 export default function MyQuizzes() {
   const { data: session, status } = useSession();
   const isAuthenticated = status === 'authenticated';
+  const userId = session?.user?.id?.toString() ?? '';
 
   const myQuizsOverviewQuery = useQuery({
     queryKey: ['myQuizs'],
@@ -18,7 +19,7 @@ export default function MyQuizzes() {
         process.env.NEXT_PUBLIC_GRAPHQL_URL,
         queryMyQuizsOverviewOfOwner,
         {
-          ownerId: session?.user?.id ?? '',
+          ownerId: userId,
         }
       ),
     enabled: isAuthenticated,
@@ -37,7 +38,7 @@ export default function MyQuizzes() {
           <Alert severity="error">Could not load your quizes.</Alert>
         )}
         {myQuizsOverviewQuery.isSuccess &&
-          myQuizsOverviewQuery.data.myQuizs?.data.map((quiz) => (
+          myQuizsOverviewQuery.data.quizzes?.data.map((quiz) => (
             <MyQuizOverview
               key={quiz.id}
               title={quiz.attributes?.title ?? ''}

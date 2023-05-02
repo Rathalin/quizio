@@ -1,10 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "my_quizs",
+  "collectionName": "quizzes",
   "info": {
-    "singularName": "my-quiz",
-    "pluralName": "my-quizs",
-    "displayName": "MyQuiz",
+    "singularName": "quiz",
+    "pluralName": "quizzes",
+    "displayName": "Quiz",
     "description": ""
   },
   "options": {
@@ -15,13 +15,18 @@
     "title": {
       "type": "string",
       "required": true,
-      "maxLength": 30,
-      "minLength": 3
+      "minLength": 1,
+      "maxLength": 30
     },
     "description": {
       "type": "text",
       "required": false,
-      "maxLength": 100
+      "maxLength": 50
+    },
+    "published": {
+      "type": "boolean",
+      "default": false,
+      "required": false
     },
     "owner": {
       "type": "relation",
@@ -32,11 +37,14 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::question.question",
-      "mappedBy": "myQuiz"
+      "mappedBy": "quiz"
     },
-    "published": {
-      "type": "boolean",
-      "default": false,
+    "image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false,
       "required": false
     }
   }
