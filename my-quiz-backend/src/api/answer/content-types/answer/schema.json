@@ -15,7 +15,7 @@
     "title": {
       "type": "string",
       "required": true,
-      "maxLength": 30,
+      "maxLength": 100,
       "minLength": 1
     },
     "correct": {

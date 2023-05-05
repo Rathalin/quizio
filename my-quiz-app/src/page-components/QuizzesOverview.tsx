@@ -15,7 +15,13 @@ export default function QuizzesOverview() {
   const quizzes = data?.quizzes?.data ?? [];
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+      }}
+    >
       {isLoading && <QuizOverviewPlaceholder />}
       {quizzes.length > 0 ? (
         quizzes.map((quiz) => (
@@ -25,7 +31,7 @@ export default function QuizzesOverview() {
             description={quiz.attributes?.description ?? ''}
             published={quiz.attributes?.published ?? false}
             questionCount={quiz.attributes?.questions?.data.length ?? 0}
-            imageUrl={quiz.attributes?.image?.data?.attributes?.url ?? ''}
+            imageUrl={quiz.attributes?.image?.data?.attributes?.url}
             isMyQuiz={true}
           />
         ))

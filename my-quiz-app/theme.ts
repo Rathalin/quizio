@@ -5,7 +5,7 @@ export const theme = responsiveFontSizes(
     palette: {
       mode: 'dark',
       primary: {
-        main: '#d09c5c',
+        main: '#d0c15c',
       },
       loading: {
         main: '#009376',
@@ -25,29 +25,35 @@ export const theme = responsiveFontSizes(
       ].join(','),
       h1: {
         fontSize: '2.5rem',
-        marginBlock: '2rem',
+        marginTop: '1rem',
+        marginBottom: '2rem',
       },
       h2: {
         fontSize: '2rem',
-        marginBlock: '2rem',
+        marginTop: '0.8rem',
+        marginBottom: '2rem',
       },
       h3: {
         fontSize: '1.75rem',
-        marginBlock: '1.5rem',
+        marginTop: '0.6rem',
+        marginBottom: '1.5rem',
       },
       h4: {
         fontSize: '1.5rem',
-        marginBlock: '1rem',
+        marginTop: '0.4rem',
+        marginBottom: '1rem',
       },
       h5: {
         fontSize: '1.25rem',
-        marginBlock: '0.75rem',
+        marginTop: '0.2rem',
+        marginBottom: '0.75rem',
       },
       h6: {
         fontSize: '1rem',
-        marginBlock: '0.5rem',
+        marginBottom: '0.5rem',
       },
       button: {
+        fontWeight: 600,
         textTransform: 'none',
       },
     },

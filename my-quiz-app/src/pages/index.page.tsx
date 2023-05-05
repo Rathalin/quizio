@@ -1,9 +1,9 @@
 import { Box, Button, Grid, Typography } from '@mui/material';
 import GradientWord from '@/components/GradientWord';
-import { signIn, signOut, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { LoginOutlined, LogoutOutlined } from '@mui/icons-material';
 import QuizzesOverview from '@/page-components/QuizzesOverview';
+import AccountMenu from '@/page-components/AccountMenu';
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -29,23 +29,7 @@ export default function Home() {
           </Typography>
         </Grid>
         <Grid item xs={2} sx={{ display: 'flex', justifyContent: 'end' }}>
-          {isAuthenticated ? (
-            <Button
-              variant="outlined"
-              endIcon={<LogoutOutlined />}
-              onClick={() => signOut()}
-            >
-              Sign Out
-            </Button>
-          ) : (
-            <Button
-              variant="outlined"
-              endIcon={<LoginOutlined />}
-              onClick={() => signIn()}
-            >
-              Sign In
-            </Button>
-          )}
+          <AccountMenu />
         </Grid>
       </Grid>
       <QuizzesOverview />
