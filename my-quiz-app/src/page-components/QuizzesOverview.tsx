@@ -23,23 +23,24 @@ export default function QuizzesOverview() {
       }}
     >
       {isLoading && <QuizOverviewPlaceholder />}
-      {quizzes.length > 0 ? (
-        quizzes.map((quiz) => (
-          <QuizOverview
-            key={quiz.id}
-            title={quiz.attributes?.title ?? ''}
-            description={quiz.attributes?.description ?? ''}
-            published={quiz.attributes?.published ?? false}
-            questionCount={quiz.attributes?.questions?.data.length ?? 0}
-            imageUrl={quiz.attributes?.image?.data?.attributes?.url}
-            isMyQuiz={true}
-          />
-        ))
-      ) : (
-        <Typography>
-          Can you believe it? No one published a quiz yet!
-        </Typography>
-      )}
+      {isSuccess &&
+        (quizzes.length > 0 ? (
+          quizzes.map((quiz) => (
+            <QuizOverview
+              key={quiz.id}
+              title={quiz.attributes?.title ?? ''}
+              description={quiz.attributes?.description ?? ''}
+              published={quiz.attributes?.published ?? false}
+              questionCount={quiz.attributes?.questions?.data.length ?? 0}
+              imageUrl={quiz.attributes?.image?.data?.attributes?.url}
+              isMyQuiz={true}
+            />
+          ))
+        ) : (
+          <Typography>
+            Can you believe it? No one published a quiz yet!
+          </Typography>
+        ))}
       {isError && <Alert severity="error">Error loading quizzes</Alert>}
     </Box>
   );
