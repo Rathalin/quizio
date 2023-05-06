@@ -1,7 +1,7 @@
 import GradientWord from '@/components/GradientWord';
 import LinkButton from '@/components/LinkButton';
 import { useQuizDraft } from '@/stores/quiz-draft.store';
-import { ArrowForwardOutlined } from '@mui/icons-material';
+import { ArrowForward as ArrowForwardIcon } from '@mui/icons-material';
 import {
   Box,
   Card,
@@ -86,7 +86,7 @@ export default function CreateQuizGeneralPage() {
               type="submit"
               sx={{ marginLeft: 'auto' }}
               variant="contained"
-              endIcon={<ArrowForwardOutlined />}
+              endIcon={<ArrowForwardIcon />}
             >
               Add questions
             </LinkButton>

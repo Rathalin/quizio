@@ -11,9 +11,8 @@ import {
 import PublishStateChip from './PublishStateChip';
 import Image from 'next/image';
 import {
-  ImageOutlined,
-  PlayArrow,
-  PlayArrowOutlined,
+  Image as ImageIcon,
+  PlayArrow as PlayArrowIcon,
 } from '@mui/icons-material';
 
 type QuizOverviewProps = {
@@ -69,7 +68,7 @@ export default function QuizOverview({
             backgroundColor: '#3b3b3b',
           }}
         >
-          <ImageOutlined fontSize="large" />
+          <ImageIcon fontSize="large" />
         </Box>
       )}
       <CardContent
@@ -115,7 +114,7 @@ export default function QuizOverview({
             justifyContent: 'center',
           }}
         >
-          <Button variant="contained" size="large" endIcon={<PlayArrow />}>
+          <Button variant="contained" size="large" endIcon={<PlayArrowIcon />}>
             Play
           </Button>
         </Box>

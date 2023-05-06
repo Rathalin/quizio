@@ -4,23 +4,10 @@ import {
   Card,
   CardContent,
   Divider,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  IconButton,
-  Radio,
-  RadioGroup,
   TextField,
-  Tooltip,
-  Typography,
 } from '@mui/material';
-import { useState } from 'react';
 import AnswerInput from './answer/AnswerInput';
-import {
-  AddOutlined,
-  DeleteOutline,
-  DeleteOutlined,
-} from '@mui/icons-material';
+import { Add as AddIcon } from '@mui/icons-material';
 import {
   type QuestionDraft,
   useQuizDraft,
@@ -120,7 +107,7 @@ export default function QuestionInput({
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
               <Button
                 variant="outlined"
-                startIcon={<AddOutlined />}
+                startIcon={<AddIcon />}
                 onClick={() => addAnswer({ text: '', isCorrect: false })}
               >
                 Answer

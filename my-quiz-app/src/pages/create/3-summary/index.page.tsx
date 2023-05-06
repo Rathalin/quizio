@@ -2,9 +2,9 @@ import GradientWord from '@/components/GradientWord';
 import LinkButton from '@/components/LinkButton';
 import { useQuizDraft } from '@/stores/quiz-draft.store';
 import {
-  ArrowBackOutlined,
-  CheckOutlined,
-  ClearOutlined,
+  ArrowBack as ArrowBackIcon,
+  Check as CheckIcon,
+  Clear as ClearIcon,
 } from '@mui/icons-material';
 import {
   Box,
@@ -61,9 +61,9 @@ export default function CreateQuizSummaryPage() {
                           }}
                         >
                           {answer.isCorrect ? (
-                            <CheckOutlined color="success" />
+                            <CheckIcon color="success" />
                           ) : (
-                            <ClearOutlined color="error" />
+                            <ClearIcon color="error" />
                           )}
                           <Box>{answer.text}</Box>
                         </ListItem>
@@ -89,7 +89,7 @@ export default function CreateQuizSummaryPage() {
             navigateOnClick
             variant="outlined"
             iconSide="right"
-            startIcon={<ArrowBackOutlined />}
+            startIcon={<ArrowBackIcon />}
           >
             Edit questions
           </LinkButton>

@@ -1,17 +1,5 @@
-import { DeleteOutlined } from '@mui/icons-material';
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  IconButton,
-  Radio,
-  TextField,
-  Tooltip,
-} from '@mui/material';
+import { Box, TextField } from '@mui/material';
 import CorrectToggle from './CorrectToggle';
-import { useState } from 'react';
 import DeleteAnswerButton from './DeleteAnswerButton';
 
 type AnswerInputProps = {
