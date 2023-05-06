@@ -23,16 +23,23 @@ export default function QuizzesOverview() {
       sx={{
         display: 'grid',
         gridTemplateColumns: `repeat(auto-fill, minmax(${gridItemMinWidth}, ${gridItemMaxWidth}))`,
-        justifyContent: 'center',
-        gap: 6,
+        gap: {
+          xs: 2,
+          md: 4,
+          xl: 6,
+        },
       }}
     >
-      {isLoading && <QuizOverviewPlaceholder />}
+      {isLoading &&
+        Array.from({ length: 3 }).map((_, index) => (
+          <QuizOverviewPlaceholder key={index} />
+        ))}
       {isSuccess &&
         (quizzes.length > 0 ? (
           quizzes.map((quiz) => (
             <QuizOverview
-              key={quiz.id}
+              key={quiz.attributes?.uuid}
+              uuid={quiz.attributes?.uuid ?? ''}
               title={quiz.attributes?.title ?? ''}
               description={quiz.attributes?.description ?? ''}
               username={

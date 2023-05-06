@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import QuizzesOverview from '@/page-components/QuizzesOverview';
 import AccountMenu from '@/page-components/AccountMenu';
+import Link from 'next/link';
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -12,9 +13,8 @@ export default function Home() {
 
   return (
     <Box>
-      <Grid container sx={{ alignItems: 'center' }}>
-        <Grid item xs={2}></Grid>
-        <Grid item xs={8}>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Link href="/" style={{ textDecoration: 'none' }}>
           <Typography
             component="h1"
             sx={{
@@ -27,11 +27,11 @@ export default function Home() {
           >
             <GradientWord>Quizio</GradientWord>
           </Typography>
-        </Grid>
-        <Grid item xs={2} sx={{ display: 'flex', justifyContent: 'end' }}>
+        </Link>
+        <Box sx={{ marginLeft: 'auto' }}>
           <AccountMenu />
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
       <QuizzesOverview />
     </Box>
   );

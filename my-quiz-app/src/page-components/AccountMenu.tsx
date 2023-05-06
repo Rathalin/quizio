@@ -1,3 +1,4 @@
+import LinkButton from '@/components/LinkButton';
 import { AccountCircle, Login, Logout, Settings } from '@mui/icons-material';
 import {
   Avatar,

@@ -14,8 +14,10 @@ import {
   Image as ImageIcon,
   PlayArrow as PlayArrowIcon,
 } from '@mui/icons-material';
+import LinkButton from './LinkButton';
 
 type QuizOverviewProps = {
+  uuid: string;
   title: string;
   description: string;
   username: string;
@@ -26,6 +28,7 @@ type QuizOverviewProps = {
 };
 
 export default function QuizOverview({
+  uuid,
   title,
   description,
   username,
@@ -114,9 +117,15 @@ export default function QuizOverview({
             justifyContent: 'center',
           }}
         >
-          <Button variant="contained" size="large" endIcon={<PlayArrowIcon />}>
+          <LinkButton
+            hrefObserver={`/play/${uuid}`}
+            navigateOnClick
+            variant="contained"
+            size="large"
+            endIcon={<PlayArrowIcon />}
+          >
             Play
-          </Button>
+          </LinkButton>
         </Box>
       </CardContent>
     </Card>

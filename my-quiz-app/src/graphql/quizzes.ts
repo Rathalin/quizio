@@ -6,8 +6,8 @@ export const queryAllPublishedQuizzes = graphql(`
   query allPublishedQuizzes {
     quizzes(filters: { published: { eq: true } }) {
       data {
-        id
         attributes {
+          uuid
           title
           description
           published
@@ -30,6 +30,34 @@ export const queryAllPublishedQuizzes = graphql(`
               id
               attributes {
                 username
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`);
+
+export const queryQuizzesByUuid = graphql(`
+  query queryQuizzesByUuid($uuid: String!) {
+    quizzes(filters: { uuid: { eq: $uuid } }) {
+      data {
+        attributes {
+          questions {
+            data {
+              id
+              attributes {
+                title
+                answers {
+                  data {
+                    id
+                    attributes {
+                      title
+                      correct
+                    }
+                  }
+                }
               }
             }
           }

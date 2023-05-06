@@ -10,11 +10,13 @@
     "strapi": "strapi"
   },
   "dependencies": {
+    "@strapi/plugin-color-picker": "^4.10.2",
     "@strapi/plugin-graphql": "^4.10.1",
     "@strapi/plugin-i18n": "4.9.2",
     "@strapi/plugin-users-permissions": "4.9.2",
     "@strapi/strapi": "4.9.2",
-    "better-sqlite3": "8.0.1"
+    "better-sqlite3": "8.0.1",
+    "strapi-auto-uuid": "^0.0.6"
   },
   "author": {
     "name": "A Strapi developer"
