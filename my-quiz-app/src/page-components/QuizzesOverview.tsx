@@ -4,6 +4,7 @@ import { queryAllPublishedQuizzes } from '@/graphql/quizzes';
 import { Alert, Box, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
+import { useSession } from 'next-auth/react';
 
 export default function QuizzesOverview() {
   const { data, isSuccess, isLoading, isError } = useQuery({
@@ -14,12 +15,16 @@ export default function QuizzesOverview() {
 
   const quizzes = data?.quizzes?.data ?? [];
 
+  const gridItemMinWidth = '280px';
+  const gridItemMaxWidth = '1fr';
+
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2,
+        display: 'grid',
+        gridTemplateColumns: `repeat(auto-fill, minmax(${gridItemMinWidth}, ${gridItemMaxWidth}))`,
+        justifyContent: 'center',
+        gap: 6,
       }}
     >
       {isLoading && <QuizOverviewPlaceholder />}
@@ -30,6 +35,9 @@ export default function QuizzesOverview() {
               key={quiz.id}
               title={quiz.attributes?.title ?? ''}
               description={quiz.attributes?.description ?? ''}
+              username={
+                quiz.attributes?.owner?.data?.attributes?.username ?? ''
+              }
               published={quiz.attributes?.published ?? false}
               questionCount={quiz.attributes?.questions?.data.length ?? 0}
               imageUrl={quiz.attributes?.image?.data?.attributes?.url}

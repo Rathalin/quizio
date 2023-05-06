@@ -25,6 +25,14 @@ export const queryAllPublishedQuizzes = graphql(`
               }
             }
           }
+          owner {
+            data {
+              id
+              attributes {
+                username
+              }
+            }
+          }
         }
       }
     }

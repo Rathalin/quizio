@@ -3,17 +3,23 @@ import {
   Button,
   Card,
   CardContent,
+  Chip,
   IconButton,
   Paper,
   Typography,
 } from '@mui/material';
 import PublishStateChip from './PublishStateChip';
 import Image from 'next/image';
-import { ImageOutlined, PlayArrowOutlined } from '@mui/icons-material';
+import {
+  ImageOutlined,
+  PlayArrow,
+  PlayArrowOutlined,
+} from '@mui/icons-material';
 
 type QuizOverviewProps = {
   title: string;
   description: string;
+  username: string;
   questionCount: number;
   published: boolean;
   imageUrl?: string;
@@ -23,6 +29,7 @@ type QuizOverviewProps = {
 export default function QuizOverview({
   title,
   description,
+  username,
   questionCount,
   published,
   imageUrl,
@@ -38,42 +45,9 @@ export default function QuizOverview({
     <Card
       sx={{
         display: 'flex',
-        gap: 2,
-        // cursor: 'pointer',
-        // transition: 'transform .2s ease-in-out',
-        // '&:hover': {
-        //   transform: 'scale(1.02)',
-        // },
+        flexDirection: 'column',
       }}
     >
-      <CardContent
-        sx={{
-          flexGrow: 1,
-          padding: 4,
-          display: 'grid',
-          gridTemplateColumns: '3fr minmax(100px, 1fr)',
-          gridTemplateRows: '1fr 1fr',
-          alignItems: 'center',
-        }}
-      >
-        <Typography variant="h3">{title}</Typography>
-        {isMyQuiz && (
-          <Box sx={{ justifySelf: 'center' }}>
-            <PublishStateChip published={published} />
-          </Box>
-        )}
-        <Box>
-          <Typography>{description}</Typography>
-          <Typography>{`${questionCount} question${
-            isQuestionCountSingular ? '' : 's'
-          }`}</Typography>
-        </Box>
-        <Box sx={{ justifySelf: 'center' }}>
-          <Button variant="contained" endIcon={<PlayArrowOutlined />}>
-            Play
-          </Button>
-        </Box>
-      </CardContent>
       {imageUrl != null ? (
         <Image
           loader={imageLoader}
@@ -82,6 +56,7 @@ export default function QuizOverview({
           width={300}
           height={200}
           priority={true}
+          style={{ objectFit: 'cover', width: '100%', minHeight: '180px' }}
         ></Image>
       ) : (
         <Box
@@ -97,6 +72,54 @@ export default function QuizOverview({
           <ImageOutlined fontSize="large" />
         </Box>
       )}
+      <CardContent
+        sx={{
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Box>
+          <Box>
+            <Typography
+              variant="h3"
+              sx={{ display: 'flex', justifyContent: 'space-between' }}
+            >
+              {title}
+            </Typography>
+          </Box>
+          <Box>
+            <Typography sx={{ marginBottom: '.8rem' }}>
+              {description}
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+              {isMyQuiz && (
+                <Box sx={{ justifySelf: 'center' }}>
+                  <PublishStateChip published={published} />
+                </Box>
+              )}
+              {!isMyQuiz && <Chip label={username} />}
+              <Chip
+                label={`${questionCount} question${
+                  isQuestionCountSingular ? '' : 's'
+                }`}
+              />
+            </Box>
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            marginTop: 4,
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          <Button variant="contained" size="large" endIcon={<PlayArrow />}>
+            Play
+          </Button>
+        </Box>
+      </CardContent>
     </Card>
   );
 }

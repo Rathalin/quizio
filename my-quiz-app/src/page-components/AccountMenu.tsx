@@ -38,10 +38,9 @@ export default function AccountMenu() {
 
   return (
     <>
-      <IconButton>
+      <IconButton onClick={handleClick}>
         <Avatar
           title={session.user.username}
-          onClick={handleClick}
           sx={{ backgroundColor: 'primary.main', fontWeight: '600' }}
         >
           {initial}
@@ -87,9 +86,14 @@ export default function AccountMenu() {
           </ListItemIcon>
           Settings
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            signOut();
+          }}
+        >
           <ListItemIcon>
-            <Logout onClick={() => signOut()} />
+            <Logout />
           </ListItemIcon>
           Logout
         </MenuItem>
