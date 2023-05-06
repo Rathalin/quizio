@@ -56,12 +56,13 @@ export default function AccountMenu() {
           sx: {
             overflow: 'visible',
             marginTop: 1,
+            minWidth: '16ch',
             '&:before': {
               content: '""',
               display: 'block',
               position: 'absolute',
               top: 0,
-              right: 16,
+              right: 24,
               width: 10,
               height: 10,
               backgroundColor: '#303030e6',
