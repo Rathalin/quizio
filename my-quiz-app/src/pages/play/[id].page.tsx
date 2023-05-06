@@ -15,6 +15,7 @@ import {
   ListItemText,
   Chip,
   ListItemIcon,
+  Alert,
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
@@ -66,7 +67,11 @@ export default function PlayIdPage({
 
   return (
     <Box>
-      {question != null && (
+      {quizQuery.isLoading && <Alert severity="info">Loading the quiz</Alert>}
+      {quizQuery.isError && (
+        <Alert severity="error">Could not load the quiz</Alert>
+      )}
+      {quizQuery.isSuccess && !gameDone && (
         <Card>
           <CardContent sx={{ padding: 0 }}>
             <Typography
@@ -99,10 +104,22 @@ export default function PlayIdPage({
                 </ListItem>
               ))}
             </List>
+            <Box
+              sx={{
+                marginTop: 4,
+                marginInline: 4,
+                display: 'flex',
+                justifyContent: 'end',
+              }}
+            >
+              <LinkButton hrefObserver="/" navigateOnClick variant="contained">
+                Stop Playing
+              </LinkButton>
+            </Box>
           </CardContent>
         </Card>
       )}
-      {gameDone && (
+      {quizQuery.isSuccess && gameDone && (
         <Card sx={{ paddingInline: 4 }}>
           <CardContent>
             <Typography variant="h1">
