@@ -16,6 +16,7 @@ import {
   Chip,
   ListItemIcon,
   Alert,
+  Button,
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
@@ -71,99 +72,147 @@ export default function PlayIdPage({
       {quizQuery.isError && (
         <Alert severity="error">Could not load the quiz</Alert>
       )}
-      {quizQuery.isSuccess && !gameDone && (
-        <Card>
-          <CardContent sx={{ padding: 0 }}>
-            <Typography
-              variant="h4"
-              component="h1"
-              sx={{
-                margin: 4,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <Typography variant="inherit" component="span">
-                {question.attributes?.title}
-              </Typography>
-              <ScoreProgress progress={scoreProgress} />
-            </Typography>
-            <List disablePadding>
-              {question.attributes?.answers?.data.map((answer) => (
-                <ListItem
-                  key={answer.id}
-                  disableGutters
-                  onClick={() =>
-                    handleAnswerClick(answer.attributes?.correct ?? false)
-                  }
+      {quizQuery.isSuccess && (
+        <>
+          {questions.length === 0 ? (
+            <Box>
+              <Alert severity="warning">This quiz does not exist 😮</Alert>
+              <Box
+                sx={{ marginTop: 4, display: 'flex', justifyContent: 'end' }}
+              >
+                <LinkButton
+                  hrefObserver="/"
+                  navigateOnClick
+                  variant="contained"
                 >
-                  <ListItemButton sx={{ fontSize: '1.2rem', paddingInline: 6 }}>
-                    <ListItemText>{answer.attributes?.title}</ListItemText>
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-            <Box
-              sx={{
-                marginTop: 4,
-                marginInline: 4,
-                display: 'flex',
-                justifyContent: 'end',
-              }}
-            >
-              <LinkButton hrefObserver="/" navigateOnClick variant="contained">
-                Stop Playing
-              </LinkButton>
+                  Home
+                </LinkButton>
+              </Box>
             </Box>
-          </CardContent>
-        </Card>
-      )}
-      {quizQuery.isSuccess && gameDone && (
-        <Card sx={{ paddingInline: 4 }}>
-          <CardContent>
-            <Typography variant="h1">
-              <GradientWord>Summary</GradientWord>
-            </Typography>
-            <Typography>
-              {`You got ${
-                scoreProgress.filter((score) => score === 'correct').length
-              } out of ${questions.length} answers correct!`}
-            </Typography>
-            <Box sx={{ marginTop: 4 }}>
-              {questions.map((question) => (
-                <Box key={question.id}>
-                  <Typography
-                    variant="h5"
-                    component="h2"
-                    sx={{ marginTop: 2, marginBottom: 0 }}
-                  >
-                    {question.attributes?.title}
-                  </Typography>
-                  <List dense>
-                    {question.attributes?.answers?.data.map((answer) => (
-                      <ListItem key={answer.id}>
-                        <ListItemIcon>
-                          {answer.attributes?.correct ? (
-                            <CheckIcon color="success" />
-                          ) : null}
-                        </ListItemIcon>
-                        <ListItemText>
-                          <Typography>{answer.attributes?.title}</Typography>
-                        </ListItemText>
-                      </ListItem>
-                    ))}
-                  </List>
-                </Box>
-              ))}
-            </Box>
-            <Box sx={{ marginTop: 4, display: 'flex', justifyContent: 'end' }}>
-              <LinkButton hrefObserver="/" navigateOnClick variant="contained">
-                Home
-              </LinkButton>
-            </Box>
-          </CardContent>
-        </Card>
+          ) : (
+            <>
+              {!gameDone && (
+                <Card>
+                  <CardContent sx={{ padding: 0 }}>
+                    <Typography
+                      variant="h4"
+                      component="h1"
+                      sx={{
+                        margin: 4,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <Typography variant="inherit" component="span">
+                        {question.attributes?.title}
+                      </Typography>
+                      <ScoreProgress progress={scoreProgress} />
+                    </Typography>
+                    <List disablePadding>
+                      {question.attributes?.answers?.data.map((answer) => (
+                        <ListItem
+                          key={answer.id}
+                          disableGutters
+                          onClick={() =>
+                            handleAnswerClick(
+                              answer.attributes?.correct ?? false
+                            )
+                          }
+                        >
+                          <ListItemButton
+                            sx={{ fontSize: '1.2rem', paddingInline: 6 }}
+                          >
+                            <ListItemText>
+                              {answer.attributes?.title}
+                            </ListItemText>
+                          </ListItemButton>
+                        </ListItem>
+                      ))}
+                    </List>
+                    <Box
+                      sx={{
+                        marginTop: 4,
+                        marginInline: 4,
+                        display: 'flex',
+                        justifyContent: 'end',
+                      }}
+                    >
+                      <LinkButton
+                        hrefObserver="/"
+                        navigateOnClick
+                        variant="contained"
+                      >
+                        Stop Playing
+                      </LinkButton>
+                    </Box>
+                  </CardContent>
+                </Card>
+              )}
+              {gameDone && (
+                <Card sx={{ paddingInline: 4 }}>
+                  <CardContent>
+                    <Typography variant="h1">
+                      <GradientWord>Summary</GradientWord>
+                    </Typography>
+                    <Typography>
+                      {`You got ${
+                        scoreProgress.filter((score) => score === 'correct')
+                          .length
+                      } out of ${questions.length} answers correct!`}
+                    </Typography>
+                    <Box sx={{ marginTop: 4 }}>
+                      {questions.map((question) => (
+                        <Box key={question.id}>
+                          <Typography
+                            variant="h5"
+                            component="h2"
+                            sx={{ marginTop: 2, marginBottom: 0 }}
+                          >
+                            {question.attributes?.title}
+                          </Typography>
+                          <List dense>
+                            {question.attributes?.answers?.data.map(
+                              (answer) => (
+                                <ListItem key={answer.id}>
+                                  <ListItemIcon>
+                                    {answer.attributes?.correct ? (
+                                      <CheckIcon color="success" />
+                                    ) : null}
+                                  </ListItemIcon>
+                                  <ListItemText>
+                                    <Typography>
+                                      {answer.attributes?.title}
+                                    </Typography>
+                                  </ListItemText>
+                                </ListItem>
+                              )
+                            )}
+                          </List>
+                        </Box>
+                      ))}
+                    </Box>
+                    <Box
+                      sx={{
+                        marginTop: 4,
+                        display: 'flex',
+                        justifyContent: 'end',
+                      }}
+                    >
+                      <LinkButton
+                        hrefObserver="/"
+                        navigateOnClick
+                        variant="contained"
+                      >
+                        Home
+                      </LinkButton>
+                    </Box>
+                  </CardContent>
+                </Card>
+              )}
+            </>
+          )}
+        </>
       )}
     </Box>
   );
