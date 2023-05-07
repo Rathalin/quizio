@@ -4,9 +4,11 @@ services:
     restart: always
     ports:
       - 1337:1337
-    environment:
     volumes:
-      - strapidata:/opt/app/.tmp
-      - strapidata:/opt/app/public/uploads
+      - strapidb:/opt/app/.tmp
+      - strapiuploads:/opt/app/public/uploads
+    env_file:
+      - .env
 volumes:
-  strapidata:
+  strapidb:
+  strapiuploads:
