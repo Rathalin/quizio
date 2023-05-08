@@ -8,17 +8,28 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { usePageTransition } from '@/stores/page-transition.store';
 import {
+  DehydratedState,
   Hydrate,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { SessionProvider } from 'next-auth/react';
+import { Session } from 'next-auth';
+import { CacheProvider, EmotionCache } from '@emotion/react';
+import createEmotionCache from '@/createEmotionCache';
+
+// Client-side cache, shared for the whole session of the user in the browser.
+const cliendSideEmotionCache = createEmotionCache();
 
 export default function App({
   Component,
-  pageProps: { session, ...pageProps },
-}: AppProps) {
+  pageProps: { session, emotionCache, dehydratedState, ...pageProps },
+}: AppProps<{
+  emotionCache?: EmotionCache;
+  session: Session;
+  dehydratedState: DehydratedState;
+}>) {
   const [queryClient] = useState(() => new QueryClient());
 
   const router = useRouter();
@@ -50,17 +61,19 @@ export default function App({
   return (
     <SessionProvider session={session}>
       <QueryClientProvider client={queryClient}>
-        <Hydrate state={pageProps.dehydratedState}>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Head>
-              <title>Quizio</title>
-            </Head>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </ThemeProvider>
-          <ReactQueryDevtools initialIsOpen={false} />
+        <Hydrate state={dehydratedState}>
+          <CacheProvider value={emotionCache ?? cliendSideEmotionCache}>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <Head>
+                <title>Quizio</title>
+              </Head>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </ThemeProvider>
+            <ReactQueryDevtools initialIsOpen={false} />
+          </CacheProvider>
         </Hydrate>
       </QueryClientProvider>
     </SessionProvider>
