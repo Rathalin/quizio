@@ -8,7 +8,7 @@ import { useSession } from 'next-auth/react';
 
 export default function QuizzesOverview() {
   const { data, isSuccess, isLoading, isError } = useQuery({
-    queryKey: ['allQuizzes'],
+    queryKey: ['allPublishedQuizzes'],
     queryFn: () =>
       request(process.env.NEXT_PUBLIC_GRAPHQL_URL, queryAllPublishedQuizzes),
   });

@@ -18,12 +18,37 @@ import {
   Alert,
   Button,
 } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
+import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useEffect, useMemo, useState } from 'react';
 
 export type Score = 'correct' | 'incorrect' | 'unset';
+
+export const getServerSideProps: GetServerSideProps<{
+  gameId: string;
+}> = async (ctx) => {
+  const queryClient = new QueryClient();
+  const id = ctx.params?.id;
+  if (typeof id !== 'string') {
+    return {
+      notFound: true,
+    };
+  }
+
+  await queryClient.prefetchQuery(['quiz', id], () =>
+    request(process.env.NEXT_PUBLIC_GRAPHQL_URL, queryQuizzesByUuid, {
+      uuid: id,
+    })
+  );
+
+  return {
+    props: {
+      gameId: id,
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
+};
 
 export default function PlayIdPage({
   gameId,
@@ -217,20 +242,3 @@ export default function PlayIdPage({
     </Box>
   );
 }
-
-export const getServerSideProps: GetServerSideProps<{
-  gameId: string;
-}> = async (ctx) => {
-  const id = ctx.params?.id;
-  if (typeof id !== 'string') {
-    return {
-      notFound: true,
-    };
-  }
-
-  return {
-    props: {
-      gameId: id,
-    },
-  };
-};
