@@ -2,8 +2,15 @@
 const nextConfig = {
   pageExtensions: ['page.tsx', 'page.ts'],
   reactStrictMode: true,
-  images: {
-    domains: ['http://localhost:1337'],
+  experimental: {
+    modularizeImports: {
+      '@mui/material': {
+        transform: '@mui/material/{{member}}',
+      },
+      '@mui/icons-material': {
+        transform: '@mui/icons-material/{{member}}',
+      },
+    },
   },
 };
 
