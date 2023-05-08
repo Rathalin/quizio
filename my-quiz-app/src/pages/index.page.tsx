@@ -11,15 +11,20 @@ import request from 'graphql-request';
 import { queryAllPublishedQuizzes } from '@/graphql/quizzes';
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const queryClient = new QueryClient();
+  // const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery(['allPublishedQuizzes'], () =>
-    request(process.env.NEXT_PUBLIC_GRAPHQL_URL, queryAllPublishedQuizzes)
-  );
+  // await queryClient.prefetchQuery(['allPublishedQuizzes'], () =>
+  //   request(process.env.NEXT_PUBLIC_GRAPHQL_URL, queryAllPublishedQuizzes)
+  // );
 
+  // return {
+  //   props: {
+  //     dehydratedState: dehydrate(queryClient),
+  //   },
+  // };
   return {
     props: {
-      dehydratedState: dehydrate(queryClient),
+      foo: 'bar',
     },
   };
 };
@@ -50,7 +55,7 @@ export default function Home() {
           <AccountMenu />
         </Box>
       </Box>
-      <QuizzesOverview />
+      {/* <QuizzesOverview /> */}
     </Box>
   );
 }
