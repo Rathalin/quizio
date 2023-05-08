@@ -1,4 +1,4 @@
-import { Delete as DeleteIcon } from '@mui/icons-material';
+// import { Delete as DeleteIcon } from '@mui/icons-material';
 import { Tooltip, IconButton, Box } from '@mui/material';
 
 type DeleteQuestionButtonProps = {
@@ -26,7 +26,7 @@ export default function DeleteQuestionButton({
           disabled={disabled}
           onClick={() => onDelete()}
         >
-          <DeleteIcon />
+          {/* <DeleteIcon /> */}
         </IconButton>
       </Box>
     </Tooltip>

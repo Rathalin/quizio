@@ -1,11 +1,11 @@
 import GradientWord from '@/components/GradientWord';
 import LinkButton from '@/components/LinkButton';
 import { useQuizDraft } from '@/stores/quiz-draft.store';
-import {
-  ArrowBack as ArrowBackIcon,
-  Check as CheckIcon,
-  Clear as ClearIcon,
-} from '@mui/icons-material';
+// import {
+//   ArrowBack as ArrowBackIcon,
+//   Check as CheckIcon,
+//   Clear as ClearIcon,
+// } from '@mui/icons-material';
 import {
   Box,
   Card,
@@ -60,11 +60,11 @@ export default function CreateQuizSummaryPage() {
                             columnGap: 3,
                           }}
                         >
-                          {answer.isCorrect ? (
+                          {/* {answer.isCorrect ? (
                             <CheckIcon color="success" />
                           ) : (
                             <ClearIcon color="error" />
-                          )}
+                          )} */}
                           <Box>{answer.text}</Box>
                         </ListItem>
                       ))}
@@ -89,7 +89,7 @@ export default function CreateQuizSummaryPage() {
             navigateOnClick
             variant="outlined"
             iconSide="right"
-            startIcon={<ArrowBackIcon />}
+            // startIcon={<ArrowBackIcon />}
           >
             Edit questions
           </LinkButton>

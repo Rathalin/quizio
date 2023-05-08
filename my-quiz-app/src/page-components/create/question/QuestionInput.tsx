@@ -7,7 +7,7 @@ import {
   TextField,
 } from '@mui/material';
 import AnswerInput from './answer/AnswerInput';
-import { Add as AddIcon } from '@mui/icons-material';
+// import { Add as AddIcon } from '@mui/icons-material';
 import {
   type QuestionDraft,
   useQuizDraft,
@@ -107,7 +107,7 @@ export default function QuestionInput({
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
               <Button
                 variant="outlined"
-                startIcon={<AddIcon />}
+                // startIcon={<AddIcon />}
                 onClick={() => addAnswer({ text: '', isCorrect: false })}
               >
                 Answer

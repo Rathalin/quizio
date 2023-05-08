@@ -2,7 +2,7 @@ import GradientWord from '@/components/GradientWord';
 import LinkButton from '@/components/LinkButton';
 import ScoreProgress from '@/components/game/ScoreProgress';
 import { queryQuizzesByUuid } from '@/graphql/quizzes';
-import { Check as CheckIcon } from '@mui/icons-material';
+// import { Check as CheckIcon } from '@mui/icons-material';
 import {
   Box,
   Card,
@@ -201,9 +201,9 @@ export default function PlayIdPage({
                               (answer) => (
                                 <ListItem key={answer.id}>
                                   <ListItemIcon>
-                                    {answer.attributes?.correct ? (
+                                    {/* {answer.attributes?.correct ? (
                                       <CheckIcon color="success" />
-                                    ) : null}
+                                    ) : null} */}
                                   </ListItemIcon>
                                   <ListItemText>
                                     <Typography>
