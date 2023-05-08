@@ -6,11 +6,11 @@ import {
   QuestionDraft,
   useQuizDraft,
 } from '@/stores/quiz-draft.store';
-// import {
-//   Add as AddIcon,
-//   ArrowBack as ArrowBackIcon,
-//   ArrowForward as ArrowForwardIcon,
-// } from '@mui/icons-material';
+import {
+  Add as AddIcon,
+  ArrowBack as ArrowBackIcon,
+  ArrowForward as ArrowForwardIcon,
+} from '@mui/icons-material';
 import {
   Box,
   Card,
@@ -80,7 +80,7 @@ export default function CreateQuizQuestionsPage() {
           }}
         >
           <Button
-            // startIcon={<AddIcon />}
+            startIcon={<AddIcon />}
             variant="outlined"
             onClick={() => addQuestion()}
           >
@@ -99,7 +99,7 @@ export default function CreateQuizQuestionsPage() {
             navigateOnClick
             variant="outlined"
             iconSide="right"
-            // startIcon={<ArrowBackIcon />}
+            startIcon={<ArrowBackIcon />}
           >
             Title and description
           </LinkButton>
@@ -108,7 +108,7 @@ export default function CreateQuizQuestionsPage() {
             hrefObserver="/create/3-summary"
             navigateOnClick
             variant="contained"
-            // endIcon={<ArrowForwardIcon />}
+            endIcon={<ArrowForwardIcon />}
           >
             View summary
           </LinkButton>

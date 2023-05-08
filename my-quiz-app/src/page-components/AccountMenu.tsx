@@ -1,10 +1,10 @@
 import LinkButton from '@/components/LinkButton';
-// import {
-//   AccountCircle as AccountCircleIcon,
-//   Login as LoginIcon,
-//   Logout as LogoutIcon,
-//   Settings as SettingsIcon,
-// } from '@mui/icons-material';
+import {
+  AccountCircle as AccountCircleIcon,
+  Login as LoginIcon,
+  Logout as LogoutIcon,
+  Settings as SettingsIcon,
+} from '@mui/icons-material';
 import {
   Avatar,
   Button,
@@ -39,12 +39,17 @@ export default function AccountMenu() {
 
   if (!isAuthenticated || session == null) {
     if (isSmScreen) {
-      return <IconButton color="primary">{/* <LoginIcon /> */}</IconButton>;
+      return (
+        <IconButton color="primary">
+          {' '}
+          <LoginIcon />{' '}
+        </IconButton>
+      );
     }
     return (
       <Button
         variant="outlined"
-        // endIcon={<LoginIcon />}
+        endIcon={<LoginIcon />}
         onClick={() => signIn()}
       >
         Sign In
@@ -93,12 +98,16 @@ export default function AccountMenu() {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <MenuItem onClick={handleClose}>
-          <ListItemIcon>{/* <AccountCircleIcon /> */}</ListItemIcon>
+          <ListItemIcon>
+            <AccountCircleIcon />
+          </ListItemIcon>
           Profile
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleClose}>
-          <ListItemIcon>{/* <SettingsIcon /> */}</ListItemIcon>
+          <ListItemIcon>
+            <SettingsIcon />
+          </ListItemIcon>
           Settings
         </MenuItem>
         <MenuItem
@@ -107,7 +116,9 @@ export default function AccountMenu() {
             signOut();
           }}
         >
-          <ListItemIcon>{/* <LogoutIcon /> */}</ListItemIcon>
+          <ListItemIcon>
+            <LogoutIcon />
+          </ListItemIcon>
           Logout
         </MenuItem>
       </Menu>

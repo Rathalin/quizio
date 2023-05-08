@@ -10,10 +10,10 @@ import {
 } from '@mui/material';
 import PublishStateChip from './PublishStateChip';
 import Image from 'next/image';
-// import {
-//   Image as ImageIcon,
-//   PlayArrow as PlayArrowIcon,
-// } from '@mui/icons-material';
+import {
+  Image as ImageIcon,
+  PlayArrow as PlayArrowIcon,
+} from '@mui/icons-material';
 import LinkButton from './LinkButton';
 
 type QuizOverviewProps = {
@@ -71,7 +71,7 @@ export default function QuizOverview({
             backgroundColor: '#3b3b3b',
           }}
         >
-          {/* <ImageIcon fontSize="large" /> */}
+          <ImageIcon fontSize="large" />
         </Box>
       )}
       <CardContent
@@ -122,7 +122,7 @@ export default function QuizOverview({
             navigateOnClick
             variant="contained"
             size="large"
-            // endIcon={<PlayArrowIcon />}
+            endIcon={<PlayArrowIcon />}
           >
             Play
           </LinkButton>

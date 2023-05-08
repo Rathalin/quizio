@@ -1,4 +1,4 @@
-// import { Delete as DeleteIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon } from '@mui/icons-material';
 import { Tooltip, IconButton, Box } from '@mui/material';
 import { useState } from 'react';
 
@@ -30,7 +30,7 @@ export default function DeleteAnswerButton({
           disabled={disabled}
           onClick={() => onDelete()}
         >
-          {/* <DeleteIcon /> */}
+          <DeleteIcon />
         </IconButton>
       </Box>
     </Tooltip>
