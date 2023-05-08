@@ -10,24 +10,24 @@ import { QueryClient, dehydrate } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { queryAllPublishedQuizzes } from '@/graphql/quizzes';
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  // const queryClient = new QueryClient();
+// export const getServerSideProps: GetServerSideProps = async () => {
+//   const queryClient = new QueryClient();
 
-  // await queryClient.prefetchQuery(['allPublishedQuizzes'], () =>
-  //   request(process.env.NEXT_PUBLIC_GRAPHQL_URL, queryAllPublishedQuizzes)
-  // );
+//   await queryClient.prefetchQuery(['allPublishedQuizzes'], () =>
+//     request(process.env.NEXT_PUBLIC_GRAPHQL_URL, queryAllPublishedQuizzes)
+//   );
 
-  // return {
-  //   props: {
-  //     dehydratedState: dehydrate(queryClient),
-  //   },
-  // };
-  return {
-    props: {
-      foo: 'bar',
-    },
-  };
-};
+//   return {
+//     props: {
+//       dehydratedState: dehydrate(queryClient),
+//     },
+//   };
+//   return {
+//     props: {
+//       foo: 'bar',
+//     },
+//   };
+// };
 
 export default function Home() {
   const { data: session, status } = useSession();
