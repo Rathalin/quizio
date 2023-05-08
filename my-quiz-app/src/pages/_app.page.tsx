@@ -1,7 +1,7 @@
 import '@/styles/globals.css';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import type { AppProps } from 'next/app';
-import { theme } from '../../theme';
+import { theme } from '../theme';
 import Layout from '../page-components/Layout';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -20,16 +20,16 @@ import { CacheProvider, EmotionCache } from '@emotion/react';
 import createEmotionCache from '@/createEmotionCache';
 
 // Client-side cache, shared for the whole session of the user in the browser.
-const cliendSideEmotionCache = createEmotionCache();
+const clientSideEmotionCache = createEmotionCache();
 
-export default function App({
-  Component,
-  pageProps: { session, emotionCache, dehydratedState, ...pageProps },
-}: AppProps<{
+export interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
-  session: Session;
-  dehydratedState: DehydratedState;
-}>) {
+  session?: Session;
+  dehydratedState?: DehydratedState;
+}
+
+export default function App(props: MyAppProps) {
+  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   const [queryClient] = useState(() => new QueryClient());
 
   const router = useRouter();
@@ -59,10 +59,10 @@ export default function App({
   }, [router.events, startTransitioning, stopTransitioning]);
 
   return (
-    <SessionProvider session={session}>
+    <SessionProvider session={props.session}>
       <QueryClientProvider client={queryClient}>
-        <Hydrate state={dehydratedState}>
-          <CacheProvider value={emotionCache ?? cliendSideEmotionCache}>
+        <Hydrate state={props.dehydratedState}>
+          <CacheProvider value={emotionCache}>
             <ThemeProvider theme={theme}>
               <CssBaseline />
               <Head>
