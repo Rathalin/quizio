@@ -1,5 +1,10 @@
 import LinkButton from '@/components/LinkButton';
-import { AccountCircle, Login, Logout, Settings } from '@mui/icons-material';
+import {
+  AccountCircle as AccountCircleIcon,
+  Login as LoginIcon,
+  Logout as LogoutIcon,
+  Settings as SettingsIcon,
+} from '@mui/icons-material';
 import {
   Avatar,
   Button,
@@ -8,6 +13,8 @@ import {
   ListItemIcon,
   Menu,
   MenuItem,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { useState, type MouseEvent } from 'react';
@@ -19,6 +26,9 @@ export default function AccountMenu() {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = anchorEl != null;
 
+  const theme = useTheme();
+  const isSmScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
   function handleClick(event: MouseEvent<HTMLElement>) {
     setAnchorEl(event.currentTarget);
   }
@@ -28,8 +38,19 @@ export default function AccountMenu() {
   }
 
   if (!isAuthenticated || session == null) {
+    if (isSmScreen) {
+      return (
+        <IconButton color="primary">
+          <LoginIcon />
+        </IconButton>
+      );
+    }
     return (
-      <Button variant="outlined" endIcon={<Login />} onClick={() => signIn()}>
+      <Button
+        variant="outlined"
+        endIcon={<LoginIcon />}
+        onClick={() => signIn()}
+      >
         Sign In
       </Button>
     );
@@ -77,14 +98,14 @@ export default function AccountMenu() {
       >
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <AccountCircle />
+            <AccountCircleIcon />
           </ListItemIcon>
           Profile
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <Settings />
+            <SettingsIcon />
           </ListItemIcon>
           Settings
         </MenuItem>
@@ -95,7 +116,7 @@ export default function AccountMenu() {
           }}
         >
           <ListItemIcon>
-            <Logout />
+            <LogoutIcon />
           </ListItemIcon>
           Logout
         </MenuItem>
