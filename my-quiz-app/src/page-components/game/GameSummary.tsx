@@ -64,7 +64,7 @@ export default function GameSummary({
                     sx={{
                       cursor: 'default',
                       '&:hover': { backgroundColor: 'transparent' },
-                      '&.Mui-selected': {
+                      '&.Mui-selected, &.Mui-selected:hover': {
                         backgroundColor: answer.correct
                           ? darken(theme.palette.success.main, 0.6)
                           : darken(theme.palette.error.main, 0.6),
