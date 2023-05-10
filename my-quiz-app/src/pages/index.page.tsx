@@ -5,12 +5,14 @@ import { useRouter } from 'next/router';
 import QuizzesOverview from '@/page-components/QuizzesOverview';
 import AccountMenu from '@/page-components/AccountMenu';
 import Link from 'next/link';
-import { GetServerSideProps } from 'next';
-import { QueryClient, dehydrate } from '@tanstack/react-query';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { DehydratedState, QueryClient, dehydrate } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { queryAllPublishedQuizzes } from '@/graphql/quizzes';
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps<{
+  dehydratedState: DehydratedState;
+}> = async () => {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery(['allPublishedQuizzes'], () =>
@@ -24,11 +26,9 @@ export const getServerSideProps: GetServerSideProps = async () => {
   };
 };
 
-export default function Home() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  const isAuthenticated = status === 'authenticated';
-
+export default function Home({
+  dehydratedState,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <Box>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>

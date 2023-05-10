@@ -24,8 +24,10 @@ const clientSideEmotionCache = createEmotionCache();
 
 export interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
-  session?: Session;
-  dehydratedState?: DehydratedState;
+  pageProps: {
+    session?: Session;
+    dehydratedState?: DehydratedState;
+  };
 }
 
 export default function App(props: MyAppProps) {
@@ -59,9 +61,9 @@ export default function App(props: MyAppProps) {
   }, [router.events, startTransitioning, stopTransitioning]);
 
   return (
-    <SessionProvider session={props.session}>
+    <SessionProvider session={pageProps.session}>
       <QueryClientProvider client={queryClient}>
-        <Hydrate state={props.dehydratedState}>
+        <Hydrate state={pageProps.dehydratedState}>
           <CacheProvider value={emotionCache}>
             <ThemeProvider theme={theme}>
               <CssBaseline />

@@ -1,0 +1,36 @@
+{
+  "props": {
+    "pageProps": {
+      "dehydratedState": {
+        "mutations": [],
+        "queries": [
+          {
+            "state": {
+              "data": { "quizzes": { "data": [] } },
+              "dataUpdateCount": 1,
+              "dataUpdatedAt": 1683665592188,
+              "error": null,
+              "errorUpdateCount": 0,
+              "errorUpdatedAt": 0,
+              "fetchFailureCount": 0,
+              "fetchFailureReason": null,
+              "fetchMeta": null,
+              "isInvalidated": false,
+              "status": "success",
+              "fetchStatus": "idle"
+            },
+            "queryKey": ["allPublishedQuizzes"],
+            "queryHash": "[\"allPublishedQuizzes\"]"
+          }
+        ]
+      }
+    },
+    "__N_SSP": true
+  },
+  "page": "/",
+  "query": {},
+  "buildId": "development",
+  "isFallback": false,
+  "gssp": true,
+  "scriptLoader": []
+}
