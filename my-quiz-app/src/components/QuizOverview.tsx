@@ -92,11 +92,12 @@ export default function QuizOverview({
                   <PublishStateChip published={published} />
                 </Box>
               )}
-              {!isMyQuiz && <Chip label={username} />}
+              {!isMyQuiz && <Chip label={username} variant="filled" />}
               <Chip
                 label={`${questionCount} question${
                   isQuestionCountSingular ? '' : 's'
                 }`}
+                variant="outlined"
               />
             </Box>
           </Box>

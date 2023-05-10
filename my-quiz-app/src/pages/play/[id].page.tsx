@@ -124,7 +124,6 @@ export default function PlayIdPage({
 
   async function onAnswer(answerId: string) {
     setAnswerOfCurrentQuestion(answerId);
-    // incrementQuestionIndex();
   }
 
   return (
@@ -185,7 +184,9 @@ export default function PlayIdPage({
                         disabled={answerState?.selectedAnswerId == null}
                         onClick={incrementQuestionIndex}
                       >
-                        Next Question
+                        {questionIndex + 1 < questions.length
+                          ? 'Next Question'
+                          : 'Finish quiz'}
                       </Button>
                     </Box>
                   </CardContent>
