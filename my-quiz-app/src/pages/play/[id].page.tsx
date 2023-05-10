@@ -1,21 +1,22 @@
 import LinkButton from '@/components/LinkButton';
 import { queryQuizzesByUuid } from '@/graphql/quizzes';
-import AnswerFeedback from '@/page-components/game/AnswerFeedback';
 import GameSummary from '@/page-components/game/GameSummary';
 import PickAnAnswer from '@/page-components/game/PickAnAnswer';
 import QuizNotFound from '@/page-components/game/QuizNotFound';
+import { ContentCopy as ContentCopyIcon } from '@mui/icons-material';
 import {
   Box,
   Card,
   CardContent,
   Alert,
-  AlertColor,
   useTheme,
   Button,
+  Snackbar,
 } from '@mui/material';
 import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 
 export type AnsweredState = {
@@ -52,6 +53,7 @@ export default function PlayIdPage({
   gameId,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const theme = useTheme();
+  const router = useRouter();
   const quizQuery = useQuery({
     queryKey: ['quiz', gameId],
     queryFn: () =>
@@ -69,10 +71,7 @@ export default function PlayIdPage({
   const [answeredProgress, setAnswerwedProgress] = useState<AnsweredState[]>(
     []
   );
-  const [gameAlert, setGameAlert] = useState<{
-    text: string;
-    severity: AlertColor;
-  } | null>(null);
+  const [showCopiedAlert, setShowCopiedAlert] = useState(false);
   const question = questions[questionIndex];
   const gameDone = question == null;
   const answerState = answeredProgress[questionIndex] as
@@ -122,6 +121,33 @@ export default function PlayIdPage({
     setQuestionIndex((index) => index + 1);
   }
 
+  function resultToClipboard() {
+    const answeredStates = answeredProgress.map(
+      (answered) => answered.correctAnswerId === answered.selectedAnswerId
+    );
+    const lines: string[] = [];
+    console.log(quiz);
+    lines.push(`QUIZIO (${quiz?.attributes?.title ?? ''})`);
+    lines.push(
+      `Score: ${answeredStates.length}/${answeredProgress.length} answers correct`
+    );
+    lines.push(
+      answeredStates.map((correct) => (correct ? '🟩' : '🟥')).join('')
+    );
+    lines.push(`${window.location.origin}${router.asPath}`);
+
+    navigator.clipboard.writeText(lines.join('\n'));
+
+    setShowCopiedAlert(true);
+  }
+
+  function handleCopiedAlertClose(_event: unknown, reason?: string) {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setShowCopiedAlert(false);
+  }
+
   return (
     <Box
       sx={{
@@ -167,14 +193,17 @@ export default function PlayIdPage({
                         marginInline: 4,
                         display: 'flex',
                         justifyContent: 'space-between',
+                        gap: 2,
+                        flexWrap: 'wrap',
                       }}
                     >
                       <LinkButton
                         hrefObserver="/"
                         navigateOnClick
                         variant="outlined"
+                        iconSide="right"
                       >
-                        Stop Playing
+                        Home
                       </LinkButton>
                       <Button
                         variant="contained"
@@ -209,16 +238,25 @@ export default function PlayIdPage({
                       sx={{
                         marginTop: 4,
                         display: 'flex',
-                        justifyContent: 'end',
+                        justifyContent: 'space-between',
+                        gap: 2,
+                        flexWrap: 'wrap',
                       }}
                     >
                       <LinkButton
                         hrefObserver="/"
                         navigateOnClick
-                        variant="contained"
+                        variant="outlined"
                       >
                         Home
                       </LinkButton>
+                      <Button
+                        variant="contained"
+                        endIcon={<ContentCopyIcon />}
+                        onClick={resultToClipboard}
+                      >
+                        Share
+                      </Button>
                     </Box>
                   </CardContent>
                 </Card>
@@ -227,7 +265,16 @@ export default function PlayIdPage({
           )}
         </>
       )}
-      <AnswerFeedback alert={gameAlert} onClose={() => setGameAlert(null)} />
+      <Snackbar
+        open={showCopiedAlert}
+        anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
+        autoHideDuration={2000}
+        onClose={handleCopiedAlertClose}
+      >
+        <Alert severity="info" onClose={handleCopiedAlertClose}>
+          Copied to clipboard
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

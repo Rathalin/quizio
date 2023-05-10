@@ -42,6 +42,7 @@ export const queryQuizzesByUuid = graphql(`
     quizzes(filters: { uuid: { eq: $uuid } }) {
       data {
         attributes {
+          title
           questions {
             data {
               id
