@@ -1,4 +1,12 @@
-import { Box, Card, CardContent, Chip, Typography } from '@mui/material';
+import {
+  Box,
+  Card,
+  CardContent,
+  Chip,
+  Typography,
+  darken,
+  useTheme,
+} from '@mui/material';
 import PublishStateChip from './PublishStateChip';
 import Image from 'next/image';
 import {
@@ -28,6 +36,7 @@ export default function QuizOverview({
   imageUrl,
   isMyQuiz,
 }: QuizOverviewProps) {
+  const theme = useTheme();
   const isQuestionCountSingular = questionCount === 1;
 
   function imageLoader({ src }: { src: string }) {
@@ -54,12 +63,11 @@ export default function QuizOverview({
       ) : (
         <Box
           sx={{
-            width: 300,
-            height: 200,
+            minHeight: '180px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#3b3b3b',
+            backgroundColor: darken(theme.palette.secondary.dark, 0.4),
           }}
         >
           <ImageIcon fontSize="large" />
