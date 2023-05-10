@@ -3,7 +3,7 @@ import GradientWord from '@/components/GradientWord';
 import QuizzesOverview from '@/page-components/QuizzesOverview';
 import AccountMenu from '@/page-components/AccountMenu';
 import Link from 'next/link';
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { GetServerSideProps } from 'next';
 import { DehydratedState, QueryClient, dehydrate } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { queryAllPublishedQuizzes } from '@/graphql/quizzes';
@@ -24,30 +24,30 @@ export const getServerSideProps: GetServerSideProps<{
   };
 };
 
-export default function Home({
-  dehydratedState,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Home() {
   return (
     <Box>
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Typography
+        component="h1"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '4rem',
+          marginTop: {
+            xs: 0,
+            lg: 4,
+          },
+          marginBottom: 4,
+        }}
+      >
         <Link href="/" style={{ textDecoration: 'none' }}>
-          <Typography
-            component="h1"
-            sx={{
-              fontSize: '4rem',
-              marginBlock: 4,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <GradientWord>Quizio</GradientWord>
-          </Typography>
+          <GradientWord>Quizio</GradientWord>
         </Link>
         <Box sx={{ marginLeft: 'auto' }}>
           <AccountMenu />
         </Box>
-      </Box>
+      </Typography>
       <QuizzesOverview />
     </Box>
   );

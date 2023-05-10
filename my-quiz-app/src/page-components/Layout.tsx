@@ -12,6 +12,7 @@ export default function Layout({ children }: LayoutProps) {
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
+        paddingBottom: 10,
       }}
     >
       <header>
