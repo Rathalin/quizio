@@ -1,5 +1,6 @@
 import LinkButton from '@/components/LinkButton';
 import { queryQuizzesByUuid } from '@/graphql/quizzes';
+import AnswerFeedback from '@/page-components/game/AnswerFeedback';
 import GameSummary from '@/page-components/game/GameSummary';
 import PickAnAnswer from '@/page-components/game/PickAnAnswer';
 import QuizNotFound from '@/page-components/game/QuizNotFound';
@@ -8,15 +9,19 @@ import {
   Card,
   CardContent,
   Alert,
-  Snackbar,
   AlertColor,
+  useTheme,
+  Button,
 } from '@mui/material';
 import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useEffect, useMemo, useState } from 'react';
 
-export type Score = 'correct' | 'incorrect' | 'unset';
+export type AnsweredState = {
+  correctAnswerId: string;
+  selectedAnswerId: string | null;
+};
 
 export const getServerSideProps: GetServerSideProps<{
   gameId: string;
@@ -46,6 +51,7 @@ export const getServerSideProps: GetServerSideProps<{
 export default function PlayIdPage({
   gameId,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const theme = useTheme();
   const quizQuery = useQuery({
     queryKey: ['quiz', gameId],
     queryFn: () =>
@@ -60,22 +66,55 @@ export default function PlayIdPage({
     [quiz]
   );
   const [questionIndex, setQuestionIndex] = useState(0);
-  const [scoreProgress, setScoreProgress] = useState<Score[]>([]);
+  const [answeredProgress, setAnswerwedProgress] = useState<AnsweredState[]>(
+    []
+  );
   const [gameAlert, setGameAlert] = useState<{
     text: string;
     severity: AlertColor;
-  } | null>();
+  } | null>(null);
   const question = questions[questionIndex];
   const gameDone = question == null;
+  const answerState = answeredProgress[questionIndex] as
+    | AnsweredState
+    | undefined;
+  const questionAnswered = answerState?.selectedAnswerId != null;
+  const borderColor = useMemo(() => {
+    const answeredCorrectly = questionAnswered
+      ? answerState.selectedAnswerId === answerState.correctAnswerId
+      : null;
+    if (answeredCorrectly == null) {
+      return 'transparent';
+    }
+    if (answeredCorrectly) {
+      return theme.palette.success.main;
+    }
+    return theme.palette.error.main;
+  }, [answerState, questionAnswered, theme]);
 
   useEffect(() => {
     setQuestionIndex(0);
-    setScoreProgress(questions.map<Score>(() => 'unset'));
+    setAnswerwedProgress(
+      questions.map((question) => ({
+        correctAnswerId:
+          question.attributes?.answers?.data.find(
+            (answer) => answer.attributes?.correct
+          )?.id ?? '0',
+        selectedAnswerId: null,
+      }))
+    );
   }, [questions]);
 
-  function addScore(score: Score) {
-    setScoreProgress((progress) =>
-      progress.map((s, i) => (i === questionIndex ? score : s))
+  function setAnswerOfCurrentQuestion(selectedAnswerId: string) {
+    setAnswerwedProgress((progress) =>
+      progress.map((answeredState, i) =>
+        i === questionIndex
+          ? {
+              selectedAnswerId: selectedAnswerId,
+              correctAnswerId: answeredState.correctAnswerId,
+            }
+          : answeredState
+      )
     );
   }
 
@@ -83,9 +122,9 @@ export default function PlayIdPage({
     setQuestionIndex((index) => index + 1);
   }
 
-  function handleAnswerClick(correct: boolean) {
-    addScore(correct ? 'correct' : 'incorrect');
-    incrementQuestionIndex();
+  async function onAnswer(answerId: string) {
+    setAnswerOfCurrentQuestion(answerId);
+    // incrementQuestionIndex();
   }
 
   return (
@@ -108,7 +147,11 @@ export default function PlayIdPage({
           ) : (
             <>
               {!gameDone && (
-                <Card>
+                <Card
+                  sx={{
+                    border: `3px solid ${borderColor}`,
+                  }}
+                >
                   <CardContent sx={{ padding: 0 }}>
                     <PickAnAnswer
                       title={question.attributes?.title ?? ''}
@@ -119,24 +162,31 @@ export default function PlayIdPage({
                           correct: answer.attributes?.correct ?? false,
                         })
                       )}
-                      scoreProgress={scoreProgress}
-                      onAnswer={handleAnswerClick}
+                      answeredProgress={answeredProgress}
+                      onAnswer={onAnswer}
                     />
                     <Box
                       sx={{
                         marginTop: 4,
                         marginInline: 4,
                         display: 'flex',
-                        justifyContent: 'end',
+                        justifyContent: 'space-between',
                       }}
                     >
                       <LinkButton
                         hrefObserver="/"
                         navigateOnClick
-                        variant="contained"
+                        variant="outlined"
                       >
                         Stop Playing
                       </LinkButton>
+                      <Button
+                        variant="contained"
+                        disabled={answerState?.selectedAnswerId == null}
+                        onClick={incrementQuestionIndex}
+                      >
+                        Next Question
+                      </Button>
                     </Box>
                   </CardContent>
                 </Card>
@@ -155,7 +205,7 @@ export default function PlayIdPage({
                             correct: answer.attributes?.correct ?? false,
                           })) ?? [],
                       }))}
-                      scoreProgress={scoreProgress}
+                      answeredProgress={answeredProgress}
                     />
                     <Box
                       sx={{
@@ -179,15 +229,7 @@ export default function PlayIdPage({
           )}
         </>
       )}
-      <Snackbar
-        open={gameAlert != null}
-        onClose={() => setGameAlert(null)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert severity={gameAlert?.severity ?? 'info'}>
-          {gameAlert?.text ?? ''}
-        </Alert>
-      </Snackbar>
+      <AnswerFeedback alert={gameAlert} onClose={() => setGameAlert(null)} />
     </Box>
   );
 }

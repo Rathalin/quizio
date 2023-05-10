@@ -4,23 +4,31 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  useTheme,
+  ListItemIcon,
 } from '@mui/material';
-import ScoreProgress from './ScoreProgress';
-import { Score } from '@/pages/play/[id].page';
+import AnsweredProgress from './AnsweredProgress';
+import { AnsweredState } from '@/pages/play/[id].page';
+import { useState } from 'react';
+import { Check as CheckIcon, Clear as ClearIcon } from '@mui/icons-material';
 
 type PickAnAnswerProps = {
   title: string;
   answers: { id: string; title: string; correct: boolean }[];
-  scoreProgress: Score[];
-  onAnswer: (correct: boolean) => void;
+  answeredProgress: AnsweredState[];
+  onAnswer: (selectedAnswerId: string) => void;
 };
 
 export default function PickAnAnswer({
   title,
   answers,
-  scoreProgress,
+  answeredProgress,
   onAnswer,
 }: PickAnAnswerProps) {
+  const theme = useTheme();
+  const [selectedAnswerId, setSelectedAnswerId] = useState<string | null>(null);
+  const answered = selectedAnswerId != null;
+
   return (
     <>
       {' '}
@@ -37,15 +45,35 @@ export default function PickAnAnswer({
         <Typography variant="inherit" component="span">
           {title}
         </Typography>
-        <ScoreProgress progress={scoreProgress} />
+        <AnsweredProgress answeredProgress={answeredProgress} />
       </Typography>
       <List disablePadding>
         {answers.map((answer) => (
           <ListItem key={answer.id} disableGutters>
             <ListItemButton
-              sx={{ fontSize: '1.2rem', paddingInline: 6 }}
-              onClick={() => onAnswer(answer.correct)}
+              sx={{
+                fontSize: '1.2rem',
+                paddingInline: 6,
+                '&.Mui-disabled': {
+                  opacity: 1,
+                },
+              }}
+              onClick={() => {
+                if (answered) return;
+                onAnswer(answer.id);
+                setSelectedAnswerId(answer.id);
+              }}
+              selected={selectedAnswerId === answer.id}
+              disabled={answered}
             >
+              <ListItemIcon>
+                {answered &&
+                  (answer.correct ? (
+                    <CheckIcon color="success" />
+                  ) : (
+                    <ClearIcon color="error" />
+                  ))}
+              </ListItemIcon>
               <ListItemText>{answer.title}</ListItemText>
             </ListItemButton>
           </ListItem>

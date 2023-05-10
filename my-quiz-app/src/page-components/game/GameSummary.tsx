@@ -5,10 +5,12 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  ListItemButton,
+  useTheme,
 } from '@mui/material';
 import { Check as CheckIcon } from '@mui/icons-material';
-import { Score } from '@/pages/play/[id].page';
 import GradientWord from '@/components/GradientWord';
+import { AnsweredState } from '@/pages/play/[id].page';
 
 type GameSummaryProps = {
   questions: {
@@ -20,13 +22,14 @@ type GameSummaryProps = {
       correct: boolean;
     }[];
   }[];
-  scoreProgress: Score[];
+  answeredProgress: AnsweredState[];
 };
 
 export default function GameSummary({
   questions,
-  scoreProgress,
+  answeredProgress,
 }: GameSummaryProps) {
+  const theme = useTheme();
   return (
     <>
       <Typography variant="h1">
@@ -34,11 +37,13 @@ export default function GameSummary({
       </Typography>
       <Typography>
         {`You got ${
-          scoreProgress.filter((score) => score === 'correct').length
+          answeredProgress.filter(
+            (score) => score.correctAnswerId === score.selectedAnswerId
+          ).length
         } out of ${questions.length} answers correct!`}
       </Typography>
       <Box sx={{ marginTop: 4 }}>
-        {questions.map((question) => (
+        {questions.map((question, qIndex) => (
           <Box key={question.id}>
             <Typography
               variant="h5"
@@ -50,12 +55,23 @@ export default function GameSummary({
             <List dense>
               {question.answers.map((answer) => (
                 <ListItem key={answer.id}>
-                  <ListItemIcon>
-                    {answer.correct ? <CheckIcon color="success" /> : null}
-                  </ListItemIcon>
-                  <ListItemText>
-                    <Typography>{answer.title}</Typography>
-                  </ListItemText>
+                  <ListItemButton
+                    selected={
+                      answer.id === answeredProgress[qIndex].selectedAnswerId
+                    }
+                    disableRipple
+                    sx={{
+                      cursor: 'default',
+                      '&:hover': { backgroundColor: 'transparent' },
+                    }}
+                  >
+                    <ListItemIcon>
+                      {answer.correct ? <CheckIcon color="success" /> : null}
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Typography>{answer.title}</Typography>
+                    </ListItemText>
+                  </ListItemButton>
                 </ListItem>
               ))}
             </List>
