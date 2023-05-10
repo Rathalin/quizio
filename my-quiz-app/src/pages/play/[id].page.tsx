@@ -249,6 +249,7 @@ export default function PlayIdPage({
                         hrefObserver="/"
                         navigateOnClick
                         variant="outlined"
+                        iconSide="right"
                       >
                         Home
                       </LinkButton>
