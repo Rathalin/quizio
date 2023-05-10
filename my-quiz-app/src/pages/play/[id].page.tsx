@@ -1,22 +1,15 @@
-import GradientWord from '@/components/GradientWord';
 import LinkButton from '@/components/LinkButton';
-import ScoreProgress from '@/components/game/ScoreProgress';
+import GameSummary from '@/components/game/GameSummary';
+import PickAnAnswer from '@/components/game/PickAnAnswer';
+import QuizNotFound from '@/components/game/QuizNotFound';
 import { queryQuizzesByUuid } from '@/graphql/quizzes';
-import { Check as CheckIcon } from '@mui/icons-material';
 import {
   Box,
   Card,
   CardContent,
-  List,
-  Typography,
-  ListItem,
-  IconButton,
-  ListItemButton,
-  ListItemText,
-  Chip,
-  ListItemIcon,
   Alert,
-  Button,
+  Snackbar,
+  AlertColor,
 } from '@mui/material';
 import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
@@ -68,6 +61,10 @@ export default function PlayIdPage({
   );
   const [questionIndex, setQuestionIndex] = useState(0);
   const [scoreProgress, setScoreProgress] = useState<Score[]>([]);
+  const [gameAlert, setGameAlert] = useState<{
+    text: string;
+    severity: AlertColor;
+  } | null>();
   const question = questions[questionIndex];
   const gameDone = question == null;
 
@@ -92,7 +89,14 @@ export default function PlayIdPage({
   }
 
   return (
-    <Box>
+    <Box
+      sx={{
+        marginTop: {
+          xs: 0,
+          lg: 6,
+        },
+      }}
+    >
       {quizQuery.isLoading && <Alert severity="info">Loading the quiz</Alert>}
       {quizQuery.isError && (
         <Alert severity="error">Could not load the quiz</Alert>
@@ -100,61 +104,24 @@ export default function PlayIdPage({
       {quizQuery.isSuccess && (
         <>
           {questions.length === 0 ? (
-            <Box>
-              <Alert severity="warning">This quiz does not exist 😮</Alert>
-              <Box
-                sx={{ marginTop: 4, display: 'flex', justifyContent: 'end' }}
-              >
-                <LinkButton
-                  hrefObserver="/"
-                  navigateOnClick
-                  variant="contained"
-                >
-                  Home
-                </LinkButton>
-              </Box>
-            </Box>
+            <QuizNotFound />
           ) : (
             <>
               {!gameDone && (
                 <Card>
                   <CardContent sx={{ padding: 0 }}>
-                    <Typography
-                      variant="h4"
-                      component="h1"
-                      sx={{
-                        margin: 4,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                      }}
-                    >
-                      <Typography variant="inherit" component="span">
-                        {question.attributes?.title}
-                      </Typography>
-                      <ScoreProgress progress={scoreProgress} />
-                    </Typography>
-                    <List disablePadding>
-                      {question.attributes?.answers?.data.map((answer) => (
-                        <ListItem
-                          key={answer.id}
-                          disableGutters
-                          onClick={() =>
-                            handleAnswerClick(
-                              answer.attributes?.correct ?? false
-                            )
-                          }
-                        >
-                          <ListItemButton
-                            sx={{ fontSize: '1.2rem', paddingInline: 6 }}
-                          >
-                            <ListItemText>
-                              {answer.attributes?.title}
-                            </ListItemText>
-                          </ListItemButton>
-                        </ListItem>
-                      ))}
-                    </List>
+                    <PickAnAnswer
+                      title={question.attributes?.title ?? ''}
+                      answers={question.attributes!.answers!.data.map(
+                        (answer) => ({
+                          id: answer.id ?? '',
+                          title: answer.attributes?.title ?? '',
+                          correct: answer.attributes?.correct ?? false,
+                        })
+                      )}
+                      scoreProgress={scoreProgress}
+                      onAnswer={handleAnswerClick}
+                    />
                     <Box
                       sx={{
                         marginTop: 4,
@@ -177,46 +144,19 @@ export default function PlayIdPage({
               {gameDone && (
                 <Card sx={{ paddingInline: 4 }}>
                   <CardContent>
-                    <Typography variant="h1">
-                      <GradientWord>Summary</GradientWord>
-                    </Typography>
-                    <Typography>
-                      {`You got ${
-                        scoreProgress.filter((score) => score === 'correct')
-                          .length
-                      } out of ${questions.length} answers correct!`}
-                    </Typography>
-                    <Box sx={{ marginTop: 4 }}>
-                      {questions.map((question) => (
-                        <Box key={question.id}>
-                          <Typography
-                            variant="h5"
-                            component="h2"
-                            sx={{ marginTop: 2, marginBottom: 0 }}
-                          >
-                            {question.attributes?.title}
-                          </Typography>
-                          <List dense>
-                            {question.attributes?.answers?.data.map(
-                              (answer) => (
-                                <ListItem key={answer.id}>
-                                  <ListItemIcon>
-                                    {answer.attributes?.correct ? (
-                                      <CheckIcon color="success" />
-                                    ) : null}
-                                  </ListItemIcon>
-                                  <ListItemText>
-                                    <Typography>
-                                      {answer.attributes?.title}
-                                    </Typography>
-                                  </ListItemText>
-                                </ListItem>
-                              )
-                            )}
-                          </List>
-                        </Box>
-                      ))}
-                    </Box>
+                    <GameSummary
+                      questions={questions.map((question) => ({
+                        id: question.id ?? '',
+                        title: question.attributes?.title ?? '',
+                        answers:
+                          question.attributes?.answers?.data.map((answer) => ({
+                            id: answer.id ?? '',
+                            title: answer.attributes?.title ?? '',
+                            correct: answer.attributes?.correct ?? false,
+                          })) ?? [],
+                      }))}
+                      scoreProgress={scoreProgress}
+                    />
                     <Box
                       sx={{
                         marginTop: 4,
@@ -239,6 +179,15 @@ export default function PlayIdPage({
           )}
         </>
       )}
+      <Snackbar
+        open={gameAlert != null}
+        onClose={() => setGameAlert(null)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert severity={gameAlert?.severity ?? 'info'}>
+          {gameAlert?.text ?? ''}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

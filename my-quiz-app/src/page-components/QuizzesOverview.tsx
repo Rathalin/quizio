@@ -12,7 +12,6 @@ export default function QuizzesOverview() {
     queryKey: ['allPublishedQuizzes'],
     queryFn: () =>
       request(process.env.NEXT_PUBLIC_GRAPHQL_URL, queryAllPublishedQuizzes),
-    enabled: false,
   });
 
   const quizzes = data?.quizzes?.data ?? [];
