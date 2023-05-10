@@ -1,6 +1,13 @@
 import GradientWord from '@/components/GradientWord';
 import LinkButton from '@/components/LinkButton';
-import { Box, Card, CardContent, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { FormEvent, useState } from 'react';
@@ -76,17 +83,20 @@ export default function SigninPage() {
         <Box
           sx={{
             display: 'flex',
-            justifyContent: 'end',
+            justifyContent: 'space-between',
           }}
         >
           <LinkButton
             hrefObserver="/"
-            variant="contained"
-            color="primary"
-            type="submit"
+            navigateOnClick
+            variant="outlined"
+            iconSide="right"
           >
-            Login
+            Home
           </LinkButton>
+          <Button variant="contained" color="primary" type="submit">
+            Login
+          </Button>
         </Box>
       </form>
     </Box>
