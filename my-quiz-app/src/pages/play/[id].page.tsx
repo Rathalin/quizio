@@ -129,7 +129,9 @@ export default function PlayIdPage({
     console.log(quiz);
     lines.push(`QUIZIO (${quiz?.attributes?.title ?? ''})`);
     lines.push(
-      `Score: ${answeredStates.length}/${answeredProgress.length} answers correct`
+      `Score: ${answeredStates.filter((correct) => correct).length}/${
+        answeredProgress.length
+      } answers correct`
     );
     lines.push(
       answeredStates.map((correct) => (correct ? '🟩' : '🟥')).join('')
