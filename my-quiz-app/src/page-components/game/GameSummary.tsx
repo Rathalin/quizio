@@ -7,8 +7,8 @@ import {
   ListItemText,
 } from '@mui/material';
 import { Check as CheckIcon } from '@mui/icons-material';
-import GradientWord from '../GradientWord';
 import { Score } from '@/pages/play/[id].page';
+import GradientWord from '@/components/GradientWord';
 
 type GameSummaryProps = {
   questions: {

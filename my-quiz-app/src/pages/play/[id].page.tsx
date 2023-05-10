@@ -1,8 +1,8 @@
 import LinkButton from '@/components/LinkButton';
-import GameSummary from '@/components/game/GameSummary';
-import PickAnAnswer from '@/components/game/PickAnAnswer';
-import QuizNotFound from '@/components/game/QuizNotFound';
 import { queryQuizzesByUuid } from '@/graphql/quizzes';
+import GameSummary from '@/page-components/game/GameSummary';
+import PickAnAnswer from '@/page-components/game/PickAnAnswer';
+import QuizNotFound from '@/page-components/game/QuizNotFound';
 import {
   Box,
   Card,

@@ -1,5 +1,5 @@
+import LinkButton from '@/components/LinkButton';
 import { Box, Alert } from '@mui/material';
-import LinkButton from '../LinkButton';
 
 export default function QuizNotFound() {
   return (
