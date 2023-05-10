@@ -1,5 +1,5 @@
 import { Check as CheckIcon, Clear as ClearIcon } from '@mui/icons-material';
-import { Box, IconButton, Tooltip } from '@mui/material';
+import { IconButton, Tooltip } from '@mui/material';
 
 type CorrectToggleProps = {
   isCorrect: boolean;

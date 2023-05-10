@@ -1,11 +1,9 @@
 import QuizOverview from '@/components/QuizOverview';
 import QuizOverviewPlaceholder from '@/components/QuizOverviewPlaceholder';
-import { AllPublishedQuizzesQuery } from '@/graphql/generated/graphql';
 import { queryAllPublishedQuizzes } from '@/graphql/quizzes';
 import { Alert, Box, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
-import { useSession } from 'next-auth/react';
 
 export default function QuizzesOverview() {
   const { data, isSuccess, isLoading, isError } = useQuery({

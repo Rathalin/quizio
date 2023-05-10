@@ -1,5 +1,3 @@
-import request from 'graphql-request';
-import { useQuery } from '@tanstack/react-query';
 import { graphql } from './generated/gql';
 
 export const queryMyQuizzesOverviewOfOwner = graphql(`

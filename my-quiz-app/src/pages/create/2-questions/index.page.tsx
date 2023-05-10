@@ -11,14 +11,7 @@ import {
   ArrowBack as ArrowBackIcon,
   ArrowForward as ArrowForwardIcon,
 } from '@mui/icons-material';
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  CardActions,
-  Button,
-} from '@mui/material';
+import { Box, Typography, Button } from '@mui/material';
 import { shallow } from 'zustand/shallow';
 
 export default function CreateQuizQuestionsPage() {

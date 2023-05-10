@@ -1,6 +1,5 @@
 import { Delete as DeleteIcon } from '@mui/icons-material';
 import { Tooltip, IconButton, Box } from '@mui/material';
-import { useState } from 'react';
 
 type DeleteAnswerButtonProps = {
   index: number;

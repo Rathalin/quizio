@@ -1,5 +1,4 @@
-import { Card, CardContent, Box, Grid, CardHeader } from '@mui/material';
-import PlaceholderBox from './placeholders/PlaceholderBox';
+import { Card, CardContent, Grid } from '@mui/material';
 import PlaceholderTypography from './placeholders/PlaceholderTypography';
 
 export default function QuizOverviewPlaceholder() {

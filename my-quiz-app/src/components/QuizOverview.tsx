@@ -1,13 +1,4 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  IconButton,
-  Paper,
-  Typography,
-} from '@mui/material';
+import { Box, Card, CardContent, Chip, Typography } from '@mui/material';
 import PublishStateChip from './PublishStateChip';
 import Image from 'next/image';
 import {

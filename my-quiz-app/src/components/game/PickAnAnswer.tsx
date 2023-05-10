@@ -1,14 +1,10 @@
 import {
-  Card,
-  CardContent,
   Typography,
   List,
   ListItem,
   ListItemButton,
   ListItemText,
-  Box,
 } from '@mui/material';
-import LinkButton from '../LinkButton';
 import ScoreProgress from './ScoreProgress';
 import { Score } from '@/pages/play/[id].page';
 

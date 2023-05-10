@@ -1,7 +1,5 @@
-import { Box, Button, Grid, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import GradientWord from '@/components/GradientWord';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
 import QuizzesOverview from '@/page-components/QuizzesOverview';
 import AccountMenu from '@/page-components/AccountMenu';
 import Link from 'next/link';

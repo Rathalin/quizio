@@ -8,11 +8,7 @@ import {
 } from '@mui/material';
 import AnswerInput from './answer/AnswerInput';
 import { Add as AddIcon } from '@mui/icons-material';
-import {
-  type QuestionDraft,
-  useQuizDraft,
-  AnswerDraft,
-} from '@/stores/quiz-draft.store';
+import { type QuestionDraft, AnswerDraft } from '@/stores/quiz-draft.store';
 import DeleteQuestionButton from './DeleteQuestionButton';
 
 type QuestionInputProps = {

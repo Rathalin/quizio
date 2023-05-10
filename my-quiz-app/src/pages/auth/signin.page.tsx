@@ -1,16 +1,6 @@
 import GradientWord from '@/components/GradientWord';
 import LinkButton from '@/components/LinkButton';
-import {
-  Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Container,
-  Grid,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Box, Card, CardContent, TextField, Typography } from '@mui/material';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { FormEvent, useState } from 'react';
