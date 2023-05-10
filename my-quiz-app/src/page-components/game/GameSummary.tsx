@@ -7,6 +7,7 @@ import {
   ListItemText,
   ListItemButton,
   useTheme,
+  darken,
 } from '@mui/material';
 import { Check as CheckIcon } from '@mui/icons-material';
 import GradientWord from '@/components/GradientWord';
@@ -54,7 +55,7 @@ export default function GameSummary({
             </Typography>
             <List dense>
               {question.answers.map((answer) => (
-                <ListItem key={answer.id}>
+                <ListItem key={answer.id} disableGutters>
                   <ListItemButton
                     selected={
                       answer.id === answeredProgress[qIndex].selectedAnswerId
@@ -63,6 +64,11 @@ export default function GameSummary({
                     sx={{
                       cursor: 'default',
                       '&:hover': { backgroundColor: 'transparent' },
+                      '&.Mui-selected': {
+                        backgroundColor: answer.correct
+                          ? darken(theme.palette.success.main, 0.6)
+                          : darken(theme.palette.error.main, 0.6),
+                      },
                     }}
                   >
                     <ListItemIcon>

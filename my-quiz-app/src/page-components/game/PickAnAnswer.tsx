@@ -4,12 +4,11 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  useTheme,
   ListItemIcon,
+  useTheme,
 } from '@mui/material';
 import AnsweredProgress from './AnsweredProgress';
 import { AnsweredState } from '@/pages/play/[id].page';
-import { useState } from 'react';
 import { Check as CheckIcon, Clear as ClearIcon } from '@mui/icons-material';
 
 type PickAnAnswerProps = {
@@ -17,6 +16,7 @@ type PickAnAnswerProps = {
   answers: { id: string; title: string; correct: boolean }[];
   answeredProgress: AnsweredState[];
   onAnswer: (selectedAnswerId: string) => void;
+  selectedAnswerId: string | null;
 };
 
 export default function PickAnAnswer({
@@ -24,9 +24,9 @@ export default function PickAnAnswer({
   answers,
   answeredProgress,
   onAnswer,
+  selectedAnswerId,
 }: PickAnAnswerProps) {
   const theme = useTheme();
-  const [selectedAnswerId, setSelectedAnswerId] = useState<string | null>(null);
   const answered = selectedAnswerId != null;
 
   return (
@@ -40,6 +40,8 @@ export default function PickAnAnswer({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          flexWrap: 'wrap-reverse',
+          gap: 2,
         }}
       >
         <Typography variant="inherit" component="span">
@@ -58,10 +60,10 @@ export default function PickAnAnswer({
                   opacity: 1,
                 },
               }}
+              color="secondary.main"
               onClick={() => {
                 if (answered) return;
                 onAnswer(answer.id);
-                setSelectedAnswerId(answer.id);
               }}
               selected={selectedAnswerId === answer.id}
               disabled={answered}

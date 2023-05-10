@@ -118,12 +118,8 @@ export default function PlayIdPage({
     );
   }
 
-  function incrementQuestionIndex() {
+  function nextQuestion() {
     setQuestionIndex((index) => index + 1);
-  }
-
-  async function onAnswer(answerId: string) {
-    setAnswerOfCurrentQuestion(answerId);
   }
 
   return (
@@ -135,9 +131,9 @@ export default function PlayIdPage({
         },
       }}
     >
-      {quizQuery.isLoading && <Alert severity="info">Loading the quiz</Alert>}
+      {quizQuery.isLoading && <Alert severity="info">Loading the quiz.</Alert>}
       {quizQuery.isError && (
-        <Alert severity="error">Could not load the quiz</Alert>
+        <Alert severity="error">Could not load the quiz.</Alert>
       )}
       {quizQuery.isSuccess && (
         <>
@@ -162,7 +158,8 @@ export default function PlayIdPage({
                         })
                       )}
                       answeredProgress={answeredProgress}
-                      onAnswer={onAnswer}
+                      selectedAnswerId={answerState?.selectedAnswerId ?? null}
+                      onAnswer={setAnswerOfCurrentQuestion}
                     />
                     <Box
                       sx={{
@@ -182,7 +179,7 @@ export default function PlayIdPage({
                       <Button
                         variant="contained"
                         disabled={answerState?.selectedAnswerId == null}
-                        onClick={incrementQuestionIndex}
+                        onClick={nextQuestion}
                       >
                         {questionIndex + 1 < questions.length
                           ? 'Next Question'
