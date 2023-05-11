@@ -47,10 +47,6 @@ export default function QuizOverview({
     []
   );
 
-  function imageLoader({ src }: { src: string }) {
-    return `${process.env.NEXT_PUBLIC_BACKEND_URL}${src}`;
-  }
-
   return (
     <Card
       elevation={2}
@@ -61,13 +57,15 @@ export default function QuizOverview({
     >
       {imageUrl != null ? (
         <Image
-          loader={imageLoader}
+          loader={({ src, width: _width, quality: _quality }) =>
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}${src}`
+          }
           src={imageUrl}
           alt="QuizImage"
           width={300}
           height={200}
-          priority={true}
           style={{ objectFit: 'cover', width: '100%', minHeight: '180px' }}
+          priority
         ></Image>
       ) : (
         <Box

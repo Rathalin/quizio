@@ -7,6 +7,16 @@ const nextConfig = {
       transform: '@mui/icons-material/{{member}}',
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'quizio.flockert.at',
+        port: '',
+        pathname: '/uploads',
+      },
+    ],
+  },
 };
 
 module.exports = nextConfig;
