@@ -69,6 +69,10 @@ export default function App(props: MyAppProps) {
               <CssBaseline />
               <Head>
                 <title>Quizio</title>
+                <meta
+                  name="description"
+                  content="Quizo is a quiz app that allows you to create and share quizzes with your friends."
+                />
               </Head>
               <Layout>
                 <Component {...pageProps} />
