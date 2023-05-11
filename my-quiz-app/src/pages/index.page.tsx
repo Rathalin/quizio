@@ -3,26 +3,26 @@ import GradientWord from '@/components/GradientWord';
 import QuizzesOverview from '@/page-components/QuizzesOverview';
 import AccountMenu from '@/page-components/AccountMenu';
 import Link from 'next/link';
-// import { GetServerSideProps } from 'next';
-// import { DehydratedState, QueryClient, dehydrate } from '@tanstack/react-query';
-// import request from 'graphql-request';
-// import { queryAllPublishedQuizzes } from '@/graphql/quizzes';
+import { GetServerSideProps } from 'next';
+import { DehydratedState, QueryClient, dehydrate } from '@tanstack/react-query';
+import request from 'graphql-request';
+import { queryAllPublishedQuizzes } from '@/graphql/quizzes';
 
-// export const getServerSideProps: GetServerSideProps<{
-//   dehydratedState: DehydratedState;
-// }> = async () => {
-//   const queryClient = new QueryClient();
+export const getServerSideProps: GetServerSideProps<{
+  dehydratedState: DehydratedState;
+}> = async () => {
+  const queryClient = new QueryClient();
 
-//   await queryClient.prefetchQuery(['allPublishedQuizzes'], () =>
-//     request(process.env.NEXT_PUBLIC_GRAPHQL_URL, queryAllPublishedQuizzes)
-//   );
+  await queryClient.prefetchQuery(['allPublishedQuizzes'], () =>
+    request(process.env.NEXT_PUBLIC_GRAPHQL_URL, queryAllPublishedQuizzes)
+  );
 
-//   return {
-//     props: {
-//       dehydratedState: dehydrate(queryClient),
-//     },
-//   };
-// };
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
+};
 
 export default function Home() {
   return (
