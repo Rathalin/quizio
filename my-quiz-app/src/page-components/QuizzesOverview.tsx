@@ -49,6 +49,7 @@ export default function QuizzesOverview() {
               createdAt={new Date(quiz.attributes?.createdAt)}
               published={quiz.attributes?.published ?? false}
               questionCount={quiz.attributes?.questions?.data.length ?? 0}
+              playCount={quiz.attributes?.playCount ?? 0}
               imageUrl={quiz.attributes?.image?.data?.attributes?.url}
               isMyQuiz={false}
             />

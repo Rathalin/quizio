@@ -10,6 +10,7 @@ import {
 import PublishStateChip from './PublishStateChip';
 import Image from 'next/image';
 import {
+  BarChart as BarChartIcon,
   Image as ImageIcon,
   PlayArrow as PlayArrowIcon,
 } from '@mui/icons-material';
@@ -23,6 +24,7 @@ type QuizOverviewProps = {
   username: string;
   createdAt: Date;
   questionCount: number;
+  playCount: number;
   published: boolean;
   imageUrl?: string;
   isMyQuiz: boolean;
@@ -35,6 +37,7 @@ export default function QuizOverview({
   username,
   createdAt,
   questionCount,
+  playCount,
   published,
   imageUrl,
   isMyQuiz,
@@ -113,6 +116,11 @@ export default function QuizOverview({
                 label={`${questionCount} question${
                   isQuestionCountSingular ? '' : 's'
                 }`}
+                variant="outlined"
+              />
+              <Chip
+                label={playCount}
+                icon={<BarChartIcon fontSize="small" />}
                 variant="outlined"
               />
               <Chip label={dateFormat.format(createdAt)} variant="outlined" />

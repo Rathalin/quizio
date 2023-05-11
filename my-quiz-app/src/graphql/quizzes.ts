@@ -11,6 +11,7 @@ export const queryAllPublishedQuizzes = graphql(`
           description
           published
           createdAt
+          playCount
           questions {
             data {
               id
