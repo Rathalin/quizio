@@ -85,6 +85,7 @@ export default function QuizOverview({
           <Box>
             <Typography
               variant="h3"
+              component="h2"
               sx={{ display: 'flex', justifyContent: 'space-between' }}
             >
               {title}
