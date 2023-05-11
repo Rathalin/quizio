@@ -39,7 +39,11 @@ export default function AccountMenu() {
   if (!isAuthenticated || session == null) {
     if (isSmScreen) {
       return (
-        <IconButton color="primary">
+        <IconButton
+          color="primary"
+          onClick={() => signIn()}
+          aria-label="Sign in"
+        >
           {' '}
           <LoginIcon />{' '}
         </IconButton>
