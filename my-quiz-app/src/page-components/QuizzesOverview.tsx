@@ -22,10 +22,12 @@ export default function QuizzesOverview() {
       sx={{
         display: 'grid',
         gridTemplateColumns: `repeat(auto-fill, minmax(${gridItemMinWidth}, ${gridItemMaxWidth}))`,
-        gap: {
-          xs: 2,
-          md: 4,
-          xl: 6,
+        columnGap: {
+          xs: 6,
+        },
+        rowGap: {
+          xs: 8,
+          md: 6,
         },
       }}
     >
