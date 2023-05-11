@@ -2,8 +2,8 @@ services:
   quizio-strapi:
     build: .
     restart: always
-    ports:
-      - 1337:1337
+    networks:
+      - nginx-net
     volumes:
       - strapidb:/opt/app/.tmp
       - strapiuploads:/opt/app/public/uploads
@@ -12,3 +12,6 @@ services:
 volumes:
   strapidb:
   strapiuploads:
+networks:
+  nginx-net:
+    external: true
