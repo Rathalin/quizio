@@ -85,6 +85,22 @@ export default function App(props: MyAppProps) {
                   property="og:image"
                   content="https://example.com/images/cool-page.jpg"
                 /> */}
+                <link
+                  rel="dns-prefetch"
+                  href={process.env.NEXT_PUBLIC_BACKEND_URL}
+                />
+                <link
+                  rel="dns-prefetch"
+                  href={process.env.NEXT_PUBLIC_GRAPHQL_URL}
+                />
+                <link
+                  rel="preconnect"
+                  href={process.env.NEXT_PUBLIC_BACKEND_URL}
+                />
+                <link
+                  rel="preconnect"
+                  href={process.env.NEXT_PUBLIC_GRAPHQL_URL}
+                />
               </Head>
               <Layout>
                 <Component {...pageProps} />
