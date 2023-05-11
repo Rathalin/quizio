@@ -1,4 +1,8 @@
 import LinkButton from '@/components/LinkButton';
+import {
+  mutatePlayCountOfQuiz,
+  queryPlayCountOfQuiz,
+} from '@/graphql/playCount';
 import { queryQuizzesByUuid } from '@/graphql/quizzes';
 import GameSummary from '@/page-components/game/GameSummary';
 import PickAnAnswer from '@/page-components/game/PickAnAnswer';
@@ -13,7 +17,12 @@ import {
   Button,
   Snackbar,
 } from '@mui/material';
-import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
+import {
+  QueryClient,
+  dehydrate,
+  useMutation,
+  useQuery,
+} from '@tanstack/react-query';
 import request from 'graphql-request';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/router';
@@ -63,6 +72,23 @@ export default function PlayIdPage({
     staleTime: Infinity,
   });
   const quiz = quizQuery.data?.quizzes?.data[0];
+  const playCountQuery = useQuery({
+    queryKey: ['playCount', quiz?.id],
+    queryFn: () =>
+      request(process.env.NEXT_PUBLIC_GRAPHQL_URL, queryPlayCountOfQuiz, {
+        quizId: quiz?.id ?? '',
+      }),
+    enabled: quiz != null,
+  });
+  const playCountMutation = useMutation({
+    mutationKey: ['playCount', quiz?.id],
+    mutationFn: ({ playCount }: { playCount: number }) =>
+      request(process.env.NEXT_PUBLIC_GRAPHQL_URL, mutatePlayCountOfQuiz, {
+        quizId: quiz?.id ?? '',
+        playCount,
+      }),
+  });
+  const [playCountIncreased, setPlayCountIncreased] = useState(false);
   const questions = useMemo(
     () => quiz?.attributes?.questions?.data ?? [],
     [quiz]
@@ -103,6 +129,23 @@ export default function PlayIdPage({
       }))
     );
   }, [questions]);
+
+  useEffect(() => {
+    if (gameDone && playCountQuery.isSuccess && !playCountIncreased) {
+      const prevPlayCount =
+        playCountQuery.data.quiz?.data?.attributes?.playCount;
+      if (prevPlayCount != null) {
+        playCountMutation.mutate({ playCount: prevPlayCount + 1 });
+        setPlayCountIncreased(true);
+      }
+    }
+  }, [
+    gameDone,
+    playCountIncreased,
+    playCountMutation,
+    playCountQuery.isSuccess,
+    playCountQuery.data,
+  ]);
 
   function setAnswerOfCurrentQuestion(selectedAnswerId: string) {
     setAnswerwedProgress((progress) =>
