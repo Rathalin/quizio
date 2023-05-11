@@ -53,6 +53,7 @@ export default function QuizOverview({
 
   return (
     <Card
+      elevation={2}
       sx={{
         display: 'flex',
         flexDirection: 'column',

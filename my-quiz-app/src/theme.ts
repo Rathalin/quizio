@@ -16,6 +16,10 @@ export const theme = responsiveFontSizes(
       placeholder: {
         main: '#313131',
       },
+      background: {
+        default: '#0f0f0f',
+        paper: '#121212',
+      },
     },
     typography: {
       fontFamily: [
