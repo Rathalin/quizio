@@ -50,6 +50,11 @@
     "uuid": {
       "type": "customField",
       "customField": "plugin::field-uuid.uuid"
+    },
+    "playCount": {
+      "type": "integer",
+      "min": 0,
+      "default": 0
     }
   }
 }

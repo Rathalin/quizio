@@ -2,6 +2,6 @@
  * quiz router
  */
 
-import { factories } from '@strapi/strapi';
+import { factories } from "@strapi/strapi";
 
-export default factories.createCoreRouter('api::quiz.quiz');
+export default factories.createCoreRouter("api::quiz.quiz");
