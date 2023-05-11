@@ -14,12 +14,14 @@ import {
   PlayArrow as PlayArrowIcon,
 } from '@mui/icons-material';
 import LinkButton from './LinkButton';
+import { useMemo } from 'react';
 
 type QuizOverviewProps = {
   uuid: string;
   title: string;
   description: string;
   username: string;
+  createdAt: Date;
   questionCount: number;
   published: boolean;
   imageUrl?: string;
@@ -31,6 +33,7 @@ export default function QuizOverview({
   title,
   description,
   username,
+  createdAt,
   questionCount,
   published,
   imageUrl,
@@ -38,6 +41,11 @@ export default function QuizOverview({
 }: QuizOverviewProps) {
   const theme = useTheme();
   const isQuestionCountSingular = questionCount === 1;
+
+  const dateFormat = useMemo(
+    () => new Intl.DateTimeFormat('en-GB', { dateStyle: 'short' }),
+    []
+  );
 
   function imageLoader({ src }: { src: string }) {
     return `${process.env.NEXT_PUBLIC_BACKEND_URL}${src}`;
@@ -108,6 +116,7 @@ export default function QuizOverview({
                 }`}
                 variant="outlined"
               />
+              <Chip label={dateFormat.format(createdAt)} variant="outlined" />
             </Box>
           </Box>
         </Box>

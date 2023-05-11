@@ -44,6 +44,7 @@ export default function QuizzesOverview() {
               username={
                 quiz.attributes?.owner?.data?.attributes?.username ?? ''
               }
+              createdAt={new Date(quiz.attributes?.createdAt)}
               published={quiz.attributes?.published ?? false}
               questionCount={quiz.attributes?.questions?.data.length ?? 0}
               imageUrl={quiz.attributes?.image?.data?.attributes?.url}
