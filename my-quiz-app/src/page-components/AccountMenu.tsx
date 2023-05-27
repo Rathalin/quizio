@@ -2,7 +2,7 @@ import {
   AccountCircle as AccountCircleIcon,
   Login as LoginIcon,
   Logout as LogoutIcon,
-  Settings as SettingsIcon,
+  // Settings as SettingsIcon,
 } from '@mui/icons-material';
 import {
   Avatar,
@@ -16,6 +16,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { signIn, signOut, useSession } from 'next-auth/react';
+import Link from 'next/link';
 import { useState, type MouseEvent } from 'react';
 
 export default function AccountMenu() {
@@ -100,19 +101,21 @@ export default function AccountMenu() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleClose}>
+        <Link href="/me" style={{ color: 'inherit', textDecoration: 'none' }}>
+          <MenuItem onClick={handleClose}>
+            <ListItemIcon>
+              <AccountCircleIcon />
+            </ListItemIcon>
+            Profile
+          </MenuItem>
+        </Link>
+        {/* <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <AccountCircleIcon />
-          </ListItemIcon>
-          Profile
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <SettingsIcon />
+          <SettingsIcon />
           </ListItemIcon>
           Settings
-        </MenuItem>
+        </MenuItem> */}
+        <Divider />
         <MenuItem
           onClick={() => {
             handleClose();
