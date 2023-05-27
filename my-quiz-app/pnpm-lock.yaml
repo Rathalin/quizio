@@ -37,6 +37,9 @@ dependencies:
   '@types/react-dom':
     specifier: 18.2.1
     version: 18.2.1
+  '@vercel/analytics':
+    specifier: ^1.0.1
+    version: 1.0.1
   eslint:
     specifier: 8.39.0
     version: 8.39.0
@@ -2058,6 +2061,10 @@ packages:
       '@typescript-eslint/types': 5.59.1
       eslint-visitor-keys: 3.4.0
     dev: true
+
+  /@vercel/analytics@1.0.1:
+    resolution: {integrity: sha512-Ux0c9qUfkcPqng3vrR0GTrlQdqNJ2JREn/2ydrVuKwM3RtMfF2mWX31Ijqo1opSjNAq6rK76PwtANw6kl6TAow==}
+    dev: false
 
   /@whatwg-node/events@0.0.3:
     resolution: {integrity: sha512-IqnKIDWfXBJkvy/k6tzskWTc2NK3LcqHlb+KHGCrjOCH4jfQckRX0NAiIcC/vIqQkzLYw2r2CTSwAxcrtcD6lA==}

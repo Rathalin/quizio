@@ -18,6 +18,7 @@ import { SessionProvider } from 'next-auth/react';
 import { Session } from 'next-auth';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import createEmotionCache from '@/createEmotionCache';
+import { Analytics } from '@vercel/analytics/react';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -109,6 +110,7 @@ export default function App(props: MyAppProps) {
               </Head>
               <Layout>
                 <Component {...pageProps} />
+                <Analytics />
               </Layout>
             </ThemeProvider>
             <ReactQueryDevtools initialIsOpen={false} />
