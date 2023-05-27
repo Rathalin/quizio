@@ -1,3 +1,4 @@
+import { usePrefersDarkMode } from '@/custom-hooks/usePrefersDarkMode';
 import {
   AccountCircle as AccountCircleIcon,
   Login as LoginIcon,
@@ -12,6 +13,7 @@ import {
   ListItemIcon,
   Menu,
   MenuItem,
+  lighten,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
@@ -20,13 +22,14 @@ import Link from 'next/link';
 import { useState, type MouseEvent } from 'react';
 
 export default function AccountMenu() {
+  const theme = useTheme();
+  const prefersDarkMode = usePrefersDarkMode();
   const { data: session, status } = useSession();
   const isAuthenticated = status === 'authenticated';
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = anchorEl != null;
 
-  const theme = useTheme();
   const isSmScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   function handleClick(event: MouseEvent<HTMLElement>) {
@@ -68,7 +71,11 @@ export default function AccountMenu() {
       <IconButton onClick={handleClick}>
         <Avatar
           title={session.user.username}
-          sx={{ backgroundColor: 'primary.main', fontWeight: '600' }}
+          sx={{
+            backgroundColor: theme.palette.primary.main,
+            color: theme.palette.primary.contrastText,
+            fontWeight: '600',
+          }}
         >
           {initial}
         </Avatar>
@@ -92,7 +99,7 @@ export default function AccountMenu() {
               right: 24,
               width: 10,
               height: 10,
-              backgroundColor: '#303030e6',
+              backgroundColor: lighten(theme.palette.background.paper, 0.13),
               transform: 'translateY(-50%) rotate(45deg)',
               zIndex: 0,
             },

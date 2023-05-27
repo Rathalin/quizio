@@ -8,10 +8,12 @@ import {
   ListItemButton,
   useTheme,
   darken,
+  lighten,
 } from '@mui/material';
 import { Check as CheckIcon } from '@mui/icons-material';
 import GradientWord from '@/components/GradientWord';
 import { AnsweredState } from '@/pages/play/[id].page';
+import { usePrefersDarkMode } from '@/custom-hooks/usePrefersDarkMode';
 
 type GameSummaryProps = {
   questions: {
@@ -31,6 +33,7 @@ export default function GameSummary({
   answeredProgress,
 }: GameSummaryProps) {
   const theme = useTheme();
+  const prefersDarkMode = usePrefersDarkMode();
   return (
     <>
       <Typography variant="h1">
@@ -66,8 +69,12 @@ export default function GameSummary({
                       '&:hover': { backgroundColor: 'transparent' },
                       '&.Mui-selected, &.Mui-selected:hover': {
                         backgroundColor: answer.correct
-                          ? darken(theme.palette.success.main, 0.6)
-                          : darken(theme.palette.error.main, 0.6),
+                          ? prefersDarkMode
+                            ? darken(theme.palette.success.main, 0.6)
+                            : lighten(theme.palette.success.main, 0.6)
+                          : prefersDarkMode
+                          ? darken(theme.palette.error.main, 0.6)
+                          : lighten(theme.palette.error.main, 0.6),
                       },
                     }}
                   >

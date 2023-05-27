@@ -90,6 +90,7 @@ export default function MePage() {
                     width: '6rem',
                     height: '6rem',
                     fontSize: '2rem',
+                    color: theme.palette.primary.contrastText,
                   }}
                 >
                   {initials}

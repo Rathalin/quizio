@@ -5,22 +5,51 @@ export const createThemeWithMode = (mode: PaletteMode) =>
     createTheme({
       palette: {
         mode,
-        primary: {
-          main: '#d0c15c',
-        },
-        secondary: {
-          main: '#84a9c1',
-        },
-        loading: {
-          main: '#009376',
-        },
-        placeholder: {
-          main: '#313131',
-        },
-        background: {
-          default: '#0f0f0f',
-          paper: '#121212',
-        },
+        ...(mode === 'light'
+          ? {
+              text: {
+                primary: '#000000',
+                secondary: '#181818',
+              },
+              primary: {
+                main: '#ddc40a',
+              },
+              secondary: {
+                main: '#68baec',
+              },
+              loading: {
+                main: '#009376',
+              },
+              placeholder: {
+                main: '#d5d5d5',
+              },
+              background: {
+                default: '#e2e2e2',
+                paper: '#f9f9f9',
+              },
+            }
+          : {
+              text: {
+                primary: '#ffffff',
+                secondary: '#f8f8f8',
+              },
+              primary: {
+                main: '#d0c15c',
+              },
+              secondary: {
+                main: '#84a9c1',
+              },
+              loading: {
+                main: '#009376',
+              },
+              placeholder: {
+                main: '#313131',
+              },
+              background: {
+                default: '#0f0f0f',
+                paper: '#121212',
+              },
+            }),
       },
       typography: {
         fontFamily: [

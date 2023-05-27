@@ -5,6 +5,7 @@ import {
   Chip,
   Typography,
   darken,
+  lighten,
   useTheme,
 } from '@mui/material';
 import PublishStateChip from './PublishStateChip';
@@ -16,6 +17,7 @@ import {
 } from '@mui/icons-material';
 import LinkButton from './LinkButton';
 import { useMemo } from 'react';
+import { usePrefersDarkMode } from '@/custom-hooks/usePrefersDarkMode';
 
 type QuizOverviewProps = {
   uuid: string;
@@ -43,6 +45,7 @@ export default function QuizOverview({
   isMyQuiz,
 }: QuizOverviewProps) {
   const theme = useTheme();
+  const prefersDarkMode = usePrefersDarkMode();
   const isQuestionCountSingular = questionCount === 1;
 
   const dateFormat = useMemo(
@@ -77,7 +80,9 @@ export default function QuizOverview({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: darken(theme.palette.secondary.dark, 0.4),
+            backgroundColor: prefersDarkMode
+              ? darken(theme.palette.secondary.dark, 0.4)
+              : lighten(theme.palette.secondary.light, 0.4),
           }}
         >
           <ImageIcon fontSize="large" />
