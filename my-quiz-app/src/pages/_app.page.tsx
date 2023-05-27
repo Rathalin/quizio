@@ -1,11 +1,11 @@
 import '@/styles/globals.css';
-import { CssBaseline, ThemeProvider } from '@mui/material';
+import { CssBaseline, ThemeProvider, useMediaQuery } from '@mui/material';
 import type { AppProps } from 'next/app';
-import { theme } from '../theme';
+import { createThemeWithMode } from '../theme';
 import Layout from '../page-components/Layout';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { usePageTransition } from '@/stores/page-transition.store';
 import {
   DehydratedState,
@@ -32,6 +32,11 @@ export interface MyAppProps extends AppProps {
 
 export default function App(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const theme = useMemo(
+    () => createThemeWithMode(prefersDarkMode ? 'dark' : 'light'),
+    [prefersDarkMode]
+  );
   const [queryClient] = useState(() => new QueryClient());
 
   const router = useRouter();
