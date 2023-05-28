@@ -1,5 +1,5 @@
 import LinkButton from '@/components/LinkButton';
-import { queryMe } from '@/graphql/user';
+import { getMeGQL } from '@/graphql/user';
 import MeDataPlaceholder from '@/page-components/me/MeDataPlaceholder';
 import MeImagePlaceholder from '@/page-components/me/MeImagePlaceholder';
 import {
@@ -26,7 +26,7 @@ export default function MePage() {
     queryFn: () =>
       request(
         process.env.NEXT_PUBLIC_GRAPHQL_URL,
-        queryMe,
+        getMeGQL,
         {},
         {
           Authorization: `Bearer ${session?.user.acessToken}`,

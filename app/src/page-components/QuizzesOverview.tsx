@@ -1,6 +1,6 @@
 import QuizOverview from '@/components/QuizOverview';
 import QuizOverviewPlaceholder from '@/components/QuizOverviewPlaceholder';
-import { queryAllPublishedQuizzes } from '@/graphql/quizzes';
+import { getAllPublishedQuizzesGQL } from '@/graphql/quizzes';
 import { Alert, Box, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
@@ -9,7 +9,7 @@ export default function QuizzesOverview() {
   const { data, isSuccess, isLoading, isError } = useQuery({
     queryKey: ['allPublishedQuizzes'],
     queryFn: () =>
-      request(process.env.NEXT_PUBLIC_GRAPHQL_URL, queryAllPublishedQuizzes),
+      request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getAllPublishedQuizzesGQL),
   });
 
   const quizzes = data?.quizzes?.data ?? [];

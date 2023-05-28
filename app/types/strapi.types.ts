@@ -1,7 +1,7 @@
 export type StrapiUserReponse = {
   jwt: string;
   user: {
-    id: number;
+    id: string;
     username: string;
     email: string;
     provider: string;

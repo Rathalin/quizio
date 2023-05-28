@@ -1,5 +1,5 @@
 import LinkButton from '@/components/LinkButton';
-import { queryQuizzesByUuid } from '@/graphql/quizzes';
+import { getQuizzesByUuidGQL } from '@/graphql/quizzes';
 import GameSummary from '@/page-components/game/GameSummary';
 import PickAnAnswer from '@/page-components/game/PickAnAnswer';
 import QuizNotFound from '@/page-components/game/QuizNotFound';
@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps<{
   }
 
   await queryClient.prefetchQuery(['quiz', id], () =>
-    request(process.env.NEXT_PUBLIC_GRAPHQL_URL, queryQuizzesByUuid, {
+    request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getQuizzesByUuidGQL, {
       uuid: id,
     })
   );
@@ -64,7 +64,7 @@ export default function PlayIdPage({
   const quizQuery = useQuery({
     queryKey: ['quiz', gameId],
     queryFn: () =>
-      request(process.env.NEXT_PUBLIC_GRAPHQL_URL, queryQuizzesByUuid, {
+      request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getQuizzesByUuidGQL, {
         uuid: gameId,
       }),
     staleTime: Infinity,

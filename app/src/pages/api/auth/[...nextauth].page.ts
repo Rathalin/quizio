@@ -42,7 +42,7 @@ export const authOptions: AuthOptions = {
     async session({ session, token, user }) {
       const responseData = token as StrapiUserReponse;
       session.user = {
-        id: responseData.user.id,
+        id: parseInt(responseData.user.id),
         username: responseData.user.username,
         email: responseData.user.email,
         createdAt: responseData.user.createdAt,
@@ -53,7 +53,7 @@ export const authOptions: AuthOptions = {
   },
   pages: {
     signIn: '/auth/signin',
-    error: '/auth/error',
+    // error: '/auth/error',
     signOut: '/auth/signout',
   },
 };

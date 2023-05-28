@@ -1,7 +1,7 @@
-import { graphql } from './generated/gql';
+import { graphql } from './generated';
 
-export const queryMe = graphql(`
-  query me {
+export const getMeGQL = graphql(`
+  query getMe {
     me {
       id
       username

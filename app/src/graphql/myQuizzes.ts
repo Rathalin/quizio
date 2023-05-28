@@ -1,7 +1,7 @@
-import { graphql } from './generated/gql';
+import { graphql } from './generated';
 
-export const queryMyQuizzesOverviewOfOwner = graphql(`
-  query myQuizsOverviewsOfOwner($ownerId: ID!) {
+export const getMyQuizzesOverviewOfOwnerGQL = graphql(`
+  query getMyQuizsOverviewsOfOwner($ownerId: ID!) {
     quizzes(filters: { owner: { id: { eq: $ownerId } } }) {
       data {
         id

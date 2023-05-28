@@ -1,6 +1,6 @@
-import { graphql } from './generated/gql';
+import { graphql } from './generated';
 
-export const queryPlayCountOfQuiz = graphql(`
+export const getPlayCountOfQuizGQL = graphql(`
   query getPlayCountOfQuiz($quizId: ID!) {
     quiz(id: $quizId) {
       data {
@@ -12,7 +12,7 @@ export const queryPlayCountOfQuiz = graphql(`
   }
 `);
 
-export const mutatePlayCountOfQuiz = graphql(`
+export const updatePlayCountOfQuizGQL = graphql(`
   mutation updatePlayCountOfQuiz($quizId: ID!, $playCount: Int!) {
     updateQuiz(id: $quizId, data: { playCount: $playCount }) {
       data {

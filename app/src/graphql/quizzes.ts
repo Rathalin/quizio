@@ -1,6 +1,6 @@
-import { graphql } from './generated/gql';
+import { graphql } from './generated';
 
-export const queryAllPublishedQuizzes = graphql(`
+export const getAllPublishedQuizzesGQL = graphql(`
   query getAllPublishedQuizzes {
     quizzes(filters: { published: { eq: true } }, sort: "createdAt:DESC") {
       data {
@@ -39,7 +39,7 @@ export const queryAllPublishedQuizzes = graphql(`
   }
 `);
 
-export const queryQuizzesByUuid = graphql(`
+export const getQuizzesByUuidGQL = graphql(`
   query getQuizzesByUuid($uuid: String!) {
     quizzes(filters: { uuid: { eq: $uuid } }) {
       data {
