@@ -17,7 +17,7 @@ import {
 } from '@mui/icons-material';
 import LinkButton from './LinkButton';
 import { useMemo } from 'react';
-import { usePrefersDarkMode } from '@/custom-hooks/usePrefersDarkMode';
+import { usePrefersLightMode } from '@/custom-hooks/usePrefersLightMode';
 
 type QuizOverviewProps = {
   uuid: string;
@@ -45,7 +45,7 @@ export default function QuizOverview({
   isMyQuiz,
 }: QuizOverviewProps) {
   const theme = useTheme();
-  const prefersDarkMode = usePrefersDarkMode();
+  const prefersLightMode = usePrefersLightMode();
   const isQuestionCountSingular = questionCount === 1;
 
   const dateFormat = useMemo(
@@ -80,9 +80,9 @@ export default function QuizOverview({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: prefersDarkMode
-              ? darken(theme.palette.secondary.dark, 0.4)
-              : lighten(theme.palette.secondary.light, 0.4),
+            backgroundColor: prefersLightMode
+              ? lighten(theme.palette.secondary.light, 0.4)
+              : darken(theme.palette.secondary.dark, 0.4),
           }}
         >
           <ImageIcon fontSize="large" />

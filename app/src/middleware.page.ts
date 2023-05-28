@@ -8,4 +8,4 @@ export default withAuth({
   // },
 });
 
-export const config = { matcher: ['/create'] };
+export const config = { matcher: ['/create', '/me'] };

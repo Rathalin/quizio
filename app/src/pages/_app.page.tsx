@@ -19,6 +19,7 @@ import { Session } from 'next-auth';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import createEmotionCache from '@/createEmotionCache';
 import { Analytics } from '@vercel/analytics/react';
+import { usePrefersLightMode } from '@/custom-hooks/usePrefersLightMode';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -33,10 +34,10 @@ export interface MyAppProps extends AppProps {
 
 export default function App(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const prefersLightMode = usePrefersLightMode();
   const theme = useMemo(
-    () => createThemeWithMode(prefersDarkMode ? 'dark' : 'light'),
-    [prefersDarkMode]
+    () => createThemeWithMode(prefersLightMode ? 'light' : 'dark'),
+    [prefersLightMode]
   );
   const [queryClient] = useState(() => new QueryClient());
 

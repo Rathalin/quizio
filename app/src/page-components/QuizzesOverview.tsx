@@ -32,7 +32,7 @@ export default function QuizzesOverview() {
       }}
     >
       {isLoading &&
-        Array.from({ length: 3 }).map((_, index) => (
+        Array.from({ length: 6 }).map((_, index) => (
           <QuizOverviewPlaceholder key={index} />
         ))}
       {isSuccess &&

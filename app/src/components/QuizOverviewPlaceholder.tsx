@@ -1,25 +1,23 @@
-import { Card, CardContent, Grid } from '@mui/material';
+import { Card, CardContent, CardMedia, Stack } from '@mui/material';
 import PlaceholderTypography from './placeholders/PlaceholderTypography';
+import PlaceholderBox from './placeholders/PlaceholderBox';
 
 export default function QuizOverviewPlaceholder() {
   return (
     <Card sx={{ minHeight: '8rem' }}>
+      <CardMedia>
+        <PlaceholderBox minHeight="10rem" />
+      </CardMedia>
       <CardContent>
-        <Grid container>
-          <Grid item xs={12} sm={8}>
-            <PlaceholderTypography variant="h3" sx={{ marginTop: 1 }} />
-          </Grid>
-        </Grid>
-        <Grid container>
-          <Grid item xs={6} sm={4}>
-            <PlaceholderTypography />
-          </Grid>
-        </Grid>
-        <Grid container>
-          <Grid item xs={4} sm={3}>
-            <PlaceholderTypography />
-          </Grid>
-        </Grid>
+        <Stack alignItems="start">
+          <PlaceholderTypography
+            variant="h3"
+            sx={{ marginTop: 1 }}
+            text="Et consectetur irure."
+          />
+          <PlaceholderTypography text="Adipisicing amet dolor ullamco Adipisicing amet dolor ullamco." />
+          <PlaceholderTypography text="Et consectetur irure." />
+        </Stack>
       </CardContent>
     </Card>
   );

@@ -1,9 +1,13 @@
 import { Box, Typography, TypographyProps, useTheme } from '@mui/material';
 
-type PlaceholderTypographyProps = {} & Omit<TypographyProps, 'children'>;
+type PlaceholderTypographyProps = { text?: string } & Omit<
+  TypographyProps,
+  'children'
+>;
 
 export default function PlaceholderTypography({
   lineHeight,
+  text = '',
   ...props
 }: PlaceholderTypographyProps) {
   const theme = useTheme();
@@ -16,13 +20,14 @@ export default function PlaceholderTypography({
           display: 'flow-root',
           marginBlock: '.4em',
           lineHeight: '1em',
+          minWidth: '1ch',
           color: 'transparent',
           userSelect: 'none',
           borderRadius: 1,
           animation: 'flashing 1.5s ease-in-out infinite',
         }}
       >
-        I
+        {text}
       </Box>
     </Typography>
   );

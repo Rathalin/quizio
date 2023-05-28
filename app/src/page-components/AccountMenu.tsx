@@ -1,4 +1,4 @@
-import { usePrefersDarkMode } from '@/custom-hooks/usePrefersDarkMode';
+import { usePrefersLightMode } from '@/custom-hooks/usePrefersLightMode';
 import {
   AccountCircle as AccountCircleIcon,
   Login as LoginIcon,
@@ -23,7 +23,7 @@ import { useState, type MouseEvent } from 'react';
 
 export default function AccountMenu() {
   const theme = useTheme();
-  const prefersDarkMode = usePrefersDarkMode();
+  const prefersLightMode = usePrefersLightMode();
   const { data: session, status } = useSession();
   const isAuthenticated = status === 'authenticated';
 
