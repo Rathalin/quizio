@@ -40,11 +40,13 @@ export default function CreateQuizSummaryPage() {
     title: quizTitle,
     description: quizDescription,
     questions,
+    clearDraft,
   } = useQuizDraft(
     (state) => ({
       title: state.title,
       description: state.description,
       questions: state.questions,
+      clearDraft: state.clearDraft,
     }),
     shallow
   );
@@ -73,16 +75,19 @@ export default function CreateQuizSummaryPage() {
             });
 
             // Create answers
-            for (const answer of question.answers) {
-              await createAnswerMutation.mutateAsync({
-                title: answer.text,
-                correct: answer.isCorrect,
-                question: questionData.createQuestion?.data?.id,
-              });
-            }
+            await Promise.all(
+              question.answers.map(async (answer) => {
+                await createAnswerMutation.mutateAsync({
+                  title: answer.text,
+                  correct: answer.isCorrect,
+                  question: questionData.createQuestion?.data?.id,
+                });
+              })
+            );
           })
         );
         router.push('/');
+        clearDraft();
       } catch (error) {
         console.error(error);
       }
@@ -118,7 +123,6 @@ export default function CreateQuizSummaryPage() {
   });
 
   function handleFinishQuizClick() {
-    console.log(`UserID: ${session?.user?.id}`);
     // Create quiz
     createQuizMutation.mutate({
       title: quizTitle,
