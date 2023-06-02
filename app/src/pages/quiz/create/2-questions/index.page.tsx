@@ -1,6 +1,6 @@
 import GradientWord from '@/components/GradientWord';
 import LinkButton from '@/components/LinkButton';
-import QuestionInput from '@/page-components/create/question/QuestionInput';
+import QuestionInput from '@/page-components/quiz/question/QuestionInput';
 import {
   AnswerDraft,
   QuestionDraft,
