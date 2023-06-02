@@ -29,7 +29,7 @@ export default function CreateQuizGeneralPage() {
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    router.push('/create/2-questions');
+    router.push('/quiz/create/2-questions');
   }
 
   return (
@@ -82,7 +82,7 @@ export default function CreateQuizGeneralPage() {
               Cancel
             </LinkButton>
             <LinkButton
-              hrefObserver="/create/2-questions"
+              hrefObserver="/quiz/create/2-questions"
               type="submit"
               sx={{ marginLeft: 'auto' }}
               variant="contained"
