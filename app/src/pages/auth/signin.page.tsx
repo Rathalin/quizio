@@ -1,5 +1,5 @@
 import GradientWord from '@/components/GradientWord';
-import LinkButton from '@/components/LinkButton';
+import HomeButton from '@/components/buttons/HomeButton';
 import {
   Box,
   Button,
@@ -86,14 +86,7 @@ export default function SigninPage() {
             justifyContent: 'space-between',
           }}
         >
-          <LinkButton
-            hrefObserver="/"
-            navigateOnClick
-            variant="outlined"
-            iconSide="right"
-          >
-            Home
-          </LinkButton>
+          <HomeButton />
           <Button variant="contained" color="primary" type="submit">
             Login
           </Button>

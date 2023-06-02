@@ -1,4 +1,4 @@
-import LinkButton from '@/components/LinkButton';
+import HomeButton from '@/components/buttons/HomeButton';
 import { Box, Alert } from '@mui/material';
 
 export default function QuizNotFound() {
@@ -6,9 +6,7 @@ export default function QuizNotFound() {
     <Box>
       <Alert severity="warning">This quiz does not exist 😮</Alert>
       <Box sx={{ marginTop: 4, display: 'flex', justifyContent: 'end' }}>
-        <LinkButton hrefObserver="/" navigateOnClick variant="contained">
-          Home
-        </LinkButton>
+        <HomeButton />
       </Box>
     </Box>
   );

@@ -2,7 +2,7 @@ import { usePageTransition } from '@/stores/page-transition.store';
 import { Box, Button, ButtonProps, CircularProgress } from '@mui/material';
 import Link from 'next/link';
 
-type LinkButtonProps = {
+export type LinkButtonProps = {
   hrefObserver: string;
   reason?: string;
   navigateOnClick?: boolean;

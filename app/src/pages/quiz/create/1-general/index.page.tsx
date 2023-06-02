@@ -1,5 +1,6 @@
 import GradientWord from '@/components/GradientWord';
 import LinkButton from '@/components/LinkButton';
+import HomeButton from '@/components/buttons/HomeButton';
 import { useQuizDraft } from '@/stores/quiz-draft.store';
 import { ArrowForward as ArrowForwardIcon } from '@mui/icons-material';
 import {
@@ -108,14 +109,7 @@ export default function CreateQuizGeneralPage() {
             }}
             disableSpacing
           >
-            <LinkButton
-              hrefObserver="/"
-              navigateOnClick
-              iconSide="right"
-              variant="outlined"
-            >
-              Cancel
-            </LinkButton>
+            <HomeButton>Cancel</HomeButton>
             <LinkButton
               hrefObserver="/quiz/create/2-questions"
               type="submit"

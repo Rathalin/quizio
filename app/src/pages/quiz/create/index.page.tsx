@@ -1,25 +1,35 @@
 import GradientWord from '@/components/GradientWord';
+import HomeButton from '@/components/buttons/HomeButton';
 import { useIsMobile } from '@/custom-hooks/useIsMobile';
 import MobileQuizStepper from '@/page-components/quiz/create/MobileQuizStepper';
-import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import {
   Box,
-  Button,
   Card,
   CardContent,
   Grid,
-  MobileStepper,
+  Stack,
   Step,
   StepLabel,
   Stepper,
   Typography,
 } from '@mui/material';
-import { useEffect } from 'react';
+import { useState } from 'react';
 
 export default function QuizCreatePage() {
   const isMobile = useIsMobile();
 
-  const steps = ['General', 'Questions', 'Summary'];
+  const steps = ['General', 'Questions', 'Summary'] as const;
+  const [activeStep, setActiveStep] = useState(0);
+
+  function handleNext() {
+    setActiveStep((prevActiveStep) =>
+      Math.min(prevActiveStep + 1, steps.length - 1)
+    );
+  }
+
+  function handleBack() {
+    setActiveStep((prevActiveStep) => Math.max(prevActiveStep - 1, 0));
+  }
 
   return (
     <Box>
@@ -41,14 +51,23 @@ export default function QuizCreatePage() {
                   ))}
                 </Stepper>
               ) : (
-                <MobileQuizStepper steps={steps} />
+                <MobileQuizStepper
+                  activeStep={activeStep}
+                  steps={steps}
+                  onNext={handleNext}
+                  onBack={handleBack}
+                />
               )}
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={12} sm={9}>
           <Card>
-            <CardContent>Hello</CardContent>
+            <CardContent>
+              <Stack direction="row" justifyContent="space-between">
+                <HomeButton />
+              </Stack>
+            </CardContent>
           </Card>
         </Grid>
       </Grid>

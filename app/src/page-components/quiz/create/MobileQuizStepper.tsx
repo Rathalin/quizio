@@ -1,24 +1,22 @@
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import { Button, MobileStepper, useTheme } from '@mui/material';
-import { useState } from 'react';
 
 type MobileQuizStepperProps = {
-  steps: string[];
+  activeStep: number;
+  onNext: () => void;
+  onBack: () => void;
+  steps: readonly string[];
 };
 
-export default function MobileQuizStepper({ steps }: MobileQuizStepperProps) {
+export default function MobileQuizStepper({
+  steps,
+  activeStep,
+  onNext,
+  onBack,
+}: MobileQuizStepperProps) {
   const theme = useTheme();
 
-  const [activeStep, setActiveStep] = useState(0);
   const maxSteps = steps.length;
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
 
   return (
     <MobileStepper
@@ -29,7 +27,7 @@ export default function MobileQuizStepper({ steps }: MobileQuizStepperProps) {
       nextButton={
         <Button
           size="small"
-          onClick={handleNext}
+          onClick={() => onNext()}
           disabled={activeStep === maxSteps - 1}
         >
           Next
@@ -41,7 +39,11 @@ export default function MobileQuizStepper({ steps }: MobileQuizStepperProps) {
         </Button>
       }
       backButton={
-        <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
+        <Button
+          size="small"
+          onClick={() => onBack()}
+          disabled={activeStep === 0}
+        >
           {theme.direction === 'rtl' ? (
             <KeyboardArrowRight />
           ) : (

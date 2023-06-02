@@ -1,4 +1,4 @@
-import LinkButton from '@/components/LinkButton';
+import HomeButton from '@/components/buttons/HomeButton';
 import { getMeGQL } from '@/graphql/user';
 import MeDataPlaceholder from '@/page-components/user/me/MeDataPlaceholder';
 import MeImagePlaceholder from '@/page-components/user/me/MeImagePlaceholder';
@@ -103,14 +103,7 @@ export default function MePage() {
             gap={2}
             sx={{ marginTop: 4 }}
           >
-            <LinkButton
-              hrefObserver="/"
-              navigateOnClick
-              variant="outlined"
-              iconSide="right"
-            >
-              Home
-            </LinkButton>
+            <HomeButton />
           </Stack>
         </CardActions>
       </Card>

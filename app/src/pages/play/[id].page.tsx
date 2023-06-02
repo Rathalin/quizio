@@ -1,8 +1,8 @@
-import LinkButton from '@/components/LinkButton';
+import HomeButton from '@/components/buttons/HomeButton';
 import { getQuizzesByUuidGQL } from '@/graphql/quizzes';
-import GameSummary from '@/page-components/game/GameSummary';
-import PickAnAnswer from '@/page-components/game/PickAnAnswer';
-import QuizNotFound from '@/page-components/game/QuizNotFound';
+import GameSummary from '@/page-components/quiz/game/GameSummary';
+import PickAnAnswer from '@/page-components/quiz/game/PickAnAnswer';
+import QuizNotFound from '@/page-components/quiz/game/QuizNotFound';
 import { ContentCopy as ContentCopyIcon } from '@mui/icons-material';
 import {
   Box,
@@ -227,14 +227,7 @@ export default function PlayIdPage({
                         flexWrap: 'wrap',
                       }}
                     >
-                      <LinkButton
-                        hrefObserver="/"
-                        navigateOnClick
-                        variant="outlined"
-                        iconSide="right"
-                      >
-                        Home
-                      </LinkButton>
+                      <HomeButton />
                       <Button
                         variant="contained"
                         disabled={answerState?.selectedAnswerId == null}
@@ -273,14 +266,7 @@ export default function PlayIdPage({
                         flexWrap: 'wrap',
                       }}
                     >
-                      <LinkButton
-                        hrefObserver="/"
-                        navigateOnClick
-                        variant="outlined"
-                        iconSide="right"
-                      >
-                        Home
-                      </LinkButton>
+                      <HomeButton />
                       <Button
                         variant="contained"
                         endIcon={<ContentCopyIcon />}
