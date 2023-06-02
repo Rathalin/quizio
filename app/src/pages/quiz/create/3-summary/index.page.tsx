@@ -191,7 +191,7 @@ export default function CreateQuizSummaryPage() {
           disableSpacing
         >
           <LinkButton
-            hrefObserver="/create/2-questions"
+            hrefObserver="/quiz/create/2-questions"
             navigateOnClick
             variant="outlined"
             iconSide="right"

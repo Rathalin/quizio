@@ -39,7 +39,7 @@ export default function Home() {
           sx={{ marginBottom: 4 }}
         >
           <LinkButton
-            hrefObserver="/create/1-general"
+            hrefObserver="/quiz/create/1-general"
             navigateOnClick
             variant="contained"
             iconSide="right"

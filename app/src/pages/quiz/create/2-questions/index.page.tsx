@@ -1,6 +1,6 @@
 import GradientWord from '@/components/GradientWord';
 import LinkButton from '@/components/LinkButton';
-import QuestionInput from '@/page-components/create/question/QuestionInput';
+import QuestionInput from '@/page-components/quiz/question/QuestionInput';
 import {
   AnswerDraft,
   QuestionDraft,
@@ -88,7 +88,7 @@ export default function CreateQuizQuestionsPage() {
           }}
         >
           <LinkButton
-            hrefObserver="/create/1-general"
+            hrefObserver="/quiz/create/1-general"
             navigateOnClick
             variant="outlined"
             iconSide="right"
@@ -98,7 +98,7 @@ export default function CreateQuizQuestionsPage() {
           </LinkButton>
           <LinkButton
             sx={{ marginLeft: 'auto' }}
-            hrefObserver="/create/3-summary"
+            hrefObserver="/quiz/create/3-summary"
             navigateOnClick
             variant="contained"
             endIcon={<ArrowForwardIcon />}

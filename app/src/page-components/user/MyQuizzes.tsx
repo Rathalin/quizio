@@ -58,7 +58,7 @@
 //         }}
 //       >
 //         <LinkButton
-//           hrefObserver="/create/1-general"
+//           hrefObserver="/quiz/create/1-general"
 //           navigateOnClick
 //           iconSide="right"
 //           variant="contained"

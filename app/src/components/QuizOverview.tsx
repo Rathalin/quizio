@@ -3,21 +3,24 @@ import {
   Card,
   CardContent,
   Chip,
+  IconButton,
+  Tooltip,
   Typography,
   darken,
   lighten,
   useTheme,
 } from '@mui/material';
-import PublishStateChip from './PublishStateChip';
 import Image from 'next/image';
 import {
   BarChart as BarChartIcon,
+  Edit as EditIcon,
   Image as ImageIcon,
   PlayArrow as PlayArrowIcon,
 } from '@mui/icons-material';
 import LinkButton from './LinkButton';
 import { useMemo } from 'react';
 import { usePrefersLightMode } from '@/custom-hooks/usePrefersLightMode';
+import Link from 'next/link';
 
 type QuizOverviewProps = {
   uuid: string;
@@ -104,6 +107,17 @@ export default function QuizOverview({
               sx={{ display: 'flex', justifyContent: 'space-between' }}
             >
               {title}
+              {isMyQuiz && (
+                <Box sx={{ justifySelf: 'center' }}>
+                  <Link href={`/quiz/edit/${uuid}`}>
+                    <Tooltip title="Edit your quiz" arrow>
+                      <IconButton>
+                        <EditIcon color="secondary" />
+                      </IconButton>
+                    </Tooltip>
+                  </Link>
+                </Box>
+              )}
             </Typography>
           </Box>
           <Box>
@@ -111,12 +125,7 @@ export default function QuizOverview({
               {description}
             </Typography>
             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-              {isMyQuiz && (
-                <Box sx={{ justifySelf: 'center' }}>
-                  <PublishStateChip published={published} />
-                </Box>
-              )}
-              {!isMyQuiz && <Chip label={username} variant="filled" />}
+              <Chip label={username} variant="filled" />
               <Chip
                 label={`${questionCount} question${
                   isQuestionCountSingular ? '' : 's'
