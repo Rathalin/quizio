@@ -4,8 +4,10 @@ import { getAllPublishedQuizzesGQL } from '@/graphql/quizzes';
 import { Alert, Box, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
+import { useSession } from 'next-auth/react';
 
 export default function QuizzesOverview() {
+  const { data: session, status } = useSession();
   const { data, isSuccess, isLoading, isError } = useQuery({
     queryKey: ['allPublishedQuizzes'],
     queryFn: () =>
@@ -51,7 +53,10 @@ export default function QuizzesOverview() {
               questionCount={quiz.attributes?.questions?.data.length ?? 0}
               playCount={quiz.attributes?.playCount ?? 0}
               imageUrl={quiz.attributes?.image?.data?.attributes?.url}
-              isMyQuiz={false}
+              isMyQuiz={
+                quiz.attributes?.owner?.data?.attributes?.username ===
+                session?.user.username
+              }
             />
           ))
         ) : (
