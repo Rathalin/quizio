@@ -1,6 +1,6 @@
 {
-  "extends": ["next", "prettier", "react/jsx-key"],
-  "plugins": ["unused-imports"],
+  "extends": ["next", "prettier"],
+  "plugins": ["unused-imports", "react"],
   "rules": {
     "unused-imports/no-unused-imports": "error",
     "react/jsx-key": "error"
