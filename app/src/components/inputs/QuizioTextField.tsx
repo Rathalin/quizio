@@ -13,6 +13,8 @@ export default function QuizioTextField({
   helperText,
   value,
   inputProps,
+  fullWidth,
+  sx,
   ...props
 }: QuizioTextInputProps) {
   const remainingCharacters = useMemo(() => {
@@ -21,8 +23,15 @@ export default function QuizioTextField({
   }, [value, inputProps?.maxLength]);
 
   return (
-    <Box>
-      <TextField value={value} inputProps={inputProps} {...props} />
+    <Stack
+      sx={{ display: 'inline-flex', width: fullWidth ? '100%' : 'auto', ...sx }}
+    >
+      <TextField
+        value={value}
+        inputProps={inputProps}
+        fullWidth={fullWidth}
+        {...props}
+      />
       <Stack
         direction="row"
         justifyContent="space-between"
@@ -31,6 +40,6 @@ export default function QuizioTextField({
         <FormHelperText error>{helperText}</FormHelperText>
         <FormHelperText>{remainingCharacters}</FormHelperText>
       </Stack>
-    </Box>
+    </Stack>
   );
 }
