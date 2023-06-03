@@ -7,11 +7,18 @@ type HomeButtonProps = Omit<
 
 export default function HomeButton({
   children,
+  iconSide = 'right',
   variant = 'outlined',
   ...props
 }: HomeButtonProps) {
   return (
-    <LinkButton hrefObserver="/" navigateOnClick variant={variant} {...props}>
+    <LinkButton
+      hrefObserver="/"
+      navigateOnClick
+      variant={variant}
+      iconSide={iconSide}
+      {...props}
+    >
       {children != null ? children : 'Home'}
     </LinkButton>
   );

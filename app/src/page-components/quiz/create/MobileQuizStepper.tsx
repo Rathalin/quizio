@@ -1,11 +1,13 @@
-import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
-import { Button, MobileStepper, useTheme } from '@mui/material';
+import { MobileStepper, useTheme } from '@mui/material';
+import { StepData } from '@/pages/quiz/create/index.page';
+import BackButton from './BackButton';
+import NextButton from './NextButton';
 
 type MobileQuizStepperProps = {
   activeStep: number;
   onNext: () => void;
   onBack: () => void;
-  steps: readonly string[];
+  steps: StepData[];
 };
 
 export default function MobileQuizStepper({
@@ -25,32 +27,14 @@ export default function MobileQuizStepper({
       steps={maxSteps}
       activeStep={activeStep}
       nextButton={
-        <Button
-          size="small"
-          onClick={() => onNext()}
-          disabled={activeStep === maxSteps - 1}
-        >
-          Next
-          {theme.direction === 'rtl' ? (
-            <KeyboardArrowLeft />
-          ) : (
-            <KeyboardArrowRight />
-          )}
-        </Button>
+        <NextButton activeStep={activeStep} onNext={onNext} maxSteps={maxSteps}>
+          {steps.at(activeStep)?.nextLabel}
+        </NextButton>
       }
       backButton={
-        <Button
-          size="small"
-          onClick={() => onBack()}
-          disabled={activeStep === 0}
-        >
-          {theme.direction === 'rtl' ? (
-            <KeyboardArrowRight />
-          ) : (
-            <KeyboardArrowLeft />
-          )}
-          Back
-        </Button>
+        <BackButton activeStep={activeStep} onBack={onBack}>
+          {steps.at(activeStep)?.backLabel}
+        </BackButton>
       }
     />
   );

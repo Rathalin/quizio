@@ -88,7 +88,7 @@ export default function CreateQuizQuestionsPage() {
           }}
         >
           <LinkButton
-            hrefObserver="/quiz/create/1-general"
+            hrefObserver="/quiz/create"
             navigateOnClick
             variant="outlined"
             iconSide="right"
