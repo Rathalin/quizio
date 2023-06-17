@@ -1,15 +1,12 @@
-import { Box, Stack, Typography } from '@mui/material';
-import GradientWord from '@/components/GradientWord';
+import { Box, Stack } from '@mui/material';
 import QuizzesOverview from '@/page-components/QuizzesOverview';
-import AccountMenu from '@/page-components/AccountMenu';
-import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import LinkButton from '@/components/LinkButton';
 
 export default function Home() {
   const session = useSession();
   return (
-    <Box>
+    <Box sx={{ marginTop: 2 }}>
       {session.status === 'authenticated' && (
         <Stack
           direction="row"

@@ -22,35 +22,33 @@ export default function QuestionsForm() {
   });
 
   return (
-    <Box>
-      <Box>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          {fields.map((field, index) => (
-            <QuestionIndexContext.Provider key={field.id} value={index}>
-              <QuestionInput
-                onDelete={() => remove(index)}
-                deletable={fields.length > minQuestions}
-              />
-            </QuestionIndexContext.Provider>
-          ))}
-        </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            marginTop: 2,
-            marginBottom: 2,
-          }}
-        >
-          <Button
-            startIcon={<AddIcon />}
-            variant="outlined"
-            onClick={() => append(emptyQuestion)}
-          >
-            Another Question
-          </Button>
-        </Box>
+    <>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        {fields.map((field, index) => (
+          <QuestionIndexContext.Provider key={field.id} value={index}>
+            <QuestionInput
+              onDelete={() => remove(index)}
+              deletable={fields.length > minQuestions}
+            />
+          </QuestionIndexContext.Provider>
+        ))}
       </Box>
-    </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginTop: 2,
+          marginBottom: 2,
+        }}
+      >
+        <Button
+          startIcon={<AddIcon />}
+          variant="outlined"
+          onClick={() => append(emptyQuestion)}
+        >
+          Another Question
+        </Button>
+      </Box>
+    </>
   );
 }

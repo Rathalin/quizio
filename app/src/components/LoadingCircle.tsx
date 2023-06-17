@@ -1,5 +1,11 @@
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, CircularProgressProps } from '@mui/material';
 
-export default function LoadingCircle() {
-  return <CircularProgress />;
+type LoadingCircleProps = CircularProgressProps & {};
+
+export default function LoadingCircle({
+  size = '1rem',
+  color = 'loading',
+  ...other
+}: LoadingCircleProps) {
+  return <CircularProgress size={size} color={color} {...other} />;
 }

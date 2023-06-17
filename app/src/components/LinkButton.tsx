@@ -1,6 +1,7 @@
 import { usePageTransition } from '@/stores/page-transition.store';
-import { Box, Button, ButtonProps, CircularProgress } from '@mui/material';
+import { Box, Button, ButtonProps } from '@mui/material';
 import Link from 'next/link';
+import LoadingCircle from './LoadingCircle';
 
 export type LinkButtonProps = {
   hrefObserver: string;
@@ -22,9 +23,7 @@ export default function LinkButton({
   const loading =
     transitionHref === hrefObserver &&
     (reason == null || reason === transitionReason);
-  const icon = loading ? (
-    <CircularProgress size="1rem" color="loading" />
-  ) : null;
+  const icon = loading ? <LoadingCircle /> : null;
 
   const button = (
     <Button

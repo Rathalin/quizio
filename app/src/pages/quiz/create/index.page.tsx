@@ -1,11 +1,10 @@
 import GradientWord from '@/components/GradientWord';
-import { useIsMobile } from '@/custom-hooks/useIsMobile';
 import OverviewForm from '@/page-components/quiz/create/OverviewForm';
 import QuestionsForm from '@/page-components/quiz/create/QuestionsForm';
 import SummaryForm from '@/page-components/quiz/create/SummaryForm';
-import MobileQuizStepper from '@/page-components/quiz/create/MobileQuizStepper';
 import {
   Box,
+  Button,
   Card,
   CardActions,
   CardContent,
@@ -15,10 +14,26 @@ import {
   Stepper,
   Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import BackButton from '@/page-components/quiz/create/BackButton';
 import NextButton from '@/page-components/quiz/create/NextButton';
+import {
+  createQuizGQL,
+  createQuestionGQL,
+  createAnswerGQL,
+} from '@/graphql/createQuiz';
+import {
+  QuizInput,
+  QuestionInput,
+  AnswerInput,
+} from '@/graphql/generated/graphql';
+import { useMutation } from '@tanstack/react-query';
+import request from 'graphql-request';
+import router from 'next/router';
+import { useSession } from 'next-auth/react';
+import { Publish as PublishIcon } from '@mui/icons-material';
+import LoadingCircle from '@/components/LoadingCircle';
 
 const stepTitles = ['Overview', 'Questions', 'Summary'] as const;
 export type StepData = {
@@ -35,7 +50,7 @@ const steps = stepTitles.map((title, index) => ({
 export type QuizCreateFormFields = {
   title: string;
   description: string;
-  image: FileList;
+  image?: FileList;
   questions: {
     title: string;
     answers: {
@@ -45,28 +60,118 @@ export type QuizCreateFormFields = {
   }[];
 };
 
+export const emptyQuizFormData = {
+  title: '',
+  description: '',
+  image: undefined,
+  questions: [
+    {
+      title: '',
+      answers: [
+        { title: '', isCorrect: false },
+        { title: '', isCorrect: false },
+      ],
+    },
+  ],
+} satisfies QuizCreateFormFields;
+
 export default function QuizCreatePage() {
-  const isMobile = useIsMobile();
+  const { data: session, status } = useSession();
 
   const [activeStep, setActiveStep] = useState(0);
 
   const { ...methods } = useForm<QuizCreateFormFields>({
-    defaultValues: {
-      title: '',
-      description: '',
-      image: undefined,
-      questions: [
+    defaultValues: emptyQuizFormData,
+  });
+  const { getValues, reset, handleSubmit } = methods;
+  const { title, description, questions } = getValues() as QuizCreateFormFields;
+
+  const createQuizMutation = useMutation({
+    mutationKey: ['createQuiz'],
+    mutationFn: (data: QuizInput) =>
+      request(
+        process.env.NEXT_PUBLIC_GRAPHQL_URL,
+        createQuizGQL,
         {
-          title: '',
-          answers: [
-            { title: '', isCorrect: false },
-            { title: '', isCorrect: false },
-          ],
+          data,
         },
-      ],
+        {
+          Authorization: `Bearer ${session?.user.acessToken}`,
+        }
+      ),
+    onSuccess: async (data) => {
+      try {
+        // Create questions
+        await Promise.all(
+          questions.map(async (question) => {
+            const questionData = await createQuestionMutation.mutateAsync({
+              title: question.title,
+              quiz: data.createQuiz?.data?.id,
+            });
+
+            // Create answers
+            await Promise.all(
+              question.answers.map(async (answer) => {
+                await createAnswerMutation.mutateAsync({
+                  title: answer.title,
+                  correct: answer.isCorrect,
+                  question: questionData.createQuestion?.data?.id,
+                });
+              })
+            );
+          })
+        );
+        router.push('/');
+        reset(emptyQuizFormData);
+      } catch (error) {
+        console.error(error);
+      }
     },
   });
-  const { handleSubmit } = methods;
+  const createQuestionMutation = useMutation({
+    mutationKey: ['createQuestion'],
+    mutationFn: (data: QuestionInput) =>
+      request(
+        process.env.NEXT_PUBLIC_GRAPHQL_URL,
+        createQuestionGQL,
+        {
+          data,
+        },
+        {
+          Authorization: `Bearer ${session?.user.acessToken}`,
+        }
+      ),
+  });
+  const createAnswerMutation = useMutation({
+    mutationKey: ['createAnswer'],
+    mutationFn: (data: AnswerInput) =>
+      request(
+        process.env.NEXT_PUBLIC_GRAPHQL_URL,
+        createAnswerGQL,
+        {
+          data,
+        },
+        {
+          Authorization: `Bearer ${session?.user.acessToken}`,
+        }
+      ),
+  });
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/');
+    }
+  }, [status]);
+
+  function handleFinishQuizClick() {
+    // Create quiz
+    createQuizMutation.mutate({
+      title,
+      description,
+      published: true,
+      owner: session?.user?.id?.toString() ?? '0',
+    });
+  }
 
   function handleNext() {
     setActiveStep((prevActiveStep) =>
@@ -89,30 +194,21 @@ export default function QuizCreatePage() {
         <GradientWord>quiz</GradientWord>
         <span>.</span>
       </Typography>
-      <Grid container spacing={4} wrap="wrap-reverse">
-        <Grid item xs={12} sm={3}>
+      <Grid container spacing={4}>
+        <Grid item xs={12} md={3} sx={{ display: { xs: 'none', md: 'block' } }}>
           <Card>
             <CardContent>
-              {!isMobile ? (
-                <Stepper orientation="vertical" activeStep={activeStep}>
-                  {steps.map((step) => (
-                    <Step key={step.title}>
-                      <StepLabel>{step.title}</StepLabel>
-                    </Step>
-                  ))}
-                </Stepper>
-              ) : (
-                <MobileQuizStepper
-                  activeStep={activeStep}
-                  steps={steps}
-                  onNext={() => {}}
-                  onBack={handleBack}
-                />
-              )}
+              <Stepper orientation="vertical" activeStep={activeStep}>
+                {steps.map((step) => (
+                  <Step key={step.title}>
+                    <StepLabel>{step.title}</StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={9}>
+        <Grid item xs={12} md={9}>
           <FormProvider {...methods}>
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
               <Card>
@@ -130,6 +226,19 @@ export default function QuizCreatePage() {
                   <NextButton activeStep={activeStep} maxSteps={steps.length}>
                     {steps.at(activeStep)?.nextLabel}
                   </NextButton>
+                  {steps.at(activeStep)?.title === 'Summary' && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleFinishQuizClick}
+                      startIcon={
+                        createQuizMutation.isLoading ? <LoadingCircle /> : null
+                      }
+                      endIcon={<PublishIcon />}
+                    >
+                      Publish quiz
+                    </Button>
+                  )}
                 </CardActions>
               </Card>
             </form>
