@@ -78,7 +78,7 @@ export default function CreateQuizSummaryPage() {
             await Promise.all(
               question.answers.map(async (answer) => {
                 await createAnswerMutation.mutateAsync({
-                  title: answer.text,
+                  title: answer.title,
                   correct: answer.isCorrect,
                   question: questionData.createQuestion?.data?.id,
                 });
@@ -171,7 +171,7 @@ export default function CreateQuizSummaryPage() {
                           ) : (
                             <ClearIcon color="error" />
                           )}
-                          <Box>{answer.text}</Box>
+                          <Box>{answer.title}</Box>
                         </ListItem>
                       ))}
                     </List>

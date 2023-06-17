@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 export type AnswerDraft = {
-  text: string;
+  title: string;
   isCorrect: boolean;
 };
 
@@ -31,11 +31,11 @@ const defaultDraft: QuizDraft = {
       title: '',
       answers: [
         {
-          text: '',
+          title: '',
           isCorrect: false,
         },
         {
-          text: '',
+          title: '',
           isCorrect: false,
         },
       ],

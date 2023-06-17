@@ -1,22 +1,23 @@
 import { Delete as DeleteIcon } from '@mui/icons-material';
 import { Tooltip, IconButton, Box } from '@mui/material';
 
-type DeleteQuestionButtonProps = {
-  index: number;
+type DeleteAnswerButtonProps = {
+  minAnswers: number;
   onDelete: () => void;
+  disabled: boolean;
 };
 
-export default function DeleteQuestionButton({
-  index,
+export default function DeleteAnswerButton({
+  minAnswers,
   onDelete,
-}: DeleteQuestionButtonProps) {
-  const minQuestions = 1;
-  const disabled = index + 1 <= minQuestions;
-
+  disabled,
+}: DeleteAnswerButtonProps) {
   return (
     <Tooltip
       title={
-        disabled ? `You cannot delete the first question.` : 'Delete questions'
+        disabled
+          ? `You cannot delete the first ${minAnswers} answers.`
+          : 'Delete answer'
       }
       arrow
     >

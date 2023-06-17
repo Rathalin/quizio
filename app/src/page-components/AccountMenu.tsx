@@ -108,7 +108,10 @@ export default function AccountMenu() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <Link href="/me" style={{ color: 'inherit', textDecoration: 'none' }}>
+        <Link
+          href="/users/me"
+          style={{ color: 'inherit', textDecoration: 'none' }}
+        >
           <MenuItem onClick={handleClose}>
             <ListItemIcon>
               <AccountCircleIcon />

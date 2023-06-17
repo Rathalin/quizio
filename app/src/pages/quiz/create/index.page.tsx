@@ -33,9 +33,16 @@ const steps = stepTitles.map((title, index) => ({
 }));
 
 type QuizCreateFormFields = {
-  quizTitle: string;
-  quizDesc: string;
-  quizImage: FileList;
+  title: string;
+  description: string;
+  image: FileList;
+  questions: {
+    title: string;
+    answers: {
+      title: string;
+      isCorrect: boolean;
+    }[];
+  }[];
 };
 
 export default function QuizCreatePage() {
@@ -45,8 +52,18 @@ export default function QuizCreatePage() {
 
   const { ...methods } = useForm<QuizCreateFormFields>({
     defaultValues: {
-      quizTitle: '',
-      quizDesc: '',
+      title: '',
+      description: '',
+      image: undefined,
+      questions: [
+        {
+          title: '',
+          answers: [
+            { title: '', isCorrect: false },
+            { title: '', isCorrect: false },
+          ],
+        },
+      ],
     },
   });
   const { handleSubmit } = methods;

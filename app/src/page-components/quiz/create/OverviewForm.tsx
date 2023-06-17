@@ -1,5 +1,4 @@
-import QuizioTextField from '@/components/inputs/QuizioTextField';
-import { Box, Button, Stack } from '@mui/material';
+import { Box, Button, Stack, TextField } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 
 export default function OverviewForm() {
@@ -9,18 +8,22 @@ export default function OverviewForm() {
     formState: { errors },
     getValues,
   } = useFormContext<{
-    quizTitle: string;
-    quizDesc: string;
-    quizImage: string;
+    title: string;
+    description: string;
+    image: string;
   }>();
 
   const titleMaxLength = 50;
   let titleError = '';
-  if (errors.quizTitle?.type === 'required') {
+  if (errors.title?.type === 'required') {
     titleError = 'Title is required';
   }
 
   const descMaxLength = 100;
+
+  function getFileNameFromPath(path: string) {
+    return path.split('\\').pop()?.split('/').pop();
+  }
 
   return (
     <Box>
@@ -29,12 +32,12 @@ export default function OverviewForm() {
           <Box>
             <Controller
               control={control}
-              name="quizTitle"
+              name="title"
               render={({ field }) => (
-                <QuizioTextField
+                <TextField
                   id="quiz-title"
                   label="Title"
-                  error={errors.quizTitle != null}
+                  error={errors.title != null}
                   helperText={titleError}
                   inputProps={{ maxLength: titleMaxLength }}
                   required
@@ -46,28 +49,22 @@ export default function OverviewForm() {
             />
           </Box>
           <Box>
-            <Controller
-              control={control}
-              name="quizDesc"
-              render={({ field }) => (
-                <QuizioTextField
-                  id="quiz-desc"
-                  label="Description"
-                  inputProps={{
-                    maxLength: descMaxLength,
-                  }}
-                  multiline
-                  fullWidth
-                  {...field}
-                />
-              )}
+            <TextField
+              id="quiz-desc"
+              label="Description"
+              inputProps={{
+                maxLength: descMaxLength,
+              }}
+              multiline
+              fullWidth
+              {...register('description')}
             />
           </Box>
         </Stack>
         <Stack direction="row" alignItems="center">
           <Controller
             control={control}
-            name="quizImage"
+            name="image"
             render={({ field }) => (
               <>
                 <input
@@ -75,7 +72,7 @@ export default function OverviewForm() {
                   type="file"
                   accept="image/*"
                   style={{ display: 'none' }}
-                  {...register('quizImage')}
+                  {...field}
                 />
                 <label
                   htmlFor="quiz-image"
@@ -92,7 +89,9 @@ export default function OverviewForm() {
                       minHeight: '180px',
                     }}
                   >
-                    Upload image
+                    {field.value
+                      ? getFileNameFromPath(field.value)
+                      : 'Upload Image'}
                   </Button>
                 </label>
               </>

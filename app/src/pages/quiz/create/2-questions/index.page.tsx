@@ -1,6 +1,6 @@
 import GradientWord from '@/components/GradientWord';
 import LinkButton from '@/components/LinkButton';
-import QuestionInput from '@/page-components/quiz/question/QuestionInput';
+import QuestionInput from '@/page-components/quiz/create/question/QuestionInput';
 import {
   AnswerDraft,
   QuestionDraft,
@@ -30,7 +30,7 @@ export default function CreateQuizQuestionsPage() {
       {
         title: '',
         answers: Array<AnswerDraft>(minAnswers).fill({
-          text: '',
+          title: '',
           isCorrect: false,
         }),
       },
