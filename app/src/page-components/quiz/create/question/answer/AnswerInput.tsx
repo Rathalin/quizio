@@ -1,7 +1,7 @@
 import { Stack } from '@mui/material';
 import CorrectToggle from './CorrectToggle';
 import DeleteAnswerButton from './DeleteAnswerButton';
-import { useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import { useAnswerIndex } from './AnswerIndexContext';
 import { useQuestionIndex } from '../QuestionIndexContext';
 import QuizioTextField from '@/components/inputs/QuizioTextField';
@@ -24,6 +24,7 @@ export default function AnswerInput({
   const questionIndex = useQuestionIndex();
   const index = useAnswerIndex();
   const {
+    control,
     register,
     formState: { errors },
   } = useFormContext();
@@ -41,17 +42,22 @@ export default function AnswerInput({
 
   return (
     <Stack direction="row" gap={2} alignItems="start" flexWrap="wrap">
-      <QuizioTextField
-        id={name}
-        label={`Answer ${(index ?? 0) + 1}`}
-        color={isCorrect ? 'success' : 'primary'}
-        sx={{ flex: 1 }}
-        error={titleError != null}
-        helperText={titleError}
-        inputProps={{ maxLength: titleMaxLength }}
-        {...register(`${name}.title` as 'questions.0.answers.0.title', {
-          required: true,
-        })}
+      <Controller
+        name={`${name}.title`}
+        render={({ field }) => (
+          <QuizioTextField
+            id={name}
+            label={`Answer ${(index ?? 0) + 1}`}
+            color={isCorrect ? 'success' : 'primary'}
+            sx={{ flex: 1 }}
+            error={titleError != null}
+            helperText={titleError}
+            inputProps={{ maxLength: titleMaxLength }}
+            {...field}
+          />
+        )}
+        rules={{ required: true }}
+        control={control}
       />
       <Stack direction="row" gap={2} alignItems="start" sx={{ marginTop: 1 }}>
         <CorrectToggle />

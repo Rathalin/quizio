@@ -46,11 +46,6 @@ export default function App(props: MyAppProps) {
 
   useEffect(() => {
     function handleRouteChange(url: any, { shallow }: { shallow: boolean }) {
-      console.log(
-        `App is changing to ${url} ${
-          shallow ? 'with' : 'without'
-        } shallow routing`
-      );
       startTransitioning(url);
       return;
     }

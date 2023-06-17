@@ -32,8 +32,8 @@ import { useMutation } from '@tanstack/react-query';
 import request from 'graphql-request';
 import router from 'next/router';
 import { useSession } from 'next-auth/react';
-import { Publish as PublishIcon } from '@mui/icons-material';
 import LoadingCircle from '@/components/LoadingCircle';
+import { Publish as PublishIcon } from '@mui/icons-material';
 
 const stepTitles = ['Overview', 'Questions', 'Summary'] as const;
 export type StepData = {

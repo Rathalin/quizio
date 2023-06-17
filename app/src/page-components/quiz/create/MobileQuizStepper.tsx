@@ -5,7 +5,6 @@ import NextButton from './NextButton';
 
 type MobileQuizStepperProps = {
   activeStep: number;
-  onNext: () => void;
   onBack: () => void;
   steps: StepData[];
 };
@@ -13,7 +12,6 @@ type MobileQuizStepperProps = {
 export default function MobileQuizStepper({
   steps,
   activeStep,
-  onNext,
   onBack,
 }: MobileQuizStepperProps) {
   const theme = useTheme();
@@ -27,7 +25,7 @@ export default function MobileQuizStepper({
       steps={maxSteps}
       activeStep={activeStep}
       nextButton={
-        <NextButton activeStep={activeStep} onNext={onNext} maxSteps={maxSteps}>
+        <NextButton activeStep={activeStep} maxSteps={maxSteps}>
           {steps.at(activeStep)?.nextLabel}
         </NextButton>
       }

@@ -2,7 +2,7 @@ import { Box, Button, Card, CardContent, Divider } from '@mui/material';
 import AnswerInput from './answer/AnswerInput';
 import { Add as AddIcon } from '@mui/icons-material';
 import DeleteQuestionButton from './DeleteQuestionButton';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import { useQuestionIndex } from './QuestionIndexContext';
 import { AnswerIndexContext } from './answer/AnswerIndexContext';
 import QuizioTextField from '@/components/inputs/QuizioTextField';
@@ -61,14 +61,21 @@ export default function QuestionInput({
               display: 'flex',
             }}
           >
-            <QuizioTextField
-              id={`${name}.title`}
-              label={`Question`}
-              fullWidth
-              error={titleError != null}
-              helperText={titleError}
-              inputProps={{ maxLength: titleMaxLength }}
-              {...register(`${name}.title`, { required: true })}
+            <Controller
+              name={`${name}.title`}
+              render={({ field }) => (
+                <QuizioTextField
+                  id={`${name}.title`}
+                  label={`Question`}
+                  fullWidth
+                  error={titleError != null}
+                  helperText={titleError}
+                  inputProps={{ maxLength: titleMaxLength }}
+                  {...field}
+                />
+              )}
+              rules={{ required: true }}
+              control={control}
             />
             <Box sx={{ marginTop: 1 }}>
               <DeleteQuestionButton disabled={!deletable} onDelete={onDelete} />

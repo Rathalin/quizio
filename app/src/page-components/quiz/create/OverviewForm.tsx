@@ -1,5 +1,5 @@
 import QuizioTextField from '@/components/inputs/QuizioTextField';
-import { Box, Button, Stack, TextField } from '@mui/material';
+import { Box, Button, Stack } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 
 export default function OverviewForm() {
@@ -8,6 +8,7 @@ export default function OverviewForm() {
     register,
     formState: { errors },
     getValues,
+    watch,
   } = useFormContext<{
     title: string;
     description: string;
@@ -26,31 +27,46 @@ export default function OverviewForm() {
     return path.split('\\').pop()?.split('/').pop();
   }
 
+  const {} = register('title');
+
   return (
     <Box>
       <Stack direction="column" gap={2} flexWrap="wrap">
         <Stack direction="column" gap={2} sx={{ flexGrow: 1 }}>
           <Box>
-            <QuizioTextField
-              id="title"
-              label="Title"
-              fullWidth
-              error={errors.title != null}
-              helperText={titleError}
-              inputProps={{ maxLength: titleMaxLength }}
-              {...register('title', { required: true })}
+            <Controller
+              name="title"
+              render={({ field }) => (
+                <QuizioTextField
+                  id="title"
+                  label="Title"
+                  fullWidth
+                  error={errors.title != null}
+                  helperText={titleError}
+                  inputProps={{ maxLength: titleMaxLength }}
+                  {...field}
+                />
+              )}
+              rules={{ required: true }}
+              control={control}
             />
           </Box>
           <Box>
-            <TextField
-              id="quiz-desc"
-              label="Description"
-              inputProps={{
-                maxLength: descMaxLength,
-              }}
-              multiline
-              fullWidth
-              {...register('description')}
+            <Controller
+              name="description"
+              render={({ field }) => (
+                <QuizioTextField
+                  id="description"
+                  label="Description"
+                  inputProps={{
+                    maxLength: descMaxLength,
+                  }}
+                  multiline
+                  fullWidth
+                  {...field}
+                />
+              )}
+              control={control}
             />
           </Box>
         </Stack>
