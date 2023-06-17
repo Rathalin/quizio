@@ -1,92 +1,112 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Divider,
-  TextField,
-} from '@mui/material';
+import { Box, Button, Card, CardContent, Divider } from '@mui/material';
 import AnswerInput from './answer/AnswerInput';
 import { Add as AddIcon } from '@mui/icons-material';
 import DeleteQuestionButton from './DeleteQuestionButton';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { QuestionIndexContext, useQuestionIndex } from './QuestionIndexContext';
+import { useQuestionIndex } from './QuestionIndexContext';
 import { AnswerIndexContext } from './answer/AnswerIndexContext';
+import QuizioTextField from '@/components/inputs/QuizioTextField';
 
 type QuestionInputProps = {
   deletable: boolean;
   onDelete: () => void;
 };
+const titleMaxLength = 50;
 const minAnswers = 2;
+const maxAnswers = 20;
 
 export default function QuestionInput({
   deletable,
   onDelete,
 }: QuestionInputProps) {
   const index = useQuestionIndex();
-  const { control, register } = useFormContext();
-  const name = `questions.${index}.answers`;
-  const { fields, append, remove } = useFieldArray({
-    name: name as 'questions.0.answers',
+  const {
     control,
+    register,
+    formState: { errors },
+    getValues,
+  } = useFormContext();
+  const name = `questions.${index}`;
+  const { fields, append, remove } = useFieldArray({
+    name: `${name}.answers` as 'questions.0.answers',
+    control,
+    rules: {
+      minLength: minAnswers,
+      maxLength: maxAnswers,
+    },
   });
 
+  let titleError: string | null = null;
+  if (
+    (errors.questions as any[] | undefined)?.at(index ?? 0)?.title?.type ===
+    'required'
+  ) {
+    titleError = 'Question is required';
+  }
+  let answersError: string | null = null;
+  if (errors.questions?.root?.type === 'minLength') {
+    answersError = `Must have at least ${minAnswers} answers`;
+  } else if (errors.questions?.root?.type === 'maxLength') {
+    answersError = `Must have at most ${maxAnswers} answers`;
+  }
+
   return (
-    <QuestionIndexContext.Provider value={index}>
-      <Card elevation={4}>
-        <CardContent>
+    <Card elevation={4}>
+      <CardContent>
+        <Box>
+          <Box
+            sx={{
+              marginBottom: 4,
+              gap: 2,
+              display: 'flex',
+            }}
+          >
+            <QuizioTextField
+              id={`${name}.title`}
+              label={`Question`}
+              fullWidth
+              error={titleError != null}
+              helperText={titleError}
+              inputProps={{ maxLength: titleMaxLength }}
+              {...register(`${name}.title`, { required: true })}
+            />
+            <Box sx={{ marginTop: 1 }}>
+              <DeleteQuestionButton disabled={!deletable} onDelete={onDelete} />
+            </Box>
+          </Box>
           <Box>
             <Box
               sx={{
-                marginBottom: 4,
-                gap: 2,
                 display: 'flex',
-                alignItems: 'center',
+                flexDirection: 'column',
+                gap: 2,
+                marginBottom: 2,
               }}
             >
-              <TextField
-                id={name}
-                label={`Question`}
-                fullWidth
-                required
-                {...register(name)}
-              />
-              <DeleteQuestionButton disabled={!deletable} onDelete={onDelete} />
+              {fields.map((field, index) => (
+                <AnswerIndexContext.Provider key={field.id} value={index}>
+                  <AnswerInput
+                    onDelete={() => remove(index)}
+                    minAnswers={minAnswers}
+                    isCorrect={getValues(`${name}.answers.${index}.isCorrect`)}
+                    deletable={fields.length > minAnswers}
+                  />
+                </AnswerIndexContext.Provider>
+              ))}
             </Box>
-            <Box>
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 2,
-                  marginBottom: 2,
-                }}
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Button
+                variant="outlined"
+                startIcon={<AddIcon />}
+                onClick={() => append({ title: '', isCorrect: false })}
               >
-                {fields.map((field, index) => (
-                  <AnswerIndexContext.Provider key={field.id} value={index}>
-                    <AnswerInput
-                      onDelete={() => remove(index)}
-                      minAnswers={minAnswers}
-                      isCorrect={false}
-                      deletable={fields.length > minAnswers}
-                    />
-                  </AnswerIndexContext.Provider>
-                ))}
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Button
-                  variant="outlined"
-                  startIcon={<AddIcon />}
-                  onClick={() => append({ title: '', isCorrect: false })}
-                >
-                  Answer
-                </Button>
-              </Box>
+                Answer
+              </Button>
             </Box>
-            <Divider sx={{ marginBlock: 4 }} />
           </Box>
-        </CardContent>
-      </Card>
-    </QuestionIndexContext.Provider>
+          <Divider sx={{ marginBlock: 4 }} />
+        </Box>
+      </CardContent>
+    </Card>
   );
 }

@@ -1,3 +1,4 @@
+import QuizioTextField from '@/components/inputs/QuizioTextField';
 import { Box, Button, Stack, TextField } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 
@@ -14,7 +15,7 @@ export default function OverviewForm() {
   }>();
 
   const titleMaxLength = 50;
-  let titleError = '';
+  let titleError: string | null = null;
   if (errors.title?.type === 'required') {
     titleError = 'Title is required';
   }
@@ -30,22 +31,14 @@ export default function OverviewForm() {
       <Stack direction="column" gap={2} flexWrap="wrap">
         <Stack direction="column" gap={2} sx={{ flexGrow: 1 }}>
           <Box>
-            <Controller
-              control={control}
-              name="title"
-              render={({ field }) => (
-                <TextField
-                  id="quiz-title"
-                  label="Title"
-                  error={errors.title != null}
-                  helperText={titleError}
-                  inputProps={{ maxLength: titleMaxLength }}
-                  required
-                  fullWidth
-                  {...field}
-                />
-              )}
-              rules={{ required: true }}
+            <QuizioTextField
+              id="title"
+              label="Title"
+              fullWidth
+              error={errors.title != null}
+              helperText={titleError}
+              inputProps={{ maxLength: titleMaxLength }}
+              {...register('title', { required: true })}
             />
           </Box>
           <Box>

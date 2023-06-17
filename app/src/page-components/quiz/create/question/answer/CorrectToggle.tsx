@@ -5,19 +5,22 @@ import { useQuestionIndex } from '../QuestionIndexContext';
 import { useAnswerIndex } from './AnswerIndexContext';
 
 export default function CorrectToggle() {
-  const { register } = useFormContext();
+  const { register, watch } = useFormContext();
   const questionIndex = useQuestionIndex();
   const answerIndex = useAnswerIndex();
-  // const tooltipTitle = isCorrect ? 'Marked as correct' : 'Marked as incorrect';
+
+  const name = `questions.${questionIndex}.answers.${answerIndex}.isCorrect`;
+
+  const tooltipTitle = (watch(name) as boolean)
+    ? 'Marked as correct'
+    : 'Marked as incorrect';
 
   return (
-    <Tooltip title={'todo'} arrow>
+    <Tooltip title={tooltipTitle} arrow>
       <Checkbox
-        icon={<ClearIcon color="error" />}
+        icon={<ClearIcon color="primary" />}
         checkedIcon={<CheckIcon color="success" />}
-        {...register(
-          `questions.${questionIndex}.answers.${answerIndex}.isCorrect`
-        )}
+        {...register(name)}
       />
     </Tooltip>
   );

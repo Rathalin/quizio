@@ -1,9 +1,10 @@
-import { Box, TextField } from '@mui/material';
+import { Stack } from '@mui/material';
 import CorrectToggle from './CorrectToggle';
 import DeleteAnswerButton from './DeleteAnswerButton';
 import { useFormContext } from 'react-hook-form';
 import { useAnswerIndex } from './AnswerIndexContext';
 import { useQuestionIndex } from '../QuestionIndexContext';
+import QuizioTextField from '@/components/inputs/QuizioTextField';
 
 type AnswerInputProps = {
   isCorrect: boolean;
@@ -22,29 +23,44 @@ export default function AnswerInput({
 }: AnswerInputProps) {
   const questionIndex = useQuestionIndex();
   const index = useAnswerIndex();
-  const { register } = useFormContext();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
 
   const name = `questions.${questionIndex}.answers.${index}`;
 
-  return (
-    <Box
-      sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}
-    >
-      <TextField
-        id={name}
-        label={`Answer ${index}`}
-        color={isCorrect ? 'success' : 'error'}
-        sx={{ flex: 1 }}
-        inputProps={{ maxLength: titleMaxLength }}
-        {...register(`${name}.title` as 'questions.0.answers.0.title')}
-      />
+  let titleError: string | null = null;
+  if (
+    (errors.questions as any[] | undefined)
+      ?.at(questionIndex ?? 0)
+      ?.answers?.at(index ?? 0)?.title?.type === 'required'
+  ) {
+    titleError = 'Answer is required';
+  }
 
-      <CorrectToggle />
-      <DeleteAnswerButton
-        minAnswers={minAnswers}
-        onDelete={onDelete}
-        disabled={!deletable}
+  return (
+    <Stack direction="row" gap={2} alignItems="start" flexWrap="wrap">
+      <QuizioTextField
+        id={name}
+        label={`Answer ${(index ?? 0) + 1}`}
+        color={isCorrect ? 'success' : 'primary'}
+        sx={{ flex: 1 }}
+        error={titleError != null}
+        helperText={titleError}
+        inputProps={{ maxLength: titleMaxLength }}
+        {...register(`${name}.title` as 'questions.0.answers.0.title', {
+          required: true,
+        })}
       />
-    </Box>
+      <Stack direction="row" gap={2} alignItems="start" sx={{ marginTop: 1 }}>
+        <CorrectToggle />
+        <DeleteAnswerButton
+          minAnswers={minAnswers}
+          onDelete={onDelete}
+          disabled={!deletable}
+        />
+      </Stack>
+    </Stack>
   );
 }

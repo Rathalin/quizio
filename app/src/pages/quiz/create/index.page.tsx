@@ -32,7 +32,7 @@ const steps = stepTitles.map((title, index) => ({
   nextLabel: stepTitles[index + 1],
 }));
 
-type QuizCreateFormFields = {
+export type QuizCreateFormFields = {
   title: string;
   description: string;
   image: FileList;
