@@ -1,11 +1,24 @@
-import { Box, Button, Card, CardContent, Divider } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Divider,
+  FormHelperText,
+} from '@mui/material';
 import AnswerInput from './answer/AnswerInput';
 import { Add as AddIcon } from '@mui/icons-material';
 import DeleteQuestionButton from './DeleteQuestionButton';
-import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
+import {
+  Controller,
+  useFieldArray,
+  useFormContext,
+  useWatch,
+} from 'react-hook-form';
 import { useQuestionIndex } from './QuestionIndexContext';
 import { AnswerIndexContext } from './answer/AnswerIndexContext';
 import QuizioTextField from '@/components/inputs/QuizioTextField';
+import { QuizCreateFormFields } from '@/pages/quiz/create/index.page';
 
 type QuestionInputProps = {
   deletable: boolean;
@@ -22,12 +35,11 @@ export default function QuestionInput({
   const index = useQuestionIndex();
   const {
     control,
-    register,
-    formState: { errors },
+    formState: { errors, isSubmitSuccessful },
     getValues,
-  } = useFormContext();
-  const name = `questions.${index}`;
-  const { fields, append, remove } = useFieldArray({
+  } = useFormContext<QuizCreateFormFields>();
+  const name = `questions.${index}` as const;
+  const { fields, append, remove } = useFieldArray<QuizCreateFormFields>({
     name: `${name}.answers` as 'questions.0.answers',
     control,
     rules: {
@@ -48,6 +60,16 @@ export default function QuestionInput({
     answersError = `Must have at least ${minAnswers} answers`;
   } else if (errors.questions?.root?.type === 'maxLength') {
     answersError = `Must have at most ${maxAnswers} answers`;
+  }
+
+  const hasCorrectAnswer =
+    useWatch({
+      name: `questions.${index}`,
+      control,
+    }).answers.filter((answer) => answer.isCorrect).length === 1;
+  let hasCorrectAnswerError: string | null = null;
+  if (!hasCorrectAnswer) {
+    hasCorrectAnswerError = 'Exactly one answer must be correct';
   }
 
   return (
@@ -101,6 +123,9 @@ export default function QuestionInput({
                 </AnswerIndexContext.Provider>
               ))}
             </Box>
+            {!isSubmitSuccessful && (
+              <FormHelperText error>{hasCorrectAnswerError}</FormHelperText>
+            )}
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
               <Button
                 variant="outlined"
