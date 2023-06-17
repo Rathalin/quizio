@@ -10,27 +10,6 @@ export default function Home() {
   const session = useSession();
   return (
     <Box>
-      <Typography
-        component="h1"
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '4rem',
-          marginTop: {
-            xs: 0,
-            lg: 4,
-          },
-          marginBottom: 4,
-        }}
-      >
-        <Link href="/" style={{ textDecoration: 'none' }}>
-          <GradientWord>Quizio</GradientWord>
-        </Link>
-        <Box sx={{ marginLeft: 'auto' }}>
-          <AccountMenu />
-        </Box>
-      </Typography>
       {session.status === 'authenticated' && (
         <Stack
           direction="row"
