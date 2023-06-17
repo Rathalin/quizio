@@ -38,7 +38,7 @@ export default function QuestionInput({
 
   let titleError: string | null = null;
   if (
-    (errors.questions as any[] | undefined)?.at(index ?? 0)?.title?.type ===
+    (errors.questions as any[] | undefined)?.at(index)?.title?.type ===
     'required'
   ) {
     titleError = 'Question is required';
@@ -66,7 +66,7 @@ export default function QuestionInput({
               render={({ field }) => (
                 <QuizioTextField
                   id={`${name}.title`}
-                  label={`Question`}
+                  label={`Question ${index + 1}`}
                   fullWidth
                   error={titleError != null}
                   helperText={titleError}

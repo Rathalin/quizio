@@ -35,7 +35,7 @@ export default function AnswerInput({
   if (
     (errors.questions as any[] | undefined)
       ?.at(questionIndex ?? 0)
-      ?.answers?.at(index ?? 0)?.title?.type === 'required'
+      ?.answers?.at(index)?.title?.type === 'required'
   ) {
     titleError = 'Answer is required';
   }
@@ -47,7 +47,7 @@ export default function AnswerInput({
         render={({ field }) => (
           <QuizioTextField
             id={name}
-            label={`Answer ${(index ?? 0) + 1}`}
+            label={`Answer ${index + 1}`}
             color={isCorrect ? 'success' : 'primary'}
             sx={{ flex: 1 }}
             error={titleError != null}
