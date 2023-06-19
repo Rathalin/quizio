@@ -205,6 +205,7 @@ export default function PlayIdPage({
                 >
                   <CardContent sx={{ padding: 0 }}>
                     <PickAnAnswer
+                      index={questionIndex + 1}
                       title={question.attributes?.title ?? ''}
                       answers={question.attributes!.answers!.data.map(
                         (answer) => ({
