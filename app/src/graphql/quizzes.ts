@@ -12,7 +12,7 @@ export const getAllPublishedQuizzesGQL = graphql(`
           published
           createdAt
           playCount
-          questions {
+          questions(pagination: { limit: 100 }) {
             data {
               id
             }
