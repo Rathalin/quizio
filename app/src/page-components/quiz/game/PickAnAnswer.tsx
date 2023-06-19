@@ -6,7 +6,6 @@ import {
   ListItemText,
   ListItemIcon,
   useTheme,
-  Box,
   Avatar,
   Stack,
   Grid,
