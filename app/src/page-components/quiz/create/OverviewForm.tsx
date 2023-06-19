@@ -1,4 +1,5 @@
 import QuizioTextField from '@/components/inputs/QuizioTextField';
+import { QuizCreateFormFields } from '@/pages/quiz/create/index.page';
 import { Box, Button, Stack } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 
@@ -9,11 +10,7 @@ export default function OverviewForm() {
     formState: { errors },
     getValues,
     watch,
-  } = useFormContext<{
-    title: string;
-    description: string;
-    image: string;
-  }>();
+  } = useFormContext<QuizCreateFormFields>();
 
   const titleMaxLength = 50;
   let titleError: string | null = null;
@@ -77,14 +74,14 @@ export default function OverviewForm() {
             render={({ field }) => (
               <>
                 <input
-                  id="quiz-image"
+                  id="image"
                   type="file"
                   accept="image/*"
                   style={{ display: 'none' }}
                   {...field}
                 />
                 <label
-                  htmlFor="quiz-image"
+                  htmlFor="image"
                   style={{
                     display: 'flex',
                   }}

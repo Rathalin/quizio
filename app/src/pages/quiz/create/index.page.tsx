@@ -34,6 +34,7 @@ import router from 'next/router';
 import { useSession } from 'next-auth/react';
 import LoadingCircle from '@/components/LoadingCircle';
 import { Publish as PublishIcon } from '@mui/icons-material';
+import { uploadImageGQL } from '@/graphql/upload';
 
 const stepTitles = ['Overview', 'Questions', 'Summary'] as const;
 export type StepData = {
@@ -50,7 +51,7 @@ const steps = stepTitles.map((title, index) => ({
 export type QuizCreateFormFields = {
   title: string;
   description: string;
-  image?: FileList;
+  image: string;
   questions: {
     title: string;
     answers: {
@@ -63,7 +64,7 @@ export type QuizCreateFormFields = {
 export const emptyQuizFormData = {
   title: '',
   description: '',
-  image: undefined,
+  image: '',
   questions: [
     {
       title: '',
@@ -84,7 +85,8 @@ export default function QuizCreatePage() {
     defaultValues: emptyQuizFormData,
   });
   const { getValues, reset, handleSubmit } = methods;
-  const { title, description, questions } = getValues() as QuizCreateFormFields;
+  const { title, description, image, questions } =
+    getValues() as QuizCreateFormFields;
 
   const createQuizMutation = useMutation({
     mutationKey: ['createQuiz'],
@@ -156,6 +158,28 @@ export default function QuizCreatePage() {
         }
       ),
   });
+  const uploadImageMutation = useMutation({
+    mutationKey: ['uploadImage'],
+    mutationFn: () =>
+      request(
+        process.env.NEXT_PUBLIC_GRAPHQL_URL,
+        uploadImageGQL,
+        {
+          file: image,
+        },
+        {
+          Authorization: `Bearer ${session?.user.acessToken}`,
+        }
+      ),
+    onSuccess: (data) =>
+      createQuizMutation.mutate({
+        title,
+        description,
+        image: data.upload.data?.id,
+        published: true,
+        owner: session?.user?.id?.toString() ?? '0',
+      }),
+  });
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -165,12 +189,7 @@ export default function QuizCreatePage() {
 
   function handleFinishQuizClick() {
     // Create quiz
-    createQuizMutation.mutate({
-      title,
-      description,
-      published: true,
-      owner: session?.user?.id?.toString() ?? '0',
-    });
+    uploadImageMutation.mutate();
   }
 
   function handleNext() {
