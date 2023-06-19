@@ -24,7 +24,7 @@ type QuestionInputProps = {
   deletable: boolean;
   onDelete: () => void;
 };
-const titleMaxLength = 50;
+const titleMaxLength = 100;
 const minAnswers = 2;
 const maxAnswers = 20;
 
