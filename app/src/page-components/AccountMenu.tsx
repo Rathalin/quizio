@@ -1,4 +1,3 @@
-import { usePrefersLightMode } from '@/custom-hooks/usePrefersLightMode';
 import {
   AccountCircle as AccountCircleIcon,
   Login as LoginIcon,
@@ -23,7 +22,6 @@ import { useState, type MouseEvent } from 'react';
 
 export default function AccountMenu() {
   const theme = useTheme();
-  const prefersLightMode = usePrefersLightMode();
   const { data: session, status } = useSession();
   const isAuthenticated = status === 'authenticated';
 
@@ -48,8 +46,7 @@ export default function AccountMenu() {
           onClick={() => signIn()}
           aria-label="Sign in"
         >
-          {' '}
-          <LoginIcon />{' '}
+          <LoginIcon />
         </IconButton>
       );
     }
@@ -86,22 +83,24 @@ export default function AccountMenu() {
         open={open}
         onClick={handleClose}
         onClose={handleClose}
-        PaperProps={{
-          sx: {
-            overflow: 'visible',
-            marginTop: 1,
-            minWidth: '16ch',
-            '&:before': {
-              content: '""',
-              display: 'block',
-              position: 'absolute',
-              top: 0,
-              right: 24,
-              width: 10,
-              height: 10,
-              backgroundColor: lighten(theme.palette.background.paper, 0.13),
-              transform: 'translateY(-50%) rotate(45deg)',
-              zIndex: 0,
+        slotProps={{
+          paper: {
+            sx: {
+              overflow: 'visible',
+              marginTop: 1,
+              minWidth: '16ch',
+              '&:before': {
+                content: '""',
+                display: 'block',
+                position: 'absolute',
+                top: 0,
+                right: 24,
+                width: 10,
+                height: 10,
+                backgroundColor: lighten(theme.palette.background.paper, 0.13),
+                transform: 'translateY(-50%) rotate(45deg)',
+                zIndex: 0,
+              },
             },
           },
         }}

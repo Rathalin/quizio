@@ -235,6 +235,7 @@ export default function QuizCreatePage() {
                         createQuizMutation.isLoading ? <LoadingCircle /> : null
                       }
                       endIcon={<PublishIcon />}
+                      disabled={createQuizMutation.isLoading}
                     >
                       Publish quiz
                     </Button>

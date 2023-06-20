@@ -1,4 +1,5 @@
 import HomeButton from '@/components/buttons/HomeButton';
+import { useIsMobile } from '@/custom-hooks/useIsMobile';
 import { getMeGQL } from '@/graphql/user';
 import MeDataPlaceholder from '@/page-components/user/me/MeDataPlaceholder';
 import MeImagePlaceholder from '@/page-components/user/me/MeImagePlaceholder';
@@ -20,6 +21,7 @@ import { useSession } from 'next-auth/react';
 
 export default function MePage() {
   const theme = useTheme();
+  const isMobile = useIsMobile();
   const { data: session, status } = useSession();
   const { isLoading, isError, error, isSuccess, data } = useQuery({
     queryKey: ['me'],
@@ -59,17 +61,25 @@ export default function MePage() {
             {isSuccess && (
               <>
                 <Stack spacing={1} alignItems="start">
-                  <Tooltip title="Your username" placement="right-start" arrow>
+                  <Tooltip
+                    title="Your username"
+                    placement={isMobile ? 'bottom' : 'right'}
+                    arrow
+                  >
                     <Typography>{data.me?.username}</Typography>
                   </Tooltip>
                   <Tooltip
                     title="Your email address"
-                    placement="right-start"
+                    placement={isMobile ? 'bottom' : 'right'}
                     arrow
                   >
                     <Typography>{data.me?.email}</Typography>
                   </Tooltip>
-                  <Tooltip title="Your role" placement="right-start" arrow>
+                  <Tooltip
+                    title="Your role"
+                    placement={isMobile ? 'bottom' : 'right'}
+                    arrow
+                  >
                     <Typography>{data.me?.role?.name}</Typography>
                   </Tooltip>
                 </Stack>
