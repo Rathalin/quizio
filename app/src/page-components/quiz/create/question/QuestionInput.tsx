@@ -4,9 +4,9 @@ import {
   AccordionSummary,
   Box,
   Button,
-  Divider,
   FormHelperText,
   Stack,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import AnswerInput from './answer/AnswerInput';
@@ -92,7 +92,11 @@ export default function QuestionInput({
             >
               {`Question ${index + 1}`}
             </Typography>
-            {!isValid && <ReportProblemIcon color="error" />}
+            {!isValid && (
+              <Tooltip title="Some inputs require your attention." arrow>
+                <ReportProblemIcon color="error" />
+              </Tooltip>
+            )}
           </Stack>
           <DeleteQuestionButton disabled={!deletable} onDelete={onDelete} />
         </Stack>
@@ -147,16 +151,27 @@ export default function QuestionInput({
             <FormHelperText error>{hasCorrectAnswerError}</FormHelperText>
           )}
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Button
-              variant="outlined"
-              startIcon={<AddIcon />}
-              onClick={() => append({ title: '', isCorrect: false })}
+            <Tooltip
+              title={
+                fields.length >= maxAnswers
+                  ? `You can only add ${maxAnswers} answers.`
+                  : null
+              }
+              arrow
             >
-              Answer
-            </Button>
+              <Box>
+                <Button
+                  variant="outlined"
+                  startIcon={<AddIcon />}
+                  onClick={() => append({ title: '', isCorrect: false })}
+                  disabled={fields.length >= maxAnswers}
+                >
+                  Answer
+                </Button>
+              </Box>
+            </Tooltip>
           </Box>
         </Box>
-        <Divider sx={{ marginBlock: 4 }} />
       </AccordionDetails>
     </Accordion>
   );

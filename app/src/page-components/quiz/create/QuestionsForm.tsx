@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material';
+import { Box, Button, Tooltip } from '@mui/material';
 import QuestionInput from './question/QuestionInput';
 import { QuestionDraft } from '@/stores/quiz-draft.store';
 import { Add as AddIcon } from '@mui/icons-material';
@@ -13,6 +13,7 @@ const emptyQuestion: QuestionDraft = {
   ],
 };
 const minQuestions = 1;
+const maxQuestions = 20;
 
 export default function QuestionsForm() {
   const { control } = useFormContext();
@@ -23,7 +24,7 @@ export default function QuestionsForm() {
 
   return (
     <>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
         {fields.map((field, index) => (
           <QuestionIndexContext.Provider key={field.id} value={index}>
             <QuestionInput
@@ -37,17 +38,28 @@ export default function QuestionsForm() {
         sx={{
           display: 'flex',
           justifyContent: 'center',
-          marginTop: 2,
-          marginBottom: 2,
+          marginTop: 4,
         }}
       >
-        <Button
-          startIcon={<AddIcon />}
-          variant="outlined"
-          onClick={() => append(emptyQuestion)}
+        <Tooltip
+          title={
+            fields.length >= maxQuestions
+              ? `You can only add ${maxQuestions} questions.`
+              : null
+          }
+          arrow
         >
-          Another Question
-        </Button>
+          <Box>
+            <Button
+              startIcon={<AddIcon />}
+              variant="outlined"
+              onClick={() => append(emptyQuestion)}
+              disabled={fields.length >= maxQuestions}
+            >
+              Question
+            </Button>
+          </Box>
+        </Tooltip>
       </Box>
     </>
   );

@@ -6,13 +6,13 @@ import {
   ListItemText,
   ListItemIcon,
   useTheme,
-  Avatar,
   Stack,
   Grid,
 } from '@mui/material';
 import AnsweredProgress from './AnsweredProgress';
 import { AnsweredState } from '@/pages/play/[id].page';
 import { Check as CheckIcon, Clear as ClearIcon } from '@mui/icons-material';
+import IndexAvatar from './IndexAvatar';
 
 type PickAnAnswerProps = {
   index: number;
@@ -45,16 +45,7 @@ export default function PickAnAnswer({
         <Grid item xs={12} md={8}>
           <Stack direction="row" alignItems="center" gap={2}>
             <Stack direction="row" alignItems="center" gap={2}>
-              <Avatar
-                sx={{
-                  backgroundColor: theme.palette.secondary.main,
-                  fontWeight: 700,
-                  width: '2rem',
-                  height: '2rem',
-                }}
-              >
-                {index}
-              </Avatar>
+              <IndexAvatar index={index} />
               <Typography variant="h4" component="h1" sx={{ margin: 0 }}>
                 {title}
               </Typography>
