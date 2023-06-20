@@ -19,12 +19,12 @@ import { useQuestionIndex } from './QuestionIndexContext';
 import { AnswerIndexContext } from './answer/AnswerIndexContext';
 import QuizioTextField from '@/components/inputs/QuizioTextField';
 import { QuizCreateFormFields } from '@/pages/quiz/create/index.page';
+import { maxLengths } from '@/stores/max-lengths';
 
 type QuestionInputProps = {
   deletable: boolean;
   onDelete: () => void;
 };
-const titleMaxLength = 200;
 const minAnswers = 2;
 const maxAnswers = 20;
 
@@ -92,7 +92,7 @@ export default function QuestionInput({
                   fullWidth
                   error={titleError != null}
                   helperText={titleError}
-                  inputProps={{ maxLength: titleMaxLength }}
+                  inputProps={{ maxLength: maxLengths.question.title }}
                   {...field}
                 />
               )}

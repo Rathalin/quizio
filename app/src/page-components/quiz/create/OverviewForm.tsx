@@ -1,4 +1,5 @@
 import QuizioTextField from '@/components/inputs/QuizioTextField';
+import { maxLengths } from '@/stores/max-lengths';
 import { Box, Button, Stack } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 
@@ -15,13 +16,10 @@ export default function OverviewForm() {
     image: string;
   }>();
 
-  const titleMaxLength = 50;
   let titleError: string | null = null;
   if (errors.title?.type === 'required') {
     titleError = 'Title is required';
   }
-
-  const descMaxLength = 100;
 
   function getFileNameFromPath(path: string) {
     return path.split('\\').pop()?.split('/').pop();
@@ -43,7 +41,7 @@ export default function OverviewForm() {
                   fullWidth
                   error={errors.title != null}
                   helperText={titleError}
-                  inputProps={{ maxLength: titleMaxLength }}
+                  inputProps={{ maxLength: maxLengths.quiz.title }}
                   {...field}
                 />
               )}
@@ -59,7 +57,7 @@ export default function OverviewForm() {
                   id="description"
                   label="Description"
                   inputProps={{
-                    maxLength: descMaxLength,
+                    maxLength: maxLengths.quiz.description,
                   }}
                   multiline
                   fullWidth
