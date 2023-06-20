@@ -13,6 +13,7 @@ import AnswerInput from './answer/AnswerInput';
 import {
   Add as AddIcon,
   ExpandMore as ExpandMoreIcon,
+  ReportProblem as ReportProblemIcon,
 } from '@mui/icons-material';
 import DeleteQuestionButton from './DeleteQuestionButton';
 import {
@@ -41,8 +42,9 @@ export default function QuestionInput({
   const index = useQuestionIndex();
   const {
     control,
-    formState: { errors, isSubmitSuccessful },
+    formState: { errors, isValid },
     getValues,
+    watch,
   } = useFormContext<QuizCreateFormFields>();
   const name = `questions.${index}` as const;
   const { fields, append, remove } = useFieldArray<QuizCreateFormFields>({
@@ -60,12 +62,6 @@ export default function QuestionInput({
     'required'
   ) {
     titleError = 'Question is required';
-  }
-  let answersError: string | null = null;
-  if (errors.questions?.root?.type === 'minLength') {
-    answersError = `Must have at least ${minAnswers} answers`;
-  } else if (errors.questions?.root?.type === 'maxLength') {
-    answersError = `Must have at most ${maxAnswers} answers`;
   }
 
   const hasCorrectAnswer =
@@ -87,9 +83,17 @@ export default function QuestionInput({
           justifyContent="space-between"
           sx={{ flex: 1 }}
         >
-          <Typography variant="h5" sx={{ marginBlock: 0 }}>{`Question ${
-            index + 1
-          }`}</Typography>
+          <Stack direction="row" alignItems="center" gap={4} sx={{ flex: 1 }}>
+            <Typography
+              variant="h5"
+              sx={{
+                marginBlock: 0,
+              }}
+            >
+              {`Question ${index + 1}`}
+            </Typography>
+            {!isValid && <ReportProblemIcon color="error" />}
+          </Stack>
           <DeleteQuestionButton disabled={!deletable} onDelete={onDelete} />
         </Stack>
       </AccordionSummary>
@@ -139,7 +143,7 @@ export default function QuestionInput({
               </AnswerIndexContext.Provider>
             ))}
           </Box>
-          {!isSubmitSuccessful && (
+          {!isValid && (
             <FormHelperText error>{hasCorrectAnswerError}</FormHelperText>
           )}
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
