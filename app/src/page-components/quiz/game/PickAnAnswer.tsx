@@ -31,7 +31,6 @@ export default function PickAnAnswer({
   onAnswer,
   selectedAnswerId,
 }: PickAnAnswerProps) {
-  const theme = useTheme();
   const answered = selectedAnswerId != null;
 
   return (

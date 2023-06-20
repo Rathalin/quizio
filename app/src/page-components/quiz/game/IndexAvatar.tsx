@@ -16,7 +16,7 @@ export default function IndexAvatar({ index, color }: IndexAvatarProps) {
         height: '2rem',
       }}
     >
-      <Typography sx={{ fontWeight: 700 }}>{index + 1}</Typography>
+      <Typography sx={{ fontWeight: 700 }}>{index}</Typography>
     </Avatar>
   );
 }
