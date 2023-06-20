@@ -5,7 +5,6 @@ import {
   ListItemButton,
   ListItemText,
   ListItemIcon,
-  useTheme,
   Stack,
   Grid,
 } from '@mui/material';
