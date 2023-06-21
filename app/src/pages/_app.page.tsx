@@ -71,22 +71,6 @@ export default function App(props: MyAppProps) {
               <CssBaseline />
               <Head>
                 <title>Quizio</title>
-                <meta
-                  name="description"
-                  content="Quizo is a quiz app that allows you to create and share quizzes with your friends."
-                />
-                <meta
-                  property="og:title"
-                  content="Quizio - The modern quizz app"
-                />
-                <meta
-                  property="og:description"
-                  content="Create and share quizzes with your friends."
-                />
-                {/* <meta
-                  property="og:image"
-                  content="https://example.com/images/cool-page.jpg"
-                /> */}
                 <link
                   rel="dns-prefetch"
                   href={process.env.NEXT_PUBLIC_BACKEND_URL}
