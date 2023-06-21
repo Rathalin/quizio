@@ -1,6 +1,5 @@
 import QuizioTextField from '@/components/inputs/QuizioTextField';
 import { QuizCreateFormFields } from '@/pages/quiz/create/index.page';
-import { Box, Button, Stack } from '@mui/material';
 import { maxLengths } from '@/stores/max-lengths';
 import { Box, Button, Stack, Tooltip } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
