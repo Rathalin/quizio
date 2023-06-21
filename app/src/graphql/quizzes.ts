@@ -67,6 +67,14 @@ export const getQuizzesByUuidGQL = graphql(`
               }
             }
           }
+          image {
+            data {
+              id
+              attributes {
+                url
+              }
+            }
+          }
         }
       }
     }
