@@ -57,8 +57,6 @@ export default function QuestionInput({
   });
 
   const questionError = errors.questions?.[index];
-  const hasError =
-    questionError?.title != null || questionError?.answers != null;
 
   let titleError: string | null = null;
   if (questionError?.title?.type === 'required') {
@@ -74,6 +72,10 @@ export default function QuestionInput({
   if (!hasCorrectAnswer) {
     hasCorrectAnswerError = 'Exactly one answer must be correct';
   }
+  const hasError =
+    questionError?.title != null ||
+    questionError?.answers != null ||
+    !hasCorrectAnswer;
 
   return (
     <Accordion elevation={4} defaultExpanded>
