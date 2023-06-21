@@ -1,6 +1,8 @@
 import QuizioTextField from '@/components/inputs/QuizioTextField';
 import { QuizCreateFormFields } from '@/pages/quiz/create/index.page';
 import { Box, Button, Stack } from '@mui/material';
+import { maxLengths } from '@/stores/max-lengths';
+import { Box, Button, Stack, Tooltip } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 
 export default function OverviewForm() {
@@ -12,13 +14,10 @@ export default function OverviewForm() {
     watch,
   } = useFormContext<QuizCreateFormFields>();
 
-  const titleMaxLength = 50;
   let titleError: string | null = null;
   if (errors.title?.type === 'required') {
     titleError = 'Title is required';
   }
-
-  const descMaxLength = 100;
 
   function getFileNameFromPath(path: string) {
     return path.split('\\').pop()?.split('/').pop();
@@ -40,7 +39,7 @@ export default function OverviewForm() {
                   fullWidth
                   error={errors.title != null}
                   helperText={titleError}
-                  inputProps={{ maxLength: titleMaxLength }}
+                  inputProps={{ maxLength: maxLengths.quiz.title }}
                   {...field}
                 />
               )}
@@ -56,7 +55,7 @@ export default function OverviewForm() {
                   id="description"
                   label="Description"
                   inputProps={{
-                    maxLength: descMaxLength,
+                    maxLength: maxLengths.quiz.description,
                   }}
                   multiline
                   fullWidth
@@ -72,35 +71,39 @@ export default function OverviewForm() {
             control={control}
             name="image"
             render={({ field }) => (
-              <>
-                <input
-                  id="image"
-                  type="file"
-                  accept="image/*"
-                  style={{ display: 'none' }}
-                  {...field}
-                />
-                <label
-                  htmlFor="image"
-                  style={{
-                    display: 'flex',
-                  }}
-                >
-                  <Button
-                    variant="outlined"
-                    component="span"
-                    sx={{
-                      padding: 4,
-                      minWidth: '16rem',
-                      minHeight: '180px',
+              <Tooltip title="Image upload comming soon!" arrow>
+                <Box>
+                  <input
+                    id="quiz-image"
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    disabled
+                    {...field}
+                  />
+                  <label
+                    htmlFor="quiz-image"
+                    style={{
+                      display: 'flex',
                     }}
                   >
-                    {field.value
-                      ? getFileNameFromPath(field.value)
-                      : 'Upload Image'}
-                  </Button>
-                </label>
-              </>
+                    <Button
+                      variant="outlined"
+                      component="span"
+                      sx={{
+                        padding: 4,
+                        minWidth: '16rem',
+                        minHeight: '180px',
+                      }}
+                      disabled
+                    >
+                      {field.value
+                        ? getFileNameFromPath(field.value)
+                        : 'Upload Image'}
+                    </Button>
+                  </label>
+                </Box>
+              </Tooltip>
             )}
           />
         </Stack>

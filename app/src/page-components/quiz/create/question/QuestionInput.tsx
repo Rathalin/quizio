@@ -1,13 +1,20 @@
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
   Button,
-  Card,
-  CardContent,
-  Divider,
   FormHelperText,
+  Stack,
+  Tooltip,
+  Typography,
 } from '@mui/material';
 import AnswerInput from './answer/AnswerInput';
-import { Add as AddIcon } from '@mui/icons-material';
+import {
+  Add as AddIcon,
+  ExpandMore as ExpandMoreIcon,
+  ReportProblem as ReportProblemIcon,
+} from '@mui/icons-material';
 import DeleteQuestionButton from './DeleteQuestionButton';
 import {
   Controller,
@@ -19,12 +26,12 @@ import { useQuestionIndex } from './QuestionIndexContext';
 import { AnswerIndexContext } from './answer/AnswerIndexContext';
 import QuizioTextField from '@/components/inputs/QuizioTextField';
 import { QuizCreateFormFields } from '@/pages/quiz/create/index.page';
+import { maxLengths } from '@/stores/max-lengths';
 
 type QuestionInputProps = {
   deletable: boolean;
   onDelete: () => void;
 };
-const titleMaxLength = 50;
 const minAnswers = 2;
 const maxAnswers = 20;
 
@@ -35,8 +42,9 @@ export default function QuestionInput({
   const index = useQuestionIndex();
   const {
     control,
-    formState: { errors, isSubmitSuccessful },
+    formState: { errors, isValid },
     getValues,
+    watch,
   } = useFormContext<QuizCreateFormFields>();
   const name = `questions.${index}` as const;
   const { fields, append, remove } = useFieldArray<QuizCreateFormFields>({
@@ -55,12 +63,6 @@ export default function QuestionInput({
   ) {
     titleError = 'Question is required';
   }
-  let answersError: string | null = null;
-  if (errors.questions?.root?.type === 'minLength') {
-    answersError = `Must have at least ${minAnswers} answers`;
-  } else if (errors.questions?.root?.type === 'maxLength') {
-    answersError = `Must have at most ${maxAnswers} answers`;
-  }
 
   const hasCorrectAnswer =
     useWatch({
@@ -73,72 +75,104 @@ export default function QuestionInput({
   }
 
   return (
-    <Card elevation={4}>
-      <CardContent>
+    <Accordion elevation={4} defaultExpanded>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{ flex: 1 }}
+        >
+          <Stack direction="row" alignItems="center" gap={4} sx={{ flex: 1 }}>
+            <Typography
+              variant="h5"
+              sx={{
+                marginBlock: 0,
+              }}
+            >
+              {`Question ${index + 1}`}
+            </Typography>
+            {!isValid && (
+              <Tooltip title="Some inputs require your attention." arrow>
+                <ReportProblemIcon color="error" />
+              </Tooltip>
+            )}
+          </Stack>
+          <DeleteQuestionButton disabled={!deletable} onDelete={onDelete} />
+        </Stack>
+      </AccordionSummary>
+      <AccordionDetails>
+        <Box
+          sx={{
+            marginBottom: 4,
+            gap: 2,
+            display: 'flex',
+          }}
+        >
+          <Controller
+            name={`${name}.title`}
+            render={({ field }) => (
+              <QuizioTextField
+                id={`${name}.title`}
+                label="Question"
+                fullWidth
+                error={titleError != null}
+                helperText={titleError}
+                inputProps={{ maxLength: maxLengths.question.title }}
+                {...field}
+              />
+            )}
+            rules={{ required: true }}
+            control={control}
+          />
+          <Box sx={{ marginTop: 1 }}></Box>
+        </Box>
         <Box>
           <Box
             sx={{
-              marginBottom: 4,
-              gap: 2,
               display: 'flex',
+              flexDirection: 'column',
+              gap: 2,
+              marginBottom: 2,
             }}
           >
-            <Controller
-              name={`${name}.title`}
-              render={({ field }) => (
-                <QuizioTextField
-                  id={`${name}.title`}
-                  label={`Question ${index + 1}`}
-                  fullWidth
-                  error={titleError != null}
-                  helperText={titleError}
-                  inputProps={{ maxLength: titleMaxLength }}
-                  {...field}
+            {fields.map((field, index) => (
+              <AnswerIndexContext.Provider key={field.id} value={index}>
+                <AnswerInput
+                  onDelete={() => remove(index)}
+                  minAnswers={minAnswers}
+                  isCorrect={getValues(`${name}.answers.${index}.isCorrect`)}
+                  deletable={fields.length > minAnswers}
                 />
-              )}
-              rules={{ required: true }}
-              control={control}
-            />
-            <Box sx={{ marginTop: 1 }}>
-              <DeleteQuestionButton disabled={!deletable} onDelete={onDelete} />
-            </Box>
+              </AnswerIndexContext.Provider>
+            ))}
           </Box>
-          <Box>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 2,
-                marginBottom: 2,
-              }}
+          {!isValid && (
+            <FormHelperText error>{hasCorrectAnswerError}</FormHelperText>
+          )}
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Tooltip
+              title={
+                fields.length >= maxAnswers
+                  ? `You can only add ${maxAnswers} answers.`
+                  : null
+              }
+              arrow
             >
-              {fields.map((field, index) => (
-                <AnswerIndexContext.Provider key={field.id} value={index}>
-                  <AnswerInput
-                    onDelete={() => remove(index)}
-                    minAnswers={minAnswers}
-                    isCorrect={getValues(`${name}.answers.${index}.isCorrect`)}
-                    deletable={fields.length > minAnswers}
-                  />
-                </AnswerIndexContext.Provider>
-              ))}
-            </Box>
-            {!isSubmitSuccessful && (
-              <FormHelperText error>{hasCorrectAnswerError}</FormHelperText>
-            )}
-            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-              <Button
-                variant="outlined"
-                startIcon={<AddIcon />}
-                onClick={() => append({ title: '', isCorrect: false })}
-              >
-                Answer
-              </Button>
-            </Box>
+              <Box>
+                <Button
+                  variant="outlined"
+                  startIcon={<AddIcon />}
+                  onClick={() => append({ title: '', isCorrect: false })}
+                  disabled={fields.length >= maxAnswers}
+                >
+                  Answer
+                </Button>
+              </Box>
+            </Tooltip>
           </Box>
-          <Divider sx={{ marginBlock: 4 }} />
         </Box>
-      </CardContent>
-    </Card>
+      </AccordionDetails>
+    </Accordion>
   );
 }

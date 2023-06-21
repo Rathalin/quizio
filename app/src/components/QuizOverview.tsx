@@ -3,8 +3,6 @@ import {
   Card,
   CardContent,
   Chip,
-  IconButton,
-  Tooltip,
   Typography,
   darken,
   lighten,
@@ -13,14 +11,12 @@ import {
 import Image from 'next/image';
 import {
   BarChart as BarChartIcon,
-  Edit as EditIcon,
   Image as ImageIcon,
   PlayArrow as PlayArrowIcon,
 } from '@mui/icons-material';
 import LinkButton from './LinkButton';
 import { useMemo } from 'react';
 import { usePrefersLightMode } from '@/custom-hooks/usePrefersLightMode';
-import Link from 'next/link';
 
 type QuizOverviewProps = {
   uuid: string;
@@ -107,7 +103,7 @@ export default function QuizOverview({
               sx={{ display: 'flex', justifyContent: 'space-between' }}
             >
               {title}
-              {isMyQuiz && (
+              {/* {isMyQuiz && (
                 <Box sx={{ justifySelf: 'center' }}>
                   <Link href={`/quiz/edit/${uuid}`}>
                     <Tooltip title="Edit your quiz" arrow>
@@ -117,7 +113,7 @@ export default function QuizOverview({
                     </Tooltip>
                   </Link>
                 </Box>
-              )}
+              )} */}
             </Typography>
           </Box>
           <Box>

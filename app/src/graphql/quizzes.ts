@@ -2,7 +2,11 @@ import { graphql } from './generated';
 
 export const getAllPublishedQuizzesGQL = graphql(`
   query getAllPublishedQuizzes {
-    quizzes(filters: { published: { eq: true } }, sort: "createdAt:DESC") {
+    quizzes(
+      filters: { published: { eq: true } }
+      sort: "createdAt:DESC"
+      pagination: { limit: 50 }
+    ) {
       data {
         id
         attributes {
@@ -12,7 +16,7 @@ export const getAllPublishedQuizzesGQL = graphql(`
           published
           createdAt
           playCount
-          questions {
+          questions(pagination: { limit: 100 }) {
             data {
               id
             }
@@ -46,12 +50,12 @@ export const getQuizzesByUuidGQL = graphql(`
         id
         attributes {
           title
-          questions {
+          questions(pagination: { limit: 100 }) {
             data {
               id
               attributes {
                 title
-                answers {
+                answers(pagination: { limit: 10 }) {
                   data {
                     id
                     attributes {

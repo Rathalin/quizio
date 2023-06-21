@@ -5,6 +5,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { useAnswerIndex } from './AnswerIndexContext';
 import { useQuestionIndex } from '../QuestionIndexContext';
 import QuizioTextField from '@/components/inputs/QuizioTextField';
+import { maxLengths } from '@/stores/max-lengths';
 
 type AnswerInputProps = {
   isCorrect: boolean;
@@ -12,8 +13,6 @@ type AnswerInputProps = {
   minAnswers: number;
   deletable: boolean;
 };
-
-const titleMaxLength = 50;
 
 export default function AnswerInput({
   isCorrect,
@@ -52,7 +51,7 @@ export default function AnswerInput({
             sx={{ flex: 1 }}
             error={titleError != null}
             helperText={titleError}
-            inputProps={{ maxLength: titleMaxLength }}
+            inputProps={{ maxLength: maxLengths.answer.title }}
             {...field}
           />
         )}

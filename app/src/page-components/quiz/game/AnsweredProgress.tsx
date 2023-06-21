@@ -4,8 +4,7 @@ import {
   CheckCircle as CheckCircleIcon,
   Circle as CircleIcon,
 } from '@mui/icons-material';
-import { Box } from '@mui/material';
-import { grey } from '@mui/material/colors';
+import { Stack } from '@mui/material';
 
 type ScoreProgressProps = {
   answeredProgress: AnsweredState[];
@@ -22,17 +21,17 @@ export default function AnsweredProgress({
   }
 
   return (
-    <Box>
+    <Stack direction="row" flexWrap="wrap">
       {answeredProgress.map((state, index) => (
         <AnsweredStateItem key={index} correct={isAnswerCorrect(state)} />
       ))}
-    </Box>
+    </Stack>
   );
 }
 
 function AnsweredStateItem({ correct }: { correct: boolean | null }) {
   if (correct == null) {
-    return <CircleIcon sx={{ color: grey[600] }} fontSize="large" />;
+    return <CircleIcon color="disabled" fontSize="large" />;
   }
 
   if (correct) {

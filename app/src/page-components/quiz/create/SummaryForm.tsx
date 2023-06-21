@@ -1,10 +1,20 @@
 import { QuizCreateFormFields } from '@/pages/quiz/create/index.page';
 import { Check as CheckIcon, Clear as ClearIcon } from '@mui/icons-material';
-import { Box, Divider, List, ListItem, Typography } from '@mui/material';
+import {
+  Box,
+  Divider,
+  List,
+  ListItem,
+  Stack,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { useFormContext } from 'react-hook-form';
+import IndexAvatar from '../game/IndexAvatar';
 
 export default function SummaryForm() {
   const { getValues } = useFormContext();
+  const theme = useTheme();
 
   const { title, description, questions } = getValues() as QuizCreateFormFields;
 
@@ -20,9 +30,19 @@ export default function SummaryForm() {
             {qIndex > 0 && <Divider />}
             <ListItem>
               <Box>
-                <Typography variant="h5" component="h3">{`${qIndex + 1}) ${
-                  question.title
-                }`}</Typography>
+                <Stack direction="row" alignItems="center" gap={2}>
+                  <IndexAvatar
+                    index={qIndex}
+                    color={theme.palette.action.disabled}
+                  />
+                  <Typography
+                    variant="h5"
+                    component="h3"
+                    sx={{ marginBlock: 0 }}
+                  >
+                    {question.title}
+                  </Typography>
+                </Stack>
                 <List>
                   {question.answers.map((answer, aIndex) => (
                     <ListItem
