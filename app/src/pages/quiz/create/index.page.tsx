@@ -12,7 +12,7 @@ import {
   Step,
   StepLabel,
   Stepper,
-  Typography,
+  Typography
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -21,12 +21,12 @@ import NextButton from '@/page-components/quiz/create/NextButton';
 import {
   createQuizGQL,
   createQuestionGQL,
-  createAnswerGQL,
+  createAnswerGQL
 } from '@/graphql/createQuiz';
 import {
   QuizInput,
   QuestionInput,
-  AnswerInput,
+  AnswerInput
 } from '@/graphql/generated/graphql';
 import { useMutation } from '@tanstack/react-query';
 import request from 'graphql-request';
@@ -45,7 +45,7 @@ export type StepData = {
 const steps = stepTitles.map((title, index) => ({
   title,
   backLabel: stepTitles[index - 1],
-  nextLabel: stepTitles[index + 1],
+  nextLabel: stepTitles[index + 1]
 }));
 
 export type QuizCreateFormFields = {
@@ -70,10 +70,10 @@ export const emptyQuizFormData = {
       title: '',
       answers: [
         { title: '', isCorrect: false },
-        { title: '', isCorrect: false },
-      ],
-    },
-  ],
+        { title: '', isCorrect: false }
+      ]
+    }
+  ]
 } satisfies QuizCreateFormFields;
 
 export default function QuizCreatePage() {
@@ -82,7 +82,7 @@ export default function QuizCreatePage() {
   const [activeStep, setActiveStep] = useState(0);
 
   const { ...methods } = useForm<QuizCreateFormFields>({
-    defaultValues: emptyQuizFormData,
+    defaultValues: emptyQuizFormData
   });
   const { getValues, reset, handleSubmit } = methods;
   const { title, description, image, questions } =
@@ -95,10 +95,10 @@ export default function QuizCreatePage() {
         process.env.NEXT_PUBLIC_GRAPHQL_URL,
         createQuizGQL,
         {
-          data,
+          data
         },
         {
-          Authorization: `Bearer ${session?.user.acessToken}`,
+          Authorization: `Bearer ${session?.user.acessToken}`
         }
       ),
     onSuccess: async (data) => {
@@ -108,7 +108,7 @@ export default function QuizCreatePage() {
           questions.map(async (question) => {
             const questionData = await createQuestionMutation.mutateAsync({
               title: question.title,
-              quiz: data.createQuiz?.data?.id,
+              quiz: data.createQuiz?.data?.id
             });
 
             // Create answers
@@ -117,7 +117,7 @@ export default function QuizCreatePage() {
                 await createAnswerMutation.mutateAsync({
                   title: answer.title,
                   correct: answer.isCorrect,
-                  question: questionData.createQuestion?.data?.id,
+                  question: questionData.createQuestion?.data?.id
                 });
               })
             );
@@ -128,7 +128,7 @@ export default function QuizCreatePage() {
       } catch (error) {
         console.error(error);
       }
-    },
+    }
   });
   const createQuestionMutation = useMutation({
     mutationKey: ['createQuestion'],
@@ -137,12 +137,12 @@ export default function QuizCreatePage() {
         process.env.NEXT_PUBLIC_GRAPHQL_URL,
         createQuestionGQL,
         {
-          data,
+          data
         },
         {
-          Authorization: `Bearer ${session?.user.acessToken}`,
+          Authorization: `Bearer ${session?.user.acessToken}`
         }
-      ),
+      )
   });
   const createAnswerMutation = useMutation({
     mutationKey: ['createAnswer'],
@@ -151,12 +151,12 @@ export default function QuizCreatePage() {
         process.env.NEXT_PUBLIC_GRAPHQL_URL,
         createAnswerGQL,
         {
-          data,
+          data
         },
         {
-          Authorization: `Bearer ${session?.user.acessToken}`,
+          Authorization: `Bearer ${session?.user.acessToken}`
         }
-      ),
+      )
   });
   const uploadImageMutation = useMutation({
     mutationKey: ['uploadImage'],
@@ -165,10 +165,10 @@ export default function QuizCreatePage() {
         process.env.NEXT_PUBLIC_GRAPHQL_URL,
         uploadImageGQL,
         {
-          file: image,
+          file: image
         },
         {
-          Authorization: `Bearer ${session?.user.acessToken}`,
+          Authorization: `Bearer ${session?.user.acessToken}`
         }
       ),
     onSuccess: (data) =>
@@ -177,8 +177,8 @@ export default function QuizCreatePage() {
         description,
         image: data.upload.data?.id,
         published: true,
-        owner: session?.user?.id?.toString() ?? '0',
-      }),
+        owner: session?.user?.id?.toString() ?? '0'
+      })
   });
 
   useEffect(() => {
@@ -189,7 +189,12 @@ export default function QuizCreatePage() {
 
   function handleFinishQuizClick() {
     // Create quiz
-    uploadImageMutation.mutate();
+    createQuizMutation.mutate({
+      title,
+      description,
+      published: true,
+      owner: session?.user?.id?.toString() ?? '0'
+    });
   }
 
   function handleNext() {
