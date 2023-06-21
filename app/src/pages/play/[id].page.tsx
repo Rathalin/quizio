@@ -11,13 +11,13 @@ import {
   Alert,
   useTheme,
   Button,
-  Snackbar
+  Snackbar,
 } from '@mui/material';
 import {
   QueryClient,
   dehydrate,
   useMutation,
-  useQuery
+  useQuery,
 } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
@@ -37,26 +37,26 @@ export const getServerSideProps: GetServerSideProps<{
   const id = ctx.params?.id;
   if (typeof id !== 'string') {
     return {
-      notFound: true
+      notFound: true,
     };
   }
 
   await queryClient.prefetchQuery(['quiz', id], () =>
     request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getQuizzesByUuidGQL, {
-      uuid: id
+      uuid: id,
     })
   );
 
   return {
     props: {
       gameId: id,
-      dehydratedState: dehydrate(queryClient)
-    }
+      dehydratedState: dehydrate(queryClient),
+    },
   };
 };
 
 export default function PlayIdPage({
-  gameId
+  gameId,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const theme = useTheme();
   const router = useRouter();
@@ -64,9 +64,9 @@ export default function PlayIdPage({
     queryKey: ['quiz', gameId],
     queryFn: () =>
       request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getQuizzesByUuidGQL, {
-        uuid: gameId
+        uuid: gameId,
       }),
-    staleTime: Infinity
+    staleTime: Infinity,
   });
   const quiz = quizQuery.data?.quizzes?.data[0];
   const increasePlayCountMutation = useMutation({
@@ -77,10 +77,10 @@ export default function PlayIdPage({
         {
           method: 'POST',
           body: JSON.stringify({
-            quizId: quiz?.id ?? ''
-          })
+            quizId: quiz?.id ?? '',
+          }),
         }
-      )
+      ),
   });
   const [playCountIncreased, setPlayCountIncreased] = useState(false);
   const questions = useMemo(
@@ -119,7 +119,7 @@ export default function PlayIdPage({
           question.attributes?.answers?.data.find(
             (answer) => answer.attributes?.correct
           )?.id ?? '0',
-        selectedAnswerId: null
+        selectedAnswerId: null,
       }))
     );
   }, [questions]);
@@ -137,7 +137,7 @@ export default function PlayIdPage({
         i === questionIndex
           ? {
               selectedAnswerId: selectedAnswerId,
-              correctAnswerId: answeredState.correctAnswerId
+              correctAnswerId: answeredState.correctAnswerId,
             }
           : answeredState
       )
@@ -181,8 +181,8 @@ export default function PlayIdPage({
       sx={{
         marginTop: {
           xs: 0,
-          lg: 6
-        }
+          lg: 6,
+        },
       }}
     >
       {quizQuery.isLoading && <Alert severity="info">Loading the quiz.</Alert>}
@@ -211,7 +211,7 @@ export default function PlayIdPage({
               {!gameDone && (
                 <Card
                   sx={{
-                    border: `3px solid ${borderColor}`
+                    border: `3px solid ${borderColor}`,
                   }}
                 >
                   <CardContent sx={{ padding: 0 }}>
@@ -222,7 +222,7 @@ export default function PlayIdPage({
                         (answer) => ({
                           id: answer.id ?? '',
                           title: answer.attributes?.title ?? '',
-                          correct: answer.attributes?.correct ?? false
+                          correct: answer.attributes?.correct ?? false,
                         })
                       )}
                       answeredProgress={answeredProgress}
@@ -236,7 +236,7 @@ export default function PlayIdPage({
                         display: 'flex',
                         justifyContent: 'space-between',
                         gap: 2,
-                        flexWrap: 'wrap'
+                        flexWrap: 'wrap',
                       }}
                     >
                       <HomeButton />
@@ -264,8 +264,8 @@ export default function PlayIdPage({
                           question.attributes?.answers?.data.map((answer) => ({
                             id: answer.id ?? '',
                             title: answer.attributes?.title ?? '',
-                            correct: answer.attributes?.correct ?? false
-                          })) ?? []
+                            correct: answer.attributes?.correct ?? false,
+                          })) ?? [],
                       }))}
                       answeredProgress={answeredProgress}
                     />
@@ -275,7 +275,7 @@ export default function PlayIdPage({
                         display: 'flex',
                         justifyContent: 'space-between',
                         gap: 2,
-                        flexWrap: 'wrap'
+                        flexWrap: 'wrap',
                       }}
                     >
                       <HomeButton />

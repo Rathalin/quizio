@@ -7,7 +7,7 @@ import {
   ListItem,
   Stack,
   Typography,
-  useTheme
+  useTheme,
 } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
 import IndexAvatar from '../game/IndexAvatar';
@@ -50,7 +50,7 @@ export default function SummaryForm() {
                       sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        columnGap: 3
+                        columnGap: 3,
                       }}
                     >
                       {answer.isCorrect ? (
