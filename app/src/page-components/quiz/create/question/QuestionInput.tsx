@@ -7,20 +7,20 @@ import {
   FormHelperText,
   Stack,
   Tooltip,
-  Typography,
+  Typography
 } from '@mui/material';
 import AnswerInput from './answer/AnswerInput';
 import {
   Add as AddIcon,
   ExpandMore as ExpandMoreIcon,
-  ReportProblem as ReportProblemIcon,
+  ReportProblem as ReportProblemIcon
 } from '@mui/icons-material';
 import DeleteQuestionButton from './DeleteQuestionButton';
 import {
   Controller,
   useFieldArray,
   useFormContext,
-  useWatch,
+  useWatch
 } from 'react-hook-form';
 import { useQuestionIndex } from './QuestionIndexContext';
 import { AnswerIndexContext } from './answer/AnswerIndexContext';
@@ -37,14 +37,14 @@ const maxAnswers = 20;
 
 export default function QuestionInput({
   deletable,
-  onDelete,
+  onDelete
 }: QuestionInputProps) {
   const index = useQuestionIndex();
   const {
     control,
     formState: { errors, isValid },
     getValues,
-    watch,
+    watch
   } = useFormContext<QuizCreateFormFields>();
   const name = `questions.${index}` as const;
   const { fields, append, remove } = useFieldArray<QuizCreateFormFields>({
@@ -52,22 +52,23 @@ export default function QuestionInput({
     control,
     rules: {
       minLength: minAnswers,
-      maxLength: maxAnswers,
-    },
+      maxLength: maxAnswers
+    }
   });
 
+  const questionError = errors.questions?.[index];
+  const hasError =
+    questionError?.title != null || questionError?.answers != null;
+
   let titleError: string | null = null;
-  if (
-    (errors.questions as any[] | undefined)?.at(index)?.title?.type ===
-    'required'
-  ) {
+  if (questionError?.title?.type === 'required') {
     titleError = 'Question is required';
   }
 
   const hasCorrectAnswer =
     useWatch({
       name: `questions.${index}`,
-      control,
+      control
     }).answers.filter((answer) => answer.isCorrect).length === 1;
   let hasCorrectAnswerError: string | null = null;
   if (!hasCorrectAnswer) {
@@ -87,12 +88,12 @@ export default function QuestionInput({
             <Typography
               variant="h5"
               sx={{
-                marginBlock: 0,
+                marginBlock: 0
               }}
             >
               {`Question ${index + 1}`}
             </Typography>
-            {!isValid && (
+            {hasError && (
               <Tooltip title="Some inputs require your attention." arrow>
                 <ReportProblemIcon color="error" />
               </Tooltip>
@@ -106,7 +107,7 @@ export default function QuestionInput({
           sx={{
             marginBottom: 4,
             gap: 2,
-            display: 'flex',
+            display: 'flex'
           }}
         >
           <Controller
@@ -133,7 +134,7 @@ export default function QuestionInput({
               display: 'flex',
               flexDirection: 'column',
               gap: 2,
-              marginBottom: 2,
+              marginBottom: 2
             }}
           >
             {fields.map((field, index) => (
@@ -147,9 +148,8 @@ export default function QuestionInput({
               </AnswerIndexContext.Provider>
             ))}
           </Box>
-          {!isValid && (
-            <FormHelperText error>{hasCorrectAnswerError}</FormHelperText>
-          )}
+          <FormHelperText error>{hasCorrectAnswerError}</FormHelperText>
+
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <Tooltip
               title={
