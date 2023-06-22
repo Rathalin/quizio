@@ -1,6 +1,6 @@
 import LogoButton from '@/components/buttons/LogoButton';
 import { AppBar, Box, Container, Toolbar } from '@mui/material';
-import AccountMenu from './AccountMenu';
+import AccountMenu from './dashboard/AccountMenu';
 
 export default function Header() {
   return (

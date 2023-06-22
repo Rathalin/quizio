@@ -1,8 +1,8 @@
 import { Box, Divider, Stack } from '@mui/material';
-import QuizzesOverview from '@/page-components/QuizzesOverview';
 import { useSession } from 'next-auth/react';
 import LinkButton from '@/components/LinkButton';
 import Head from 'next/head';
+import QuizzesOverview from '@/page-components/dashboard/QuizzesOverview';
 
 export default function Home() {
   const session = useSession();
