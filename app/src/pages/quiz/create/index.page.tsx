@@ -14,7 +14,7 @@ import {
   Stepper,
   Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import BackButton from '@/page-components/quiz/create/BackButton';
 import NextButton from '@/page-components/quiz/create/NextButton';
@@ -41,6 +41,7 @@ import {
 } from '@/page-components/quiz/create/quiz-form-data';
 import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import { useRedirectOnUnauthenticated } from '@/custom-hooks/useRedirectOnUnauthenticated';
+import { useStorage } from '@/custom-hooks/useStorage';
 
 const stepTitles = ['Overview', 'Questions', 'Summary'] as const;
 export type StepData = {
@@ -53,17 +54,28 @@ const steps = stepTitles.map((title, index) => ({
   backLabel: stepTitles[index - 1],
   nextLabel: stepTitles[index + 1],
 }));
+const formDataKey = 'quiz-form-data';
 
 export default function QuizCreatePage() {
   const { data: session, status } = useSession();
   const { authHeader } = useAuthHeader(session);
-
+  const { getStorageItem, setStorageItem } = useStorage<QuizForm>(formDataKey);
   const [activeStep, setActiveStep] = useState(0);
 
   const { ...methods } = useForm<QuizForm>({
     defaultValues: defaultQuizFormData,
   });
-  const { getValues, reset, handleSubmit } = methods;
+  const { getValues, reset, handleSubmit, watch } = methods;
+  useEffect(() => {
+    reset(getStorageItem() as QuizForm);
+  }, [getStorageItem, reset]);
+  useEffect(() => {
+    const subscription = watch((value) => {
+      setStorageItem(value as QuizForm);
+    });
+    return () => subscription.unsubscribe();
+  }, [setStorageItem, watch]);
+
   const { title, description, image, questions } = getValues() as QuizForm;
 
   useRedirectOnUnauthenticated(status);

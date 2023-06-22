@@ -1,8 +1,8 @@
 import QuizioTextField from '@/components/inputs/QuizioTextField';
-import { QuizCreateFormFields } from '@/pages/quiz/create/index.page';
 import { maxLengths } from '@/stores/max-lengths';
 import { Box, Button, Stack, Tooltip } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
+import { QuizForm } from './quiz-form-data';
 
 export default function OverviewForm() {
   const {
@@ -11,7 +11,7 @@ export default function OverviewForm() {
     formState: { errors },
     getValues,
     watch,
-  } = useFormContext<QuizCreateFormFields>();
+  } = useFormContext<QuizForm>();
 
   let titleError: string | null = null;
   if (errors.title?.type === 'required') {
