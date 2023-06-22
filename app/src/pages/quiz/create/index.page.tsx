@@ -14,7 +14,7 @@ import {
   Stepper,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import BackButton from '@/page-components/quiz/create/BackButton';
 import NextButton from '@/page-components/quiz/create/NextButton';
@@ -35,6 +35,12 @@ import { useSession } from 'next-auth/react';
 import LoadingCircle from '@/components/LoadingCircle';
 import { Publish as PublishIcon } from '@mui/icons-material';
 import { uploadImageGQL } from '@/graphql/upload';
+import {
+  QuizForm,
+  defaultQuizFormData,
+} from '@/page-components/quiz/create/quiz-form-data';
+import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
+import { useRedirectOnUnauthenticated } from '@/custom-hooks/useRedirectOnUnauthenticated';
 
 const stepTitles = ['Overview', 'Questions', 'Summary'] as const;
 export type StepData = {
@@ -48,42 +54,9 @@ const steps = stepTitles.map((title, index) => ({
   nextLabel: stepTitles[index + 1],
 }));
 
-export type AnswerForm = {
-  title: string;
-  isCorrect: boolean;
-};
-
-export type QuestionForm = {
-  title: string;
-  answers: AnswerForm[];
-};
-
-export type QuizForm = {
-  title: string;
-  description: string;
-  image: string;
-  questions: QuestionForm[];
-};
-
-export const defaultAnswerFormData: AnswerForm = {
-  title: '',
-  isCorrect: false,
-};
-
-export const defaultQuestionFormData: QuestionForm = {
-  title: '',
-  answers: Array.from({ length: 4 }, () => defaultAnswerFormData),
-};
-
-export const defaultQuizFormData: QuizForm = {
-  title: '',
-  description: '',
-  image: '',
-  questions: [defaultQuestionFormData],
-};
-
 export default function QuizCreatePage() {
   const { data: session, status } = useSession();
+  const { authHeader } = useAuthHeader(session);
 
   const [activeStep, setActiveStep] = useState(0);
 
@@ -92,6 +65,8 @@ export default function QuizCreatePage() {
   });
   const { getValues, reset, handleSubmit } = methods;
   const { title, description, image, questions } = getValues() as QuizForm;
+
+  useRedirectOnUnauthenticated(status);
 
   const createQuizMutation = useMutation({
     mutationKey: ['createQuiz'],
@@ -102,9 +77,7 @@ export default function QuizCreatePage() {
         {
           data,
         },
-        {
-          Authorization: `Bearer ${session?.user.acessToken}`,
-        }
+        authHeader
       ),
     onSuccess: async (data) => {
       try {
@@ -144,9 +117,7 @@ export default function QuizCreatePage() {
         {
           data,
         },
-        {
-          Authorization: `Bearer ${session?.user.acessToken}`,
-        }
+        authHeader
       ),
   });
   const createAnswerMutation = useMutation({
@@ -158,9 +129,7 @@ export default function QuizCreatePage() {
         {
           data,
         },
-        {
-          Authorization: `Bearer ${session?.user.acessToken}`,
-        }
+        authHeader
       ),
   });
   const uploadImageMutation = useMutation({
@@ -172,9 +141,7 @@ export default function QuizCreatePage() {
         {
           file: image,
         },
-        {
-          Authorization: `Bearer ${session?.user.acessToken}`,
-        }
+        authHeader
       ),
     onSuccess: (data) =>
       createQuizMutation.mutate({
@@ -185,12 +152,6 @@ export default function QuizCreatePage() {
         owner: session?.user?.id?.toString() ?? '0',
       }),
   });
-
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/');
-    }
-  }, [status]);
 
   function handleFinishQuizClick() {
     // Create quiz

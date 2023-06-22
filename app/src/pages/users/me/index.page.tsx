@@ -1,4 +1,5 @@
 import HomeButton from '@/components/buttons/HomeButton';
+import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import { useIsMobile } from '@/custom-hooks/useIsMobile';
 import { getMeGQL } from '@/graphql/user';
 import MeDataPlaceholder from '@/page-components/user/me/MeDataPlaceholder';
@@ -23,17 +24,11 @@ export default function MePage() {
   const theme = useTheme();
   const isMobile = useIsMobile();
   const { data: session, status } = useSession();
+  const { authHeader } = useAuthHeader(session);
   const { isLoading, isError, error, isSuccess, data } = useQuery({
     queryKey: ['me'],
     queryFn: () =>
-      request(
-        process.env.NEXT_PUBLIC_GRAPHQL_URL,
-        getMeGQL,
-        {},
-        {
-          Authorization: `Bearer ${session?.user.acessToken}`,
-        }
-      ),
+      request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getMeGQL, {}, authHeader),
     enabled: status === 'authenticated',
   });
 
