@@ -1,4 +1,4 @@
-import { Stack, Typography, useTheme } from '@mui/material';
+import { Stack, useTheme } from '@mui/material';
 import IndexAvatar from '../../quiz/game/IndexAvatar';
 import SearchInput from './SearchInput';
 import SortCreatedButton from './SortButton';
@@ -26,9 +26,6 @@ export default function SearchFilterBarBar({
         <SearchInput />
         <SortCreatedButton option="created-at">Created at</SortCreatedButton>
       </Stack>
-      <Typography variant="overline">
-        {sort.option} | {sort.mode}
-      </Typography>
     </Stack>
   );
 }
