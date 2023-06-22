@@ -25,11 +25,8 @@ import {
 import { useQuestionIndex } from './QuestionIndexContext';
 import { AnswerIndexContext } from './answer/AnswerIndexContext';
 import QuizioTextField from '@/components/inputs/QuizioTextField';
-import {
-  QuizForm,
-  defaultAnswerFormData,
-} from '@/pages/quiz/create/index.page';
 import { maxLengths } from '@/stores/max-lengths';
+import { QuizForm, defaultAnswerFormData } from '../quiz-form-data';
 
 type QuestionInputProps = {
   deletable: boolean;

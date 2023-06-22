@@ -3,7 +3,7 @@ import QuestionInput from './question/QuestionInput';
 import { Add as AddIcon } from '@mui/icons-material';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { QuestionIndexContext } from './question/QuestionIndexContext';
-import { defaultQuestionFormData } from '@/pages/quiz/create/index.page';
+import { defaultQuestionFormData } from './quiz-form-data';
 
 const minQuestions = 1;
 const maxQuestions = 20;

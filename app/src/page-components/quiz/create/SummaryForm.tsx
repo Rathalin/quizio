@@ -1,4 +1,3 @@
-import { QuizCreateFormFields } from '@/pages/quiz/create/index.page';
 import { Check as CheckIcon, Clear as ClearIcon } from '@mui/icons-material';
 import {
   Box,
@@ -11,12 +10,13 @@ import {
 } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
 import IndexAvatar from '../game/IndexAvatar';
+import { QuizForm } from './quiz-form-data';
 
 export default function SummaryForm() {
   const { getValues } = useFormContext();
   const theme = useTheme();
 
-  const { title, description, questions } = getValues() as QuizCreateFormFields;
+  const { title, description, questions } = getValues() as QuizForm;
 
   return (
     <Box>
