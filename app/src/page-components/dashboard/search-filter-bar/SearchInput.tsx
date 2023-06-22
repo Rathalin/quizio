@@ -9,6 +9,7 @@ export default function SearchInput() {
   return (
     <QuizioTextField
       value={searchText}
+      placeholder="Search quizzes"
       onChange={(e) => setSearchText(e.target.value)}
       size="small"
       InputProps={{
