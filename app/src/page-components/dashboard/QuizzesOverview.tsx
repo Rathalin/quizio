@@ -26,17 +26,24 @@ export default function QuizzesOverview() {
   const [searchText, setSearchText] = useState('');
   const [sort, setSort] = useState<Sort>(defaultSort);
 
-  const filteredQuizzes = useMemo(() => {
-    const quizzes = (data?.quizzes?.data ?? []) as QuizEntity[];
-    const filtered = quizzes.filter((quiz) =>
-      quiz.attributes?.title
-        ?.toLowerCase()
-        .includes(searchText.trim().toLowerCase())
-    );
-    return sortQuiz(filtered, sort);
-  }, [data?.quizzes?.data, searchText, sort]);
+  const quizzes = useMemo(
+    () => (data?.quizzes?.data ?? []) as QuizEntity[],
+    [data?.quizzes?.data]
+  );
+  const sortedQuizzes = useMemo(() => sortQuiz(quizzes, sort), [quizzes, sort]);
+  const sortedAndSearchedQuizzes = useMemo(
+    () =>
+      searchText.trim() === ''
+        ? sortedQuizzes
+        : sortedQuizzes.filter((quiz) =>
+            quiz.attributes?.title
+              ?.toLowerCase()
+              .includes(searchText.trim().toLowerCase())
+          ),
+    [sortedQuizzes, searchText]
+  );
 
-  const filteredQuizzesCount = filteredQuizzes.length ?? 0;
+  const quizzesCount = sortedAndSearchedQuizzes.length ?? 0;
 
   const gridItemMinWidth = '280px';
   const gridItemMaxWidth = '1fr';
@@ -49,7 +56,7 @@ export default function QuizzesOverview() {
       >
         <SortContextProvider sort={sort} setSort={setSort}>
           <Box sx={{ marginBottom: 4 }}>
-            <QuizzesFilterBar filteredQuizzesCount={filteredQuizzesCount} />
+            <QuizzesFilterBar quizzesCount={quizzesCount} />
           </Box>
           <Box
             sx={{
@@ -65,7 +72,7 @@ export default function QuizzesOverview() {
             }}
           >
             {isSuccess &&
-              filteredQuizzes.map((quiz) => (
+              sortedAndSearchedQuizzes.map((quiz) => (
                 <QuizOverview
                   key={quiz.attributes?.uuid}
                   uuid={quiz.attributes?.uuid ?? ''}
@@ -90,7 +97,7 @@ export default function QuizzesOverview() {
                 <QuizOverviewPlaceholder key={index} />
               ))}
           </Box>
-          {isSuccess && filteredQuizzes.length === 0 && (
+          {isSuccess && sortedAndSearchedQuizzes.length === 0 && (
             <Typography>
               No quizzes found. Try changing your search criteria.
             </Typography>

@@ -5,11 +5,11 @@ import SortCreatedButton from './SortButton';
 import { useSort } from '../sort.context';
 
 type SearchFilterBarBarProps = {
-  filteredQuizzesCount: number;
+  quizzesCount: number;
 };
 
 export default function SearchFilterBarBar({
-  filteredQuizzesCount,
+  quizzesCount,
 }: SearchFilterBarBarProps) {
   const theme = useTheme();
   const { sort } = useSort();
@@ -20,7 +20,7 @@ export default function SearchFilterBarBar({
         <IndexAvatar
           variant="rounded"
           color={theme.palette.primary.main}
-          index={filteredQuizzesCount}
+          index={quizzesCount}
           sx={{ width: '2.4rem', height: '2.4rem' }}
         ></IndexAvatar>
         <SearchInput />
