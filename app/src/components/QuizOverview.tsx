@@ -69,7 +69,12 @@ export default function QuizOverview({
           alt="QuizImage"
           width={300}
           height={200}
-          style={{ objectFit: 'cover', width: '100%', minHeight: '180px' }}
+          style={{
+            objectFit: 'cover',
+            width: '100%',
+            minHeight: '180px',
+            filter: prefersLightMode ? 'opacity(0.8)' : 'none',
+          }}
           priority
         ></Image>
       ) : (
