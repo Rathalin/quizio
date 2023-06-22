@@ -1,11 +1,16 @@
-import { Avatar, Typography, useTheme } from '@mui/material';
+import { Avatar, AvatarProps, Typography, useTheme } from '@mui/material';
 
-type IndexAvatarProps = {
+type IndexAvatarProps = AvatarProps & {
   index: number;
   color?: string;
 };
 
-export default function IndexAvatar({ index, color }: IndexAvatarProps) {
+export default function IndexAvatar({
+  index,
+  color,
+  sx: { ...sxOther } = {},
+  ...other
+}: IndexAvatarProps) {
   const theme = useTheme();
 
   return (
@@ -14,7 +19,9 @@ export default function IndexAvatar({ index, color }: IndexAvatarProps) {
         backgroundColor: color ?? theme.palette.secondary.main,
         width: '2rem',
         height: '2rem',
+        ...sxOther,
       }}
+      {...other}
     >
       <Typography sx={{ fontWeight: 700 }}>{index}</Typography>
     </Avatar>
