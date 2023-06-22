@@ -1,17 +1,10 @@
 import { Box, Button, Tooltip } from '@mui/material';
 import QuestionInput from './question/QuestionInput';
-import { QuestionDraft } from '@/stores/quiz-draft.store';
 import { Add as AddIcon } from '@mui/icons-material';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { QuestionIndexContext } from './question/QuestionIndexContext';
+import { defaultQuestionFormData } from '@/pages/quiz/create/index.page';
 
-const emptyQuestion: QuestionDraft = {
-  title: '',
-  answers: [
-    { title: '', isCorrect: false },
-    { title: '', isCorrect: false },
-  ],
-};
 const minQuestions = 1;
 const maxQuestions = 20;
 
@@ -53,7 +46,7 @@ export default function QuestionsForm() {
             <Button
               startIcon={<AddIcon />}
               variant="outlined"
-              onClick={() => append(emptyQuestion)}
+              onClick={() => append(defaultQuestionFormData)}
               disabled={fields.length >= maxQuestions}
             >
               Question

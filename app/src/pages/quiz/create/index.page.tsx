@@ -48,47 +48,50 @@ const steps = stepTitles.map((title, index) => ({
   nextLabel: stepTitles[index + 1],
 }));
 
-export type QuizCreateFormFields = {
+export type AnswerForm = {
+  title: string;
+  isCorrect: boolean;
+};
+
+export type QuestionForm = {
+  title: string;
+  answers: AnswerForm[];
+};
+
+export type QuizForm = {
   title: string;
   description: string;
   image: string;
-  questions: {
-    title: string;
-    answers: {
-      title: string;
-      isCorrect: boolean;
-    }[];
-  }[];
+  questions: QuestionForm[];
 };
 
-export const emptyQuizFormData = {
+export const defaultAnswerFormData: AnswerForm = {
+  title: '',
+  isCorrect: false,
+};
+
+export const defaultQuestionFormData: QuestionForm = {
+  title: '',
+  answers: Array.from({ length: 4 }, () => defaultAnswerFormData),
+};
+
+export const defaultQuizFormData: QuizForm = {
   title: '',
   description: '',
   image: '',
-  questions: [
-    {
-      title: '',
-      answers: [
-        { title: '', isCorrect: false },
-        { title: '', isCorrect: false },
-        { title: '', isCorrect: false },
-        { title: '', isCorrect: false },
-      ],
-    },
-  ],
-} satisfies QuizCreateFormFields;
+  questions: [defaultQuestionFormData],
+};
 
 export default function QuizCreatePage() {
   const { data: session, status } = useSession();
 
   const [activeStep, setActiveStep] = useState(0);
 
-  const { ...methods } = useForm<QuizCreateFormFields>({
-    defaultValues: emptyQuizFormData,
+  const { ...methods } = useForm<QuizForm>({
+    defaultValues: defaultQuizFormData,
   });
   const { getValues, reset, handleSubmit } = methods;
-  const { title, description, image, questions } =
-    getValues() as QuizCreateFormFields;
+  const { title, description, image, questions } = getValues() as QuizForm;
 
   const createQuizMutation = useMutation({
     mutationKey: ['createQuiz'],
@@ -126,7 +129,7 @@ export default function QuizCreatePage() {
           })
         );
         router.push('/');
-        reset(emptyQuizFormData);
+        reset(defaultQuizFormData);
       } catch (error) {
         console.error(error);
       }
@@ -209,7 +212,7 @@ export default function QuizCreatePage() {
     setActiveStep((prevActiveStep) => Math.max(prevActiveStep - 1, 0));
   }
 
-  function onSubmit(_data: QuizCreateFormFields) {
+  function onSubmit(_data: QuizForm) {
     handleNext();
   }
 

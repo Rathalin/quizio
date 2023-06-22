@@ -25,7 +25,10 @@ import {
 import { useQuestionIndex } from './QuestionIndexContext';
 import { AnswerIndexContext } from './answer/AnswerIndexContext';
 import QuizioTextField from '@/components/inputs/QuizioTextField';
-import { QuizCreateFormFields } from '@/pages/quiz/create/index.page';
+import {
+  QuizForm,
+  defaultAnswerFormData,
+} from '@/pages/quiz/create/index.page';
 import { maxLengths } from '@/stores/max-lengths';
 
 type QuestionInputProps = {
@@ -45,9 +48,9 @@ export default function QuestionInput({
     formState: { errors, isValid },
     getValues,
     watch,
-  } = useFormContext<QuizCreateFormFields>();
+  } = useFormContext<QuizForm>();
   const name = `questions.${index}` as const;
-  const { fields, append, remove } = useFieldArray<QuizCreateFormFields>({
+  const { fields, append, remove } = useFieldArray<QuizForm>({
     name: `${name}.answers` as 'questions.0.answers',
     control,
     rules: {
@@ -165,7 +168,7 @@ export default function QuestionInput({
                 <Button
                   variant="outlined"
                   startIcon={<AddIcon />}
-                  onClick={() => append({ title: '', isCorrect: false })}
+                  onClick={() => append(defaultAnswerFormData)}
                   disabled={fields.length >= maxAnswers}
                 >
                   Answer
