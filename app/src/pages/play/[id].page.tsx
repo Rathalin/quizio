@@ -234,12 +234,11 @@ export default function PlayIdPage({
                         marginTop: 4,
                         marginInline: 4,
                         display: 'flex',
-                        justifyContent: 'space-between',
+                        justifyContent: 'end',
                         gap: 2,
                         flexWrap: 'wrap',
                       }}
                     >
-                      <HomeButton />
                       <Button
                         variant="contained"
                         disabled={answerState?.selectedAnswerId == null}
