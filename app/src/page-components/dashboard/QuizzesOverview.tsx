@@ -5,7 +5,6 @@ import { Alert, Box, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { useSession } from 'next-auth/react';
-import QuizzesFilterBar from './search-filter-bar/SearchFilterBar';
 import { useMemo, useState } from 'react';
 import { SearchContextProvider } from './search.context';
 import {
@@ -15,6 +14,7 @@ import {
   sortQuiz,
 } from './sort.context';
 import { QuizEntity } from '@/graphql/generated/graphql';
+import FilterBar from './filter-bar/FilterBar';
 
 export default function QuizzesOverview() {
   const { data: session, status } = useSession();
@@ -56,7 +56,7 @@ export default function QuizzesOverview() {
       >
         <SortContextProvider sort={sort} setSort={setSort}>
           <Box sx={{ marginBottom: 4 }}>
-            <QuizzesFilterBar quizzesCount={quizzesCount} />
+            <FilterBar quizzesCount={quizzesCount} />
           </Box>
           <Box
             sx={{
