@@ -1,14 +1,17 @@
 import GradientWord from '@/components/GradientWord';
 import HomeButton from '@/components/buttons/HomeButton';
 import {
+  Alert,
   Box,
   Button,
   Card,
   CardContent,
+  Snackbar,
   TextField,
   Typography,
 } from '@mui/material';
 import { signIn } from 'next-auth/react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FormEvent, useState } from 'react';
 
@@ -92,6 +95,19 @@ export default function SigninPage() {
           </Button>
         </Box>
       </form>
+      <Alert severity="info" sx={{ marginTop: 4 }}>
+        <Typography>
+          <span>
+            {
+              'Do you need an account to create quizzes? Feel free to contact me on '
+            }
+          </span>
+          <Link href="mailto:daniel@flockert.at" style={{ color: 'inherit' }}>
+            daniel@flockert.at
+          </Link>
+          <span>{'.'}</span>
+        </Typography>
+      </Alert>
     </Box>
   );
 }
