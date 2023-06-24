@@ -73,9 +73,9 @@ export default function QuizOverview({
     }
     setCopiedText(null);
   }
-
   return (
     <>
+      {/* TODO: Move to QuizzesOverview.tsx */}
       <Snackbar
         open={showCopiedAlert}
         anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
@@ -139,11 +139,19 @@ export default function QuizOverview({
               <Typography
                 variant="h3"
                 component="h2"
-                sx={{ display: 'flex', justifyContent: 'space-between' }}
+                sx={{
+                  marginBottom: {
+                    xs: 2,
+                    md: 3,
+                  },
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
               >
                 {title}
-                {/* {isMyQuiz && (
-                  <Box sx={{ justifySelf: 'center' }}>
+                <Box>
+                  {/* {isMyQuiz && (
                     <Link href={`/quiz/edit/${uuid}`}>
                       <Tooltip title="Edit your quiz" arrow>
                         <IconButton>
@@ -151,9 +159,7 @@ export default function QuizOverview({
                         </IconButton>
                       </Tooltip>
                     </Link>
-                  </Box>
-                )} */}
-                <Box>
+                  )} */}
                   <Tooltip title="Copy link" arrow>
                     <IconButton onClick={() => handleShareClick()}>
                       <ShareIcon color="secondary" />
