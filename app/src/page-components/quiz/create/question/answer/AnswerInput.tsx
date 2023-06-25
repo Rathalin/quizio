@@ -40,7 +40,7 @@ export default function AnswerInput({
   }
 
   return (
-    <Stack direction="row" gap={2} alignItems="start" flexWrap="wrap">
+    <Stack direction="row" columnGap={2} alignItems="start" flexWrap="wrap">
       <Controller
         name={`${name}.title`}
         render={({ field }) => (
@@ -48,7 +48,7 @@ export default function AnswerInput({
             id={name}
             label={`Answer ${index + 1}`}
             color={isCorrect ? 'success' : 'primary'}
-            sx={{ flex: 1 }}
+            sx={{ flex: 1, minWidth: '30ch' }}
             error={titleError != null}
             helperText={titleError}
             inputProps={{ maxLength: maxLengths.answer.title }}

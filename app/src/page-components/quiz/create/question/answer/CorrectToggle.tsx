@@ -1,11 +1,11 @@
 import { Check as CheckIcon, Clear as ClearIcon } from '@mui/icons-material';
 import { Checkbox, Tooltip } from '@mui/material';
-import { useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import { useQuestionIndex } from '../QuestionIndexContext';
 import { useAnswerIndex } from './AnswerIndexContext';
 
 export default function CorrectToggle() {
-  const { register, watch } = useFormContext();
+  const { control, watch } = useFormContext();
   const questionIndex = useQuestionIndex();
   const answerIndex = useAnswerIndex();
 
@@ -17,10 +17,18 @@ export default function CorrectToggle() {
 
   return (
     <Tooltip title={tooltipTitle} arrow>
-      <Checkbox
-        icon={<ClearIcon color="primary" />}
-        checkedIcon={<CheckIcon color="success" />}
-        {...register(name)}
+      <Controller
+        name={name}
+        render={({ field }) => (
+          <Checkbox
+            icon={<ClearIcon color="primary" />}
+            checkedIcon={<CheckIcon color="success" />}
+            {...field}
+            checked={field.value}
+            value={name}
+          />
+        )}
+        control={control}
       />
     </Tooltip>
   );
