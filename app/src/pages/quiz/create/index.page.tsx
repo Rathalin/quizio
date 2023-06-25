@@ -94,25 +94,21 @@ export default function QuizCreatePage() {
     onSuccess: async (data) => {
       try {
         // Create questions
-        await Promise.all(
-          questions.map(async (question) => {
-            const questionData = await createQuestionMutation.mutateAsync({
-              title: question.title,
-              quiz: data.createQuiz?.data?.id,
-            });
+        for (const question of questions) {
+          const questionData = await createQuestionMutation.mutateAsync({
+            title: question.title,
+            quiz: data.createQuiz?.data?.id,
+          });
 
-            // Create answers
-            await Promise.all(
-              question.answers.map(async (answer) => {
-                await createAnswerMutation.mutateAsync({
-                  title: answer.title,
-                  correct: answer.isCorrect,
-                  question: questionData.createQuestion?.data?.id,
-                });
-              })
-            );
-          })
-        );
+          // Create answers
+          for (const answer of question.answers) {
+            await createAnswerMutation.mutateAsync({
+              title: answer.title,
+              correct: answer.isCorrect,
+              question: questionData.createQuestion?.data?.id,
+            });
+          }
+        }
         router.push('/');
         reset(defaultQuizFormData);
       } catch (error) {
