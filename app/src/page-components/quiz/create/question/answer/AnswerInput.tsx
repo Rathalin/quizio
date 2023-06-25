@@ -6,6 +6,7 @@ import { useAnswerIndex } from './AnswerIndexContext';
 import { useQuestionIndex } from '../QuestionIndexContext';
 import QuizioTextField from '@/components/inputs/QuizioTextField';
 import { maxLengths } from '@/stores/max-lengths';
+import { useIsMobile } from '@/custom-hooks/useIsMobile';
 
 type AnswerInputProps = {
   isCorrect: boolean;
@@ -20,6 +21,7 @@ export default function AnswerInput({
   minAnswers,
   deletable,
 }: AnswerInputProps) {
+  const isMobile = useIsMobile();
   const questionIndex = useQuestionIndex();
   const index = useAnswerIndex();
   const {
@@ -40,7 +42,12 @@ export default function AnswerInput({
   }
 
   return (
-    <Stack direction="row" columnGap={2} alignItems="start" flexWrap="wrap">
+    <Stack
+      direction="row"
+      columnGap={2}
+      alignItems="start"
+      flexWrap="wrap-reverse"
+    >
       <Controller
         name={`${name}.title`}
         render={({ field }) => (
@@ -48,7 +55,7 @@ export default function AnswerInput({
             id={name}
             label={`Answer ${index + 1}`}
             color={isCorrect ? 'success' : 'primary'}
-            sx={{ flex: 1, minWidth: '30ch' }}
+            sx={{ flex: 1, minWidth: '200px' }}
             error={titleError != null}
             helperText={titleError}
             inputProps={{ maxLength: maxLengths.answer.title }}
@@ -58,7 +65,12 @@ export default function AnswerInput({
         rules={{ required: true }}
         control={control}
       />
-      <Stack direction="row" gap={2} alignItems="start" sx={{ marginTop: 1 }}>
+      <Stack
+        direction="row"
+        gap={2}
+        alignItems="center"
+        sx={{ marginTop: isMobile ? 0 : 1 }}
+      >
         <CorrectToggle />
         <DeleteAnswerButton
           minAnswers={minAnswers}

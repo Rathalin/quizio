@@ -1,3 +1,4 @@
+import { useIsMobile } from '@/custom-hooks/useIsMobile';
 import { Delete as DeleteIcon } from '@mui/icons-material';
 import { Tooltip, IconButton, Box } from '@mui/material';
 
@@ -12,6 +13,8 @@ export default function DeleteAnswerButton({
   onDelete,
   disabled,
 }: DeleteAnswerButtonProps) {
+  const isMobile = useIsMobile();
+
   return (
     <Tooltip
       title={
@@ -23,11 +26,12 @@ export default function DeleteAnswerButton({
     >
       <Box>
         <IconButton
+          size={isMobile ? 'small' : 'medium'}
           color="error"
           disabled={disabled}
           onClick={() => onDelete()}
         >
-          <DeleteIcon />
+          <DeleteIcon fontSize={isMobile ? 'small' : 'medium'} />
         </IconButton>
       </Box>
     </Tooltip>

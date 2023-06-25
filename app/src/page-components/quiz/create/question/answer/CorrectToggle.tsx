@@ -3,8 +3,10 @@ import { Checkbox, Tooltip } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 import { useQuestionIndex } from '../QuestionIndexContext';
 import { useAnswerIndex } from './AnswerIndexContext';
+import { useIsMobile } from '@/custom-hooks/useIsMobile';
 
 export default function CorrectToggle() {
+  const isMobile = useIsMobile();
   const { control, watch } = useFormContext();
   const questionIndex = useQuestionIndex();
   const answerIndex = useAnswerIndex();
@@ -21,6 +23,7 @@ export default function CorrectToggle() {
         name={name}
         render={({ field }) => (
           <Checkbox
+            size={isMobile ? 'small' : 'medium'}
             icon={<ClearIcon color="primary" />}
             checkedIcon={<CheckIcon color="success" />}
             {...field}

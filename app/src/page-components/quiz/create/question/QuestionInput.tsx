@@ -128,7 +128,6 @@ export default function QuestionInput({
             rules={{ required: true }}
             control={control}
           />
-          <Box sx={{ marginTop: 1 }}></Box>
         </Box>
         <Box>
           <Box
