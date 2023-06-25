@@ -150,7 +150,9 @@ export default function QuestionInput({
               </AnswerIndexContext.Provider>
             ))}
           </Box>
-          <FormHelperText error>{hasCorrectAnswerError}</FormHelperText>
+          <FormHelperText sx={{ marginBottom: 2 }} error>
+            {hasCorrectAnswerError}
+          </FormHelperText>
 
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <Tooltip
