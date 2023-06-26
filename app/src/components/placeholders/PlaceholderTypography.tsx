@@ -1,18 +1,19 @@
 import { Box, Typography, TypographyProps, useTheme } from '@mui/material';
+import { ElementType } from 'react';
 
 type PlaceholderTypographyProps = { text?: string } & Omit<
   TypographyProps,
   'children'
->;
+> & { component?: ElementType<any> };
 
 export default function PlaceholderTypography({
   lineHeight,
-  text = '',
-  ...props
+  text = '.',
+  ...other
 }: PlaceholderTypographyProps) {
   const theme = useTheme();
   return (
-    <Typography {...props}>
+    <Typography {...other}>
       <Box
         component="span"
         sx={{

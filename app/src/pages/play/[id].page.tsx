@@ -2,6 +2,7 @@ import HomeButton from '@/components/buttons/HomeButton';
 import { getQuizzesByUuidGQL } from '@/graphql/quizzes';
 import GameSummary from '@/page-components/quiz/game/GameSummary';
 import PickAnAnswer from '@/page-components/quiz/game/PickAnAnswer';
+import PickAnAnswerPlaceholder from '@/page-components/quiz/game/PickAnAnswerPlaceholder';
 import QuizNotFound from '@/page-components/quiz/game/QuizNotFound';
 import { ContentCopy as ContentCopyIcon } from '@mui/icons-material';
 import {
@@ -41,11 +42,11 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
 
-  await queryClient.prefetchQuery(['quiz', id], () =>
-    request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getQuizzesByUuidGQL, {
-      uuid: id,
-    })
-  );
+  // await queryClient.prefetchQuery(['quiz', id], () =>
+  //   request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getQuizzesByUuidGQL, {
+  //     uuid: id,
+  //   })
+  // );
 
   return {
     props: {
@@ -185,7 +186,7 @@ export default function PlayIdPage({
         },
       }}
     >
-      {quizQuery.isLoading && <Alert severity="info">Loading the quiz.</Alert>}
+      {quizQuery.isLoading && <PickAnAnswerPlaceholder />}
       {quizQuery.isError && (
         <Alert severity="error">Could not load the quiz.</Alert>
       )}
