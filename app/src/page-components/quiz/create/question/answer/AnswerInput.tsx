@@ -5,7 +5,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { useAnswerIndex } from './AnswerIndexContext';
 import { useQuestionIndex } from '../QuestionIndexContext';
 import QuizioTextField from '@/components/inputs/QuizioTextField';
-import { maxLengths } from '@/stores/max-lengths';
+import { constraints } from '@/stores/content-type-constraints';
 import { useIsMobile } from '@/custom-hooks/useIsMobile';
 
 type AnswerInputProps = {
@@ -58,7 +58,7 @@ export default function AnswerInput({
             sx={{ flex: 1, minWidth: '200px' }}
             error={titleError != null}
             helperText={titleError}
-            inputProps={{ maxLength: maxLengths.answer.title }}
+            inputProps={{ maxLength: constraints.quiz.answer.title.maxLength }}
             {...field}
           />
         )}

@@ -25,8 +25,8 @@ import {
 import { useQuestionIndex } from './QuestionIndexContext';
 import { AnswerIndexContext } from './answer/AnswerIndexContext';
 import QuizioTextField from '@/components/inputs/QuizioTextField';
-import { maxLengths } from '@/stores/max-lengths';
 import { QuizForm, defaultAnswerFormData } from '../quiz-form-data';
+import { constraints } from '@/stores/content-type-constraints';
 
 type QuestionInputProps = {
   deletable: boolean;
@@ -121,7 +121,7 @@ export default function QuestionInput({
                 fullWidth
                 error={titleError != null}
                 helperText={titleError}
-                inputProps={{ maxLength: maxLengths.question.title }}
+                inputProps={{ maxLength: constraints.quiz.question.title }}
                 {...field}
               />
             )}

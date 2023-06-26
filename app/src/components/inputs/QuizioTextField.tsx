@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import { forwardRef, useMemo } from 'react';
 
-type QuizioTextInputProps = TextFieldProps & {};
+export type QuizioTextInputProps = TextFieldProps & {};
 
 export default forwardRef<HTMLDivElement, QuizioTextInputProps>(
   function QuizioTextField(
@@ -44,6 +44,7 @@ export default forwardRef<HTMLDivElement, QuizioTextInputProps>(
           direction="row"
           justifyContent="space-between"
           sx={{ marginInline: 1 }}
+          gap={1}
         >
           <FormHelperText error>{helperText}</FormHelperText>
           <FormHelperText>{remainingCharacters}</FormHelperText>

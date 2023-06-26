@@ -1,5 +1,5 @@
 import QuizioTextField from '@/components/inputs/QuizioTextField';
-import { maxLengths } from '@/stores/max-lengths';
+import { constraints } from '@/stores/content-type-constraints';
 import { Box, Button, Stack, Tooltip } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 import { QuizForm } from './quiz-form-data';
@@ -38,7 +38,7 @@ export default function OverviewForm() {
                   fullWidth
                   error={errors.title != null}
                   helperText={titleError}
-                  inputProps={{ maxLength: maxLengths.quiz.title }}
+                  inputProps={{ maxLength: constraints.quiz.title.maxLength }}
                   {...field}
                 />
               )}
@@ -54,7 +54,7 @@ export default function OverviewForm() {
                   id="description"
                   label="Description"
                   inputProps={{
-                    maxLength: maxLengths.quiz.description,
+                    maxLength: constraints.quiz.description.maxLength,
                   }}
                   multiline
                   fullWidth
