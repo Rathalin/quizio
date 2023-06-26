@@ -94,7 +94,7 @@ export default function PlayIdPage({
   );
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
   const question = questions[questionIndex];
-  const gameDone = question == null;
+  const gameDone = quizQuery.isSuccess && question == null;
   const answerState = answeredProgress[questionIndex] as
     | AnsweredState
     | undefined;
