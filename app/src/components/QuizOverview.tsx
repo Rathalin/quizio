@@ -51,31 +51,33 @@ export default function QuizOverview({
   const theme = useTheme();
   const prefersLightMode = usePrefersLightMode();
   const isQuestionCountSingular = questionCount === 1;
-  const [copiedText, setCopiedText] = useState<string | null>(null);
-  const showCopiedAlert = copiedText != null;
+  const [showCopiedAlert, setShowCopiedAlert] = useState(false);
 
   const dateFormat = useMemo(
     () => new Intl.DateTimeFormat('en-GB', { dateStyle: 'short' }),
     []
   );
 
+  const copiedText = useMemo(() => {
+    const titleLimit = 30;
+    return title.length > titleLimit
+      ? `${title.slice(0, titleLimit)}...`
+      : title;
+  }, [title]);
+
   function handleShareClick() {
     navigator.clipboard.writeText(`${window.location.origin}/play/${uuid}`);
-    const titleLimit = 30;
-    const titleText =
-      title.length > titleLimit ? `${title.slice(0, titleLimit)}...` : title;
-    setCopiedText(`Copied link to '${titleText}'`);
+    setShowCopiedAlert(true);
   }
 
   function handleCopiedAlertClose(_event: unknown, reason?: string) {
     if (reason === 'clickaway') {
       return;
     }
-    setCopiedText(null);
+    setShowCopiedAlert(false);
   }
   return (
     <>
-      {/* TODO: Move to QuizzesOverview.tsx */}
       <Snackbar
         open={showCopiedAlert}
         anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
