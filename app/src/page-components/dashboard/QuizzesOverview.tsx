@@ -7,43 +7,39 @@ import request from 'graphql-request';
 import { useSession } from 'next-auth/react';
 import { useMemo, useState } from 'react';
 import { SearchContextProvider } from './search.context';
-import {
-  Sort,
-  SortContextProvider,
-  defaultSort,
-  sortQuiz,
-} from './sort.context';
+import { Sort, SortContextProvider, defaultSort } from './sort.context';
 import { QuizEntity } from '@/graphql/generated/graphql';
 import FilterBar from './filter-bar/FilterBar';
 
 export default function QuizzesOverview() {
   const { data: session, status } = useSession();
-  const { data, isSuccess, isLoading, isError } = useQuery({
-    queryKey: ['allPublishedQuizzes'],
-    queryFn: () =>
-      request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getAllPublishedQuizzesGQL),
-  });
   const [searchText, setSearchText] = useState('');
   const [sort, setSort] = useState<Sort>(defaultSort);
+  const { data, isSuccess, isLoading, isError } = useQuery({
+    queryKey: ['allPublishedQuizzes', sort.option, sort.mode],
+    queryFn: () =>
+      request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getAllPublishedQuizzesGQL, {
+        sortFields: [`${sort.option}:${sort.mode}`],
+      }),
+  });
 
   const quizzes = useMemo(
     () => (data?.quizzes?.data ?? []) as QuizEntity[],
     [data?.quizzes?.data]
   );
-  const sortedQuizzes = useMemo(() => sortQuiz(quizzes, sort), [quizzes, sort]);
-  const sortedAndSearchedQuizzes = useMemo(
+  const searchedQuizzes = useMemo(
     () =>
       searchText.trim() === ''
-        ? sortedQuizzes
-        : sortedQuizzes.filter((quiz) =>
+        ? quizzes
+        : quizzes.filter((quiz) =>
             quiz.attributes?.title
               ?.toLowerCase()
               .includes(searchText.trim().toLowerCase())
           ),
-    [sortedQuizzes, searchText]
+    [quizzes, searchText]
   );
 
-  const quizzesCount = sortedAndSearchedQuizzes.length ?? 0;
+  const quizzesCount = searchedQuizzes.length ?? 0;
 
   const gridItemMinWidth = '280px';
   const gridItemMaxWidth = '1fr';
@@ -72,7 +68,7 @@ export default function QuizzesOverview() {
             }}
           >
             {isSuccess &&
-              sortedAndSearchedQuizzes.map((quiz) => (
+              searchedQuizzes.map((quiz) => (
                 <QuizOverview
                   key={quiz.attributes?.uuid}
                   uuid={quiz.attributes?.uuid ?? ''}
@@ -97,7 +93,7 @@ export default function QuizzesOverview() {
                 <QuizOverviewPlaceholder key={index} />
               ))}
           </Box>
-          {isSuccess && sortedAndSearchedQuizzes.length === 0 && (
+          {isSuccess && searchedQuizzes.length === 0 && (
             <Typography>
               No quizzes found. Try changing your search criteria.
             </Typography>

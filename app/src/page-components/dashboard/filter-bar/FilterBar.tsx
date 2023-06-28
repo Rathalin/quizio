@@ -21,7 +21,8 @@ export default function FilterBar({ quizzesCount }: FilterBarProps) {
         sx={{ width: '2.4rem', height: '2.4rem' }}
       ></IndexAvatar>
       <SearchInput />
-      <SortCreatedButton option="created-at">Created at</SortCreatedButton>
+      <SortCreatedButton option="createdAt">Created at</SortCreatedButton>
+      <SortCreatedButton option="playCount">Played</SortCreatedButton>
     </Stack>
   );
 }

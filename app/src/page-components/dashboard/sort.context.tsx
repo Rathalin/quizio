@@ -8,7 +8,7 @@ import {
   useContext,
 } from 'react';
 
-export const sortOptions = ['created-at'] as const;
+export const sortOptions = ['createdAt', 'playCount'] as const;
 export type SortOption = (typeof sortOptions)[number];
 export const sortModes = ['asc', 'desc'] as const;
 export type SortMode = (typeof sortModes)[number];
@@ -18,7 +18,7 @@ export type Sort = {
 };
 
 export const defaultSort: Sort = {
-  option: 'created-at',
+  option: 'createdAt',
   mode: 'desc',
 };
 
@@ -72,7 +72,7 @@ export function useSort() {
 
 export function sortQuiz(quizzes: QuizEntity[], sort: Sort) {
   switch (sort.option) {
-    case 'created-at':
+    case 'createdAt':
       return [...quizzes].sort(
         sort.mode === 'asc' ? sortByCreatedAtAsc : sortByCreatedAtDesc
       );

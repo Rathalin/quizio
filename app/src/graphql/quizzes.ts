@@ -1,10 +1,10 @@
 import { graphql } from './generated';
 
 export const getAllPublishedQuizzesGQL = graphql(`
-  query getAllPublishedQuizzes {
+  query getAllPublishedQuizzes($sortFields: [String]) {
     quizzes(
       filters: { published: { eq: true } }
-      sort: "createdAt:DESC"
+      sort: $sortFields
       pagination: { limit: 50 }
     ) {
       data {

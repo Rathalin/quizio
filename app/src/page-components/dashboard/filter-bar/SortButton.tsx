@@ -9,7 +9,7 @@ import { PropsWithChildren, useMemo } from 'react';
 type SortButtonProps = PropsWithChildren<{ option: SortOption }>;
 
 export default function SortButton({ option, children }: SortButtonProps) {
-  const { sort, setSort, toggleSortMode, setSortOption } = useSort();
+  const { sort, toggleSortMode, setSortOption } = useSort();
 
   const icon = useMemo(() => {
     if (sort.option !== option) {
