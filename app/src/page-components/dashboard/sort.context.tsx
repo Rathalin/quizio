@@ -62,10 +62,20 @@ export function useSort() {
     [setSort]
   );
 
+  const setSortMode = useCallback(
+    (mode: SortMode) => {
+      setSort((prevSort) => ({ ...prevSort, mode }));
+    },
+    [setSort]
+  );
+
   return {
     sort,
+    sortMode: sort.mode,
+    sortOption: sort.option,
     setSort,
     setSortOption,
+    setSortMode,
     toggleSortMode,
   };
 }

@@ -9,21 +9,26 @@ import { PropsWithChildren, useMemo } from 'react';
 type SortButtonProps = PropsWithChildren<{ option: SortOption }>;
 
 export default function SortButton({ option, children }: SortButtonProps) {
-  const { sort, toggleSortMode, setSortOption } = useSort();
+  const { sortOption, sortMode, setSortOption, setSortMode, toggleSortMode } =
+    useSort();
 
   const icon = useMemo(() => {
-    if (sort.option !== option) {
+    if (sortOption !== option) {
       return null;
     }
-    if (sort.mode === 'asc') {
+    if (sortMode === 'asc') {
       return <ArrowDownwardIcon />;
     }
     return <ArrowUpwardIcon />;
-  }, [option, sort.mode, sort.option]);
+  }, [option, sortMode, sortOption]);
 
   function handleClick() {
+    if (sortOption === option) {
+      toggleSortMode();
+    } else {
+      setSortMode('desc');
+    }
     setSortOption(option);
-    toggleSortMode();
   }
 
   return (
