@@ -16,6 +16,7 @@ export default function PlaceholderBox({
     <Box
       sx={{
         minHeight,
+        minWidth,
         borderRadius: 1,
         backgroundColor: theme.palette.placeholder.main,
         animation: 'flashing 1.5s ease-in-out infinite',
