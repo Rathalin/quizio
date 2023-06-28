@@ -4,7 +4,7 @@ import LinkButton from '@/components/LinkButton';
 import Head from 'next/head';
 import QuizzesOverview from '@/page-components/dashboard/QuizzesOverview';
 
-export default function Home() {
+export default function HomePage() {
   const session = useSession();
   return (
     <>
