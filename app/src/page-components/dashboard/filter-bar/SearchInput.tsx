@@ -1,16 +1,32 @@
 import QuizioTextField from '@/components/inputs/QuizioTextField';
 import { Clear as ClearIcon, Search as SearchIcon } from '@mui/icons-material';
-import { InputAdornment, IconButton } from '@mui/material';
+import { InputAdornment, IconButton, debounce } from '@mui/material';
 import { useSearch } from '../search.context';
+import { useEffect, useMemo, useState } from 'react';
+
+const debounceTime = 300;
 
 export default function SearchInput() {
   const { searchText, setSearchText } = useSearch();
+  const [inputValue, setInputValue] = useState('');
+
+  const searchDebounce = useMemo(
+    () =>
+      debounce((newValue: string) => {
+        setSearchText(newValue);
+      }, debounceTime),
+    [setSearchText]
+  );
+
+  useEffect(() => {
+    searchDebounce(inputValue);
+  }, [searchDebounce, inputValue]);
 
   return (
     <QuizioTextField
-      value={searchText}
+      value={inputValue}
       placeholder="Search quizzes"
-      onChange={(e) => setSearchText(e.target.value)}
+      onChange={(e) => setInputValue(e.target.value)}
       size="small"
       InputProps={{
         startAdornment: (
@@ -22,7 +38,7 @@ export default function SearchInput() {
           <InputAdornment position="end">
             <IconButton
               size="small"
-              onClick={() => setSearchText('')}
+              onClick={() => setInputValue('')}
               sx={{
                 visibility: searchText.length === 0 ? 'hidden' : 'visible',
               }}
