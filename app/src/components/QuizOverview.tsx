@@ -95,10 +95,7 @@ export default function QuizOverview({
       >
         {imageUrl != null ? (
           <Image
-            loader={({ src, width: _width, quality: _quality }) =>
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}${src}`
-            }
-            src={imageUrl}
+            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${imageUrl}`}
             alt="QuizImage"
             width={300}
             height={200}
@@ -109,6 +106,7 @@ export default function QuizOverview({
               filter: prefersLightMode ? 'opacity(0.8)' : 'none',
             }}
             priority
+            unoptimized
           ></Image>
         ) : (
           <Box
