@@ -10,18 +10,31 @@ import { Sort, SortProvider, defaultSort } from './sort.context';
 import { QuizEntity } from '@/graphql/generated/graphql';
 import FilterBar from './filter-bar/FilterBar';
 import { SearchProvider } from './search.context';
-import { FilterOption, FilterProvider } from './filter.context';
+import {
+  FilterOption,
+  FilterProvider,
+  useComposeFilters,
+} from './filter.context';
 
 export default function QuizzesOverview() {
   const { data: session } = useSession();
   const [searchText, setSearchText] = useState('');
   const [sort, setSort] = useState<Sort>(defaultSort);
   const [filters, setFilters] = useState<Set<FilterOption>>(new Set());
+  const composeFilters = useComposeFilters(filters, session?.user.username);
+
   const { data, isSuccess, isLoading, isError } = useQuery({
-    queryKey: ['allPublishedQuizzes', sort.option, sort.mode],
+    queryKey: [
+      'allPublishedQuizzes',
+      sort.option,
+      sort.mode,
+      composeFilters(),
+      session?.user.username,
+    ],
     queryFn: () =>
       request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getAllPublishedQuizzesGQL, {
         sortFields: [`${sort.option}:${sort.mode}`],
+        filters: composeFilters(),
       }),
   });
 
@@ -41,10 +54,7 @@ export default function QuizzesOverview() {
     [quizzes, searchText]
   );
 
-  const quizzesCount = searchedQuizzes.length ?? 0;
-
-  const gridItemMinWidth = '280px';
-  const gridItemMaxWidth = '1fr';
+  const quizzesCount = searchedQuizzes.length;
 
   return (
     <Box>
@@ -57,7 +67,7 @@ export default function QuizzesOverview() {
             <Box
               sx={{
                 display: 'grid',
-                gridTemplateColumns: `repeat(auto-fill, minmax(${gridItemMinWidth}, ${gridItemMaxWidth}))`,
+                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
                 columnGap: {
                   xs: 6,
                 },
@@ -67,7 +77,7 @@ export default function QuizzesOverview() {
                 },
               }}
             >
-              {isSuccess &&
+              {data != null &&
                 searchedQuizzes.map((quiz) => (
                   <QuizOverview
                     key={quiz.attributes?.uuid}
@@ -99,7 +109,7 @@ export default function QuizzesOverview() {
               </Typography>
             )}
             {isError && (
-              <Alert severity="error">
+              <Alert severity="error" sx={{ marginTop: 2 }}>
                 An error occurred while loading quizzes
               </Alert>
             )}

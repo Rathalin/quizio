@@ -1,12 +1,11 @@
 import { graphql } from './generated';
 
 export const getAllPublishedQuizzesGQL = graphql(`
-  query getAllPublishedQuizzes($sortFields: [String]) {
-    quizzes(
-      filters: { published: { eq: true } }
-      sort: $sortFields
-      pagination: { limit: 50 }
-    ) {
+  query getAllPublishedQuizzes(
+    $sortFields: [String]
+    $filters: QuizFiltersInput!
+  ) {
+    quizzes(filters: $filters, sort: $sortFields, pagination: { limit: 50 }) {
       data {
         id
         attributes {

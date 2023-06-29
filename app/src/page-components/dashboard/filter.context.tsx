@@ -1,3 +1,4 @@
+import { QuizFiltersInput } from '@/graphql/generated/graphql';
 import {
   Dispatch,
   PropsWithChildren,
@@ -84,4 +85,17 @@ export function useFilter() {
     toggleFilter,
     removeFilter,
   };
+}
+
+export function useComposeFilters(
+  filters: Set<FilterOption>,
+  username?: string
+) {
+  return useCallback(() => {
+    const graphqlFilters: QuizFiltersInput = {};
+    if (username != null && filters.has('my-quizzes')) {
+      graphqlFilters.owner = { username: { eqi: username } };
+    }
+    return graphqlFilters;
+  }, [filters, username]);
 }

@@ -15,7 +15,7 @@ export default function FilterButton({ filter, children }: FilterButtonProps) {
       variant="outlined"
       onClick={() => toggleFilter(filter)}
       startIcon={
-        hasFilter(filter) ? <CheckBoxOutlineBlank /> : <CheckBoxOutlined />
+        hasFilter(filter) ? <CheckBoxOutlined /> : <CheckBoxOutlineBlank />
       }
     >
       {children}

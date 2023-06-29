@@ -28,6 +28,7 @@ export default function SearchInput() {
       placeholder="Search quizzes"
       onChange={(e) => setInputValue(e.target.value)}
       size="small"
+      sx={{ marginTop: '3px' }}
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">

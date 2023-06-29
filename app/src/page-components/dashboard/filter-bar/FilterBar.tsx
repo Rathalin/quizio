@@ -25,7 +25,7 @@ export default function FilterBar({ quizzesCount }: FilterBarProps) {
       <SortCreatedButton option="createdAt">Created at</SortCreatedButton>
       <SortCreatedButton option="playCount">Played</SortCreatedButton>
       {session.status === 'authenticated' && (
-        <FilterButton filter={'my-quizzes'}>My quizzes</FilterButton>
+        <FilterButton filter={'my-quizzes'}>Only my quizzes</FilterButton>
       )}
     </Stack>
   );
