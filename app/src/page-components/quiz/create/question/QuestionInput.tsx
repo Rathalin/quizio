@@ -63,8 +63,6 @@ export default function QuestionInput({
     titleError = 'Question is required';
   }
 
-  console.log(constraints.quiz.question.title);
-
   const hasCorrectAnswer =
     useWatch({
       name: `questions.${index}`,

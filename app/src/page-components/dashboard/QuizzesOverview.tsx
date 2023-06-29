@@ -27,17 +27,20 @@ export default function QuizzesOverview() {
     () => (data?.quizzes?.data ?? []) as QuizEntity[],
     [data?.quizzes?.data]
   );
-  const searchedQuizzes = useMemo(
-    () =>
-      searchText.trim() === ''
-        ? quizzes
-        : quizzes.filter((quiz) =>
-            quiz.attributes?.title
-              ?.toLowerCase()
-              .includes(searchText.trim().toLowerCase())
-          ),
-    [quizzes, searchText]
-  );
+  const searchedQuizzes = useMemo(() => {
+    const searchKey = searchText.trim().toLowerCase();
+    return searchText.trim() === ''
+      ? quizzes
+      : quizzes.filter((quiz) => {
+          const textToSearch = `${
+            quiz.attributes?.title?.toLowerCase() ?? ''
+          } ${quiz.attributes?.description?.toLowerCase() ?? ''} ${
+            quiz.attributes?.owner?.data?.attributes?.username.toLocaleLowerCase() ??
+            ''
+          }`;
+          return textToSearch.includes(searchKey);
+        });
+  }, [quizzes, searchText]);
 
   const quizzesCount = searchedQuizzes.length ?? 0;
 
