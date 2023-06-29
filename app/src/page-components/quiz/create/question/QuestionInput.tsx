@@ -121,7 +121,9 @@ export default function QuestionInput({
                 fullWidth
                 error={titleError != null}
                 helperText={titleError}
-                inputProps={{ maxLength: constraints.quiz.question.title }}
+                inputProps={{
+                  maxLength: constraints.quiz.question.title.maxLength,
+                }}
                 {...field}
               />
             )}
