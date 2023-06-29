@@ -202,6 +202,7 @@ export default function QuizOverview({
               variant="contained"
               size="large"
               endIcon={<PlayArrowIcon />}
+              iconSide="left"
             >
               Play
             </LinkButton>

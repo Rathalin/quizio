@@ -1,11 +1,8 @@
-import { Box, Divider, Stack } from '@mui/material';
-import { useSession } from 'next-auth/react';
-import LinkButton from '@/components/LinkButton';
+import { Box } from '@mui/material';
 import Head from 'next/head';
 import QuizzesOverview from '@/page-components/dashboard/QuizzesOverview';
 
 export default function HomePage() {
-  const session = useSession();
   return (
     <>
       <Head>
@@ -21,21 +18,6 @@ export default function HomePage() {
         <meta property="og:image" content="public/favicion" />
       </Head>
       <Box sx={{ marginTop: 2 }}>
-        {session.status === 'authenticated' && (
-          <>
-            <Stack direction="row" justifyContent="center" gap={2}>
-              <LinkButton
-                hrefObserver="/quiz/create"
-                navigateOnClick
-                variant="contained"
-                iconSide="right"
-              >
-                Create your own quiz
-              </LinkButton>
-            </Stack>
-            <Divider sx={{ marginBlock: 4 }} />
-          </>
-        )}
         <QuizzesOverview />
       </Box>
     </>
