@@ -16,7 +16,7 @@ const SearchContext = createContext<SearchContextType>({
   setSearchText: () => {},
 });
 
-export function SearchContextProvider({
+export function SearchProvider({
   searchText,
   setSearchText,
   children,

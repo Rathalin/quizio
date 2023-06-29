@@ -32,7 +32,7 @@ const SortContext = createContext<SortContextType>({
   setSort: () => {},
 });
 
-export function SortContextProvider({
+export function SortProvider({
   sort,
   setSort,
   children,
