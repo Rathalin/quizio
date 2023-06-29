@@ -19,3 +19,42 @@ export const getMyQuizzesOverviewOfOwnerGQL = graphql(`
     }
   }
 `);
+
+export const getMyQuizzesByUuidGQL = graphql(`
+  query getMyQuizzesByUuid($uuid: String!, $ownerId: ID!) {
+    quizzes(filters: { uuid: { eq: $uuid }, owner: { id: { eq: $ownerId } } }) {
+      data {
+        id
+        attributes {
+          title
+          description
+          questions(pagination: { limit: 100 }) {
+            data {
+              id
+              attributes {
+                title
+                answers(pagination: { limit: 10 }) {
+                  data {
+                    id
+                    attributes {
+                      title
+                      correct
+                    }
+                  }
+                }
+              }
+            }
+          }
+          image {
+            data {
+              id
+              attributes {
+                url
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`);

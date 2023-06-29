@@ -6,6 +6,7 @@ import {
   Chip,
   IconButton,
   Snackbar,
+  Stack,
   Tooltip,
   Typography,
   darken,
@@ -15,6 +16,7 @@ import {
 import Image from 'next/image';
 import {
   BarChart as BarChartIcon,
+  Edit as EditIcon,
   Image as ImageIcon,
   PlayArrow as PlayArrowIcon,
   Share as ShareIcon,
@@ -22,6 +24,7 @@ import {
 import LinkButton from './LinkButton';
 import { useMemo, useState } from 'react';
 import { usePrefersLightMode } from '@/custom-hooks/usePrefersLightMode';
+import Link from 'next/link';
 
 type QuizOverviewProps = {
   uuid: string;
@@ -150,8 +153,13 @@ export default function QuizOverview({
                 }}
               >
                 {title}
-                <Box>
-                  {/* {isMyQuiz && (
+                <Stack direction="row" alignItems="center">
+                  <Tooltip title="Copy link" arrow>
+                    <IconButton onClick={() => handleShareClick()}>
+                      <ShareIcon color="secondary" />
+                    </IconButton>
+                  </Tooltip>
+                  {isMyQuiz && (
                     <Link href={`/quiz/edit/${uuid}`}>
                       <Tooltip title="Edit your quiz" arrow>
                         <IconButton>
@@ -159,13 +167,8 @@ export default function QuizOverview({
                         </IconButton>
                       </Tooltip>
                     </Link>
-                  )} */}
-                  <Tooltip title="Copy link" arrow>
-                    <IconButton onClick={() => handleShareClick()}>
-                      <ShareIcon color="secondary" />
-                    </IconButton>
-                  </Tooltip>
-                </Box>
+                  )}
+                </Stack>
               </Typography>
             </Box>
             <Box>

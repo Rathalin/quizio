@@ -3,9 +3,11 @@ import { AppBar, Container, Grid, Stack, Toolbar } from '@mui/material';
 import AccountMenu from './dashboard/AccountMenu';
 import LinkButton from '@/components/LinkButton';
 import { useSession } from 'next-auth/react';
+import { useIsMobile } from '@/custom-hooks/useIsMobile';
 
 export default function Header() {
   const session = useSession();
+  const isMobile = useIsMobile();
 
   return (
     <AppBar
@@ -47,7 +49,7 @@ export default function Header() {
                     navigateOnClick
                     iconSide="left"
                   >
-                    {'Create your own quiz'}
+                    {isMobile ? 'Create' : 'Create your own quiz'}
                   </LinkButton>
                 </Stack>
               )}

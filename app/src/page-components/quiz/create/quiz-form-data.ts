@@ -1,14 +1,17 @@
 export type AnswerForm = {
+  id?: string;
   title: string;
   isCorrect: boolean;
 };
 
 export type QuestionForm = {
+  id?: string;
   title: string;
   answers: AnswerForm[];
 };
 
 export type QuizForm = {
+  id?: string;
   title: string;
   description: string;
   image: string;

@@ -1,5 +1,5 @@
 import { MobileStepper, useTheme } from '@mui/material';
-import { StepData } from '@/pages/quiz/create/index.page';
+import { StepData } from '@/pages/quiz/editor/index.page';
 import BackButton from './BackButton';
 import NextButton from './NextButton';
 

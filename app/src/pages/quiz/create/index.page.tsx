@@ -56,6 +56,23 @@ const steps = stepTitles.map((title, index) => ({
 }));
 const formDataKey = 'quiz-form-data';
 
+// export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
+//   ctx
+// ) => {
+//   const uuid = ctx.params?.uuid;
+//   if (typeof uuid !== 'string') {
+//     return {
+//       notFound: true,
+//     };
+//   }
+
+//   return {
+//     props: {
+//       uuid,
+//     },
+//   };
+// };
+
 export default function QuizCreatePage() {
   const { data: session, status } = useSession();
   const { authHeader } = useAuthHeader(session);
