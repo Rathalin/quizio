@@ -63,6 +63,8 @@ export default function QuestionInput({
     titleError = 'Question is required';
   }
 
+  console.log(constraints.quiz.question.title);
+
   const hasCorrectAnswer =
     useWatch({
       name: `questions.${index}`,
@@ -121,7 +123,9 @@ export default function QuestionInput({
                 fullWidth
                 error={titleError != null}
                 helperText={titleError}
-                inputProps={{ maxLength: constraints.quiz.question.title }}
+                inputProps={{
+                  maxLength: constraints.quiz.question.title.maxLength,
+                }}
                 {...field}
               />
             )}
