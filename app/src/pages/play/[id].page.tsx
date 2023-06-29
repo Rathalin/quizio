@@ -42,11 +42,11 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
 
-  // await queryClient.prefetchQuery(['quiz', id], () =>
-  //   request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getQuizzesByUuidGQL, {
-  //     uuid: id,
-  //   })
-  // );
+  await queryClient.prefetchQuery(['quiz', id], () =>
+    request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getQuizzesByUuidGQL, {
+      uuid: id,
+    })
+  );
 
   return {
     props: {
