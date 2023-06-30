@@ -36,6 +36,7 @@ export default function DeleteQuizDialog({
         <Button
           onClick={() => onConfirm()}
           startIcon={loading ? <LoadingCircle color="error" /> : null}
+          disabled={loading}
           color="error"
           autoFocus
         >

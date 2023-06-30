@@ -91,30 +91,6 @@ export default function QuizCreatePage() {
         },
         authHeader
       ),
-    onSuccess: async (data) => {
-      try {
-        // Create questions
-        for (const question of questions) {
-          const questionData = await createQuestionMutation.mutateAsync({
-            title: question.title,
-            quiz: data.createQuiz?.data?.id,
-          });
-
-          // Create answers
-          for (const answer of question.answers) {
-            await createAnswerMutation.mutateAsync({
-              title: answer.title,
-              correct: answer.isCorrect,
-              question: questionData.createQuestion?.data?.id,
-            });
-          }
-        }
-        router.push('/');
-        reset(defaultQuizFormData);
-      } catch (error) {
-        console.error(error);
-      }
-    },
   });
   const createQuestionMutation = useMutation({
     mutationKey: ['createQuestion'],
@@ -161,14 +137,37 @@ export default function QuizCreatePage() {
       }),
   });
 
-  function handleFinishQuizClick() {
-    // Create quiz
-    createQuizMutation.mutate({
-      title,
-      description,
-      published: true,
-      owner: session?.user?.id?.toString() ?? '0',
-    });
+  async function handleFinishQuizClick() {
+    try {
+      // Create quiz
+      const res = await createQuizMutation.mutateAsync({
+        title,
+        description,
+        published: true,
+        owner: session?.user?.id?.toString() ?? '0',
+      });
+
+      // Create questions
+      for (const question of questions) {
+        const questionData = await createQuestionMutation.mutateAsync({
+          title: question.title,
+          quiz: res.createQuiz?.data?.id,
+        });
+
+        // Create answers
+        for (const answer of question.answers) {
+          await createAnswerMutation.mutateAsync({
+            title: answer.title,
+            correct: answer.isCorrect,
+            question: questionData.createQuestion?.data?.id,
+          });
+        }
+      }
+      await router.push('/');
+      reset(defaultQuizFormData);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   function handleNext() {
@@ -184,6 +183,11 @@ export default function QuizCreatePage() {
   function onSubmit(_data: QuizForm) {
     handleNext();
   }
+
+  const isLoadingCreate =
+    createQuizMutation.isLoading ||
+    createQuestionMutation.isLoading ||
+    createAnswerMutation.isLoading;
 
   return (
     <Box>
@@ -229,11 +233,9 @@ export default function QuizCreatePage() {
                       variant="contained"
                       color="primary"
                       onClick={handleFinishQuizClick}
-                      startIcon={
-                        createQuizMutation.isLoading ? <LoadingCircle /> : null
-                      }
+                      startIcon={isLoadingCreate ? <LoadingCircle /> : null}
                       endIcon={<PublishIcon />}
-                      disabled={createQuizMutation.isLoading}
+                      disabled={isLoadingCreate}
                     >
                       Publish quiz
                     </Button>
