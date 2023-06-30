@@ -16,12 +16,12 @@
       "type": "string",
       "required": true,
       "minLength": 1,
-      "maxLength": 30
+      "maxLength": 50
     },
     "description": {
       "type": "text",
       "required": false,
-      "maxLength": 50
+      "maxLength": 200
     },
     "published": {
       "type": "boolean",
