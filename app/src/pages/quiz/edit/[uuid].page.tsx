@@ -10,6 +10,7 @@ import {
   createAnswerGQL,
   deleteAnswerGQL,
   deleteQuestionGQL,
+  deleteQuizGQL,
 } from '@/graphql/crudQuiz';
 import {
   QuizInput,
@@ -27,8 +28,9 @@ import {
   QuizForm,
   defaultQuizFormData,
 } from '@/page-components/quiz/create/quiz-form-data';
+import DeleteQuizDialog from '@/page-components/quiz/edit/DeleteQuizDialog';
 import { authOptions } from '@/pages/api/auth/[...nextauth].page';
-import { Save as SaveIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon, Save as SaveIcon } from '@mui/icons-material';
 import {
   Box,
   Typography,
@@ -55,6 +57,7 @@ import request from 'graphql-request';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { getServerSession } from 'next-auth';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 
@@ -111,10 +114,12 @@ export default function QuizCreatePage({
   uuid,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const queryClient = useQueryClient();
+  const router = useRouter();
   const { data: session, status } = useSession();
   const { authHeader } = useAuthHeader(session);
   const [activeStep, setActiveStep] = useState(0);
   const [showAlert, setShowAlert] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const { ...methods } = useForm<QuizForm>({
     defaultValues: defaultQuizFormData,
@@ -226,6 +231,18 @@ export default function QuizCreatePage({
         authHeader
       ),
   });
+  const deleteQuizMutation = useMutation({
+    mutationKey: ['deleteQuiz'],
+    mutationFn: ({ id }: Exact<{ id: string }>) =>
+      request(
+        process.env.NEXT_PUBLIC_GRAPHQL_URL,
+        deleteQuizGQL,
+        {
+          id,
+        },
+        authHeader
+      ),
+  });
   const deleteQuestionMutation = useMutation({
     mutationKey: ['deleteQuestion'],
     mutationFn: ({ id }: Exact<{ id: string }>) =>
@@ -257,6 +274,7 @@ export default function QuizCreatePage({
     updateQuizMutation.isLoading ||
     updateQuestionMutation.isLoading ||
     updateAnswerMutation.isLoading ||
+    deleteQuizMutation.isLoading ||
     deleteQuestionMutation.isLoading ||
     deleteAnswerMutation.isLoading;
   const isSuccess =
@@ -265,6 +283,7 @@ export default function QuizCreatePage({
     updateQuizMutation.isSuccess &&
     updateQuestionMutation.isSuccess &&
     updateAnswerMutation.isSuccess &&
+    deleteQuizMutation.isSuccess &&
     deleteQuestionMutation.isSuccess &&
     deleteAnswerMutation.isSuccess;
   const isError =
@@ -273,15 +292,13 @@ export default function QuizCreatePage({
     updateQuizMutation.isError ||
     updateQuestionMutation.isError ||
     updateAnswerMutation.isError ||
+    deleteQuizMutation.isError ||
     deleteQuestionMutation.isError ||
     deleteAnswerMutation.isError;
-
-  function handleAlertClose(_event: unknown, reason?: string) {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setShowAlert(false);
-  }
+  const isLoadingDelete =
+    deleteQuizMutation.isLoading ||
+    deleteQuestionMutation.isLoading ||
+    deleteAnswerMutation.isLoading;
 
   async function handleSaveClick() {
     try {
@@ -375,6 +392,40 @@ export default function QuizCreatePage({
     }
   }
 
+  async function onDeleteDialogConfirm() {
+    for (const question of questions) {
+      for (const answer of question.answers) {
+        // Delete answer
+        if (answer.id != null) {
+          await deleteAnswerMutation.mutateAsync({
+            id: answer.id,
+          });
+        }
+      }
+      // Delete question
+      if (question.id != null) {
+        await deleteQuestionMutation.mutateAsync({
+          id: question.id,
+        });
+      }
+    }
+    // Delete quiz
+    if (quiz?.id != null) {
+      await deleteQuizMutation.mutateAsync({
+        id: quiz.id,
+      });
+    }
+    await router.push('/');
+    setDialogOpen(false);
+  }
+
+  function handleCloseAlert(_event: unknown, reason?: string) {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setShowAlert(false);
+  }
+
   function handleNext() {
     setActiveStep((prevActiveStep) =>
       Math.min(prevActiveStep + 1, steps.length - 1)
@@ -391,15 +442,22 @@ export default function QuizCreatePage({
 
   return (
     <Box>
+      <DeleteQuizDialog
+        open={dialogOpen}
+        setOpen={setDialogOpen}
+        quizTitle={quiz?.attributes?.title ?? ''}
+        onConfirm={onDeleteDialogConfirm}
+        loading={isLoadingDelete}
+      />
       {(isSuccess || isError) && (
         <Snackbar
           open={showAlert}
           anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
           autoHideDuration={5000}
-          onClose={handleAlertClose}
+          onClose={handleCloseAlert}
         >
           <Alert
-            onClose={handleAlertClose}
+            onClose={handleCloseAlert}
             severity={isSuccess ? 'success' : 'error'}
           >
             {isSuccess ? 'Quiz updated' : 'Something went wrong'}
@@ -407,9 +465,22 @@ export default function QuizCreatePage({
         </Snackbar>
       )}
       <Typography variant="h1">
-        <span>Edit your </span>
-        <GradientWord>quiz</GradientWord>
-        <span>.</span>
+        <Stack direction="row" alignItems="center">
+          <Box>
+            <span>Edit your </span>
+            <GradientWord>quiz</GradientWord>
+            <span>.</span>
+          </Box>
+          <Button
+            variant="outlined"
+            color="error"
+            endIcon={<DeleteIcon />}
+            sx={{ marginLeft: 'auto' }}
+            onClick={() => setDialogOpen(true)}
+          >
+            Delete this quiz
+          </Button>
+        </Stack>
       </Typography>
       <Grid container spacing={4}>
         <Grid item xs={12} md={3} sx={{ display: { xs: 'none', md: 'block' } }}>
