@@ -24,7 +24,7 @@ import {
 import LinkButton from './LinkButton';
 import { useMemo, useState } from 'react';
 import { usePrefersLightMode } from '@/custom-hooks/usePrefersLightMode';
-import Link from 'next/link';
+import LinkIconButton from './LinkIconButton';
 
 type QuizOverviewProps = {
   uuid: string;
@@ -160,13 +160,16 @@ export default function QuizOverview({
                     </IconButton>
                   </Tooltip>
                   {isMyQuiz && (
-                    <Link href={`/quiz/edit/${uuid}`}>
-                      <Tooltip title="Edit your quiz" arrow>
-                        <IconButton>
+                    <Tooltip title="Edit your quiz" arrow>
+                      <Box>
+                        <LinkIconButton
+                          hrefObserver={`/quiz/edit/${uuid}`}
+                          navigateOnClick
+                        >
                           <EditIcon color="secondary" />
-                        </IconButton>
-                      </Tooltip>
-                    </Link>
+                        </LinkIconButton>
+                      </Box>
+                    </Tooltip>
                   )}
                 </Stack>
               </Typography>
