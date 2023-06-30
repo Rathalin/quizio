@@ -34,7 +34,6 @@ export type AnsweredState = {
 export const getServerSideProps: GetServerSideProps<{
   gameId: string;
 }> = async (ctx) => {
-  const queryClient = new QueryClient();
   const id = ctx.params?.id;
   if (typeof id !== 'string') {
     return {
@@ -42,6 +41,7 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
 
+  const queryClient = new QueryClient();
   await queryClient.prefetchQuery(['quiz', id], () =>
     request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getQuizzesByUuidGQL, {
       uuid: id,

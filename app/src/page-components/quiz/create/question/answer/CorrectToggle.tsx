@@ -1,5 +1,5 @@
 import { Check as CheckIcon, Clear as ClearIcon } from '@mui/icons-material';
-import { Checkbox, Tooltip } from '@mui/material';
+import { Box, Checkbox, Tooltip } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 import { useQuestionIndex } from '../QuestionIndexContext';
 import { useAnswerIndex } from './AnswerIndexContext';
@@ -19,20 +19,22 @@ export default function CorrectToggle() {
 
   return (
     <Tooltip title={tooltipTitle} arrow>
-      <Controller
-        name={name}
-        render={({ field }) => (
-          <Checkbox
-            size={isMobile ? 'small' : 'medium'}
-            icon={<ClearIcon color="primary" />}
-            checkedIcon={<CheckIcon color="success" />}
-            {...field}
-            checked={field.value}
-            value={name}
-          />
-        )}
-        control={control}
-      />
+      <Box>
+        <Controller
+          name={name}
+          render={({ field }) => (
+            <Checkbox
+              size={isMobile ? 'small' : 'medium'}
+              icon={<ClearIcon color="primary" />}
+              checkedIcon={<CheckIcon color="success" />}
+              {...field}
+              checked={field.value}
+              value={name}
+            />
+          )}
+          control={control}
+        />
+      </Box>
     </Tooltip>
   );
 }

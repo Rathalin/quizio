@@ -22,7 +22,7 @@ import {
   createQuizGQL,
   createQuestionGQL,
   createAnswerGQL,
-} from '@/graphql/createQuiz';
+} from '@/graphql/crudQuiz';
 import {
   QuizInput,
   QuestionInput,
@@ -55,23 +55,6 @@ const steps = stepTitles.map((title, index) => ({
   nextLabel: stepTitles[index + 1],
 }));
 const formDataKey = 'quiz-form-data';
-
-// export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
-//   ctx
-// ) => {
-//   const uuid = ctx.params?.uuid;
-//   if (typeof uuid !== 'string') {
-//     return {
-//       notFound: true,
-//     };
-//   }
-
-//   return {
-//     props: {
-//       uuid,
-//     },
-//   };
-// };
 
 export default function QuizCreatePage() {
   const { data: session, status } = useSession();
