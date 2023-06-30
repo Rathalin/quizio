@@ -118,7 +118,9 @@ export default function QuizCreatePage({
   const { data: session, status } = useSession();
   const { authHeader } = useAuthHeader(session);
   const [activeStep, setActiveStep] = useState(0);
-  const [showAlert, setShowAlert] = useState(false);
+  const [alertType, setAlertType] = useState<'saved' | 'save-error' | null>(
+    null
+  );
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const { ...methods } = useForm<QuizForm>({
@@ -282,19 +284,13 @@ export default function QuizCreatePage({
     createAnswerMutation.isSuccess &&
     updateQuizMutation.isSuccess &&
     updateQuestionMutation.isSuccess &&
-    updateAnswerMutation.isSuccess &&
-    deleteQuizMutation.isSuccess &&
-    deleteQuestionMutation.isSuccess &&
-    deleteAnswerMutation.isSuccess;
+    updateAnswerMutation.isSuccess;
   const isError =
     createQuestionMutation.isError ||
     createAnswerMutation.isError ||
     updateQuizMutation.isError ||
     updateQuestionMutation.isError ||
-    updateAnswerMutation.isError ||
-    deleteQuizMutation.isError ||
-    deleteQuestionMutation.isError ||
-    deleteAnswerMutation.isError;
+    updateAnswerMutation.isError;
   const isLoadingDelete =
     deleteQuizMutation.isLoading ||
     deleteQuestionMutation.isLoading ||
@@ -384,11 +380,12 @@ export default function QuizCreatePage({
       }
 
       // Refetch quiz
+      setAlertType('saved');
       queryClient.invalidateQueries(['quiz', uuid]);
     } catch (error) {
       console.error(error);
+      setAlertType('save-error');
     } finally {
-      setShowAlert(true);
     }
   }
 
@@ -423,7 +420,7 @@ export default function QuizCreatePage({
     if (reason === 'clickaway') {
       return;
     }
-    setShowAlert(false);
+    setAlertType(null);
   }
 
   function handleNext() {
@@ -449,21 +446,21 @@ export default function QuizCreatePage({
         onConfirm={onDeleteDialogConfirm}
         loading={isLoadingDelete}
       />
-      {(isSuccess || isError) && (
-        <Snackbar
-          open={showAlert}
-          anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
-          autoHideDuration={5000}
-          onClose={handleCloseAlert}
-        >
-          <Alert
-            onClose={handleCloseAlert}
-            severity={isSuccess ? 'success' : 'error'}
-          >
-            {isSuccess ? 'Quiz updated' : 'Something went wrong'}
-          </Alert>
-        </Snackbar>
-      )}
+      <Snackbar
+        open={alertType != null}
+        anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
+        autoHideDuration={5000}
+        onClose={handleCloseAlert}
+      >
+        <Box>
+          {alertType === 'saved' && (
+            <Alert severity="success">Quiz updated</Alert>
+          )}
+          {alertType === 'save-error' && (
+            <Alert severity="error">Could not save the quiz</Alert>
+          )}
+        </Box>
+      </Snackbar>
       <Typography variant="h1">
         <Stack direction="row" alignItems="center">
           <Box>
@@ -471,15 +468,24 @@ export default function QuizCreatePage({
             <GradientWord>quiz</GradientWord>
             <span>.</span>
           </Box>
-          <Button
-            variant="outlined"
-            color="error"
-            endIcon={<DeleteIcon />}
-            sx={{ marginLeft: 'auto' }}
-            onClick={() => setDialogOpen(true)}
-          >
-            Delete this quiz
-          </Button>
+          <Stack direction="row" gap={2} sx={{ marginLeft: 'auto' }}>
+            <Button
+              variant="outlined"
+              startIcon={isLoading ? <LoadingCircle /> : undefined}
+              endIcon={<SaveIcon />}
+              onClick={handleSaveClick}
+            >
+              Save
+            </Button>
+            <Button
+              variant="outlined"
+              color="error"
+              endIcon={<DeleteIcon />}
+              onClick={() => setDialogOpen(true)}
+            >
+              Delete this quiz
+            </Button>
+          </Stack>
         </Stack>
       </Typography>
       <Grid container spacing={4}>
@@ -511,19 +517,9 @@ export default function QuizCreatePage({
                   <BackButton activeStep={activeStep} onBack={handleBack}>
                     {steps.at(activeStep)?.backLabel}
                   </BackButton>
-                  <Stack direction="row" gap={2} sx={{ marginLeft: 'auto' }}>
-                    <Button
-                      variant="outlined"
-                      startIcon={isLoading ? <LoadingCircle /> : undefined}
-                      endIcon={<SaveIcon />}
-                      onClick={handleSaveClick}
-                    >
-                      Save
-                    </Button>
-                    <NextButton activeStep={activeStep} maxSteps={steps.length}>
-                      {steps.at(activeStep)?.nextLabel}
-                    </NextButton>
-                  </Stack>
+                  <NextButton activeStep={activeStep} maxSteps={steps.length}>
+                    {steps.at(activeStep)?.nextLabel}
+                  </NextButton>
                 </CardActions>
               </Card>
             </form>
