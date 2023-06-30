@@ -1,5 +1,5 @@
 import { Delete as DeleteIcon } from '@mui/icons-material';
-import { IconButton, Box } from '@mui/material';
+import { Tooltip, IconButton, Box } from '@mui/material';
 
 type DeleteQuestionButtonProps = {
   onDelete: () => void;
@@ -11,18 +11,21 @@ export default function DeleteQuestionButton({
   disabled,
 }: DeleteQuestionButtonProps) {
   return (
-    <Box>
-      <IconButton color="error" disabled={disabled} onClick={() => onDelete()}>
-        <DeleteIcon />
-      </IconButton>
-    </Box>
-    // <Tooltip
-    //   title={
-    //     disabled ? `You cannot delete the first question.` : 'Delete questions'
-    //   }
-    //   arrow
-    // >
-
-    // </Tooltip>
+    <Tooltip
+      title={
+        disabled ? `You cannot delete the first question.` : 'Delete questions'
+      }
+      arrow
+    >
+      <Box>
+        <IconButton
+          color="error"
+          disabled={disabled}
+          onClick={() => onDelete()}
+        >
+          <DeleteIcon />
+        </IconButton>
+      </Box>
+    </Tooltip>
   );
 }
