@@ -82,7 +82,12 @@ export default function QuestionInput({
     !hasCorrectAnswer;
 
   return (
-    <Accordion elevation={4} expanded={expanded} onChange={() => onExpand()}>
+    <Accordion
+      elevation={4}
+      expanded={expanded}
+      onChange={() => onExpand()}
+      TransitionProps={{ unmountOnExit: true }}
+    >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Stack
           direction="row"
