@@ -5,7 +5,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { useAnswerIndex } from './AnswerIndexContext';
 import { useQuestionIndex } from '../QuestionIndexContext';
 import QuizioTextField from '@/components/inputs/QuizioTextField';
-import { constraints } from '@/stores/content-type-constraints';
+import { constraints } from '@/persistence/content-type-constraints';
 import { useIsMobile } from '@/custom-hooks/useIsMobile';
 
 type AnswerInputProps = {

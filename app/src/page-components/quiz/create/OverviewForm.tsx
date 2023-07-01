@@ -1,5 +1,5 @@
 import QuizioTextField from '@/components/inputs/QuizioTextField';
-import { constraints } from '@/stores/content-type-constraints';
+import { constraints } from '@/persistence/content-type-constraints';
 import { Box, Button, Stack, Tooltip } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 import { QuizForm } from './quiz-form-data';

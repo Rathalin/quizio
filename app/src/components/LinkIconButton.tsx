@@ -1,4 +1,4 @@
-import { usePageTransition } from '@/stores/page-transition.store';
+import { usePageTransition } from '@/persistence/page-transition.store';
 import { Box, IconButton, IconButtonProps } from '@mui/material';
 import LoadingCircle from './LoadingCircle';
 import Link from 'next/link';

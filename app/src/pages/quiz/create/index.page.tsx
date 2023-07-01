@@ -42,6 +42,7 @@ import {
 import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import { useRedirectOnUnauthenticated } from '@/custom-hooks/useRedirectOnUnauthenticated';
 import { useStorage } from '@/custom-hooks/useStorage';
+import { storageKeys } from '@/persistence/storage-keys';
 
 const stepTitles = ['Overview', 'Questions', 'Summary'] as const;
 export type StepData = {
@@ -54,12 +55,13 @@ const steps = stepTitles.map((title, index) => ({
   backLabel: stepTitles[index - 1],
   nextLabel: stepTitles[index + 1],
 }));
-const formDataKey = 'quizio-quiz-form-data';
 
 export default function QuizCreatePage() {
   const { data: session, status } = useSession();
   const { authHeader } = useAuthHeader(session);
-  const { getStorageItem, setStorageItem } = useStorage<QuizForm>(formDataKey);
+  const { getStorageItem, setStorageItem } = useStorage<QuizForm>(
+    storageKeys.quizDraft
+  );
   const [activeStep, setActiveStep] = useState(0);
 
   const { ...methods } = useForm<QuizForm>({

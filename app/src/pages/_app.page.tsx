@@ -5,7 +5,7 @@ import Layout from '../page-components/Layout';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { usePageTransition } from '@/stores/page-transition.store';
+import { usePageTransition } from '@/persistence/page-transition.store';
 import {
   DehydratedState,
   Hydrate,
@@ -21,6 +21,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { createThemeWithMode } from '@/theme';
 import { ColorModeProvider } from '@/page-components/theme.context';
 import { useStorage } from '@/custom-hooks/useStorage';
+import { storageKeys } from '@/persistence/storage-keys';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -33,11 +34,16 @@ export interface MyAppProps extends AppProps {
   };
 }
 
+const defaultColorMode: PaletteMode = 'dark';
+
 export default function App(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
-  const [colorMode, setColorMode] = useState<'light' | 'dark'>('dark');
-  const { getStorageItem, setStorageItem } =
-    useStorage<PaletteMode>('quizio-color-mode');
+  const [colorMode, setColorMode] = useState<'light' | 'dark'>(
+    defaultColorMode
+  );
+  const { getStorageItem, setStorageItem } = useStorage<PaletteMode>(
+    storageKeys.theme
+  );
   const [colorModeLoadedFromStorage, setColorModeLoadedFromStorage] =
     useState(false);
   const theme = useMemo(() => createThemeWithMode(colorMode), [colorMode]);
@@ -47,10 +53,8 @@ export default function App(props: MyAppProps) {
 
   useEffect(() => {
     const storedColorMode = getStorageItem();
-    if (storedColorMode != null) {
-      setColorMode(storedColorMode);
-      setColorModeLoadedFromStorage(true);
-    }
+    setColorMode(storedColorMode ?? defaultColorMode);
+    setColorModeLoadedFromStorage(true);
   }, [getStorageItem]);
   useEffect(() => {
     if (colorModeLoadedFromStorage) {
