@@ -54,7 +54,7 @@ const steps = stepTitles.map((title, index) => ({
   backLabel: stepTitles[index - 1],
   nextLabel: stepTitles[index + 1],
 }));
-const formDataKey = 'quiz-form-data';
+const formDataKey = 'quizio-quiz-form-data';
 
 export default function QuizCreatePage() {
   const { data: session, status } = useSession();

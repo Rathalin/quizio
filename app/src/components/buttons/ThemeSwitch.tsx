@@ -1,13 +1,32 @@
+import { useStorage } from '@/custom-hooks/useStorage';
 import { Switch, SwitchProps, useTheme } from '@mui/material';
+import { ChangeEvent, useEffect, useState } from 'react';
+
+const storageKey = 'quizio-theme';
 
 type ThemeSwitchProps = SwitchProps & {};
 
 export function ThemeSwitch({ ...other }: ThemeSwitchProps) {
   const theme = useTheme();
+  const { getStorageItem, setStorageItem } = useStorage(storageKey);
+  const [checked, setChecked] = useState(true);
+
+  useEffect(() => {
+    if (getStorageItem() === 'dark') {
+      setChecked(true);
+    }
+  }, [getStorageItem]);
+
+  function handleChange(e: ChangeEvent<HTMLInputElement>) {
+    setChecked(e.target.checked);
+    setStorageItem(e.target.checked ? 'dark' : 'light');
+  }
 
   return (
     <Switch
       {...other}
+      checked={checked}
+      onChange={handleChange}
       sx={{
         width: 62,
         height: 34,
@@ -15,10 +34,10 @@ export function ThemeSwitch({ ...other }: ThemeSwitchProps) {
         '& .MuiSwitch-switchBase': {
           margin: 1,
           padding: 0,
-          transform: 'translateX(-5px) translateY(-7px)',
+          transform: 'translateX(-1px) translateY(-7px)',
           '&.Mui-checked': {
             color: '#fff',
-            transform: 'translateX(22px) translateY(-7px)',
+            transform: 'translateX(15px) translateY(-7px)',
             '& .MuiSwitch-thumb:before': {
               backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
                 '#fff'
