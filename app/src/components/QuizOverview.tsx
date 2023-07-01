@@ -24,7 +24,7 @@ import {
 import LinkButton from './LinkButton';
 import { useMemo, useState } from 'react';
 import LinkIconButton from './LinkIconButton';
-import { usePrefersLightMode } from '@/custom-hooks/usePrefersLightMode';
+import { useColorMode } from '@/page-components/theme.context';
 
 type QuizOverviewProps = {
   uuid: string;
@@ -52,7 +52,7 @@ export default function QuizOverview({
   isMyQuiz,
 }: QuizOverviewProps) {
   const theme = useTheme();
-  const prefersLightMode = usePrefersLightMode();
+  const { mode } = useColorMode();
   const isQuestionCountSingular = questionCount === 1;
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
 
@@ -108,7 +108,7 @@ export default function QuizOverview({
               objectFit: 'cover',
               width: '100%',
               minHeight: '180px',
-              filter: prefersLightMode ? 'opacity(0.8)' : 'none',
+              filter: mode === 'light' ? 'opacity(0.8)' : 'none',
             }}
             priority
             unoptimized
@@ -120,9 +120,10 @@ export default function QuizOverview({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: prefersLightMode
-                ? lighten(theme.palette.secondary.light, 0.4)
-                : darken(theme.palette.secondary.dark, 0.4),
+              backgroundColor:
+                mode === 'light'
+                  ? lighten(theme.palette.secondary.light, 0.4)
+                  : darken(theme.palette.secondary.dark, 0.4),
             }}
           >
             <ImageIcon fontSize="large" />
