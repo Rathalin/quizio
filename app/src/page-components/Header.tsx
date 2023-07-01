@@ -4,6 +4,7 @@ import AccountMenu from './dashboard/AccountMenu';
 import LinkButton from '@/components/LinkButton';
 import { useSession } from 'next-auth/react';
 import { useIsMobile } from '@/custom-hooks/useIsMobile';
+import { ThemeSwitch } from '@/components/buttons/ThemeSwitch';
 
 export default function Header() {
   const session = useSession();
@@ -62,7 +63,9 @@ export default function Header() {
                 justifyContent: 'end',
                 alignItems: 'center',
               }}
+              gap={1}
             >
+              <ThemeSwitch />
               <AccountMenu />
             </Grid>
           </Grid>
