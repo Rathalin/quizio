@@ -1,5 +1,6 @@
 import {
   AccountCircle as AccountCircleIcon,
+  AddCircle,
   AdminPanelSettings,
   Login as LoginIcon,
   Logout as LogoutIcon,
@@ -110,10 +111,16 @@ export default function AccountMenu() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <Link
-          href="/users/me"
-          style={{ color: 'inherit', textDecoration: 'none' }}
-        >
+        <Link href="/quiz/create">
+          <MenuItem>
+            <ListItemIcon>
+              <AddCircle />
+            </ListItemIcon>
+            Create a new quiz
+          </MenuItem>
+        </Link>
+        <Divider />
+        <Link href="/users/me">
           <MenuItem onClick={handleClose}>
             <ListItemIcon>
               <AccountCircleIcon />

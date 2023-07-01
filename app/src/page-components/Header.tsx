@@ -1,15 +1,9 @@
 import LogoButton from '@/components/buttons/LogoButton';
-import { AppBar, Container, Grid, Stack, Toolbar } from '@mui/material';
+import { AppBar, Container, Grid, Toolbar } from '@mui/material';
 import AccountMenu from './dashboard/AccountMenu';
-import LinkButton from '@/components/LinkButton';
-import { useSession } from 'next-auth/react';
-import { useIsMobile } from '@/custom-hooks/useIsMobile';
 import { ThemeSwitch } from '@/components/buttons/ThemeSwitch';
 
 export default function Header() {
-  const session = useSession();
-  const isMobile = useIsMobile();
-
   return (
     <AppBar
       position="sticky"
@@ -37,24 +31,7 @@ export default function Header() {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
-            >
-              {session.status === 'authenticated' && (
-                <Stack
-                  direction="row"
-                  justifyContent="center"
-                  sx={{ flexGrow: 1 }}
-                  gap={2}
-                >
-                  <LinkButton
-                    hrefObserver="/quiz/create"
-                    navigateOnClick
-                    iconSide="left"
-                  >
-                    {isMobile ? 'Create' : 'Create your own quiz'}
-                  </LinkButton>
-                </Stack>
-              )}
-            </Grid>
+            ></Grid>
             <Grid
               item
               xs={4}
