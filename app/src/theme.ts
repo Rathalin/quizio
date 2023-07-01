@@ -12,7 +12,7 @@ export function createThemeWithMode(mode: PaletteMode) {
                 secondary: '#181818',
               },
               primary: {
-                main: '#a98605',
+                main: '#cc9200',
               },
               secondary: {
                 main: '#68baec',

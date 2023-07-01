@@ -23,8 +23,8 @@ import {
 } from '@mui/icons-material';
 import LinkButton from './LinkButton';
 import { useMemo, useState } from 'react';
-import { usePrefersLightMode } from '@/custom-hooks/usePrefersLightMode';
 import LinkIconButton from './LinkIconButton';
+import { usePrefersLightMode } from '@/custom-hooks/usePrefersLightMode';
 
 type QuizOverviewProps = {
   uuid: string;

@@ -1,11 +1,10 @@
 import '@/styles/globals.css';
-import { CssBaseline, ThemeProvider } from '@mui/material';
+import { CssBaseline, PaletteMode, ThemeProvider } from '@mui/material';
 import type { AppProps } from 'next/app';
-import { createThemeWithMode } from '../theme';
 import Layout from '../page-components/Layout';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePageTransition } from '@/stores/page-transition.store';
 import {
   DehydratedState,
@@ -19,7 +18,9 @@ import { Session } from 'next-auth';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import createEmotionCache from '@/createEmotionCache';
 import { Analytics } from '@vercel/analytics/react';
-import { usePrefersLightMode } from '@/custom-hooks/usePrefersLightMode';
+import { createThemeWithMode } from '@/theme';
+import { ColorModeProvider } from '@/page-components/theme.context';
+import { useStorage } from '@/custom-hooks/useStorage';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -34,11 +35,29 @@ export interface MyAppProps extends AppProps {
 
 export default function App(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
-  const prefersLightMode = usePrefersLightMode();
-  const theme = useMemo(
-    () => createThemeWithMode(prefersLightMode ? 'light' : 'dark'),
-    [prefersLightMode]
-  );
+  const [colorMode, setColorMode] = useState<'light' | 'dark'>('dark');
+  const { getStorageItem, setStorageItem } =
+    useStorage<PaletteMode>('quizio-color-mode');
+  const [colorModeLoadedFromStorage, setColorModeLoadedFromStorage] =
+    useState(false);
+  const theme = useMemo(() => createThemeWithMode(colorMode), [colorMode]);
+  const toggleColorMode = useCallback(() => {
+    setColorMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  }, []);
+
+  useEffect(() => {
+    const storedColorMode = getStorageItem();
+    if (storedColorMode != null) {
+      setColorMode(storedColorMode);
+      setColorModeLoadedFromStorage(true);
+    }
+  }, [getStorageItem]);
+  useEffect(() => {
+    if (colorModeLoadedFromStorage) {
+      setStorageItem(colorMode);
+    }
+  }, [colorMode, colorModeLoadedFromStorage, getStorageItem, setStorageItem]);
+
   const [queryClient] = useState(() => new QueryClient());
 
   const router = useRouter();
@@ -59,6 +78,7 @@ export default function App(props: MyAppProps) {
 
     return () => {
       router.events.off('routeChangeStart', handleRouteChange);
+      router.events.off('routeChangeComplete', handleRouteComplete);
     };
   }, [router.events, startTransitioning, stopTransitioning]);
 
@@ -68,30 +88,35 @@ export default function App(props: MyAppProps) {
         <Hydrate state={pageProps.dehydratedState}>
           <CacheProvider value={emotionCache}>
             <ThemeProvider theme={theme}>
-              <CssBaseline />
-              <Head>
-                <title>Quizio</title>
-                <link
-                  rel="dns-prefetch"
-                  href={process.env.NEXT_PUBLIC_BACKEND_URL}
-                />
-                <link
-                  rel="dns-prefetch"
-                  href={process.env.NEXT_PUBLIC_GRAPHQL_URL}
-                />
-                <link
-                  rel="preconnect"
-                  href={process.env.NEXT_PUBLIC_BACKEND_URL}
-                />
-                <link
-                  rel="preconnect"
-                  href={process.env.NEXT_PUBLIC_GRAPHQL_URL}
-                />
-              </Head>
-              <Layout>
-                <Component {...pageProps} />
-                <Analytics />
-              </Layout>
+              <ColorModeProvider
+                mode={colorMode}
+                toggleColorMode={toggleColorMode}
+              >
+                <CssBaseline />
+                <Head>
+                  <title>Quizio</title>
+                  <link
+                    rel="dns-prefetch"
+                    href={process.env.NEXT_PUBLIC_BACKEND_URL}
+                  />
+                  <link
+                    rel="dns-prefetch"
+                    href={process.env.NEXT_PUBLIC_GRAPHQL_URL}
+                  />
+                  <link
+                    rel="preconnect"
+                    href={process.env.NEXT_PUBLIC_BACKEND_URL}
+                  />
+                  <link
+                    rel="preconnect"
+                    href={process.env.NEXT_PUBLIC_GRAPHQL_URL}
+                  />
+                </Head>
+                <Layout>
+                  <Component {...pageProps} />
+                  <Analytics />
+                </Layout>
+              </ColorModeProvider>
             </ThemeProvider>
             <ReactQueryDevtools initialIsOpen={false} />
           </CacheProvider>

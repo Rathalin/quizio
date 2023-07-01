@@ -1,25 +1,16 @@
-import { useStorage } from '@/custom-hooks/useStorage';
+import { useColorMode } from '@/page-components/theme.context';
 import { Switch, SwitchProps, useTheme } from '@mui/material';
-import { ChangeEvent, useEffect, useState } from 'react';
-
-const storageKey = 'quizio-theme';
+import { ChangeEvent } from 'react';
 
 type ThemeSwitchProps = SwitchProps & {};
 
 export function ThemeSwitch({ ...other }: ThemeSwitchProps) {
   const theme = useTheme();
-  const { getStorageItem, setStorageItem } = useStorage(storageKey);
-  const [checked, setChecked] = useState(true);
-
-  useEffect(() => {
-    if (getStorageItem() === 'dark') {
-      setChecked(true);
-    }
-  }, [getStorageItem]);
+  const { mode, toggleColorMode } = useColorMode();
+  const checked = mode === 'dark';
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    setChecked(e.target.checked);
-    setStorageItem(e.target.checked ? 'dark' : 'light');
+    toggleColorMode();
   }
 
   return (
