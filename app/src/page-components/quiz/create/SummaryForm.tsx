@@ -31,10 +31,7 @@ export default function SummaryForm() {
             <ListItem>
               <Box>
                 <Stack direction="row" alignItems="center" gap={2}>
-                  <IndexAvatar
-                    index={qIndex + 1}
-                    color={theme.palette.action.disabled}
-                  />
+                  <IndexAvatar index={qIndex + 1} />
                   <Typography
                     variant="h5"
                     component="h3"
