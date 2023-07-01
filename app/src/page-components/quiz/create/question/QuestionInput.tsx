@@ -31,6 +31,8 @@ import { constraints } from '@/stores/content-type-constraints';
 type QuestionInputProps = {
   deletable: boolean;
   onDelete: () => void;
+  expanded: boolean;
+  onExpand: () => void;
 };
 const minAnswers = 2;
 const maxAnswers = 20;
@@ -38,6 +40,8 @@ const maxAnswers = 20;
 export default function QuestionInput({
   deletable,
   onDelete,
+  expanded,
+  onExpand,
 }: QuestionInputProps) {
   const index = useQuestionIndex();
   const {
@@ -78,7 +82,7 @@ export default function QuestionInput({
     !hasCorrectAnswer;
 
   return (
-    <Accordion elevation={4} defaultExpanded>
+    <Accordion elevation={4} expanded={expanded} onChange={() => onExpand()}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Stack
           direction="row"

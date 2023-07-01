@@ -4,11 +4,13 @@ import { Add as AddIcon } from '@mui/icons-material';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { QuestionIndexContext } from './question/QuestionIndexContext';
 import { defaultQuestionFormData } from './quiz-form-data';
+import { useState } from 'react';
 
 const minQuestions = 1;
 const maxQuestions = 20;
 
 export default function QuestionsForm() {
+  const [expanded, setExpanded] = useState<string | null>(null);
   const { control } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     name: 'questions',
@@ -23,6 +25,10 @@ export default function QuestionsForm() {
             <QuestionInput
               onDelete={() => remove(index)}
               deletable={fields.length > minQuestions}
+              expanded={expanded === field.id}
+              onExpand={() =>
+                setExpanded(expanded === field.id ? null : field.id)
+              }
             />
           </QuestionIndexContext.Provider>
         ))}
