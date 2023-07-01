@@ -59,6 +59,7 @@ export default function App(props: MyAppProps) {
   useEffect(() => {
     if (colorModeLoadedFromStorage) {
       setStorageItem(colorMode);
+      document.body.setAttribute('data-theme', colorMode);
     }
   }, [colorMode, colorModeLoadedFromStorage, getStorageItem, setStorageItem]);
 
