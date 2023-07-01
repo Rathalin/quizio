@@ -55,7 +55,7 @@ export default function AnswerInput({
             id={name}
             label={`Answer ${index + 1}`}
             color={isCorrect ? 'success' : 'primary'}
-            sx={{ flex: 1, minWidth: '200px' }}
+            sx={{ flex: 1, width: isMobile ? '100%' : 'auto' }}
             error={titleError != null}
             helperText={titleError}
             inputProps={{ maxLength: constraints.quiz.answer.title.maxLength }}
@@ -69,7 +69,8 @@ export default function AnswerInput({
         direction="row"
         gap={2}
         alignItems="center"
-        sx={{ marginTop: isMobile ? 0 : 1 }}
+        justifyContent="end"
+        sx={{ width: isMobile ? '100%' : 'auto' }}
       >
         <CorrectToggle />
         <DeleteAnswerButton

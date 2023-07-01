@@ -462,13 +462,18 @@ export default function QuizCreatePage({
         </Box>
       </Snackbar>
       <Typography variant="h1">
-        <Stack direction="row" alignItems="center">
+        <Stack direction="row" alignItems="center" flexWrap="wrap" gap={2}>
           <Box>
             <span>Edit your </span>
             <GradientWord>quiz</GradientWord>
             <span>.</span>
           </Box>
-          <Stack direction="row" gap={2} sx={{ marginLeft: 'auto' }}>
+          <Stack
+            direction="row"
+            gap={2}
+            flexWrap="wrap"
+            sx={{ marginLeft: 'auto' }}
+          >
             <Button
               variant="outlined"
               startIcon={isLoading ? <LoadingCircle /> : undefined}
