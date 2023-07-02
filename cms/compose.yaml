@@ -1,3 +1,4 @@
+version: '3'
 services:
   quizio-strapi:
     build: .
@@ -5,13 +6,13 @@ services:
     networks:
       - nginx-net
     volumes:
-      - strapidb:/opt/app/.tmp
-      - strapiuploads:/opt/app/public/uploads
+      - my-quiz-backend_strapidb:/opt/app/.tmp
+      - my-quiz-backend_strapiuploads:/opt/app/public/uploads
     env_file:
       - .env
 volumes:
-  strapidb:
-  strapiuploads:
+  my-quiz-backend_strapidb:
+  my-quiz-backend_strapiuploads:
 networks:
   nginx-net:
     external: true
