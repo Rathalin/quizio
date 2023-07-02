@@ -6,7 +6,6 @@ import { useAnswerIndex } from './AnswerIndexContext';
 import { useQuestionIndex } from '../QuestionIndexContext';
 import QuizioTextField from '@/components/inputs/QuizioTextField';
 import { constraints } from '@/persistence/content-type-constraints';
-import { useIsMobile } from '@/custom-hooks/useIsMobile';
 
 type AnswerInputProps = {
   isCorrect: boolean;
@@ -21,7 +20,6 @@ export default function AnswerInput({
   minAnswers,
   deletable,
 }: AnswerInputProps) {
-  const isMobile = useIsMobile();
   const questionIndex = useQuestionIndex();
   const index = useAnswerIndex();
   const {
@@ -55,7 +53,13 @@ export default function AnswerInput({
             id={name}
             label={`Answer ${index + 1}`}
             color={isCorrect ? 'success' : 'primary'}
-            sx={{ flex: 1, width: isMobile ? '100%' : 'auto' }}
+            sx={{
+              flex: 1,
+              width: {
+                xs: '100%',
+                sm: 'auto',
+              },
+            }}
             error={titleError != null}
             helperText={titleError}
             inputProps={{ maxLength: constraints.quiz.answer.title.maxLength }}
@@ -70,7 +74,16 @@ export default function AnswerInput({
         gap={2}
         alignItems="center"
         justifyContent="end"
-        sx={{ width: isMobile ? '100%' : 'auto' }}
+        sx={{
+          marginTop: {
+            xs: 0,
+            sm: 1,
+          },
+          width: {
+            xs: '100%',
+            sm: 'auto',
+          },
+        }}
       >
         <CorrectToggle />
         <DeleteAnswerButton
