@@ -1,5 +1,6 @@
 services:
   quizio-strapi:
+    image: my-quiz-backend-quizio-strapi
     build: .
     restart: always
     networks:
