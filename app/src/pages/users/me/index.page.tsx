@@ -2,6 +2,7 @@ import HomeButton from '@/components/buttons/HomeButton';
 import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import { useHandleGQLUnauthorized } from '@/custom-hooks/useHandleGQLUnauthorized';
 import { useIsMobile } from '@/custom-hooks/useIsMobile';
+import { useRedirectOnUnauthenticated } from '@/custom-hooks/useRedirectOnUnauthenticated';
 import { getMeGQL } from '@/graphql/user';
 import MeDataPlaceholder from '@/page-components/user/me/MeDataPlaceholder';
 import MeImagePlaceholder from '@/page-components/user/me/MeImagePlaceholder';
@@ -34,6 +35,7 @@ export default function MePage() {
   });
 
   useHandleGQLUnauthorized([error]);
+  useRedirectOnUnauthenticated(status);
 
   const initials = data?.me?.username?.trim().charAt(0).toUpperCase() ?? '';
 

@@ -54,7 +54,6 @@ const defaultValues = {
 export default function ChangePasswordPage() {
   const { data: session, status } = useSession();
   const { authHeader } = useAuthHeader(session);
-  useRedirectOnUnauthenticated(status);
 
   const { control, handleSubmit, formState, reset } =
     useForm<ChangePaswordForm>({
@@ -77,6 +76,7 @@ export default function ChangePasswordPage() {
     },
   });
 
+  useRedirectOnUnauthenticated(status);
   useHandleGQLUnauthorized([changePasswordMutation.isError]);
 
   function onSubmit(data: ChangePaswordForm) {

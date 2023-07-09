@@ -81,8 +81,6 @@ export default function QuizCreatePage() {
 
   const { title, description, image, questions } = getValues() as QuizForm;
 
-  useRedirectOnUnauthenticated(status);
-
   const createQuizMutation = useMutation({
     mutationKey: ['createQuiz'],
     mutationFn: (data: QuizInput) =>
@@ -139,6 +137,8 @@ export default function QuizCreatePage() {
         owner: session?.user?.id?.toString() ?? '0',
       }),
   });
+
+  useRedirectOnUnauthenticated(status);
   useHandleGQLUnauthorized([
     createQuizMutation.error,
     createQuestionMutation.error,
