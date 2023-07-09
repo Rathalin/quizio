@@ -1,16 +1,23 @@
 import QuizioTextField from '@/components/inputs/QuizioTextField';
 import { constraints } from '@/persistence/content-type-constraints';
-import { Box, Button, Stack, Tooltip } from '@mui/material';
+import { Box, Button, Stack } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 import { QuizForm } from './quiz-form-data';
 
-export default function OverviewForm() {
+export default function OverviewForm({
+  image,
+  setImage,
+}: {
+  image: File | null;
+  setImage: (image: File | null) => void;
+}) {
   const {
     control,
     register,
     formState: { errors },
     getValues,
     watch,
+    setValue,
   } = useFormContext<QuizForm>();
 
   let titleError: string | null = null;
@@ -66,45 +73,79 @@ export default function OverviewForm() {
           </Box>
         </Stack>
         <Stack direction="row" alignItems="center">
-          <Controller
+          <Box>
+            <input
+              id="quiz-image"
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={(e) => {
+                console.log(typeof e.target.files);
+                setImage(e.target.files != null ? e.target.files[0] : null);
+              }}
+            />
+            <label
+              htmlFor="quiz-image"
+              style={{
+                display: 'flex',
+              }}
+            >
+              <Button
+                variant="outlined"
+                component="span"
+                sx={{
+                  padding: 4,
+                  minWidth: '16rem',
+                  minHeight: '180px',
+                }}
+              >
+                {image?.name ? getFileNameFromPath(image.name) : 'Upload Image'}
+              </Button>
+            </label>
+          </Box>
+          {/* <Controller
             control={control}
             name="image"
             render={({ field }) => (
-              <Tooltip title="Image upload comming soon!" arrow>
-                <Box>
-                  <input
-                    id="quiz-image"
-                    type="file"
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    disabled
-                    {...field}
-                  />
-                  <label
-                    htmlFor="quiz-image"
-                    style={{
-                      display: 'flex',
+              <Box>
+                <input
+                  {...field}
+                  id="quiz-image"
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  value={undefined}
+                  onChange={(e) => {
+                    console.log(typeof e.target.files);
+                    setValue(
+                      'image',
+                      e.target.files != null ? e.target.files[0] : null
+                    );
+                  }}
+                />
+                <label
+                  htmlFor="quiz-image"
+                  style={{
+                    display: 'flex',
+                  }}
+                >
+                  <Button
+                    variant="outlined"
+                    component="span"
+                    sx={{
+                      padding: 4,
+                      minWidth: '16rem',
+                      minHeight: '180px',
                     }}
                   >
-                    <Button
-                      variant="outlined"
-                      component="span"
-                      sx={{
-                        padding: 4,
-                        minWidth: '16rem',
-                        minHeight: '180px',
-                      }}
-                      disabled
-                    >
-                      {field.value
-                        ? getFileNameFromPath(field.value)
-                        : 'Upload Image'}
-                    </Button>
-                  </label>
-                </Box>
-              </Tooltip>
+                    {field.value?.name
+                      ? getFileNameFromPath(field.value.name)
+                      : 'Upload Image'}
+                  </Button>
+                </label>
+              </Box>
             )}
-          />
+          /> */}
         </Stack>
       </Stack>
     </Box>

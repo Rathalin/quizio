@@ -1,6 +1,7 @@
 import GradientWord from '@/components/GradientWord';
 import LoadingCircle from '@/components/LoadingCircle';
 import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
+import { useHandleGQLUnauthorized } from '@/custom-hooks/useHandleGQLUnauthorized';
 import { useRedirectOnUnauthenticated } from '@/custom-hooks/useRedirectOnUnauthenticated';
 import {
   createQuestionGQL,
@@ -270,31 +271,34 @@ export default function QuizCreatePage({
       ),
   });
 
-  const isLoading =
-    createQuestionMutation.isLoading ||
-    createAnswerMutation.isLoading ||
-    updateQuizMutation.isLoading ||
-    updateQuestionMutation.isLoading ||
-    updateAnswerMutation.isLoading ||
-    deleteQuizMutation.isLoading ||
-    deleteQuestionMutation.isLoading ||
-    deleteAnswerMutation.isLoading;
-  const isSuccess =
-    createQuestionMutation.isSuccess &&
-    createAnswerMutation.isSuccess &&
-    updateQuizMutation.isSuccess &&
-    updateQuestionMutation.isSuccess &&
-    updateAnswerMutation.isSuccess;
-  const isError =
-    createQuestionMutation.isError ||
-    createAnswerMutation.isError ||
-    updateQuizMutation.isError ||
-    updateQuestionMutation.isError ||
-    updateAnswerMutation.isError;
-  const isLoadingDelete =
-    deleteQuizMutation.isLoading ||
-    deleteQuestionMutation.isLoading ||
-    deleteAnswerMutation.isLoading;
+  const createOrUpdateMutations = [
+    createQuestionMutation,
+    createAnswerMutation,
+    updateQuizMutation,
+    updateQuestionMutation,
+    updateAnswerMutation,
+    deleteQuizMutation,
+    deleteQuestionMutation,
+    deleteAnswerMutation,
+  ];
+  const deleteMutations = [
+    deleteQuizMutation,
+    deleteQuestionMutation,
+    deleteAnswerMutation,
+  ];
+  useHandleGQLUnauthorized(
+    createOrUpdateMutations.map((mutation) => mutation.error)
+  );
+  const isLoading = createOrUpdateMutations.some(
+    (mutation) => mutation.isLoading
+  );
+  const isSuccess = createOrUpdateMutations.every(
+    (mutation) => mutation.isSuccess
+  );
+  const isError = createOrUpdateMutations.some((mutation) => mutation.isError);
+  const isLoadingDelete = deleteMutations.some(
+    (mutation) => mutation.isLoading
+  );
 
   async function handleSaveClick() {
     try {

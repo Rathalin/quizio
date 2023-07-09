@@ -43,6 +43,7 @@ import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import { useRedirectOnUnauthenticated } from '@/custom-hooks/useRedirectOnUnauthenticated';
 import { useStorage } from '@/custom-hooks/useStorage';
 import { storageKeys } from '@/persistence/storage-keys';
+import { useHandleGQLUnauthorized } from '@/custom-hooks/useHandleGQLUnauthorized';
 
 const stepTitles = ['Overview', 'Questions', 'Summary'] as const;
 export type StepData = {
@@ -78,7 +79,8 @@ export default function QuizCreatePage() {
     return () => subscription.unsubscribe();
   }, [setStorageItem, watch]);
 
-  const { title, description, image, questions } = getValues() as QuizForm;
+  const { title, description, questions } = getValues() as QuizForm;
+  const [image, setImage] = useState<File | null>(null);
 
   useRedirectOnUnauthenticated(status);
 
@@ -120,13 +122,11 @@ export default function QuizCreatePage() {
   });
   const uploadImageMutation = useMutation({
     mutationKey: ['uploadImage'],
-    mutationFn: () =>
+    mutationFn: (data: { file: File | null }) =>
       request(
         process.env.NEXT_PUBLIC_GRAPHQL_URL,
         uploadImageGQL,
-        {
-          file: image,
-        },
+        data,
         authHeader
       ),
     onSuccess: (data) =>
@@ -138,6 +138,17 @@ export default function QuizCreatePage() {
         owner: session?.user?.id?.toString() ?? '0',
       }),
   });
+  useHandleGQLUnauthorized([
+    createQuizMutation.error,
+    createQuestionMutation.error,
+    createAnswerMutation.error,
+    uploadImageMutation.error,
+  ]);
+  useEffect(() => {
+    if ((uploadImageMutation.error as any)?.response != null) {
+      console.log((uploadImageMutation.error as any)?.response);
+    }
+  }, [uploadImageMutation.error]);
 
   async function handleFinishQuizClick() {
     try {
@@ -217,13 +228,26 @@ export default function QuizCreatePage() {
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
               <Card>
                 <CardContent>
-                  {steps[activeStep].title === 'Overview' && <OverviewForm />}
+                  {steps[activeStep].title === 'Overview' && (
+                    <OverviewForm image={image} setImage={setImage} />
+                  )}
                   {steps[activeStep].title === 'Questions' && <QuestionsForm />}
                   {steps[activeStep].title === 'Summary' && <SummaryForm />}
                 </CardContent>
                 <CardActions
                   sx={{ padding: 2, justifyContent: 'space-between' }}
                 >
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      console.log(image);
+                      uploadImageMutation.mutate({
+                        file: image,
+                      });
+                    }}
+                  >
+                    Upload
+                  </Button>
                   <BackButton activeStep={activeStep} onBack={handleBack}>
                     {steps.at(activeStep)?.backLabel}
                   </BackButton>

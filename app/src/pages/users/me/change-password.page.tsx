@@ -19,6 +19,7 @@ import { z } from 'zod';
 
 import QuizioPasswordField from '@/components/inputs/QuizioPasswordField';
 import { ZodFieldErrors } from '../../../../types/hook-form-zod';
+import { useHandleGQLUnauthorized } from '@/custom-hooks/useHandleGQLUnauthorized';
 
 const passwordMinLength = 6;
 const passwordMaxLength = 30;
@@ -75,6 +76,7 @@ export default function ChangePasswordPage() {
       reset(defaultValues);
     },
   });
+  useHandleGQLUnauthorized([changePasswordMutation.error]);
 
   function onSubmit(data: ChangePaswordForm) {
     changePasswordMutation.mutate(data);
