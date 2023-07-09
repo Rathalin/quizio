@@ -1,5 +1,6 @@
 import HomeButton from '@/components/buttons/HomeButton';
 import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
+import { useHandleGQLUnauthorized } from '@/custom-hooks/useHandleGQLUnauthorized';
 import { useIsMobile } from '@/custom-hooks/useIsMobile';
 import { getMeGQL } from '@/graphql/user';
 import MeDataPlaceholder from '@/page-components/user/me/MeDataPlaceholder';
@@ -31,6 +32,8 @@ export default function MePage() {
       request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getMeGQL, {}, authHeader),
     enabled: status === 'authenticated',
   });
+
+  useHandleGQLUnauthorized([error]);
 
   const initials = data?.me?.username?.trim().charAt(0).toUpperCase() ?? '';
 

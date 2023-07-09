@@ -43,6 +43,7 @@ import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import { useRedirectOnUnauthenticated } from '@/custom-hooks/useRedirectOnUnauthenticated';
 import { useStorage } from '@/custom-hooks/useStorage';
 import { storageKeys } from '@/persistence/storage-keys';
+import { useHandleGQLUnauthorized } from '@/custom-hooks/useHandleGQLUnauthorized';
 
 const stepTitles = ['Overview', 'Questions', 'Summary'] as const;
 export type StepData = {
@@ -138,6 +139,12 @@ export default function QuizCreatePage() {
         owner: session?.user?.id?.toString() ?? '0',
       }),
   });
+  useHandleGQLUnauthorized([
+    createQuizMutation.error,
+    createQuestionMutation.error,
+    createAnswerMutation.error,
+    uploadImageMutation.error,
+  ]);
 
   async function handleFinishQuizClick() {
     try {
