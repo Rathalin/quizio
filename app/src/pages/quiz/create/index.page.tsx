@@ -27,6 +27,7 @@ import {
   QuizInput,
   QuestionInput,
   AnswerInput,
+  UploadFileEntity,
 } from '@/graphql/generated/graphql';
 import { useMutation } from '@tanstack/react-query';
 import request from 'graphql-request';
@@ -34,7 +35,6 @@ import router from 'next/router';
 import { useSession } from 'next-auth/react';
 import LoadingCircle from '@/components/LoadingCircle';
 import { Publish as PublishIcon } from '@mui/icons-material';
-import { uploadImageGQL } from '@/graphql/upload';
 import {
   QuizForm,
   defaultQuizFormData,
@@ -74,13 +74,14 @@ export default function QuizCreatePage() {
   }, [getStorageItem, reset]);
   useEffect(() => {
     const subscription = watch((value) => {
+      // Don't store image
+      delete value.image;
       setStorageItem(value as QuizForm);
     });
     return () => subscription.unsubscribe();
   }, [setStorageItem, watch]);
 
   const { title, description, questions } = getValues() as QuizForm;
-  const [image, setImage] = useState<File | null>(null);
 
   useRedirectOnUnauthenticated(status);
 
@@ -122,21 +123,25 @@ export default function QuizCreatePage() {
   });
   const uploadImageMutation = useMutation({
     mutationKey: ['uploadImage'],
-    mutationFn: (data: { file: File | null }) =>
-      request(
-        process.env.NEXT_PUBLIC_GRAPHQL_URL,
-        uploadImageGQL,
-        data,
-        authHeader
-      ),
-    onSuccess: (data) =>
-      createQuizMutation.mutate({
-        title,
-        description,
-        image: data.upload.data?.id,
-        published: true,
-        owner: session?.user?.id?.toString() ?? '0',
-      }),
+    mutationFn: async ({
+      file,
+    }: {
+      file: File;
+    }): Promise<[UploadFileEntity['attributes'] & { id: number }]> => {
+      const formData = new FormData();
+      formData.append('files', file);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/upload`,
+        {
+          method: 'POST',
+          body: formData,
+          headers: {
+            ...authHeader,
+          },
+        }
+      );
+      return response.json();
+    },
   });
   useHandleGQLUnauthorized([
     createQuizMutation.error,
@@ -144,19 +149,25 @@ export default function QuizCreatePage() {
     createAnswerMutation.error,
     uploadImageMutation.error,
   ]);
-  useEffect(() => {
-    if ((uploadImageMutation.error as any)?.response != null) {
-      console.log((uploadImageMutation.error as any)?.response);
-    }
-  }, [uploadImageMutation.error]);
 
   async function handleFinishQuizClick() {
     try {
+      // Upload image
+      const image = getValues('image');
+      let imageId: string | null = null;
+      if (image != null) {
+        imageId =
+          (await uploadImageMutation.mutateAsync({ file: image }))
+            .at(0)
+            ?.id?.toString() ?? '';
+      }
+
       // Create quiz
       const res = await createQuizMutation.mutateAsync({
         title,
         description,
         published: true,
+        image: imageId,
         owner: session?.user?.id?.toString() ?? '0',
       });
 
@@ -178,6 +189,7 @@ export default function QuizCreatePage() {
       }
       await router.push('/');
       reset(defaultQuizFormData);
+      setStorageItem(defaultQuizFormData);
     } catch (error) {
       console.error(error);
     }
@@ -193,7 +205,7 @@ export default function QuizCreatePage() {
     setActiveStep((prevActiveStep) => Math.max(prevActiveStep - 1, 0));
   }
 
-  function onSubmit(_data: QuizForm) {
+  function onSubmit() {
     handleNext();
   }
 
@@ -201,6 +213,10 @@ export default function QuizCreatePage() {
     createQuizMutation.isLoading ||
     createQuestionMutation.isLoading ||
     createAnswerMutation.isLoading;
+  const isSuccessCreate =
+    createQuizMutation.isSuccess &&
+    createQuestionMutation.isSuccess &&
+    createAnswerMutation.isSuccess;
 
   return (
     <Box>
@@ -228,26 +244,13 @@ export default function QuizCreatePage() {
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
               <Card>
                 <CardContent>
-                  {steps[activeStep].title === 'Overview' && (
-                    <OverviewForm image={image} setImage={setImage} />
-                  )}
+                  {steps[activeStep].title === 'Overview' && <OverviewForm />}
                   {steps[activeStep].title === 'Questions' && <QuestionsForm />}
                   {steps[activeStep].title === 'Summary' && <SummaryForm />}
                 </CardContent>
                 <CardActions
                   sx={{ padding: 2, justifyContent: 'space-between' }}
                 >
-                  <Button
-                    variant="contained"
-                    onClick={() => {
-                      console.log(image);
-                      uploadImageMutation.mutate({
-                        file: image,
-                      });
-                    }}
-                  >
-                    Upload
-                  </Button>
                   <BackButton activeStep={activeStep} onBack={handleBack}>
                     {steps.at(activeStep)?.backLabel}
                   </BackButton>
@@ -261,7 +264,7 @@ export default function QuizCreatePage() {
                       onClick={handleFinishQuizClick}
                       startIcon={isLoadingCreate ? <LoadingCircle /> : null}
                       endIcon={<PublishIcon />}
-                      disabled={isLoadingCreate}
+                      disabled={isLoadingCreate || isSuccessCreate}
                     >
                       Publish quiz
                     </Button>

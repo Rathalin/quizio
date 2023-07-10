@@ -14,7 +14,7 @@ export type QuizForm = {
   id?: string;
   title: string;
   description: string;
-  // image: File | null;
+  image: File | null;
   questions: QuestionForm[];
 };
 
@@ -31,6 +31,6 @@ export const defaultQuestionFormData: QuestionForm = {
 export const defaultQuizFormData: QuizForm = {
   title: '',
   description: '',
-  // image: null,
+  image: null,
   questions: [defaultQuestionFormData],
 };

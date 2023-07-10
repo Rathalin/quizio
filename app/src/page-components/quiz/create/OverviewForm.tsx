@@ -3,22 +3,22 @@ import { constraints } from '@/persistence/content-type-constraints';
 import { Box, Button, Stack } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 import { QuizForm } from './quiz-form-data';
+import Image from 'next/image';
+import { useIsMobile } from '@/custom-hooks/useIsMobile';
 
-export default function OverviewForm({
-  image,
-  setImage,
-}: {
-  image: File | null;
-  setImage: (image: File | null) => void;
-}) {
+const imageInput = {
+  width: 300,
+  height: 200,
+} as const;
+
+export default function OverviewForm() {
   const {
     control,
-    register,
     formState: { errors },
-    getValues,
-    watch,
     setValue,
+    watch,
   } = useFormContext<QuizForm>();
+  const isMobile = useIsMobile();
 
   let titleError: string | null = null;
   if (errors.title?.type === 'required') {
@@ -29,7 +29,10 @@ export default function OverviewForm({
     return path.split('\\').pop()?.split('/').pop();
   }
 
-  const {} = register('title');
+  const image = watch('image');
+  const previewImageUrl = image != null ? URL.createObjectURL(image) : null;
+  const imageWidth = isMobile ? imageInput.width * 0.8 : imageInput.width;
+  const imageHeight = isMobile ? imageInput.height * 0.8 : imageInput.height;
 
   return (
     <Box>
@@ -73,38 +76,7 @@ export default function OverviewForm({
           </Box>
         </Stack>
         <Stack direction="row" alignItems="center">
-          <Box>
-            <input
-              id="quiz-image"
-              type="file"
-              accept="image/*"
-              style={{ display: 'none' }}
-              onChange={(e) => {
-                console.log(typeof e.target.files);
-                setImage(e.target.files != null ? e.target.files[0] : null);
-              }}
-            />
-            <label
-              htmlFor="quiz-image"
-              style={{
-                display: 'flex',
-              }}
-            >
-              <Button
-                variant="outlined"
-                component="span"
-                sx={{
-                  padding: 4,
-                  minWidth: '16rem',
-                  minHeight: '180px',
-                }}
-              >
-                {image?.name ? getFileNameFromPath(image.name) : 'Upload Image'}
-              </Button>
-            </label>
-          </Box>
-          {/* <Controller
-            control={control}
+          <Controller
             name="image"
             render={({ field }) => (
               <Box>
@@ -116,7 +88,6 @@ export default function OverviewForm({
                   style={{ display: 'none' }}
                   value={undefined}
                   onChange={(e) => {
-                    console.log(typeof e.target.files);
                     setValue(
                       'image',
                       e.target.files != null ? e.target.files[0] : null
@@ -133,19 +104,33 @@ export default function OverviewForm({
                     variant="outlined"
                     component="span"
                     sx={{
-                      padding: 4,
-                      minWidth: '16rem',
-                      minHeight: '180px',
+                      padding: 2,
+                      width: imageWidth,
+                      minHeight: imageHeight,
                     }}
                   >
-                    {field.value?.name
-                      ? getFileNameFromPath(field.value.name)
-                      : 'Upload Image'}
+                    {previewImageUrl != null ? (
+                      <Stack alignItems="center">
+                        <Image
+                          src={previewImageUrl}
+                          width={imageWidth - 34}
+                          height={imageHeight - 64}
+                          alt="quiz-image"
+                          style={{ borderRadius: 2, objectFit: 'cover' }}
+                        />
+                        <Box sx={{ overflowWrap: 'anywhere' }}>
+                          {getFileNameFromPath(image!.name)}
+                        </Box>
+                      </Stack>
+                    ) : (
+                      <Box>Upload Image</Box>
+                    )}
                   </Button>
                 </label>
               </Box>
             )}
-          /> */}
+            control={control}
+          />
         </Stack>
       </Stack>
     </Box>

@@ -6,7 +6,6 @@ import {
   ListItem,
   Stack,
   Typography,
-  useTheme,
 } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
 import IndexAvatar from '../game/IndexAvatar';
@@ -14,7 +13,6 @@ import { QuizForm } from './quiz-form-data';
 
 export default function SummaryForm() {
   const { getValues } = useFormContext();
-  const theme = useTheme();
 
   const { title, description, questions } = getValues() as QuizForm;
 
