@@ -3,6 +3,8 @@
   "plugins": ["unused-imports", "react"],
   "rules": {
     "unused-imports/no-unused-imports": "error",
+    "no-unused-vars": "error",
+    "no-console": ["error", { "allow": ["warn", "error"] }],
     "react/jsx-key": "error"
   }
 }
