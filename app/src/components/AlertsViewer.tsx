@@ -16,11 +16,12 @@ export default function AlertsViewer() {
   const [closedAlertIds, setClosedAlertIds] = useState<string[]>([]);
 
   return (
-    <Box>
+    <Box sx={{ marginBottom: 2 }}>
       {data?.alerts?.data.map((alert) => (
         <Collapse in={!closedAlertIds.includes(alert.id!)} key={alert.id}>
           <Alert
             severity={alert.attributes?.severity}
+            variant="standard"
             icon={false}
             sx={{
               '& .MuiAlert-message': {
