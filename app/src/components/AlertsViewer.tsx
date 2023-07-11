@@ -33,7 +33,18 @@ export default function AlertsViewer() {
             }}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={8} md={9} lg={10}>
+              <Grid
+                item
+                xs={12}
+                sm={8}
+                md={9}
+                lg={10}
+                sx={{
+                  '& a': {
+                    textDecoration: 'underline',
+                  },
+                }}
+              >
                 <ReactMarkdown>{alert.attributes?.content ?? ''}</ReactMarkdown>
               </Grid>
               <Grid item xs={12} sm={4} md={3} lg={2}>
