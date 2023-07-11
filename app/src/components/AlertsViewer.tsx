@@ -1,6 +1,6 @@
 import { getAlertsGQL } from '@/graphql/alerts';
 import { Enum_Alert_Imagesize } from '@/graphql/generated/graphql';
-import { Alert, Box, Collapse, Grid, Stack } from '@mui/material';
+import { Alert, Collapse, Grid, Stack } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
 import Image from 'next/image';
@@ -16,7 +16,7 @@ export default function AlertsViewer() {
   const [closedAlertIds, setClosedAlertIds] = useState<string[]>([]);
 
   return (
-    <Box sx={{ marginBottom: 2 }}>
+    <Stack gap={1} sx={{ marginBottom: 4 }}>
       {data?.alerts?.data.map((alert) => (
         <Collapse in={!closedAlertIds.includes(alert.id!)} key={alert.id}>
           <Alert
@@ -76,7 +76,7 @@ export default function AlertsViewer() {
           </Alert>
         </Collapse>
       ))}
-    </Box>
+    </Stack>
   );
 }
 
