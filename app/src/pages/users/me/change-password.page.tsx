@@ -75,6 +75,7 @@ export default function ChangePasswordPage() {
       reset(defaultValues);
     },
   });
+  useHandleGQLUnauthorized([changePasswordMutation.error]);
 
   useRedirectOnUnauthenticated(status);
   useHandleGQLUnauthorized([changePasswordMutation.isError]);

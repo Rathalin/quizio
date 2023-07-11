@@ -1,4 +1,4 @@
-import { MobileStepper, useTheme } from '@mui/material';
+import { MobileStepper } from '@mui/material';
 import BackButton from './BackButton';
 import NextButton from './NextButton';
 import { StepData } from '@/pages/quiz/create/index.page';
@@ -14,8 +14,6 @@ export default function MobileQuizStepper({
   activeStep,
   onBack,
 }: MobileQuizStepperProps) {
-  const theme = useTheme();
-
   const maxSteps = steps.length;
 
   return (

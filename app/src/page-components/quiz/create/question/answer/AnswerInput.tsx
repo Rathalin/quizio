@@ -24,7 +24,6 @@ export default function AnswerInput({
   const index = useAnswerIndex();
   const {
     control,
-    register,
     formState: { errors },
   } = useFormContext();
 

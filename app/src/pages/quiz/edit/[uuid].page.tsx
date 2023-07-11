@@ -129,7 +129,7 @@ export default function QuizCreatePage({
   });
   const { reset, handleSubmit, watch } = methods;
 
-  const { title, description, image, questions } = watch() as QuizForm;
+  const { title, description, questions } = watch() as QuizForm;
 
   useRedirectOnUnauthenticated(status);
 
@@ -292,10 +292,10 @@ export default function QuizCreatePage({
   const isLoading = createOrUpdateMutations.some(
     (mutation) => mutation.isLoading
   );
-  const isSuccess = createOrUpdateMutations.every(
-    (mutation) => mutation.isSuccess
-  );
-  const isError = createOrUpdateMutations.some((mutation) => mutation.isError);
+  // const isSuccess = createOrUpdateMutations.every(
+  //   (mutation) => mutation.isSuccess
+  // );
+  // const isError = createOrUpdateMutations.some((mutation) => mutation.isError);
   const isLoadingDelete = deleteMutations.some(
     (mutation) => mutation.isLoading
   );
@@ -437,7 +437,7 @@ export default function QuizCreatePage({
     setActiveStep((prevActiveStep) => Math.max(prevActiveStep - 1, 0));
   }
 
-  function onSubmit(_data: QuizForm) {
+  function onSubmit() {
     handleNext();
   }
 

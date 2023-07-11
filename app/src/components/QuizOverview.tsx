@@ -47,7 +47,6 @@ export default function QuizOverview({
   createdAt,
   questionCount,
   playCount,
-  published,
   imageUrl,
   isMyQuiz,
 }: QuizOverviewProps) {

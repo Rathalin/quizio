@@ -8,7 +8,7 @@ type FilterButtonProps = PropsWithChildren<{
 }>;
 
 export default function FilterButton({ filter, children }: FilterButtonProps) {
-  const { filters, hasFilter, toggleFilter } = useFilter();
+  const { hasFilter, toggleFilter } = useFilter();
 
   return (
     <Button

@@ -12,7 +12,7 @@ export function useHandleGQLUnauthorized(errors: unknown[]) {
         }
       });
     } catch (e) {
-      console.log('useHandleGQLUnauthorized', e);
+      console.error('useHandleGQLUnauthorized', e);
     }
   }, [errors]);
 }

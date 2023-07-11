@@ -7,7 +7,6 @@ type PlaceholderTypographyProps = { text?: string } & Omit<
 > & { component?: ElementType<any> };
 
 export default function PlaceholderTypography({
-  lineHeight,
   text = '.',
   ...other
 }: PlaceholderTypographyProps) {

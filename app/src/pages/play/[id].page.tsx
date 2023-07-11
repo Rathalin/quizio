@@ -154,7 +154,6 @@ export default function PlayIdPage({
       (answered) => answered.correctAnswerId === answered.selectedAnswerId
     );
     const lines: string[] = [];
-    console.log(quiz);
     lines.push(`QUIZIO (${quiz?.attributes?.title ?? ''})`);
     lines.push(
       `Score: ${answeredStates.filter((correct) => correct).length}/${

@@ -1,17 +1,24 @@
 import QuizioTextField from '@/components/inputs/QuizioTextField';
 import { constraints } from '@/persistence/content-type-constraints';
-import { Box, Button, Stack, Tooltip } from '@mui/material';
+import { Box, Button, Stack } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 import { QuizForm } from './quiz-form-data';
+import Image from 'next/image';
+import { useIsMobile } from '@/custom-hooks/useIsMobile';
+
+const imageInput = {
+  width: 300,
+  height: 200,
+} as const;
 
 export default function OverviewForm() {
   const {
     control,
-    register,
     formState: { errors },
-    getValues,
+    setValue,
     watch,
   } = useFormContext<QuizForm>();
+  const isMobile = useIsMobile();
 
   let titleError: string | null = null;
   if (errors.title?.type === 'required') {
@@ -22,7 +29,10 @@ export default function OverviewForm() {
     return path.split('\\').pop()?.split('/').pop();
   }
 
-  const {} = register('title');
+  const image = watch('image');
+  const previewImageUrl = image != null ? URL.createObjectURL(image) : null;
+  const imageWidth = isMobile ? imageInput.width * 0.8 : imageInput.width;
+  const imageHeight = isMobile ? imageInput.height * 0.8 : imageInput.height;
 
   return (
     <Box>
@@ -67,43 +77,59 @@ export default function OverviewForm() {
         </Stack>
         <Stack direction="row" alignItems="center">
           <Controller
-            control={control}
             name="image"
             render={({ field }) => (
-              <Tooltip title="Image upload comming soon!" arrow>
-                <Box>
-                  <input
-                    id="quiz-image"
-                    type="file"
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    disabled
-                    {...field}
-                  />
-                  <label
-                    htmlFor="quiz-image"
-                    style={{
-                      display: 'flex',
+              <Box>
+                <input
+                  {...field}
+                  id="quiz-image"
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  value={undefined}
+                  onChange={(e) => {
+                    setValue(
+                      'image',
+                      e.target.files != null ? e.target.files[0] : null
+                    );
+                  }}
+                />
+                <label
+                  htmlFor="quiz-image"
+                  style={{
+                    display: 'flex',
+                  }}
+                >
+                  <Button
+                    variant="outlined"
+                    component="span"
+                    sx={{
+                      padding: 2,
+                      width: imageWidth,
+                      minHeight: imageHeight,
                     }}
                   >
-                    <Button
-                      variant="outlined"
-                      component="span"
-                      sx={{
-                        padding: 4,
-                        minWidth: '16rem',
-                        minHeight: '180px',
-                      }}
-                      disabled
-                    >
-                      {field.value
-                        ? getFileNameFromPath(field.value)
-                        : 'Upload Image'}
-                    </Button>
-                  </label>
-                </Box>
-              </Tooltip>
+                    {previewImageUrl != null ? (
+                      <Stack alignItems="center">
+                        <Image
+                          src={previewImageUrl}
+                          width={imageWidth - 34}
+                          height={imageHeight - 64}
+                          alt="quiz-image"
+                          style={{ borderRadius: 2, objectFit: 'cover' }}
+                        />
+                        <Box sx={{ overflowWrap: 'anywhere' }}>
+                          {getFileNameFromPath(image!.name)}
+                        </Box>
+                      </Stack>
+                    ) : (
+                      <Box>Upload Image</Box>
+                    )}
+                  </Button>
+                </label>
+              </Box>
             )}
+            control={control}
           />
         </Stack>
       </Stack>
