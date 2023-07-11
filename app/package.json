@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "check-types": "tsc --noemit",
+    "lint": "npm run check-types && next lint",
     "codegen:dev": "graphql-codegen --config codegen.dev.ts --watch",
     "codegen:prod": "graphql-codegen --config codegen.prod.ts --watch"
   },

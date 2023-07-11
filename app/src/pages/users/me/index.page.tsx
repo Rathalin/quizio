@@ -27,7 +27,7 @@ export default function MePage() {
   const isMobile = useIsMobile();
   const { data: session, status } = useSession();
   const { authHeader } = useAuthHeader(session);
-  const { isLoading, isError, isSuccess, data } = useQuery({
+  const { isLoading, isError, error, isSuccess, data } = useQuery({
     queryKey: ['me'],
     queryFn: () =>
       request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getMeGQL, {}, authHeader),
