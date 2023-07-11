@@ -1,10 +1,7 @@
 import PlaceholderTypography from '@/components/placeholders/PlaceholderTypography';
-import { useIsMobile } from '@/custom-hooks/useIsMobile';
 import { Card, CardContent, Stack } from '@mui/material';
 
 export default function PickAnAnswerPlaceholder() {
-  const isMobile = useIsMobile();
-
   return (
     <Card sx={{ padding: 4 }}>
       <CardContent>

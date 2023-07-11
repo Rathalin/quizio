@@ -46,9 +46,8 @@ export default function QuestionInput({
   const index = useQuestionIndex();
   const {
     control,
-    formState: { errors, isValid },
+    formState: { errors },
     getValues,
-    watch,
   } = useFormContext<QuizForm>();
   const name = `questions.${index}` as const;
   const { fields, append, remove } = useFieldArray<QuizForm>({

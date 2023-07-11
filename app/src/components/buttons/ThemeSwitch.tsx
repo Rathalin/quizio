@@ -1,6 +1,5 @@
 import { useColorMode } from '@/page-components/theme.context';
 import { Switch, SwitchProps, useTheme } from '@mui/material';
-import { ChangeEvent } from 'react';
 
 type ThemeSwitchProps = SwitchProps & {};
 
@@ -9,7 +8,7 @@ export function ThemeSwitch({ ...other }: ThemeSwitchProps) {
   const { mode, toggleColorMode } = useColorMode();
   const checked = mode === 'dark';
 
-  function handleChange(e: ChangeEvent<HTMLInputElement>) {
+  function handleChange() {
     toggleColorMode();
   }
 
