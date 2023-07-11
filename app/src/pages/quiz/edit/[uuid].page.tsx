@@ -516,7 +516,9 @@ export default function QuizCreatePage({
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
               <Card>
                 <CardContent>
-                  {steps[activeStep].title === 'Overview' && <OverviewForm />}
+                  {steps[activeStep].title === 'Overview' && (
+                    <OverviewForm tempDisableImageInput />
+                  )}
                   {steps[activeStep].title === 'Questions' && <QuestionsForm />}
                   {steps[activeStep].title === 'Summary' && <SummaryForm />}
                 </CardContent>

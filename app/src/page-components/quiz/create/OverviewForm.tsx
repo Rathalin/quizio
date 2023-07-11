@@ -11,7 +11,7 @@ const imageInput = {
   height: 200,
 } as const;
 
-export default function OverviewForm() {
+export default function OverviewForm({ tempDisableImageInput = false }) {
   const {
     control,
     formState: { errors },
@@ -93,6 +93,7 @@ export default function OverviewForm() {
                       e.target.files != null ? e.target.files[0] : null
                     );
                   }}
+                  disabled={tempDisableImageInput}
                 />
                 <label
                   htmlFor="quiz-image"
@@ -108,6 +109,7 @@ export default function OverviewForm() {
                       width: imageWidth,
                       minHeight: imageHeight,
                     }}
+                    disabled={tempDisableImageInput}
                   >
                     {previewImageUrl != null ? (
                       <Stack alignItems="center">
