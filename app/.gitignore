@@ -35,5 +35,5 @@ yarn-error.log*
 next-env.d.ts
 
 # pages
-/src/pages/debug
+/src/pages/debug*
 

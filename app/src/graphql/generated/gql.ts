@@ -13,6 +13,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
+    "\n  query alerts {\n    alerts {\n      data {\n        id\n        attributes {\n          content\n          image {\n            data {\n              id\n              attributes {\n                alternativeText\n                url\n              }\n            }\n          }\n          imageSize\n          severity\n        }\n      }\n    }\n  }\n": types.AlertsDocument,
     "\n  mutation changePassword(\n    $currentPassword: String!\n    $password: String!\n    $passwordConfirmation: String!\n  ) {\n    changePassword(\n      currentPassword: $currentPassword\n      password: $password\n      passwordConfirmation: $passwordConfirmation\n    ) {\n      jwt\n    }\n  }\n": types.ChangePasswordDocument,
     "\n  mutation createQuiz($data: QuizInput!) {\n    createQuiz(data: $data) {\n      data {\n        id\n      }\n    }\n  }\n": types.CreateQuizDocument,
     "\n  mutation createQuestion($data: QuestionInput!) {\n    createQuestion(data: $data) {\n      data {\n        id\n      }\n    }\n  }\n": types.CreateQuestionDocument,
@@ -47,6 +48,10 @@ const documents = {
  */
 export function graphql(source: string): unknown;
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query alerts {\n    alerts {\n      data {\n        id\n        attributes {\n          content\n          image {\n            data {\n              id\n              attributes {\n                alternativeText\n                url\n              }\n            }\n          }\n          imageSize\n          severity\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query alerts {\n    alerts {\n      data {\n        id\n        attributes {\n          content\n          image {\n            data {\n              id\n              attributes {\n                alternativeText\n                url\n              }\n            }\n          }\n          imageSize\n          severity\n        }\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
