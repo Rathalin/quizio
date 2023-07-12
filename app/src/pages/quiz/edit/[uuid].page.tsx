@@ -30,6 +30,7 @@ import {
   defaultQuizFormData,
 } from '@/page-components/quiz/create/quiz-form-data';
 import DeleteQuizDialog from '@/page-components/quiz/edit/DeleteQuizDialog';
+import OverviewFormPlaceholder from '@/page-components/quiz/edit/OverviewFormPlaceholder';
 import { authOptions } from '@/pages/api/auth/[...nextauth].page';
 import { Delete as DeleteIcon, Save as SaveIcon } from '@mui/icons-material';
 import {
@@ -286,9 +287,11 @@ export default function QuizCreatePage({
     deleteQuestionMutation,
     deleteAnswerMutation,
   ];
-  useHandleGQLUnauthorized(
-    createOrUpdateMutations.map((mutation) => mutation.error)
-  );
+  useHandleGQLUnauthorized([
+    quizQuery.error,
+    ...createOrUpdateMutations.map((mutation) => mutation.error),
+    ...deleteMutations.map((mutation) => mutation.error),
+  ]);
   const isLoading = createOrUpdateMutations.some(
     (mutation) => mutation.isLoading
   );
@@ -516,11 +519,19 @@ export default function QuizCreatePage({
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
               <Card>
                 <CardContent>
-                  {steps[activeStep].title === 'Overview' && (
-                    <OverviewForm tempDisableImageInput />
+                  {quizQuery.isSuccess ? (
+                    <>
+                      {steps[activeStep].title === 'Overview' && (
+                        <OverviewForm tempDisableImageInput />
+                      )}
+                      {steps[activeStep].title === 'Questions' && (
+                        <QuestionsForm />
+                      )}
+                      {steps[activeStep].title === 'Summary' && <SummaryForm />}
+                    </>
+                  ) : (
+                    <OverviewFormPlaceholder />
                   )}
-                  {steps[activeStep].title === 'Questions' && <QuestionsForm />}
-                  {steps[activeStep].title === 'Summary' && <SummaryForm />}
                 </CardContent>
                 <CardActions
                   sx={{ padding: 2, justifyContent: 'space-between' }}
