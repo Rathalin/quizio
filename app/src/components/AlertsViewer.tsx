@@ -1,24 +1,24 @@
 import { getAlertsGQL } from '@/graphql/alerts';
 import { Enum_Alert_Imagesize } from '@/graphql/generated/graphql';
+import { useDismissedAlertIds } from '@/persistence/dismissed-alert-ids';
 import { Alert, Collapse, Grid, Stack } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
 import Image from 'next/image';
-import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 
 export default function AlertsViewer() {
+  const { dismissedAlertIds, addDismissedAlertId } = useDismissedAlertIds();
+
   const { data } = useQuery({
     queryKey: ['alerts'],
     queryFn: () => request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getAlertsGQL),
   });
 
-  const [closedAlertIds, setClosedAlertIds] = useState<string[]>([]);
-
   return (
     <Stack gap={1} sx={{ marginBottom: 4 }}>
       {data?.alerts?.data.map((alert) => (
-        <Collapse in={!closedAlertIds.includes(alert.id!)} key={alert.id}>
+        <Collapse in={!dismissedAlertIds.includes(alert.id!)} key={alert.id}>
           <Alert
             severity={alert.attributes?.severity}
             variant="standard"
@@ -29,7 +29,7 @@ export default function AlertsViewer() {
               },
             }}
             onClose={() => {
-              setClosedAlertIds((prev) => prev.concat(alert.id!));
+              addDismissedAlertId(alert.id!);
             }}
           >
             <Grid container spacing={2}>
