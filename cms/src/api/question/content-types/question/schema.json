@@ -29,6 +29,10 @@
       "relation": "manyToOne",
       "target": "api::quiz.quiz",
       "inversedBy": "questions"
+    },
+    "explanation": {
+      "type": "text",
+      "maxLength": 200
     }
   }
 }
