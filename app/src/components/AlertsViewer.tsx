@@ -15,9 +15,18 @@ export default function AlertsViewer() {
     queryFn: () => request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getAlertsGQL),
   });
 
+  const alerts = data?.alerts?.data ?? [];
+
   return (
-    <Stack gap={1} sx={{ marginBottom: 4 }}>
-      {data?.alerts?.data.map((alert) => (
+    <Stack
+      gap={1}
+      sx={{
+        marginBottom: alerts.length === dismissedAlertIds.length ? 0 : 4,
+        transitionProperty: 'margin-bottom',
+        transitionDuration: '100ms',
+      }}
+    >
+      {alerts.map((alert) => (
         <Collapse in={!dismissedAlertIds.includes(alert.id!)} key={alert.id}>
           <Alert
             severity={alert.attributes?.severity}
