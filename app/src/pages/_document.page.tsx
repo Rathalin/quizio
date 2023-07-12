@@ -20,6 +20,7 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
   return (
     <Html lang="en">
       <Head>
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
         {/* PWA primary color */}
         <link rel="shortcut icon" href="/favicon.ico" />
         <meta name="emotion-insertion-point" content="" />
