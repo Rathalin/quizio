@@ -1,6 +1,6 @@
 import QuizioTextField from '@/components/inputs/QuizioTextField';
 import { constraints } from '@/persistence/content-type-constraints';
-import { Box, Button, Stack } from '@mui/material';
+import { Alert, Box, Button, Stack } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 import { QuizForm } from './quiz-form-data';
 import Image from 'next/image';
@@ -75,7 +75,7 @@ export default function OverviewForm({ tempDisableImageInput = false }) {
             />
           </Box>
         </Stack>
-        <Stack direction="row" alignItems="center">
+        <Stack direction="column" alignItems="start" gap={1}>
           <Controller
             name="image"
             render={({ field }) => (
@@ -133,6 +133,11 @@ export default function OverviewForm({ tempDisableImageInput = false }) {
             )}
             control={control}
           />
+          {tempDisableImageInput && (
+            <Alert severity="warning">
+              Changing the image is not supported yet 😕
+            </Alert>
+          )}
         </Stack>
       </Stack>
     </Box>
