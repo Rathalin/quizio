@@ -5,10 +5,18 @@ type ExplanationProps = {
   text?: string;
 };
 
+const correctEmojies = ['😀', '😁', '😃', '😄', '😆', '😊', '😎'];
+const incorrectEmojies = ['😐', '😶', '😮', '😯', '😲', '🫤'];
+
 export default function Explanation({ correct, text }: ExplanationProps) {
   const theme = useTheme();
 
   const trimmedText = text?.trim();
+
+  function getRandomEmoji(correct: boolean) {
+    const array = correct ? correctEmojies : incorrectEmojies;
+    return array.at(Math.floor(Math.random() * array.length));
+  }
 
   return (
     <>
@@ -24,7 +32,7 @@ export default function Explanation({ correct, text }: ExplanationProps) {
           {correct ? 'Correct' : 'Incorrect'}
         </Box>
         <Box component="span" sx={{ marginLeft: 2 }}>
-          {correct ? '😀' : '😮'}
+          {getRandomEmoji(correct)}
         </Box>
       </Typography>
       <Typography>{trimmedText}</Typography>

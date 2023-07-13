@@ -40,7 +40,7 @@ export default function PickAnAnswer({
         wrap="wrap-reverse"
         sx={{ paddingTop: 6, paddingInline: 6, paddingBottom: 2 }}
       >
-        <Grid item xs={12} md={8} sx={{ marginBottom: 2 }}>
+        <Grid item xs={12} md={8}>
           <Stack direction="row" alignItems="center" gap={2}>
             <IndexAvatar index={index} />
             <Typography variant="h4" component="h1" sx={{ margin: 0 }}>
