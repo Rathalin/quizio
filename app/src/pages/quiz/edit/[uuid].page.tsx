@@ -295,10 +295,6 @@ export default function QuizCreatePage({
   const isLoading = createOrUpdateMutations.some(
     (mutation) => mutation.isLoading
   );
-  // const isSuccess = createOrUpdateMutations.every(
-  //   (mutation) => mutation.isSuccess
-  // );
-  // const isError = createOrUpdateMutations.some((mutation) => mutation.isError);
   const isLoadingDelete = deleteMutations.some(
     (mutation) => mutation.isLoading
   );
@@ -309,8 +305,8 @@ export default function QuizCreatePage({
       await updateQuizMutation.mutateAsync({
         id: quiz?.id ?? '',
         data: {
-          title,
-          description,
+          title: title.trim(),
+          description: description.trim(),
           published: true,
           owner: session?.user?.id?.toString() ?? '0',
         },
@@ -322,7 +318,7 @@ export default function QuizCreatePage({
           // Create new question
           const res = await createQuestionMutation.mutateAsync({
             data: {
-              title: question.title ?? '',
+              title: question.title.trim() ?? '',
               quiz: quiz?.id ?? '',
             },
           });
@@ -332,7 +328,7 @@ export default function QuizCreatePage({
           await updateQuestionMutation.mutateAsync({
             id: question.id ?? '',
             data: {
-              title: question.title ?? '',
+              title: question.title.trim() ?? '',
             },
           });
           questionId = question.id;
@@ -343,7 +339,7 @@ export default function QuizCreatePage({
           if (answer.id == null) {
             await createAnswerMutation.mutateAsync({
               data: {
-                title: answer.title ?? '',
+                title: answer.title.trim() ?? '',
                 correct: answer.isCorrect,
                 question: questionId,
               },
@@ -353,7 +349,7 @@ export default function QuizCreatePage({
             await updateAnswerMutation.mutateAsync({
               id: answer.id ?? '',
               data: {
-                title: answer.title ?? '',
+                title: answer.title.trim() ?? '',
                 correct: answer.isCorrect ?? false,
               },
             });

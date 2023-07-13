@@ -170,8 +170,8 @@ export default function QuizCreatePage() {
 
       // Create quiz
       const res = await createQuizMutation.mutateAsync({
-        title,
-        description,
+        title: title.trim(),
+        description: description.trim(),
         published: true,
         image: imageId,
         owner: session?.user?.id?.toString() ?? '0',
@@ -180,14 +180,14 @@ export default function QuizCreatePage() {
       // Create questions
       for (const question of questions) {
         const questionData = await createQuestionMutation.mutateAsync({
-          title: question.title,
+          title: question.title.trim(),
           quiz: res.createQuiz?.data?.id,
         });
 
         // Create answers
         for (const answer of question.answers) {
           await createAnswerMutation.mutateAsync({
-            title: answer.title,
+            title: answer.title.trim(),
             correct: answer.isCorrect,
             question: questionData.createQuestion?.data?.id,
           });
