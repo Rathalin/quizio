@@ -28,7 +28,7 @@ import SummaryForm from '@/page-components/quiz/create/SummaryForm';
 import {
   QuizForm,
   defaultQuizFormData,
-} from '@/page-components/quiz/create/quiz-form-data';
+} from '@/page-components/quiz/quiz-form-data';
 import DeleteQuizDialog from '@/page-components/quiz/edit/DeleteQuizDialog';
 import OverviewFormPlaceholder from '@/page-components/quiz/edit/OverviewFormPlaceholder';
 import { authOptions } from '@/pages/api/auth/[...nextauth].page';

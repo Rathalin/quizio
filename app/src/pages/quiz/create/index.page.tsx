@@ -1,12 +1,9 @@
 import GradientWord from '@/components/GradientWord';
 import OverviewForm from '@/page-components/quiz/create/OverviewForm';
-import QuestionsForm from '@/page-components/quiz/create/QuestionsForm';
 import SummaryForm from '@/page-components/quiz/create/SummaryForm';
 import {
   Box,
-  Button,
   Card,
-  CardActions,
   CardContent,
   Grid,
   Step,
@@ -15,9 +12,6 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import BackButton from '@/page-components/quiz/create/BackButton';
-import NextButton from '@/page-components/quiz/create/NextButton';
 import {
   createQuizGQL,
   createQuestionGQL,
@@ -31,19 +25,22 @@ import {
 } from '@/graphql/generated/graphql';
 import { useMutation } from '@tanstack/react-query';
 import request from 'graphql-request';
-import router from 'next/router';
 import { useSession } from 'next-auth/react';
-import LoadingCircle from '@/components/LoadingCircle';
-import { Publish as PublishIcon } from '@mui/icons-material';
-import {
-  QuizForm,
-  defaultQuizFormData,
-} from '@/page-components/quiz/create/quiz-form-data';
 import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import { useRedirectOnUnauthenticated } from '@/custom-hooks/useRedirectOnUnauthenticated';
+import { useHandleGQLUnauthorized } from '@/custom-hooks/useHandleGQLUnauthorized';
+import {
+  QuizOverviewForm,
+  QuizQuestionsForm,
+} from '@/page-components/quiz/quiz-form-schema';
+import QuestionsForm from '@/page-components/quiz/create/QuestionsForm';
+import {
+  defaultOverviewFormData,
+  defaultQuestionsFormData,
+} from '@/page-components/quiz/quiz-form-data';
+import { useRouter } from 'next/router';
 import { useStorage } from '@/custom-hooks/useStorage';
 import { storageKeys } from '@/persistence/storage-keys';
-import { useHandleGQLUnauthorized } from '@/custom-hooks/useHandleGQLUnauthorized';
 
 const stepTitles = ['Overview', 'Questions', 'Summary'] as const;
 export type StepData = {
@@ -58,30 +55,41 @@ const steps = stepTitles.map((title, index) => ({
 }));
 
 export default function QuizCreatePage() {
+  const router = useRouter();
   const { data: session, status } = useSession();
   const { authHeader } = useAuthHeader(session);
-  const { getStorageItem, setStorageItem } = useStorage<QuizForm>(
-    storageKeys.quizDraft
-  );
   const [activeStep, setActiveStep] = useState(0);
+  const [overviewFormData, setOverviewFormData] = useState<QuizOverviewForm>(
+    defaultOverviewFormData
+  );
+  const [questionsFormData, setQuestionsFormData] = useState<QuizQuestionsForm>(
+    defaultQuestionsFormData
+  );
 
-  const { ...methods } = useForm<QuizForm>({
-    defaultValues: defaultQuizFormData,
-  });
-  const { getValues, reset, handleSubmit, watch } = methods;
+  const { getStorageItem, setStorageItem } = useStorage<
+    QuizOverviewForm & QuizQuestionsForm
+  >(storageKeys.quizDraft);
   useEffect(() => {
-    reset(getStorageItem() as QuizForm);
-  }, [getStorageItem, reset]);
-  useEffect(() => {
-    const subscription = watch((value) => {
-      // Don't store image
-      delete value.image;
-      setStorageItem(value as QuizForm);
+    const storageItem = getStorageItem();
+    setOverviewFormData({
+      id: storageItem?.id,
+      title: storageItem?.title ?? '',
+      description: storageItem?.description,
+      image: null,
     });
-    return () => subscription.unsubscribe();
-  }, [setStorageItem, watch]);
-
-  const { title, description, questions } = getValues() as QuizForm;
+    setQuestionsFormData({
+      questions: storageItem?.questions ?? [],
+    });
+  }, [getStorageItem, setOverviewFormData, setQuestionsFormData]);
+  useEffect(() => {
+    const quizData = {
+      ...overviewFormData,
+      questions: questionsFormData.questions,
+    };
+    // Don't store image
+    quizData.image = null;
+    setStorageItem(quizData);
+  }, [overviewFormData, questionsFormData.questions, setStorageItem]);
 
   const createQuizMutation = useMutation({
     mutationKey: ['createQuiz'],
@@ -141,25 +149,20 @@ export default function QuizCreatePage() {
       return response.json();
     },
   });
-  useHandleGQLUnauthorized([
-    createQuizMutation.error,
-    createQuestionMutation.error,
-    createAnswerMutation.error,
-    uploadImageMutation.error,
-  ]);
-
+  const mutations = [
+    createQuizMutation,
+    createQuestionMutation,
+    createAnswerMutation,
+    uploadImageMutation,
+  ];
+  useHandleGQLUnauthorized(mutations.map((mutation) => mutation.error));
   useRedirectOnUnauthenticated(status);
-  useHandleGQLUnauthorized([
-    createQuizMutation.error,
-    createQuestionMutation.error,
-    createAnswerMutation.error,
-    uploadImageMutation.error,
-  ]);
 
   async function handleFinishQuizClick() {
+    const { title, description, image } = overviewFormData;
+    const { questions } = questionsFormData;
     try {
       // Upload image
-      const image = getValues('image');
       let imageId: string | null = null;
       if (image != null) {
         imageId =
@@ -167,23 +170,20 @@ export default function QuizCreatePage() {
             .at(0)
             ?.id?.toString() ?? '';
       }
-
       // Create quiz
       const res = await createQuizMutation.mutateAsync({
         title: title.trim(),
-        description: description.trim(),
+        description: description?.trim(),
         published: true,
         image: imageId,
         owner: session?.user?.id?.toString() ?? '0',
       });
-
       // Create questions
       for (const question of questions) {
         const questionData = await createQuestionMutation.mutateAsync({
           title: question.title.trim(),
           quiz: res.createQuiz?.data?.id,
         });
-
         // Create answers
         for (const answer of question.answers) {
           await createAnswerMutation.mutateAsync({
@@ -194,8 +194,9 @@ export default function QuizCreatePage() {
         }
       }
       await router.push('/');
-      reset(defaultQuizFormData);
-      setStorageItem(defaultQuizFormData);
+      setOverviewFormData(defaultOverviewFormData);
+      setQuestionsFormData(defaultQuestionsFormData);
+      // setStorageItem(defaultQuizFormData);
     } catch (error) {
       console.error(error);
     }
@@ -211,18 +212,8 @@ export default function QuizCreatePage() {
     setActiveStep((prevActiveStep) => Math.max(prevActiveStep - 1, 0));
   }
 
-  function onSubmit() {
-    handleNext();
-  }
-
-  const isLoadingCreate =
-    createQuizMutation.isLoading ||
-    createQuestionMutation.isLoading ||
-    createAnswerMutation.isLoading;
-  const isSuccessCreate =
-    createQuizMutation.isSuccess &&
-    createQuestionMutation.isSuccess &&
-    createAnswerMutation.isSuccess;
+  const backLabel = steps.at(activeStep)?.backLabel ?? null;
+  const nextLabel = steps.at(activeStep)?.nextLabel ?? null;
 
   return (
     <Box>
@@ -246,39 +237,44 @@ export default function QuizCreatePage() {
           </Card>
         </Grid>
         <Grid item xs={12} md={9}>
-          <FormProvider {...methods}>
-            <form onSubmit={handleSubmit(onSubmit)} noValidate>
-              <Card>
-                <CardContent>
-                  {steps[activeStep].title === 'Overview' && <OverviewForm />}
-                  {steps[activeStep].title === 'Questions' && <QuestionsForm />}
-                  {steps[activeStep].title === 'Summary' && <SummaryForm />}
-                </CardContent>
-                <CardActions
-                  sx={{ padding: 2, justifyContent: 'space-between' }}
-                >
-                  <BackButton activeStep={activeStep} onBack={handleBack}>
-                    {steps.at(activeStep)?.backLabel}
-                  </BackButton>
-                  <NextButton activeStep={activeStep} maxSteps={steps.length}>
-                    {steps.at(activeStep)?.nextLabel}
-                  </NextButton>
-                  {steps.at(activeStep)?.title === 'Summary' && (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleFinishQuizClick}
-                      startIcon={isLoadingCreate ? <LoadingCircle /> : null}
-                      endIcon={<PublishIcon />}
-                      disabled={isLoadingCreate || isSuccessCreate}
-                    >
-                      Publish quiz
-                    </Button>
-                  )}
-                </CardActions>
-              </Card>
-            </form>
-          </FormProvider>
+          {steps[activeStep].title === 'Overview' && (
+            <OverviewForm
+              defaultData={overviewFormData}
+              onSubmit={(data) => {
+                setOverviewFormData(data);
+                handleNext();
+              }}
+              backLabel={backLabel}
+              nextLabel={nextLabel}
+            />
+          )}
+          {steps[activeStep].title === 'Questions' && (
+            <QuestionsForm
+              defaultData={questionsFormData}
+              onSubmit={(data) => {
+                setQuestionsFormData(data);
+                handleNext();
+              }}
+              onBack={(data) => {
+                setQuestionsFormData(data);
+                handleBack();
+              }}
+              backLabel={backLabel}
+              nextLabel={nextLabel}
+            />
+          )}
+          {steps[activeStep].title === 'Summary' && (
+            <SummaryForm
+              overviewFormData={overviewFormData}
+              questionsFormData={questionsFormData}
+              onBack={() => handleBack()}
+              onPublish={() => handleFinishQuizClick()}
+              isPublishing={
+                mutations.some((mutation) => mutation.isLoading) ||
+                mutations.some((mutation) => mutation.isSuccess)
+              }
+            />
+          )}
         </Grid>
       </Grid>
     </Box>

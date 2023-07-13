@@ -1,14 +1,9 @@
 import { KeyboardArrowRight as KeyboardArrowRightIcon } from '@mui/icons-material';
 import { Box, Button, ButtonProps } from '@mui/material';
 
-type NextButtonProps = ButtonProps & {
-  activeStep: number;
-  maxSteps: number;
-};
+type NextButtonProps = ButtonProps & {};
 
 export default function NextButton({
-  activeStep,
-  maxSteps,
   variant = 'contained',
   endIcon = <KeyboardArrowRightIcon />,
   children,
@@ -19,14 +14,8 @@ export default function NextButton({
   }
 
   return (
-    <Button
-      variant={variant}
-      endIcon={endIcon}
-      disabled={activeStep === maxSteps}
-      type="submit"
-      {...props}
-    >
-      {children != null ? children : 'Next'}
+    <Button variant={variant} endIcon={endIcon} type="submit" {...props}>
+      {children}
     </Button>
   );
 }

@@ -1,6 +1,7 @@
 export const constraints = {
   quiz: {
     title: {
+      minLength: 1,
       maxLength: 50,
     },
     description: {
@@ -8,11 +9,16 @@ export const constraints = {
     },
     question: {
       title: {
+        minLength: 1,
         maxLength: 200,
+      },
+      explanation: {
+        maxLength: 400,
       },
     },
     answer: {
       title: {
+        minLength: 1,
         maxLength: 100,
       },
     },

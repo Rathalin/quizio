@@ -5,7 +5,9 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { useAnswerIndex } from './AnswerIndexContext';
 import { useQuestionIndex } from '../QuestionIndexContext';
 import QuizioTextField from '@/components/inputs/QuizioTextField';
-import { constraints } from '@/persistence/content-type-constraints';
+import { constraints } from '@/content-type-utilities/content-type-constraints';
+import { ZodFieldErrors } from '../../../../../../types/hook-form-zod';
+import { QuizQuestionsForm } from '@/page-components/quiz/quiz-form-schema';
 
 type AnswerInputProps = {
   isCorrect: boolean;
@@ -24,19 +26,13 @@ export default function AnswerInput({
   const index = useAnswerIndex();
   const {
     control,
-    formState: { errors },
-  } = useFormContext();
+    formState: { errors: formErrors },
+  } = useFormContext<QuizQuestionsForm>();
 
-  const name = `questions.${questionIndex}.answers.${index}`;
-
-  let titleError: string | null = null;
-  if (
-    (errors.questions as any[] | undefined)
-      ?.at(questionIndex ?? 0)
-      ?.answers?.at(index)?.title?.type === 'required'
-  ) {
-    titleError = 'Answer is required';
-  }
+  const name =
+    `questions.${questionIndex}.answers.${index}` as `questions.${number}.answers.${number}`;
+  const errors = formErrors as ZodFieldErrors<typeof formErrors>;
+  const answerErrors = errors.questions?.[questionIndex]?.answers?.[index];
 
   return (
     <Stack
@@ -59,8 +55,9 @@ export default function AnswerInput({
                 sm: 'auto',
               },
             }}
-            error={titleError != null}
-            helperText={titleError}
+            error={answerErrors != null}
+            helperText={answerErrors?.title?.message?.toString() ?? ''}
+            required
             inputProps={{ maxLength: constraints.quiz.answer.title.maxLength }}
             {...field}
           />

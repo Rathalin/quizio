@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   FormHelperText,
+  InputAdornment,
   Stack,
   Tooltip,
   Typography,
@@ -13,20 +14,22 @@ import AnswerInput from './answer/AnswerInput';
 import {
   Add as AddIcon,
   ExpandMore as ExpandMoreIcon,
+  Help,
   ReportProblem as ReportProblemIcon,
 } from '@mui/icons-material';
 import DeleteQuestionButton from './DeleteQuestionButton';
-import {
-  Controller,
-  useFieldArray,
-  useFormContext,
-  useWatch,
-} from 'react-hook-form';
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import { useQuestionIndex } from './QuestionIndexContext';
 import { AnswerIndexContext } from './answer/AnswerIndexContext';
 import QuizioTextField from '@/components/inputs/QuizioTextField';
-import { QuizForm, defaultAnswerFormData } from '../quiz-form-data';
-import { constraints } from '@/persistence/content-type-constraints';
+import { defaultAnswerFormData } from '../../quiz-form-data';
+import {
+  QuizQuestionsForm,
+  maxAnswers,
+  minAnswers,
+} from '../../quiz-form-schema';
+import { constraints } from '@/content-type-utilities/content-type-constraints';
+import { ZodFieldErrors } from '../../../../../types/hook-form-zod';
 
 type QuestionInputProps = {
   deletable: boolean;
@@ -34,8 +37,6 @@ type QuestionInputProps = {
   expanded: boolean;
   onExpand: () => void;
 };
-const minAnswers = 2;
-const maxAnswers = 20;
 
 export default function QuestionInput({
   deletable,
@@ -46,11 +47,11 @@ export default function QuestionInput({
   const index = useQuestionIndex();
   const {
     control,
-    formState: { errors },
     getValues,
-  } = useFormContext<QuizForm>();
+    formState: { errors: formErrors },
+  } = useFormContext<QuizQuestionsForm>();
   const name = `questions.${index}` as const;
-  const { fields, append, remove } = useFieldArray<QuizForm>({
+  const { fields, append, remove } = useFieldArray<QuizQuestionsForm>({
     name: `${name}.answers` as 'questions.0.answers',
     control,
     rules: {
@@ -58,27 +59,16 @@ export default function QuestionInput({
       maxLength: maxAnswers,
     },
   });
-
-  const questionError = errors.questions?.[index];
-
-  let titleError: string | null = null;
-  if (questionError?.title?.type === 'required') {
-    titleError = 'Question is required';
-  }
-
-  const hasCorrectAnswer =
-    useWatch({
-      name: `questions.${index}`,
-      control,
-    }).answers.filter((answer) => answer.isCorrect).length === 1;
-  let hasCorrectAnswerError: string | null = null;
-  if (!hasCorrectAnswer) {
-    hasCorrectAnswerError = 'Exactly one answer must be correct';
-  }
-  const hasError =
-    questionError?.title != null ||
-    questionError?.answers != null ||
-    !hasCorrectAnswer;
+  const errors = formErrors as ZodFieldErrors<typeof formErrors>;
+  const questionErrors = errors.questions?.[index] ?? null;
+  const oneCorrectAnswerError =
+    (
+      questionErrors?.answers as {
+        oneCorrectAnswer?: {
+          message?: string;
+        };
+      }
+    )?.oneCorrectAnswer?.message?.toString() ?? '';
 
   return (
     <Accordion
@@ -103,7 +93,7 @@ export default function QuestionInput({
             >
               {`Question ${index + 1}`}
             </Typography>
-            {hasError && (
+            {questionErrors != null && (
               <Tooltip title="Some inputs require your attention." arrow>
                 <ReportProblemIcon color="error" />
               </Tooltip>
@@ -127,8 +117,9 @@ export default function QuestionInput({
                 id={`${name}.title`}
                 label="Question"
                 fullWidth
-                error={titleError != null}
-                helperText={titleError}
+                error={questionErrors?.title != null}
+                helperText={questionErrors?.title?.message?.toString() ?? ''}
+                required
                 inputProps={{
                   maxLength: constraints.quiz.question.title.maxLength,
                 }}
@@ -159,9 +150,11 @@ export default function QuestionInput({
               </AnswerIndexContext.Provider>
             ))}
           </Box>
+          {/* {questionErrors?.answers?.oneCorrectAnswer != null && ( */}
           <FormHelperText sx={{ marginBottom: 2 }} error>
-            {hasCorrectAnswerError}
+            {oneCorrectAnswerError}
           </FormHelperText>
+          {/* )} */}
 
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <Tooltip
@@ -183,6 +176,30 @@ export default function QuestionInput({
                 </Button>
               </Box>
             </Tooltip>
+          </Box>
+
+          <Box sx={{ marginTop: 4 }}>
+            <QuizioTextField
+              id={`${name}.explanation`}
+              label="Explanation"
+              fullWidth
+              multiline
+              inputProps={{
+                maxLength: constraints.quiz.question.explanation.maxLength,
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Tooltip
+                      title="Explain the correct answer or give some context. This input is optional."
+                      arrow
+                    >
+                      <Help />
+                    </Tooltip>
+                  </InputAdornment>
+                ),
+              }}
+            />
           </Box>
         </Box>
       </AccordionDetails>

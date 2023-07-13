@@ -14,8 +14,8 @@ export default function CorrectToggle() {
   const name = `questions.${questionIndex}.answers.${answerIndex}.isCorrect`;
 
   const tooltipTitle = (watch(name) as boolean)
-    ? 'Marked as correct'
-    : 'Marked as incorrect';
+    ? 'This answer is marked as correct'
+    : 'This answer is marked as incorrect';
 
   return (
     <Tooltip title={tooltipTitle} arrow>

@@ -1,65 +1,112 @@
-import { Box, Button, Tooltip } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Tooltip,
+} from '@mui/material';
 import QuestionInput from './question/QuestionInput';
 import { Add as AddIcon } from '@mui/icons-material';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { QuestionIndexContext } from './question/QuestionIndexContext';
-import { defaultQuestionFormData } from './quiz-form-data';
+import { defaultQuestionFormData } from '../quiz-form-data';
 import { useState } from 'react';
+import {
+  minQuestions,
+  maxQuestions,
+  QuizQuestionsForm,
+  quizQuestionsFormSchema,
+} from '../quiz-form-schema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import BackButton from './BackButton';
+import NextButton from './NextButton';
 
-const minQuestions = 1;
-const maxQuestions = 20;
+type QuestionsFormProps = {
+  defaultData: QuizQuestionsForm;
+  onBack: (data: QuizQuestionsForm) => void;
+  onSubmit: (data: QuizQuestionsForm) => void;
+  backLabel: string | null;
+  nextLabel: string | null;
+};
 
-export default function QuestionsForm() {
-  const [expanded, setExpanded] = useState<string | null>(null);
-  const { control } = useFormContext();
+export default function QuestionsForm({
+  defaultData,
+  onSubmit,
+  onBack,
+  backLabel,
+  nextLabel,
+}: QuestionsFormProps) {
+  const methods = useForm({
+    defaultValues: defaultData,
+    resolver: zodResolver(quizQuestionsFormSchema),
+  });
+  const { control, handleSubmit, getValues } = methods;
   const { fields, append, remove } = useFieldArray({
     name: 'questions',
     control,
   });
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  function handleFormSubmit(data: QuizQuestionsForm) {
+    onSubmit(data);
+  }
 
   return (
-    <>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-        {fields.map((field, index) => (
-          <QuestionIndexContext.Provider key={field.id} value={index}>
-            <QuestionInput
-              onDelete={() => remove(index)}
-              deletable={fields.length > minQuestions}
-              expanded={expanded === field.id}
-              onExpand={() =>
-                setExpanded(expanded === field.id ? null : field.id)
-              }
-            />
-          </QuestionIndexContext.Provider>
-        ))}
-      </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          marginTop: 4,
-        }}
-      >
-        <Tooltip
-          title={
-            fields.length >= maxQuestions
-              ? `You can only add ${maxQuestions} questions.`
-              : null
-          }
-          arrow
-        >
-          <Box>
-            <Button
-              startIcon={<AddIcon />}
-              variant="outlined"
-              onClick={() => append(defaultQuestionFormData)}
-              disabled={fields.length >= maxQuestions}
+    <FormProvider {...methods}>
+      <form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
+        <Card>
+          <CardContent>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+              {fields.map((field, index) => (
+                <QuestionIndexContext.Provider key={field.id} value={index}>
+                  <QuestionInput
+                    onDelete={() => remove(index)}
+                    deletable={fields.length > minQuestions}
+                    expanded={expanded === field.id}
+                    onExpand={() =>
+                      setExpanded(expanded === field.id ? null : field.id)
+                    }
+                  />
+                </QuestionIndexContext.Provider>
+              ))}
+            </Box>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginTop: 4,
+              }}
             >
-              Question
-            </Button>
-          </Box>
-        </Tooltip>
-      </Box>
-    </>
+              <Tooltip
+                title={
+                  fields.length >= maxQuestions
+                    ? `You can only add ${maxQuestions} questions.`
+                    : null
+                }
+                arrow
+              >
+                <Box>
+                  <Button
+                    startIcon={<AddIcon />}
+                    variant="outlined"
+                    onClick={() => append(defaultQuestionFormData)}
+                    disabled={fields.length >= maxQuestions}
+                  >
+                    Question
+                  </Button>
+                </Box>
+              </Tooltip>
+            </Box>
+          </CardContent>
+          <CardActions sx={{ padding: 2, justifyContent: 'space-between' }}>
+            <BackButton onClick={() => onBack(getValues())}>
+              {backLabel}
+            </BackButton>
+            <NextButton>{nextLabel}</NextButton>
+          </CardActions>
+        </Card>
+      </form>
+    </FormProvider>
   );
 }
