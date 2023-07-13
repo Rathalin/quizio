@@ -175,7 +175,14 @@ export default function QuizOverview({
               </Typography>
             </Box>
             <Box>
-              <Typography sx={{ marginBottom: '.8rem' }}>
+              <Typography
+                sx={{
+                  marginBottom: '.8rem',
+                  whiteSpace: 'break-spaces',
+                  overflow: 'auto',
+                  maxHeight: '12ch',
+                }}
+              >
                 {description}
               </Typography>
               <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
