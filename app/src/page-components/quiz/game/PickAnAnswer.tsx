@@ -37,17 +37,15 @@ export default function PickAnAnswer({
       <Grid
         container
         spacing={4}
-        sx={{ paddingTop: 6, paddingInline: 6, paddingBottom: 2 }}
         wrap="wrap-reverse"
+        sx={{ paddingTop: 6, paddingInline: 6, paddingBottom: 2 }}
       >
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={8} sx={{ marginBottom: 2 }}>
           <Stack direction="row" alignItems="center" gap={2}>
-            <Stack direction="row" alignItems="center" gap={2}>
-              <IndexAvatar index={index} />
-              <Typography variant="h4" component="h1" sx={{ margin: 0 }}>
-                {title}
-              </Typography>
-            </Stack>
+            <IndexAvatar index={index} />
+            <Typography variant="h4" component="h1" sx={{ margin: 0 }}>
+              {title}
+            </Typography>
           </Stack>
         </Grid>
         <Grid item xs={12} md={4}>

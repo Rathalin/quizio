@@ -1,5 +1,6 @@
 import HomeButton from '@/components/buttons/HomeButton';
 import { getQuizzesByUuidGQL } from '@/graphql/quizzes';
+import Explanation from '@/page-components/quiz/game/Explanation';
 import GameSummary from '@/page-components/quiz/game/GameSummary';
 import PickAnAnswer from '@/page-components/quiz/game/PickAnAnswer';
 import PickAnAnswerPlaceholder from '@/page-components/quiz/game/PickAnAnswerPlaceholder';
@@ -13,6 +14,8 @@ import {
   useTheme,
   Button,
   Snackbar,
+  CardActions,
+  Divider,
 } from '@mui/material';
 import {
   QueryClient,
@@ -93,24 +96,30 @@ export default function PlayIdPage({
     []
   );
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
+
   const question = questions[questionIndex];
   const gameDone = quizQuery.isSuccess && question == null;
   const answerState = answeredProgress[questionIndex] as
     | AnsweredState
     | undefined;
   const questionAnswered = answerState?.selectedAnswerId != null;
+  const questionAnsweredCorrectly = questionAnswered
+    ? answerState.selectedAnswerId === answerState.correctAnswerId
+    : null;
+
   const borderColor = useMemo(() => {
-    const answeredCorrectly = questionAnswered
-      ? answerState.selectedAnswerId === answerState.correctAnswerId
-      : null;
-    if (answeredCorrectly == null) {
+    if (questionAnsweredCorrectly == null) {
       return 'transparent';
     }
-    if (answeredCorrectly) {
+    if (questionAnsweredCorrectly) {
       return theme.palette.success.main;
     }
     return theme.palette.error.main;
-  }, [answerState, questionAnswered, theme]);
+  }, [
+    questionAnsweredCorrectly,
+    theme.palette.error.main,
+    theme.palette.success.main,
+  ]);
 
   useEffect(() => {
     setQuestionIndex(0);
@@ -176,6 +185,7 @@ export default function PlayIdPage({
     }
     setShowCopiedAlert(false);
   }
+
   return (
     <Box
       sx={{
@@ -207,13 +217,13 @@ export default function PlayIdPage({
           {questions.length === 0 ? (
             <QuizNotFound />
           ) : (
-            <>
+            <Card
+              sx={{
+                border: `3px solid ${borderColor}`,
+              }}
+            >
               {!gameDone && (
-                <Card
-                  sx={{
-                    border: `3px solid ${borderColor}`,
-                  }}
-                >
+                <>
                   <CardContent sx={{ padding: 0 }}>
                     <PickAnAnswer
                       index={questionIndex + 1}
@@ -229,67 +239,75 @@ export default function PlayIdPage({
                       selectedAnswerId={answerState?.selectedAnswerId ?? null}
                       onAnswer={setAnswerOfCurrentQuestion}
                     />
-                    <Box
-                      sx={{
-                        marginTop: 4,
-                        marginInline: 4,
-                        display: 'flex',
-                        justifyContent: 'end',
-                        gap: 2,
-                        flexWrap: 'wrap',
-                      }}
-                    >
-                      <Button
-                        variant="contained"
-                        disabled={answerState?.selectedAnswerId == null}
-                        onClick={nextQuestion}
-                      >
-                        {questionIndex + 1 < questions.length
-                          ? 'Next Question'
-                          : 'Finish quiz'}
-                      </Button>
-                    </Box>
+                    {questionAnswered && (
+                      <Box sx={{ paddingInline: 6 }}>
+                        <Divider sx={{ marginBlock: 4 }} />
+                        <Explanation
+                          correct={questionAnsweredCorrectly ?? false}
+                          text={question.attributes?.explanation ?? ''}
+                        />
+                      </Box>
+                    )}
                   </CardContent>
-                </Card>
+                  <CardActions
+                    sx={{
+                      marginTop: 2,
+                      marginBottom: 4,
+                      paddingInline: 6,
+                      display: 'flex',
+                      justifyContent: 'end',
+                      gap: 2,
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <Button
+                      variant="contained"
+                      disabled={answerState?.selectedAnswerId == null}
+                      onClick={nextQuestion}
+                    >
+                      {questionIndex + 1 < questions.length
+                        ? 'Next Question'
+                        : 'Finish quiz'}
+                    </Button>
+                  </CardActions>
+                </>
               )}
               {gameDone && (
-                <Card sx={{ paddingInline: 4 }}>
-                  <CardContent>
-                    <GameSummary
-                      questions={questions.map((question) => ({
-                        id: question.id ?? '',
-                        title: question.attributes?.title ?? '',
-                        answers:
-                          question.attributes?.answers?.data.map((answer) => ({
-                            id: answer.id ?? '',
-                            title: answer.attributes?.title ?? '',
-                            correct: answer.attributes?.correct ?? false,
-                          })) ?? [],
-                      }))}
-                      answeredProgress={answeredProgress}
-                    />
-                    <Box
-                      sx={{
-                        marginTop: 4,
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        gap: 2,
-                        flexWrap: 'wrap',
-                      }}
+                <CardContent>
+                  <GameSummary
+                    questions={questions.map((question) => ({
+                      id: question.id ?? '',
+                      title: question.attributes?.title ?? '',
+                      answers:
+                        question.attributes?.answers?.data.map((answer) => ({
+                          id: answer.id ?? '',
+                          title: answer.attributes?.title ?? '',
+                          correct: answer.attributes?.correct ?? false,
+                        })) ?? [],
+                    }))}
+                    answeredProgress={answeredProgress}
+                  />
+                  <CardActions
+                    sx={{
+                      marginTop: 4,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      gap: 2,
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <HomeButton />
+                    <Button
+                      variant="contained"
+                      endIcon={<ContentCopyIcon />}
+                      onClick={resultToClipboard}
                     >
-                      <HomeButton />
-                      <Button
-                        variant="contained"
-                        endIcon={<ContentCopyIcon />}
-                        onClick={resultToClipboard}
-                      >
-                        Share
-                      </Button>
-                    </Box>
-                  </CardContent>
-                </Card>
+                      Share
+                    </Button>
+                  </CardActions>
+                </CardContent>
               )}
-            </>
+            </Card>
           )}
         </>
       )}
