@@ -150,11 +150,9 @@ export default function QuestionInput({
               </AnswerIndexContext.Provider>
             ))}
           </Box>
-          {/* {questionErrors?.answers?.oneCorrectAnswer != null && ( */}
           <FormHelperText sx={{ marginBottom: 2 }} error>
             {oneCorrectAnswerError}
           </FormHelperText>
-          {/* )} */}
 
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <Tooltip
@@ -179,26 +177,33 @@ export default function QuestionInput({
           </Box>
 
           <Box sx={{ marginTop: 4 }}>
-            <QuizioTextField
-              id={`${name}.explanation`}
-              label="Explanation"
-              fullWidth
-              multiline
-              inputProps={{
-                maxLength: constraints.quiz.question.explanation.maxLength,
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Tooltip
-                      title="Explain the correct answer or give some context. This input is optional."
-                      arrow
-                    >
-                      <Help />
-                    </Tooltip>
-                  </InputAdornment>
-                ),
-              }}
+            <Controller
+              name={`${name}.explanation`}
+              render={({ field }) => (
+                <QuizioTextField
+                  id={`${name}.explanation`}
+                  label="Explanation"
+                  fullWidth
+                  multiline
+                  inputProps={{
+                    maxLength: constraints.quiz.question.explanation.maxLength,
+                  }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Tooltip
+                          title="Explain the correct answer or give some context. This input is optional."
+                          arrow
+                        >
+                          <Help />
+                        </Tooltip>
+                      </InputAdornment>
+                    ),
+                  }}
+                  {...field}
+                />
+              )}
+              control={control}
             />
           </Box>
         </Box>

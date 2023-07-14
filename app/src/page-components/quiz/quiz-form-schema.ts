@@ -66,6 +66,11 @@ export const quizQuestionsFormSchema = z.object({
               path: ['oneCorrectAnswer'],
             }
           ),
+        explanation: z
+          .string()
+          .trim()
+          .max(constraints.quiz.question.explanation.maxLength)
+          .optional(),
       })
     )
     .min(minQuestions)

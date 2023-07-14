@@ -61,6 +61,7 @@ import {
   QuizOverviewForm,
   QuizQuestionsForm,
 } from '@/page-components/quiz/quiz-form-schema';
+import LoadingCircle from '@/components/LoadingCircle';
 
 export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
   ctx
@@ -168,6 +169,7 @@ export default function QuizCreatePage({
                 title: answer.attributes?.title ?? '',
                 isCorrect: answer.attributes?.correct ?? false,
               })) ?? [],
+            explanation: question.attributes?.explanation ?? '',
           })) ?? [],
       });
     }
@@ -323,6 +325,7 @@ export default function QuizCreatePage({
             id: question.id ?? '',
             data: {
               title: question.title.trim() ?? '',
+              explanation: question.explanation?.trim() ?? '',
             },
           });
           questionId = question.id;
@@ -475,8 +478,16 @@ export default function QuizCreatePage({
             <Button
               variant="contained"
               color="error"
+              startIcon={
+                deleteMutations.some((mutation) => mutation.isLoading) ? (
+                  <LoadingCircle />
+                ) : undefined
+              }
               endIcon={<DeleteIcon />}
               onClick={() => setDialogOpen(true)}
+              disabled={deleteMutations.some(
+                (mutation) => mutation.isLoading || mutation.isSuccess
+              )}
             >
               Delete this quiz
             </Button>

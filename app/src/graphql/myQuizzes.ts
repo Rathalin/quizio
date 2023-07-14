@@ -42,6 +42,7 @@ export const getMyQuizzesByUuidGQL = graphql(`
                     }
                   }
                 }
+                explanation
               }
             }
           }

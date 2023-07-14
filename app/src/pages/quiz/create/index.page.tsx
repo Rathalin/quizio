@@ -39,6 +39,7 @@ import {
   defaultQuestionsFormData,
 } from '@/page-components/quiz/quiz-form-data';
 import { useRouter } from 'next/router';
+import { storageKeys } from '@/persistence/storage-keys';
 
 const stepTitles = ['Overview', 'Questions', 'Summary'] as const;
 export type StepData = {
@@ -156,6 +157,7 @@ export default function QuizCreatePage() {
         const questionData = await createQuestionMutation.mutateAsync({
           title: question.title.trim(),
           quiz: res.createQuiz?.data?.id,
+          explanation: question.explanation?.trim(),
         });
         // Create answers
         for (const answer of question.answers) {
@@ -167,6 +169,7 @@ export default function QuizCreatePage() {
         }
       }
       await router.push('/');
+      resetQuizLocalStorage();
       setOverviewFormData(defaultOverviewFormData);
       setQuestionsFormData(defaultQuestionsFormData);
     } catch (error) {
@@ -182,6 +185,11 @@ export default function QuizCreatePage() {
 
   function handleBack() {
     setActiveStep((prevActiveStep) => Math.max(prevActiveStep - 1, 0));
+  }
+
+  function resetQuizLocalStorage() {
+    localStorage.removeItem(storageKeys.quizOverviewDraft);
+    localStorage.removeItem(storageKeys.quizQuestionsDraft);
   }
 
   const backLabel = steps.at(activeStep)?.backLabel ?? null;
@@ -245,10 +253,9 @@ export default function QuizCreatePage() {
               onBack={() => handleBack()}
               onSubmit={() => handleFinishQuizClick()}
               isLoading={mutations.some((mutation) => mutation.isLoading)}
-              isDisabled={
-                mutations.some((mutation) => mutation.isLoading) ||
-                mutations.some((mutation) => mutation.isSuccess)
-              }
+              isDisabled={mutations.some(
+                (mutation) => mutation.isLoading || mutation.isSuccess
+              )}
               editMode={false}
             />
           )}

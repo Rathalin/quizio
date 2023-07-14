@@ -14,6 +14,7 @@ import {
   ListItem,
   Stack,
   Typography,
+  useTheme,
 } from '@mui/material';
 import IndexAvatar from '../game/IndexAvatar';
 import { QuizOverviewForm, QuizQuestionsForm } from '../quiz-form-schema';
@@ -41,6 +42,7 @@ export default function SummaryForm({
   isLoading,
   isDisabled,
 }: SummaryFormProps) {
+  const theme = useTheme();
   const { title, description } = overviewFormData;
   const { questions } = questionsFormData;
 
@@ -86,6 +88,20 @@ export default function SummaryForm({
                       </ListItem>
                     ))}
                   </List>
+                  {question.explanation != null &&
+                    question.explanation.length > 0 && (
+                      <Box sx={{ marginBottom: 2 }}>
+                        <Typography
+                          component="span"
+                          color={theme.palette.primary.main}
+                        >
+                          Explanation:
+                        </Typography>
+                        <Typography component="span" sx={{ marginLeft: 1 }}>
+                          {question.explanation}
+                        </Typography>
+                      </Box>
+                    )}
                 </Box>
               </ListItem>
             </Box>
