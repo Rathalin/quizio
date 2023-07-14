@@ -16,6 +16,7 @@ import { QuizOverviewForm, quizOverviewFormSchema } from '../quiz-form-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import BackButton from './BackButton';
 import NextButton from './NextButton';
+import { useEffect } from 'react';
 
 const imageInput = {
   width: 300,
@@ -25,6 +26,7 @@ const imageInput = {
 type OverviewFormProps = {
   tempDisableImageInput?: boolean;
   defaultData: QuizOverviewForm;
+  onChange: (data: QuizOverviewForm) => void;
   onSubmit: (data: QuizOverviewForm) => void;
   backLabel: string | null;
   nextLabel: string | null;
@@ -33,6 +35,7 @@ type OverviewFormProps = {
 export default function OverviewForm({
   tempDisableImageInput = false,
   defaultData,
+  onChange,
   onSubmit,
   backLabel,
   nextLabel,
@@ -45,6 +48,7 @@ export default function OverviewForm({
     control,
     formState: { errors },
     setValue,
+    reset,
     watch,
     handleSubmit,
   } = methods;
@@ -62,6 +66,12 @@ export default function OverviewForm({
   function handleFormSubmit(data: QuizOverviewForm) {
     onSubmit(data);
   }
+
+  useEffect(() => {
+    reset(defaultData);
+  }, [defaultData, reset]);
+
+  useEffect(() => {}, [onChange, watch]);
 
   return (
     <FormProvider {...methods}>
