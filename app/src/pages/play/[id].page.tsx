@@ -1,3 +1,4 @@
+import GenericLoadingErrorMessage from '@/components/GenericLoadingErrorMessage';
 import HomeButton from '@/components/buttons/HomeButton';
 import { getQuizzesByUuidGQL } from '@/graphql/quizzes';
 import Explanation from '@/page-components/quiz/game/Explanation';
@@ -196,9 +197,7 @@ export default function PlayIdPage({
       }}
     >
       {quizQuery.isLoading && <PickAnAnswerPlaceholder />}
-      {quizQuery.isError && (
-        <Alert severity="error">Could not load the quiz.</Alert>
-      )}
+      {quizQuery.isError && <GenericLoadingErrorMessage />}
       {quizQuery.isSuccess && (
         <>
           <Head>

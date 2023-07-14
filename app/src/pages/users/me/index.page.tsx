@@ -1,3 +1,4 @@
+import GenericLoadingErrorMessage from '@/components/GenericLoadingErrorMessage';
 import HomeButton from '@/components/buttons/HomeButton';
 import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import { useHandleGQLUnauthorized } from '@/custom-hooks/useHandleGQLUnauthorized';
@@ -7,7 +8,6 @@ import { getMeGQL } from '@/graphql/user';
 import MeDataPlaceholder from '@/page-components/user/me/MeDataPlaceholder';
 import MeImagePlaceholder from '@/page-components/user/me/MeImagePlaceholder';
 import {
-  Alert,
   Avatar,
   Box,
   Card,
@@ -101,9 +101,7 @@ export default function MePage() {
                 </Stack>
               </>
             )}
-            {isError && (
-              <Alert severity="error">Could not load your profile data.</Alert>
-            )}
+            {isError && <GenericLoadingErrorMessage />}
           </Stack>
         </CardContent>
         <CardActions sx={{ padding: 4 }}>

@@ -458,7 +458,7 @@ export default function QuizCreatePage({
             <Alert severity="success">Quiz updated</Alert>
           )}
           {alertType === 'save-error' && (
-            <Alert severity="error">Could not save the quiz</Alert>
+            <Alert severity="error">Could not save your quiz</Alert>
           )}
         </Box>
       </Snackbar>

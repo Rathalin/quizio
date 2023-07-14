@@ -1,7 +1,7 @@
 import QuizOverview from '@/components/QuizOverview';
 import QuizOverviewPlaceholder from '@/components/QuizOverviewPlaceholder';
 import { getAllPublishedQuizzesGQL } from '@/graphql/quizzes';
-import { Alert, Box, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { useSession } from 'next-auth/react';
@@ -15,7 +15,7 @@ import {
   FilterProvider,
   useComposeFilters,
 } from './filter.context';
-import Link from 'next/link';
+import GenericLoadingErrorMessage from '@/components/GenericLoadingErrorMessage';
 
 export default function QuizzesOverview() {
   const { data: session } = useSession();
@@ -112,22 +112,7 @@ export default function QuizzesOverview() {
                 {'No quizzes found. Try changing your search criteria.'}
               </Typography>
             )}
-            {isError && (
-              <Alert severity="error" sx={{ marginTop: 2 }}>
-                <Box component="span">
-                  {
-                    'Sorry, the Quizio services are currently unavailable. If the error persists, contact '
-                  }
-                </Box>
-                <Link
-                  href="mailto:daniel@flockert.at"
-                  style={{ fontWeight: 700 }}
-                >
-                  daniel@flockert.at
-                </Link>
-                <Box component="span">.</Box>
-              </Alert>
-            )}
+            {isError && <GenericLoadingErrorMessage />}
           </FilterProvider>
         </SortProvider>
       </SearchProvider>
