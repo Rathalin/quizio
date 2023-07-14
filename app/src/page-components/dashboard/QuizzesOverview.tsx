@@ -15,6 +15,7 @@ import {
   FilterProvider,
   useComposeFilters,
 } from './filter.context';
+import Link from 'next/link';
 
 export default function QuizzesOverview() {
   const { data: session } = useSession();
@@ -113,7 +114,18 @@ export default function QuizzesOverview() {
             )}
             {isError && (
               <Alert severity="error" sx={{ marginTop: 2 }}>
-                An error occurred while loading quizzes
+                <Box component="span">
+                  {
+                    'Sorry, the quiz service is currently unavailable. If the error persists, contact '
+                  }
+                </Box>
+                <Link
+                  href="mailto:daniel@flockert.at"
+                  style={{ fontWeight: 700 }}
+                >
+                  daniel@flockert.at
+                </Link>
+                <Box component="span">.</Box>
               </Alert>
             )}
           </FilterProvider>
