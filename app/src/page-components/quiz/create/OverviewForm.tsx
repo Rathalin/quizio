@@ -31,6 +31,7 @@ type OverviewFormProps = {
   onSubmit: (data: QuizOverviewForm) => void;
   backLabel: string | null;
   nextLabel: string | null;
+  editMode: boolean;
 };
 
 export default function OverviewForm({
@@ -39,6 +40,7 @@ export default function OverviewForm({
   onSubmit,
   backLabel,
   nextLabel,
+  editMode,
 }: OverviewFormProps) {
   const isMobile = useIsMobile();
   const methods = useForm<QuizOverviewForm>({
@@ -58,16 +60,23 @@ export default function OverviewForm({
     storageKeys.quizOverviewDraft
   );
   useEffect(() => {
+    if (editMode) return;
     reset(getStorageItem() as QuizOverviewForm);
-  }, [getStorageItem, reset]);
+  }, [editMode, getStorageItem, reset]);
   useEffect(() => {
+    if (editMode) return;
     const subscription = watch((value) => {
       // Don't store image
       delete value.image;
       setStorageItem(value as QuizOverviewForm);
     });
     return () => subscription.unsubscribe();
-  }, [setStorageItem, watch]);
+  }, [editMode, setStorageItem, watch]);
+
+  useEffect(() => {
+    if (!editMode) return;
+    reset(defaultData);
+  }, [defaultData, editMode, reset]);
 
   const image = watch('image');
   const previewImageUrl = image != null ? URL.createObjectURL(image) : null;

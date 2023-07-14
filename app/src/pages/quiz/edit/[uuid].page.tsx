@@ -1,5 +1,4 @@
 import GradientWord from '@/components/GradientWord';
-import LoadingCircle from '@/components/LoadingCircle';
 import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import { useHandleGQLUnauthorized } from '@/custom-hooks/useHandleGQLUnauthorized';
 import { useRedirectOnUnauthenticated } from '@/custom-hooks/useRedirectOnUnauthenticated';
@@ -30,7 +29,7 @@ import {
 import DeleteQuizDialog from '@/page-components/quiz/edit/DeleteQuizDialog';
 import OverviewFormPlaceholder from '@/page-components/quiz/edit/OverviewFormPlaceholder';
 import { authOptions } from '@/pages/api/auth/[...nextauth].page';
-import { Delete as DeleteIcon, Save as SaveIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon } from '@mui/icons-material';
 import {
   Box,
   Typography,
@@ -280,26 +279,17 @@ export default function QuizCreatePage({
     updateQuizMutation,
     updateQuestionMutation,
     updateAnswerMutation,
-    deleteQuizMutation,
-    deleteQuestionMutation,
-    deleteAnswerMutation,
   ];
   const deleteMutations = [
     deleteQuizMutation,
     deleteQuestionMutation,
     deleteAnswerMutation,
   ];
+  const mutations = [...createOrUpdateMutations, ...deleteMutations];
   useHandleGQLUnauthorized([
     quizQuery.error,
-    ...createOrUpdateMutations.map((mutation) => mutation.error),
-    ...deleteMutations.map((mutation) => mutation.error),
+    ...mutations.map((mutation) => mutation.error),
   ]);
-  const isLoading = createOrUpdateMutations.some(
-    (mutation) => mutation.isLoading
-  );
-  const isLoadingDelete = deleteMutations.some(
-    (mutation) => mutation.isLoading
-  );
 
   async function handleSaveClick() {
     const { title, description } = overviewFormData;
@@ -389,6 +379,7 @@ export default function QuizCreatePage({
       // Refetch quiz
       setAlertType('saved');
       queryClient.invalidateQueries(['quiz', uuid]);
+      await router.push('/');
     } catch (error) {
       console.error(error);
       setAlertType('save-error');
@@ -451,7 +442,7 @@ export default function QuizCreatePage({
         setOpen={setDialogOpen}
         quizTitle={quiz?.attributes?.title ?? ''}
         onConfirm={onDeleteDialogConfirm}
-        loading={isLoadingDelete}
+        loading={deleteMutations.some((mutation) => mutation.isLoading)}
       />
       <Snackbar
         open={alertType != null}
@@ -482,15 +473,7 @@ export default function QuizCreatePage({
             sx={{ marginLeft: 'auto' }}
           >
             <Button
-              variant="outlined"
-              startIcon={isLoading ? <LoadingCircle /> : undefined}
-              endIcon={<SaveIcon />}
-              onClick={handleSaveClick}
-            >
-              Save
-            </Button>
-            <Button
-              variant="outlined"
+              variant="contained"
               color="error"
               endIcon={<DeleteIcon />}
               onClick={() => setDialogOpen(true)}
@@ -526,6 +509,8 @@ export default function QuizCreatePage({
                   }}
                   backLabel={backLabel}
                   nextLabel={nextLabel}
+                  editMode={true}
+                  tempDisableImageInput={true}
                 />
               )}
               {steps[activeStep].title === 'Questions' && (
@@ -541,6 +526,7 @@ export default function QuizCreatePage({
                   }}
                   backLabel={backLabel}
                   nextLabel={nextLabel}
+                  editMode={true}
                 />
               )}
               {steps[activeStep].title === 'Summary' && (
@@ -549,6 +535,13 @@ export default function QuizCreatePage({
                   questionsFormData={questionsFormData}
                   backLabel={backLabel}
                   onBack={() => handleBack()}
+                  editMode={true}
+                  onSubmit={handleSaveClick}
+                  isLoading={mutations.some((mutation) => mutation.isLoading)}
+                  isDisabled={
+                    mutations.some((mutation) => mutation.isLoading) ||
+                    mutations.some((mutation) => mutation.isSuccess)
+                  }
                 />
               )}
             </>

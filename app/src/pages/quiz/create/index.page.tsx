@@ -218,6 +218,7 @@ export default function QuizCreatePage() {
               }}
               backLabel={backLabel}
               nextLabel={nextLabel}
+              editMode={false}
             />
           )}
           {steps[activeStep].title === 'Questions' && (
@@ -233,6 +234,7 @@ export default function QuizCreatePage() {
               }}
               backLabel={backLabel}
               nextLabel={nextLabel}
+              editMode={false}
             />
           )}
           {steps[activeStep].title === 'Summary' && (
@@ -241,12 +243,13 @@ export default function QuizCreatePage() {
               questionsFormData={questionsFormData}
               backLabel={backLabel}
               onBack={() => handleBack()}
-              showPublishButton
-              onPublish={() => handleFinishQuizClick()}
-              isPublishing={
+              onSubmit={() => handleFinishQuizClick()}
+              isLoading={mutations.some((mutation) => mutation.isLoading)}
+              isDisabled={
                 mutations.some((mutation) => mutation.isLoading) ||
                 mutations.some((mutation) => mutation.isSuccess)
               }
+              editMode={false}
             />
           )}
         </Grid>

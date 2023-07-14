@@ -25,9 +25,10 @@ type SummaryFormProps = {
   questionsFormData: QuizQuestionsForm;
   backLabel: string | null;
   onBack: () => void;
-  onPublish?: () => void;
-  showPublishButton?: boolean;
-  isPublishing?: boolean;
+  editMode: boolean;
+  onSubmit: () => void;
+  isLoading: boolean;
+  isDisabled: boolean;
 };
 
 export default function SummaryForm({
@@ -35,9 +36,10 @@ export default function SummaryForm({
   questionsFormData,
   backLabel,
   onBack,
-  onPublish,
-  isPublishing = false,
-  showPublishButton = false,
+  editMode,
+  onSubmit,
+  isLoading,
+  isDisabled,
 }: SummaryFormProps) {
   const { title, description } = overviewFormData;
   const { questions } = questionsFormData;
@@ -92,14 +94,24 @@ export default function SummaryForm({
       </CardContent>
       <CardActions sx={{ padding: 2, justifyContent: 'space-between' }}>
         <BackButton onClick={() => onBack()}>{backLabel}</BackButton>
-        {showPublishButton && (
+        {editMode ? (
+          <Button
+            variant="contained"
+            onClick={onSubmit}
+            startIcon={isLoading ? <LoadingCircle /> : undefined}
+            endIcon={<PublishIcon />}
+            disabled={isDisabled}
+          >
+            Update quiz
+          </Button>
+        ) : (
           <Button
             variant="contained"
             color="primary"
-            onClick={onPublish}
-            startIcon={isPublishing ? <LoadingCircle /> : null}
+            onClick={onSubmit}
+            startIcon={isLoading ? <LoadingCircle /> : null}
             endIcon={<PublishIcon />}
-            disabled={isPublishing}
+            disabled={isDisabled}
           >
             Publish quiz
           </Button>

@@ -30,6 +30,7 @@ type QuestionsFormProps = {
   onSubmit: (data: QuizQuestionsForm) => void;
   backLabel: string | null;
   nextLabel: string | null;
+  editMode: boolean;
 };
 
 export default function QuestionsForm({
@@ -38,6 +39,7 @@ export default function QuestionsForm({
   onBack,
   backLabel,
   nextLabel,
+  editMode,
 }: QuestionsFormProps) {
   const [expanded, setExpanded] = useState<string | null>(null);
   const methods = useForm({
@@ -54,15 +56,22 @@ export default function QuestionsForm({
     storageKeys.quizQuestionsDraft
   );
   useEffect(() => {
+    if (editMode) return;
     reset(getStorageItem() as QuizQuestionsForm);
-  }, [getStorageItem, reset]);
+  }, [editMode, getStorageItem, reset]);
 
   useEffect(() => {
+    if (editMode) return;
     const subscription = watch((value) => {
       setStorageItem(value as QuizQuestionsForm);
     });
     return () => subscription.unsubscribe();
-  }, [watch, setStorageItem]);
+  }, [watch, setStorageItem, editMode]);
+
+  useEffect(() => {
+    if (!editMode) return;
+    reset(defaultData);
+  }, [defaultData, editMode, reset]);
 
   function handleFormSubmit(data: QuizQuestionsForm) {
     onSubmit(data);
