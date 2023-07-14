@@ -109,14 +109,14 @@ export default function QuizzesOverview() {
             </Box>
             {isSuccess && searchedQuizzes.length === 0 && (
               <Typography>
-                No quizzes found. Try changing your search criteria.
+                {'No quizzes found. Try changing your search criteria.'}
               </Typography>
             )}
             {isError && (
               <Alert severity="error" sx={{ marginTop: 2 }}>
                 <Box component="span">
                   {
-                    'Sorry, the quiz service is currently unavailable. If the error persists, contact '
+                    'Sorry, the Quizio services are currently unavailable. If the error persists, contact '
                   }
                 </Box>
                 <Link
