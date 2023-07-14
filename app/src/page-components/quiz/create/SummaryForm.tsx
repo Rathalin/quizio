@@ -18,21 +18,26 @@ import {
 import IndexAvatar from '../game/IndexAvatar';
 import { QuizOverviewForm, QuizQuestionsForm } from '../quiz-form-schema';
 import LoadingCircle from '@/components/LoadingCircle';
+import BackButton from './BackButton';
 
 type SummaryFormProps = {
   overviewFormData: QuizOverviewForm;
   questionsFormData: QuizQuestionsForm;
+  backLabel: string | null;
   onBack: () => void;
-  onPublish: () => void;
-  isPublishing: boolean;
+  onPublish?: () => void;
+  showPublishButton?: boolean;
+  isPublishing?: boolean;
 };
 
 export default function SummaryForm({
   overviewFormData,
   questionsFormData,
+  backLabel,
   onBack,
   onPublish,
-  isPublishing,
+  isPublishing = false,
+  showPublishButton = false,
 }: SummaryFormProps) {
   const { title, description } = overviewFormData;
   const { questions } = questionsFormData;
@@ -85,17 +90,20 @@ export default function SummaryForm({
           ))}
         </List>
       </CardContent>
-      <CardActions>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={onPublish}
-          startIcon={isPublishing ? <LoadingCircle /> : null}
-          endIcon={<PublishIcon />}
-          disabled={isPublishing}
-        >
-          Publish quiz
-        </Button>
+      <CardActions sx={{ padding: 2, justifyContent: 'space-between' }}>
+        <BackButton onClick={() => onBack()}>{backLabel}</BackButton>
+        {showPublishButton && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={onPublish}
+            startIcon={isPublishing ? <LoadingCircle /> : null}
+            endIcon={<PublishIcon />}
+            disabled={isPublishing}
+          >
+            Publish quiz
+          </Button>
+        )}
       </CardActions>
     </Card>
   );

@@ -20,14 +20,12 @@ import {
   Exact,
 } from '@/graphql/generated/graphql';
 import { getMyQuizzesByUuidGQL } from '@/graphql/myQuizzes';
-import BackButton from '@/page-components/quiz/create/BackButton';
-import NextButton from '@/page-components/quiz/create/NextButton';
 import OverviewForm from '@/page-components/quiz/create/OverviewForm';
 import QuestionsForm from '@/page-components/quiz/create/QuestionsForm';
 import SummaryForm from '@/page-components/quiz/create/SummaryForm';
 import {
-  QuizForm,
-  defaultQuizFormData,
+  defaultOverviewFormData,
+  defaultQuestionsFormData,
 } from '@/page-components/quiz/quiz-form-data';
 import DeleteQuizDialog from '@/page-components/quiz/edit/DeleteQuizDialog';
 import OverviewFormPlaceholder from '@/page-components/quiz/edit/OverviewFormPlaceholder';
@@ -42,7 +40,6 @@ import {
   Stepper,
   Step,
   StepLabel,
-  CardActions,
   Button,
   Stack,
   Snackbar,
@@ -61,7 +58,10 @@ import { getServerSession } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useForm, FormProvider } from 'react-hook-form';
+import {
+  QuizOverviewForm,
+  QuizQuestionsForm,
+} from '@/page-components/quiz/quiz-form-schema';
 
 export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
   ctx
@@ -124,13 +124,12 @@ export default function QuizCreatePage({
     null
   );
   const [dialogOpen, setDialogOpen] = useState(false);
-
-  const { ...methods } = useForm<QuizForm>({
-    defaultValues: defaultQuizFormData,
-  });
-  const { reset, handleSubmit, watch } = methods;
-
-  const { title, description, questions } = watch() as QuizForm;
+  const [overviewFormData, setOverviewFormData] = useState<QuizOverviewForm>(
+    defaultOverviewFormData
+  );
+  const [questionsFormData, setQuestionsFormData] = useState<QuizQuestionsForm>(
+    defaultQuestionsFormData
+  );
 
   useRedirectOnUnauthenticated(status);
 
@@ -154,23 +153,26 @@ export default function QuizCreatePage({
 
   useEffect(() => {
     if (quiz != null) {
-      reset({
-        id: quiz?.id ?? '',
-        title: quiz?.attributes?.title ?? '',
-        description: quiz?.attributes?.description ?? '',
-        // image: quiz?.attributes?.image?.id ?? '',
-        questions: quiz?.attributes?.questions?.data.map((question) => ({
-          id: question.id ?? '',
-          title: question.attributes?.title ?? '',
-          answers: question.attributes?.answers?.data.map((answer) => ({
-            id: answer.id ?? '',
-            title: answer.attributes?.title ?? '',
-            isCorrect: answer.attributes?.correct ?? false,
-          })),
-        })),
+      setOverviewFormData({
+        title: quiz.attributes?.title ?? '',
+        description: quiz.attributes?.description ?? '',
+        image: null,
+      });
+      setQuestionsFormData({
+        questions:
+          quiz?.attributes?.questions?.data.map((question) => ({
+            id: question.id ?? '',
+            title: question.attributes?.title ?? '',
+            answers:
+              question.attributes?.answers?.data.map((answer) => ({
+                id: answer.id ?? '',
+                title: answer.attributes?.title ?? '',
+                isCorrect: answer.attributes?.correct ?? false,
+              })) ?? [],
+          })) ?? [],
       });
     }
-  }, [quiz, reset]);
+  }, [quiz]);
 
   const createQuestionMutation = useMutation({
     mutationKey: ['createQuestion'],
@@ -300,13 +302,15 @@ export default function QuizCreatePage({
   );
 
   async function handleSaveClick() {
+    const { title, description } = overviewFormData;
+    const { questions } = questionsFormData;
     try {
       // Update quiz
       await updateQuizMutation.mutateAsync({
         id: quiz?.id ?? '',
         data: {
           title: title.trim(),
-          description: description.trim(),
+          description: description?.trim(),
           published: true,
           owner: session?.user?.id?.toString() ?? '0',
         },
@@ -393,6 +397,7 @@ export default function QuizCreatePage({
   }
 
   async function onDeleteDialogConfirm() {
+    const { questions } = questionsFormData;
     for (const question of questions) {
       for (const answer of question.answers) {
         // Delete answer
@@ -419,6 +424,9 @@ export default function QuizCreatePage({
     setDialogOpen(false);
   }
 
+  const backLabel = steps.at(activeStep)?.backLabel ?? null;
+  const nextLabel = steps.at(activeStep)?.nextLabel ?? null;
+
   function handleCloseAlert(_event: unknown, reason?: string) {
     if (reason === 'clickaway') {
       return;
@@ -434,10 +442,6 @@ export default function QuizCreatePage({
 
   function handleBack() {
     setActiveStep((prevActiveStep) => Math.max(prevActiveStep - 1, 0));
-  }
-
-  function onSubmit() {
-    handleNext();
   }
 
   return (
@@ -511,37 +515,46 @@ export default function QuizCreatePage({
           </Card>
         </Grid>
         <Grid item xs={12} md={9}>
-          <FormProvider {...methods}>
-            <form onSubmit={handleSubmit(onSubmit)} noValidate>
-              <Card>
-                <CardContent>
-                  {quizQuery.isSuccess ? (
-                    <>
-                      {steps[activeStep].title === 'Overview' && (
-                        <OverviewForm tempDisableImageInput />
-                      )}
-                      {steps[activeStep].title === 'Questions' && (
-                        <QuestionsForm />
-                      )}
-                      {steps[activeStep].title === 'Summary' && <SummaryForm />}
-                    </>
-                  ) : (
-                    <OverviewFormPlaceholder />
-                  )}
-                </CardContent>
-                <CardActions
-                  sx={{ padding: 2, justifyContent: 'space-between' }}
-                >
-                  <BackButton activeStep={activeStep} onBack={handleBack}>
-                    {steps.at(activeStep)?.backLabel}
-                  </BackButton>
-                  <NextButton activeStep={activeStep} maxSteps={steps.length}>
-                    {steps.at(activeStep)?.nextLabel}
-                  </NextButton>
-                </CardActions>
-              </Card>
-            </form>
-          </FormProvider>
+          {quizQuery.isSuccess ? (
+            <>
+              {steps[activeStep].title === 'Overview' && (
+                <OverviewForm
+                  defaultData={overviewFormData}
+                  onSubmit={(data) => {
+                    setOverviewFormData(data);
+                    handleNext();
+                  }}
+                  backLabel={backLabel}
+                  nextLabel={nextLabel}
+                />
+              )}
+              {steps[activeStep].title === 'Questions' && (
+                <QuestionsForm
+                  defaultData={questionsFormData}
+                  onSubmit={(data) => {
+                    setQuestionsFormData(data);
+                    handleNext();
+                  }}
+                  onBack={(data) => {
+                    setQuestionsFormData(data);
+                    handleBack();
+                  }}
+                  backLabel={backLabel}
+                  nextLabel={nextLabel}
+                />
+              )}
+              {steps[activeStep].title === 'Summary' && (
+                <SummaryForm
+                  overviewFormData={overviewFormData}
+                  questionsFormData={questionsFormData}
+                  backLabel={backLabel}
+                  onBack={() => handleBack()}
+                />
+              )}
+            </>
+          ) : (
+            <OverviewFormPlaceholder />
+          )}
         </Grid>
       </Grid>
     </Box>

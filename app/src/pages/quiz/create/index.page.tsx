@@ -267,7 +267,9 @@ export default function QuizCreatePage() {
             <SummaryForm
               overviewFormData={overviewFormData}
               questionsFormData={questionsFormData}
+              backLabel={backLabel}
               onBack={() => handleBack()}
+              showPublishButton
               onPublish={() => handleFinishQuizClick()}
               isPublishing={
                 mutations.some((mutation) => mutation.isLoading) ||
