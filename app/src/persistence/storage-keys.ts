@@ -2,5 +2,6 @@ const prefix = 'quizio';
 
 export const storageKeys = {
   theme: `${prefix}-theme`,
-  quizDraft: `${prefix}-quiz-draft`,
+  quizOverviewDraft: `${prefix}-quiz-overview-draft`,
+  quizQuestionsDraft: `${prefix}-quiz-questions-draft`,
 } as const;

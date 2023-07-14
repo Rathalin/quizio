@@ -17,6 +17,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import BackButton from './BackButton';
 import NextButton from './NextButton';
 import { useEffect } from 'react';
+import { useStorage } from '@/custom-hooks/useStorage';
+import { storageKeys } from '@/persistence/storage-keys';
 
 const imageInput = {
   width: 300,
@@ -26,7 +28,6 @@ const imageInput = {
 type OverviewFormProps = {
   tempDisableImageInput?: boolean;
   defaultData: QuizOverviewForm;
-  onChange: (data: QuizOverviewForm) => void;
   onSubmit: (data: QuizOverviewForm) => void;
   backLabel: string | null;
   nextLabel: string | null;
@@ -35,11 +36,11 @@ type OverviewFormProps = {
 export default function OverviewForm({
   tempDisableImageInput = false,
   defaultData,
-  onChange,
   onSubmit,
   backLabel,
   nextLabel,
 }: OverviewFormProps) {
+  const isMobile = useIsMobile();
   const methods = useForm<QuizOverviewForm>({
     defaultValues: defaultData,
     resolver: zodResolver(quizOverviewFormSchema),
@@ -52,26 +53,34 @@ export default function OverviewForm({
     watch,
     handleSubmit,
   } = methods;
-  const isMobile = useIsMobile();
 
-  function getFileNameFromPath(path: string) {
-    return path.split('\\').pop()?.split('/').pop();
-  }
+  const { getStorageItem, setStorageItem } = useStorage<QuizOverviewForm>(
+    storageKeys.quizOverviewDraft
+  );
+  useEffect(() => {
+    reset(getStorageItem() as QuizOverviewForm);
+  }, [getStorageItem, reset]);
+  useEffect(() => {
+    const subscription = watch((value) => {
+      // Don't store image
+      delete value.image;
+      setStorageItem(value as QuizOverviewForm);
+    });
+    return () => subscription.unsubscribe();
+  }, [setStorageItem, watch]);
 
   const image = watch('image');
   const previewImageUrl = image != null ? URL.createObjectURL(image) : null;
   const imageWidth = isMobile ? imageInput.width * 0.8 : imageInput.width;
   const imageHeight = isMobile ? imageInput.height * 0.8 : imageInput.height;
 
+  function getFileNameFromPath(path: string) {
+    return path.split('\\').pop()?.split('/').pop();
+  }
+
   function handleFormSubmit(data: QuizOverviewForm) {
     onSubmit(data);
   }
-
-  useEffect(() => {
-    reset(defaultData);
-  }, [defaultData, reset]);
-
-  useEffect(() => {}, [onChange, watch]);
 
   return (
     <FormProvider {...methods}>

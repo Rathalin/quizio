@@ -20,7 +20,7 @@ export const quizOverviewFormSchema = z.object({
     .trim()
     .max(constraints.quiz.description.maxLength)
     .optional(),
-  image: z.instanceof(File).nullable(),
+  image: z.any().nullable(),
 });
 export type QuizOverviewForm = z.infer<typeof quizOverviewFormSchema>;
 

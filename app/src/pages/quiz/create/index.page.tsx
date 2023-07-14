@@ -11,7 +11,7 @@ import {
   Stepper,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   createQuizGQL,
   createQuestionGQL,
@@ -39,8 +39,6 @@ import {
   defaultQuestionsFormData,
 } from '@/page-components/quiz/quiz-form-data';
 import { useRouter } from 'next/router';
-import { useStorage } from '@/custom-hooks/useStorage';
-import { storageKeys } from '@/persistence/storage-keys';
 
 const stepTitles = ['Overview', 'Questions', 'Summary'] as const;
 export type StepData = {
@@ -65,42 +63,6 @@ export default function QuizCreatePage() {
   const [questionsFormData, setQuestionsFormData] = useState<QuizQuestionsForm>(
     defaultQuestionsFormData
   );
-  const [loadedFromLocalStorage, setLoadedFromLocalStorage] = useState(false);
-  const { getStorageItem, setStorageItem } = useStorage<
-    QuizOverviewForm & QuizQuestionsForm
-  >(storageKeys.quizDraft);
-  useEffect(() => {
-    const storageItem = getStorageItem();
-    console.log('storageItem', storageItem);
-    setLoadedFromLocalStorage(true);
-    if (storageItem != null) {
-      setOverviewFormData({
-        id: storageItem?.id,
-        title: storageItem?.title ?? '',
-        description: storageItem?.description,
-        image: null,
-      });
-      setQuestionsFormData({
-        questions: storageItem?.questions ?? [],
-      });
-    }
-  }, [getStorageItem]);
-  useEffect(() => {
-    if (loadedFromLocalStorage) {
-      const quizData = {
-        ...overviewFormData,
-        questions: questionsFormData.questions,
-      };
-      // Don't store image
-      quizData.image = null;
-      setStorageItem(quizData);
-    }
-  }, [
-    loadedFromLocalStorage,
-    overviewFormData,
-    questionsFormData.questions,
-    setStorageItem,
-  ]);
 
   const createQuizMutation = useMutation({
     mutationKey: ['createQuiz'],
@@ -207,10 +169,6 @@ export default function QuizCreatePage() {
       await router.push('/');
       setOverviewFormData(defaultOverviewFormData);
       setQuestionsFormData(defaultQuestionsFormData);
-      setStorageItem({
-        ...defaultOverviewFormData,
-        ...defaultQuestionsFormData,
-      });
     } catch (error) {
       console.error(error);
     }
@@ -254,8 +212,8 @@ export default function QuizCreatePage() {
           {steps[activeStep].title === 'Overview' && (
             <OverviewForm
               defaultData={overviewFormData}
-              onChange={(data) => setOverviewFormData(data)}
-              onSubmit={() => {
+              onSubmit={(data) => {
+                setOverviewFormData(data);
                 handleNext();
               }}
               backLabel={backLabel}

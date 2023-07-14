@@ -11,7 +11,7 @@ import { Add as AddIcon } from '@mui/icons-material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { QuestionIndexContext } from './question/QuestionIndexContext';
 import { defaultQuestionFormData } from '../quiz-form-data';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   minQuestions,
   maxQuestions,
@@ -21,6 +21,8 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import BackButton from './BackButton';
 import NextButton from './NextButton';
+import { useStorage } from '@/custom-hooks/useStorage';
+import { storageKeys } from '@/persistence/storage-keys';
 
 type QuestionsFormProps = {
   defaultData: QuizQuestionsForm;
@@ -37,16 +39,30 @@ export default function QuestionsForm({
   backLabel,
   nextLabel,
 }: QuestionsFormProps) {
+  const [expanded, setExpanded] = useState<string | null>(null);
   const methods = useForm({
     defaultValues: defaultData,
     resolver: zodResolver(quizQuestionsFormSchema),
   });
-  const { control, handleSubmit, getValues } = methods;
+  const { control, handleSubmit, getValues, reset, watch } = methods;
   const { fields, append, remove } = useFieldArray({
     name: 'questions',
     control,
   });
-  const [expanded, setExpanded] = useState<string | null>(null);
+
+  const { getStorageItem, setStorageItem } = useStorage<QuizQuestionsForm>(
+    storageKeys.quizQuestionsDraft
+  );
+  useEffect(() => {
+    reset(getStorageItem() as QuizQuestionsForm);
+  }, [getStorageItem, reset]);
+
+  useEffect(() => {
+    const subscription = watch((value) => {
+      setStorageItem(value as QuizQuestionsForm);
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, setStorageItem]);
 
   function handleFormSubmit(data: QuizQuestionsForm) {
     onSubmit(data);
