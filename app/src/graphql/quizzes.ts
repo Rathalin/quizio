@@ -5,7 +5,7 @@ export const getAllPublishedQuizzesGQL = graphql(`
     $sortFields: [String]
     $filters: QuizFiltersInput!
   ) {
-    quizzes(filters: $filters, sort: $sortFields, pagination: { limit: 50 }) {
+    quizzes(filters: $filters, sort: $sortFields, pagination: { limit: 100 }) {
       data {
         id
         attributes {
