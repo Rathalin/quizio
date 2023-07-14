@@ -23,6 +23,7 @@ import BackButton from './BackButton';
 import NextButton from './NextButton';
 import { useStorage } from '@/custom-hooks/useStorage';
 import { storageKeys } from '@/persistence/storage-keys';
+import { DevTool } from '@hookform/devtools';
 
 type QuestionsFormProps = {
   defaultData: QuizQuestionsForm;
@@ -132,6 +133,7 @@ export default function QuestionsForm({
           </CardActions>
         </Card>
       </form>
+      <DevTool control={control} />
     </FormProvider>
   );
 }

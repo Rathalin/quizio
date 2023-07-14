@@ -19,6 +19,7 @@ import NextButton from './NextButton';
 import { useEffect } from 'react';
 import { useStorage } from '@/custom-hooks/useStorage';
 import { storageKeys } from '@/persistence/storage-keys';
+import { DevTool } from '@hookform/devtools';
 
 const imageInput = {
   width: 300,
@@ -209,6 +210,7 @@ export default function OverviewForm({
           </CardActions>
         </Card>
       </form>
+      <DevTool control={control} />
     </FormProvider>
   );
 }
