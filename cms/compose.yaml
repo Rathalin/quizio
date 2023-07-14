@@ -1,7 +1,7 @@
 version: '3'
 services:
   quizio-strapi:
-    build: .
+    image: ghcr.io/rathalin/quizio:latest
     restart: always
     networks:
       - nginx-net
