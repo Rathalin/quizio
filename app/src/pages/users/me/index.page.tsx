@@ -2,29 +2,23 @@ import GenericLoadingErrorMessage from '@/components/GenericLoadingErrorMessage'
 import HomeButton from '@/components/buttons/HomeButton';
 import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import { useHandleGQLUnauthorized } from '@/custom-hooks/useHandleGQLUnauthorized';
-import { useIsMobile } from '@/custom-hooks/useIsMobile';
 import { useRedirectOnUnauthenticated } from '@/custom-hooks/useRedirectOnUnauthenticated';
-import { getMeGQL } from '@/graphql/user';
-import MeDataPlaceholder from '@/page-components/user/me/MeDataPlaceholder';
-import MeImagePlaceholder from '@/page-components/user/me/MeImagePlaceholder';
+import { getMeGQL } from '@/graphql/users';
+import MyProfile from '@/page-components/user/me/MyProfile';
+import MyProfilePlaceholder from '@/page-components/user/me/MyProfilePlaceholder';
 import {
-  Avatar,
   Box,
   Card,
   CardActions,
   CardContent,
   Stack,
-  Tooltip,
   Typography,
-  useTheme,
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { useSession } from 'next-auth/react';
 
 export default function MePage() {
-  const theme = useTheme();
-  const isMobile = useIsMobile();
   const { data: session, status } = useSession();
   const { authHeader } = useAuthHeader(session);
   const { isLoading, isError, error, isSuccess, data } = useQuery({
@@ -37,72 +31,22 @@ export default function MePage() {
   useHandleGQLUnauthorized([error]);
   useRedirectOnUnauthenticated(status);
 
-  const initials = data?.me?.username?.trim().charAt(0).toUpperCase() ?? '';
+  const username = data?.me?.username ?? '';
+  const email = data?.me?.email ?? '';
+  const role = data?.me?.role?.name ?? '';
 
   return (
     <Box sx={{ marginTop: 4 }}>
       <Card elevation={2}>
         <CardContent sx={{ padding: 4 }}>
           <Typography variant="h1" sx={{ marginTop: 0 }}>
-            Profile
+            Your profile
           </Typography>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            flexWrap="wrap"
-            gap={4}
-          >
-            {isLoading && (
-              <>
-                <MeDataPlaceholder />
-                <MeImagePlaceholder />
-              </>
-            )}
-            {isSuccess && (
-              <>
-                <Stack spacing={1} alignItems="start">
-                  <Tooltip
-                    title="Your username"
-                    placement={isMobile ? 'bottom' : 'right'}
-                    arrow
-                  >
-                    <Typography>{data.me?.username}</Typography>
-                  </Tooltip>
-                  <Tooltip
-                    title="Your email address"
-                    placement={isMobile ? 'bottom' : 'right'}
-                    arrow
-                  >
-                    <Typography>{data.me?.email}</Typography>
-                  </Tooltip>
-                  <Tooltip
-                    title="Your role"
-                    placement={isMobile ? 'bottom' : 'right'}
-                    arrow
-                  >
-                    <Typography>{data.me?.role?.name}</Typography>
-                  </Tooltip>
-                </Stack>
-                <Stack alignItems="center" spacing={1}>
-                  <Avatar
-                    variant="rounded"
-                    sx={{
-                      backgroundColor: theme.palette.primary.dark,
-                      fontWeight: 'bold',
-                      width: '6rem',
-                      height: '6rem',
-                      fontSize: '2rem',
-                      color: theme.palette.primary.contrastText,
-                    }}
-                  >
-                    {initials}
-                  </Avatar>
-                  <Typography>Profile image comming soon.</Typography>
-                </Stack>
-              </>
-            )}
-            {isError && <GenericLoadingErrorMessage />}
-          </Stack>
+          {isLoading && <MyProfilePlaceholder />}
+          {isSuccess && (
+            <MyProfile username={username} email={email} role={role} />
+          )}
+          {isError && <GenericLoadingErrorMessage />}
         </CardContent>
         <CardActions sx={{ padding: 4 }}>
           <Stack
