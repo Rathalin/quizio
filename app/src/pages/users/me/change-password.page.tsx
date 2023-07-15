@@ -77,8 +77,8 @@ export default function ChangePasswordPage() {
   });
   useHandleGQLUnauthorized([changePasswordMutation.error]);
 
-  useRedirectOnUnauthenticated(status);
   useHandleGQLUnauthorized([changePasswordMutation.isError]);
+  useRedirectOnUnauthenticated(status);
 
   function onSubmit(data: ChangePaswordForm) {
     changePasswordMutation.mutate(data);
