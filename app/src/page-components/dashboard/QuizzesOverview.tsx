@@ -7,7 +7,6 @@ import request from 'graphql-request';
 import { useSession } from 'next-auth/react';
 import { useMemo, useState } from 'react';
 import { Sort, SortProvider, defaultSort } from './sort.context';
-import { QuizEntity } from '@/graphql/generated/graphql';
 import FilterBar from './filter-bar/FilterBar';
 import { SearchProvider } from './search.context';
 import {
@@ -40,7 +39,7 @@ export default function QuizzesOverview() {
   });
 
   const quizzes = useMemo(
-    () => (data?.quizzes?.data ?? []) as QuizEntity[],
+    () => data?.quizzes?.data ?? [],
     [data?.quizzes?.data]
   );
   const searchedQuizzes = useMemo(() => {
@@ -88,6 +87,9 @@ export default function QuizzesOverview() {
                     uuid={quiz.attributes?.uuid ?? ''}
                     title={quiz.attributes?.title ?? ''}
                     description={quiz.attributes?.description ?? ''}
+                    userUuid={
+                      quiz.attributes?.owner?.data?.attributes?.uuid ?? ''
+                    }
                     username={
                       quiz.attributes?.owner?.data?.attributes?.username ?? ''
                     }

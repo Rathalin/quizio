@@ -25,11 +25,13 @@ import LinkButton from './LinkButton';
 import { useMemo, useState } from 'react';
 import LinkIconButton from './LinkIconButton';
 import { useColorMode } from '@/page-components/theme.context';
+import Link from 'next/link';
 
 type QuizOverviewProps = {
   uuid: string;
   title: string;
   description: string;
+  userUuid: string;
   username: string;
   createdAt: Date;
   questionCount: number;
@@ -43,6 +45,7 @@ export default function QuizOverview({
   uuid,
   title,
   description,
+  userUuid,
   username,
   createdAt,
   questionCount,
@@ -186,7 +189,18 @@ export default function QuizOverview({
                 {description}
               </Typography>
               <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                <Chip label={username} variant="filled" />
+                <Link href={`/users/${userUuid}`}>
+                  <Chip
+                    label={username}
+                    variant="filled"
+                    sx={{
+                      cursor: 'pointer',
+                      '&:hover': {
+                        textDecoration: 'underline',
+                      },
+                    }}
+                  />
+                </Link>
                 <Chip
                   label={`${questionCount} question${
                     isQuestionCountSingular ? '' : 's'

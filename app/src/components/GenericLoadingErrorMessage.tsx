@@ -1,7 +1,7 @@
 import { Alert, Box } from '@mui/material';
 import Link from 'next/link';
 
-export default function LoadingErrorMessage() {
+export default function GenericLoadingErrorMessage() {
   return (
     <Alert severity="error" sx={{ marginTop: 2 }}>
       <Box component="span">
