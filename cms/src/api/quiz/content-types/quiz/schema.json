@@ -31,7 +31,8 @@
     "owner": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "plugin::users-permissions.user"
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "quiz"
     },
     "questions": {
       "type": "relation",

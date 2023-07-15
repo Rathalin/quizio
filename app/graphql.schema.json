@@ -9626,6 +9626,18 @@
             "deprecationReason": null
           },
           {
+            "name": "quiz",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "QuizEntityResponse",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "role",
             "description": null,
             "args": [],
@@ -9661,6 +9673,18 @@
                 "name": "String",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "uuid",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -9927,6 +9951,18 @@
             "deprecationReason": null
           },
           {
+            "name": "quiz",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "QuizFiltersInput",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "resetPasswordToken",
             "description": null,
             "type": {
@@ -9964,6 +10000,18 @@
           },
           {
             "name": "username",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "StringFilterInput",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "uuid",
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
@@ -10058,6 +10106,18 @@
             "deprecationReason": null
           },
           {
+            "name": "quiz",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "resetPasswordToken",
             "description": null,
             "type": {
@@ -10083,6 +10143,18 @@
           },
           {
             "name": "username",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "uuid",
             "description": null,
             "type": {
               "kind": "SCALAR",
