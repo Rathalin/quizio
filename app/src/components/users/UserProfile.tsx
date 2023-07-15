@@ -39,7 +39,7 @@ export default function UserProfile({
             new Date(createdAt)
           )}`}</Typography>
           <Divider />
-          <Typography>{`You created ${quizCount} quizzes that have been viewed a total of ${quizViewsTotal} times.`}</Typography>
+          <Typography>{`You created ${quizCount} quizzes that have been played a total of ${quizViewsTotal} times.`}</Typography>
         </Stack>
         <Stack alignItems="center" spacing={1}>
           <Avatar
