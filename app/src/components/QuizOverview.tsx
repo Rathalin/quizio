@@ -182,7 +182,7 @@ export default function QuizOverview({
                   marginBottom: '.8rem',
                   whiteSpace: 'break-spaces',
                   overflow: 'auto',
-                  maxHeight: '12ch',
+                  maxHeight: '8rem',
                 }}
               >
                 {description}
