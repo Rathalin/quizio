@@ -75,7 +75,6 @@ export default function AlertsViewer() {
                       style={{
                         objectFit: 'cover',
                       }}
-                      priority
                       unoptimized
                     />
                   )}

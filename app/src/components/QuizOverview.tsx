@@ -112,7 +112,6 @@ export default function QuizOverview({
               minHeight: '180px',
               filter: mode === 'light' ? 'opacity(0.8)' : 'none',
             }}
-            priority
             unoptimized
           ></Image>
         ) : (
