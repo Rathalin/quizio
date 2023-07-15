@@ -70,11 +70,11 @@
       "type": "customField",
       "customField": "plugin::field-uuid.uuid"
     },
-    "quiz": {
+    "quizzes": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "oneToMany",
       "target": "api::quiz.quiz",
-      "inversedBy": "owner"
+      "mappedBy": "owner"
     }
   }
 }
