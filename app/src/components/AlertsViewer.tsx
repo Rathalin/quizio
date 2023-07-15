@@ -1,5 +1,6 @@
 import { getAlertsGQL } from '@/graphql/alerts';
 import { Enum_Alert_Imagesize } from '@/graphql/generated/graphql';
+import { useColorMode } from '@/page-components/theme.context';
 import { useDismissedAlertIds } from '@/persistence/dismissed-alert-ids';
 import { Alert, Collapse, Grid, Stack } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
@@ -8,6 +9,7 @@ import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 
 export default function AlertsViewer() {
+  const { mode } = useColorMode();
   const { dismissedAlertIds, addDismissedAlertId } = useDismissedAlertIds();
 
   const { data } = useQuery({
@@ -74,6 +76,7 @@ export default function AlertsViewer() {
                       }
                       style={{
                         objectFit: 'cover',
+                        filter: mode === 'light' ? 'opacity(0.8)' : 'none',
                       }}
                       unoptimized
                     />
