@@ -131,8 +131,6 @@ export default function QuizCreatePage({
     defaultQuestionsFormData
   );
 
-  useRedirectOnUnauthenticated(status);
-
   const ownerId = session?.user?.id?.toString();
   const quizQuery = useQuery({
     queryKey: ['quiz', uuid],
@@ -288,10 +286,12 @@ export default function QuizCreatePage({
     deleteAnswerMutation,
   ];
   const mutations = [...createOrUpdateMutations, ...deleteMutations];
+
   useHandleGQLUnauthorized([
     quizQuery.error,
     ...mutations.map((mutation) => mutation.error),
   ]);
+  useRedirectOnUnauthenticated(status);
 
   async function handleSaveClick() {
     const { title, description } = overviewFormData;
