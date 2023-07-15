@@ -26,6 +26,8 @@ import { useMemo, useState } from 'react';
 import LinkIconButton from './LinkIconButton';
 import { useColorMode } from '@/page-components/theme.context';
 import Link from 'next/link';
+import { usePageTransition } from '@/persistence/page-transition.store';
+import LoadingCircle from './LoadingCircle';
 
 type QuizOverviewProps = {
   uuid: string;
@@ -57,6 +59,7 @@ export default function QuizOverview({
   const { mode } = useColorMode();
   const isQuestionCountSingular = questionCount === 1;
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
+  const { transitionHref } = usePageTransition();
 
   const dateFormat = useMemo(
     () => new Intl.DateTimeFormat('en-GB', { dateStyle: 'short' }),
@@ -190,7 +193,14 @@ export default function QuizOverview({
               <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                 <Link href={`/users/${userUuid}`}>
                   <Chip
-                    label={username}
+                    label={
+                      <Stack direction="row" alignItems="center" gap={1}>
+                        <Box component="span">{username}</Box>
+                        {transitionHref === `/users/${userUuid}` && (
+                          <LoadingCircle />
+                        )}
+                      </Stack>
+                    }
                     variant="filled"
                     sx={{
                       cursor: 'pointer',
