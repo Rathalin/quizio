@@ -17,6 +17,7 @@ import {
   Snackbar,
   CardActions,
   Divider,
+  Typography,
 } from '@mui/material';
 import {
   QueryClient,
@@ -87,6 +88,7 @@ export default function PlayIdPage({
         }
       ),
   });
+  const [shareFallback, setShareFallback] = useState<string | null>(null);
   const [playCountIncreased, setPlayCountIncreased] = useState(false);
   const questions = useMemo(
     () => quiz?.attributes?.questions?.data ?? [],
@@ -159,7 +161,7 @@ export default function PlayIdPage({
     setQuestionIndex((index) => index + 1);
   }
 
-  function resultToClipboard() {
+  function writeResultToClipboard() {
     const answeredStates = answeredProgress.map(
       (answered) => answered.correctAnswerId === answered.selectedAnswerId
     );
@@ -174,10 +176,18 @@ export default function PlayIdPage({
       answeredStates.map((correct) => (correct ? '🟩' : '🟥')).join('')
     );
     lines.push(`${window.location.origin}${router.asPath}`);
+    const shareText = lines.join('\n');
 
-    navigator.clipboard.writeText(lines.join('\n'));
-
-    setShowCopiedAlert(true);
+    if (navigator?.clipboard) {
+      try {
+        navigator.clipboard.writeText(shareText);
+        setShowCopiedAlert(true);
+      } catch (err) {
+        setShareFallback(shareText);
+      }
+    } else {
+      setShareFallback(shareText);
+    }
   }
 
   function handleCopiedAlertClose(_event: unknown, reason?: string) {
@@ -286,6 +296,12 @@ export default function PlayIdPage({
                     }))}
                     answeredProgress={answeredProgress}
                   />
+                  {shareFallback != null && (
+                    <Typography sx={{ whiteSpace: 'pre-line' }}>
+                      {' '}
+                      {shareFallback}
+                    </Typography>
+                  )}
                   <CardActions
                     sx={{
                       marginTop: 4,
@@ -299,7 +315,7 @@ export default function PlayIdPage({
                     <Button
                       variant="contained"
                       endIcon={<ContentCopyIcon />}
-                      onClick={resultToClipboard}
+                      onClick={writeResultToClipboard}
                     >
                       Share
                     </Button>
