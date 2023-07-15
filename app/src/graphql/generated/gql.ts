@@ -33,6 +33,7 @@ const documents = {
     "\n  mutation UploadImage($file: Upload!) {\n    upload(file: $file) {\n      data {\n        id\n        attributes {\n          name\n        }\n      }\n    }\n  }\n": types.UploadImageDocument,
     "\n  query getUsersByUuid($uuid: String!) {\n    usersPermissionsUsers(filters: { uuid: { eq: $uuid } }) {\n      data {\n        id\n      }\n    }\n  }\n": types.GetUsersByUuidDocument,
     "\n  query getMe {\n    me {\n      id\n      username\n      email\n      role {\n        id\n        name\n      }\n    }\n  }\n": types.GetMeDocument,
+    "\n  query getUserProfileDataById($userId: ID!) {\n    usersPermissionsUser(id: $userId) {\n      data {\n        id\n        attributes {\n          username\n          uuid\n          email\n          role {\n            data {\n              attributes {\n                name\n              }\n            }\n          }\n          createdAt\n          quizzes {\n            data {\n              id\n              attributes {\n                createdAt\n                playCount\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n": types.GetUserProfileDataByIdDocument,
 };
 
 /**
@@ -129,6 +130,10 @@ export function graphql(source: "\n  query getUsersByUuid($uuid: String!) {\n   
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query getMe {\n    me {\n      id\n      username\n      email\n      role {\n        id\n        name\n      }\n    }\n  }\n"): (typeof documents)["\n  query getMe {\n    me {\n      id\n      username\n      email\n      role {\n        id\n        name\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query getUserProfileDataById($userId: ID!) {\n    usersPermissionsUser(id: $userId) {\n      data {\n        id\n        attributes {\n          username\n          uuid\n          email\n          role {\n            data {\n              attributes {\n                name\n              }\n            }\n          }\n          createdAt\n          quizzes {\n            data {\n              id\n              attributes {\n                createdAt\n                playCount\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query getUserProfileDataById($userId: ID!) {\n    usersPermissionsUser(id: $userId) {\n      data {\n        id\n        attributes {\n          username\n          uuid\n          email\n          role {\n            data {\n              attributes {\n                name\n              }\n            }\n          }\n          createdAt\n          quizzes {\n            data {\n              id\n              attributes {\n                createdAt\n                playCount\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
