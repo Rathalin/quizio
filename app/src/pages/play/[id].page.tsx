@@ -293,6 +293,7 @@ export default function PlayIdPage({
                           title: answer.attributes?.title ?? '',
                           correct: answer.attributes?.correct ?? false,
                         })) ?? [],
+                      explanation: question.attributes?.explanation ?? '',
                     }))}
                     answeredProgress={answeredProgress}
                   />
