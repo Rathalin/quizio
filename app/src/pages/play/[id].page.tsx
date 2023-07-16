@@ -6,7 +6,7 @@ import GameSummary from '@/page-components/quiz/game/GameSummary';
 import PickAnAnswer from '@/page-components/quiz/game/PickAnAnswer';
 import PickAnAnswerPlaceholder from '@/page-components/quiz/game/PickAnAnswerPlaceholder';
 import QuizNotFound from '@/page-components/quiz/game/QuizNotFound';
-import { ContentCopy as ContentCopyIcon } from '@mui/icons-material';
+import { ContentCopy } from '@mui/icons-material';
 import {
   Box,
   Card,
@@ -18,6 +18,7 @@ import {
   CardActions,
   Divider,
   Typography,
+  Stack,
 } from '@mui/material';
 import {
   QueryClient,
@@ -88,7 +89,6 @@ export default function PlayIdPage({
         }
       ),
   });
-  const [shareFallback, setShareFallback] = useState<string | null>(null);
   const [playCountIncreased, setPlayCountIncreased] = useState(false);
   const questions = useMemo(
     () => quiz?.attributes?.questions?.data ?? [],
@@ -161,7 +161,7 @@ export default function PlayIdPage({
     setQuestionIndex((index) => index + 1);
   }
 
-  function writeResultToClipboard() {
+  const resultScore = useMemo(() => {
     const answeredStates = answeredProgress.map(
       (answered) => answered.correctAnswerId === answered.selectedAnswerId
     );
@@ -176,17 +176,13 @@ export default function PlayIdPage({
       answeredStates.map((correct) => (correct ? '🟩' : '🟥')).join('')
     );
     lines.push(`${window.location.origin}${router.asPath}`);
-    const shareText = lines.join('\n');
+    return lines.join('\n');
+  }, [answeredProgress, quiz?.attributes?.title, router.asPath]);
 
-    if (navigator?.clipboard) {
-      try {
-        navigator.clipboard.writeText(shareText);
-        setShowCopiedAlert(true);
-      } catch (err) {
-        setShareFallback(shareText);
-      }
-    } else {
-      setShareFallback(shareText);
+  function writeResultToClipboard() {
+    if (resultScore != null) {
+      navigator.clipboard.writeText(resultScore);
+      setShowCopiedAlert(true);
     }
   }
 
@@ -297,12 +293,25 @@ export default function PlayIdPage({
                     }))}
                     answeredProgress={answeredProgress}
                   />
-                  {shareFallback != null && (
-                    <Typography sx={{ whiteSpace: 'pre-line' }}>
-                      {' '}
-                      {shareFallback}
+                  <Divider />
+                  <Stack
+                    alignItems="center"
+                    gap={2}
+                    sx={{ marginBottom: 2, marginTop: 2 }}
+                  >
+                    <Typography
+                      sx={{ whiteSpace: 'pre-line', textAlign: 'center' }}
+                    >
+                      {resultScore}
                     </Typography>
-                  )}
+                    <Button
+                      variant="contained"
+                      endIcon={<ContentCopy />}
+                      onClick={writeResultToClipboard}
+                    >
+                      Copy
+                    </Button>
+                  </Stack>
                   <CardActions
                     sx={{
                       marginTop: 4,
@@ -313,13 +322,6 @@ export default function PlayIdPage({
                     }}
                   >
                     <HomeButton />
-                    <Button
-                      variant="contained"
-                      endIcon={<ContentCopyIcon />}
-                      onClick={writeResultToClipboard}
-                    >
-                      Share
-                    </Button>
                   </CardActions>
                 </CardContent>
               )}
