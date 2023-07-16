@@ -1,6 +1,6 @@
 import GradientWord from '@/components/GradientWord';
 import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
-import { useHandleGQLUnauthorized } from '@/custom-hooks/useHandleGQLUnauthorized';
+import { useHandleGqlUnauthorized } from '@/custom-hooks/useHandleGqlUnauthorized';
 import { useRedirectOnUnauthenticated } from '@/custom-hooks/useRedirectOnUnauthenticated';
 import {
   createQuestionGQL,
@@ -118,7 +118,7 @@ export default function QuizCreatePage({
   const queryClient = useQueryClient();
   const router = useRouter();
   const { data: session, status } = useSession();
-  const { authHeader } = useAuthHeader(session);
+  const { authHeader } = useAuthHeader();
   const [activeStep, setActiveStep] = useState(0);
   const [alertType, setAlertType] = useState<'saved' | 'save-error' | null>(
     null
@@ -287,7 +287,7 @@ export default function QuizCreatePage({
   ];
   const mutations = [...createOrUpdateMutations, ...deleteMutations];
 
-  useHandleGQLUnauthorized([
+  useHandleGqlUnauthorized([
     quizQuery.error,
     ...mutations.map((mutation) => mutation.error),
   ]);
@@ -509,7 +509,7 @@ export default function QuizCreatePage({
           </Card>
         </Grid>
         <Grid item xs={12} md={9}>
-          {quizQuery.isSuccess ? (
+          {quiz != null ? (
             <>
               {steps[activeStep].title === 'Overview' && (
                 <OverviewForm

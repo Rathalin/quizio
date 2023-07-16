@@ -36,6 +36,7 @@ export default function QuizzesOverview() {
         sortFields: [`${sort.option}:${sort.mode}`],
         filters: composeFilters(),
       }),
+    staleTime: 1000 * 30,
   });
 
   const quizzes = useMemo(

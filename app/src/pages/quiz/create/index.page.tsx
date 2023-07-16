@@ -28,7 +28,7 @@ import request from 'graphql-request';
 import { useSession } from 'next-auth/react';
 import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import { useRedirectOnUnauthenticated } from '@/custom-hooks/useRedirectOnUnauthenticated';
-import { useHandleGQLUnauthorized } from '@/custom-hooks/useHandleGQLUnauthorized';
+import { useHandleGqlUnauthorized } from '@/custom-hooks/useHandleGqlUnauthorized';
 import {
   QuizOverviewForm,
   QuizQuestionsForm,
@@ -56,7 +56,7 @@ const steps = stepTitles.map((title, index) => ({
 export default function QuizCreatePage() {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const { authHeader } = useAuthHeader(session);
+  const { authHeader } = useAuthHeader();
   const [activeStep, setActiveStep] = useState(0);
   const [overviewFormData, setOverviewFormData] = useState<QuizOverviewForm>(
     defaultOverviewFormData
@@ -129,7 +129,7 @@ export default function QuizCreatePage() {
     createAnswerMutation,
     uploadImageMutation,
   ];
-  useHandleGQLUnauthorized(mutations.map((mutation) => mutation.error));
+  useHandleGqlUnauthorized(mutations.map((mutation) => mutation.error));
   useRedirectOnUnauthenticated(status);
 
   async function handleFinishQuizClick() {

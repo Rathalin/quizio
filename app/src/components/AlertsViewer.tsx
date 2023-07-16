@@ -15,6 +15,7 @@ export default function AlertsViewer() {
   const { data } = useQuery({
     queryKey: ['alerts'],
     queryFn: () => request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getAlertsGQL),
+    staleTime: 1000 * 30,
   });
 
   const alerts = data?.alerts?.data ?? [];
