@@ -9,6 +9,7 @@ import {
   useTheme,
   darken,
   lighten,
+  Divider,
 } from '@mui/material';
 import { Check as CheckIcon } from '@mui/icons-material';
 import GradientWord from '@/components/GradientWord';
@@ -19,6 +20,7 @@ type GameSummaryProps = {
   questions: {
     id: string;
     title: string;
+    explanation: string | null;
     answers: {
       id: string;
       title: string;
@@ -49,6 +51,7 @@ export default function GameSummary({
       <Box sx={{ marginTop: 4 }}>
         {questions.map((question, qIndex) => (
           <Box key={question.id}>
+            {qIndex > 0 && <Divider />}
             <Typography
               variant="h5"
               component="h2"
@@ -88,6 +91,20 @@ export default function GameSummary({
                 </ListItem>
               ))}
             </List>
+            {question.explanation != null &&
+              question.explanation.length > 0 && (
+                <Box sx={{ marginBottom: 2 }}>
+                  <Typography
+                    component="span"
+                    color={theme.palette.primary.main}
+                  >
+                    Explanation:
+                  </Typography>
+                  <Typography component="span" sx={{ marginLeft: 1 }}>
+                    {question.explanation}
+                  </Typography>
+                </Box>
+              )}
           </Box>
         ))}
       </Box>
