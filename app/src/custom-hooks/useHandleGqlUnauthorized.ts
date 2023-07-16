@@ -3,18 +3,19 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { z } from 'zod';
 
-export function useHandleGQLUnauthorized(errors: unknown[]) {
+export function useHandleGqlUnauthorized(errors: unknown[]) {
   const router = useRouter();
+
   useEffect(() => {
     try {
       const gqlErrors = GqlErrorsSchema.parse(errors);
       gqlErrors.forEach((e) => {
         if (e != null && e.response.status === 401) {
-          signOut().then(() => router.push('/?sessionExpired=true'));
+          signOut({ callbackUrl: '/?sessionExpired=true' });
         }
       });
     } catch (e) {
-      console.error('useHandleGQLUnauthorized', e);
+      console.error('Session Expired', e);
     }
   }, [errors, router]);
 }

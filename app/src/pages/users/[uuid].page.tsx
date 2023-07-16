@@ -3,16 +3,11 @@ import HomeButton from '@/components/buttons/HomeButton';
 import UserProfile from '@/components/users/UserProfile';
 import UserProfilePlaceholder from '@/components/users/UserProfilePlaceholder';
 import { getUserProfileDataByIdGQL, getUsersByUuidGQL } from '@/graphql/users';
-import {
-  Box,
-  Card,
-  CardActions,
-  CardContent,
-  Stack,
-} from '@mui/material';
+import { Box, Card, CardActions, CardContent, Stack } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { signOut } from 'next-auth/react';
 
 export const getServerSideProps: GetServerSideProps<{
   userId: string | null;
@@ -36,22 +31,25 @@ export const getServerSideProps: GetServerSideProps<{
       },
     };
   } catch (error) {
-    if (typeof error === 'object' && error != null  && 'status' in error) {
+    if (typeof error === 'object' && error != null && 'status' in error) {
       const status = error.status;
       if (status === 401) {
+        signOut();
         return {
           redirect: {
             destination: '/?sessionExpired=true',
+            permanent: false,
           },
           props: {
             userId: null,
           },
         };
-      } 
+      }
     }
     return {
       redirect: {
         destination: '/500',
+        permanent: false,
       },
       props: {
         userId: null,

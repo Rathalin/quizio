@@ -1,14 +1,16 @@
-import { Box } from '@mui/material';
 import Head from 'next/head';
-import QuizzesOverview from '@/page-components/dashboard/QuizzesOverview';
+import { useRouter } from 'next/router';
+import { useGqlHealthCheck } from '@/custom-hooks/useGqlHealthCheck';
 import AlertsViewer from '@/components/AlertsViewer';
 import InvalidTokenAlert from '@/page-components/dashboard/InvalidTokenAlert';
-import { useRouter } from 'next/router';
+import QuizzesOverview from '@/page-components/dashboard/QuizzesOverview';
+import { Box } from '@mui/material';
 
 export default function HomePage() {
   const router = useRouter();
 
   const showInvalidTokenAlert = router.query.sessionExpired === 'true';
+  useGqlHealthCheck();
 
   return (
     <>
