@@ -36,6 +36,19 @@ export const getServerSideProps: GetServerSideProps<{
       },
     };
   } catch (error) {
+    if (typeof error === 'object' && error != null  && 'status' in error) {
+      const status = error.status;
+      if (status === 401) {
+        return {
+          redirect: {
+            destination: '/?sessionExpired=true',
+          },
+          props: {
+            userId: null,
+          },
+        };
+      } 
+    }
     return {
       redirect: {
         destination: '/500',
