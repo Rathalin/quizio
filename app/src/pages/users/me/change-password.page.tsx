@@ -19,7 +19,7 @@ import { z } from 'zod';
 
 import QuizioPasswordField from '@/components/inputs/QuizioPasswordField';
 import { ZodFieldErrors } from '../../../../types/hook-form-zod';
-import { useHandleGQLUnauthorized } from '@/custom-hooks/useHandleGQLUnauthorized';
+import { useHandleGqlUnauthorized } from '@/custom-hooks/useHandleGqlUnauthorized';
 
 const passwordMinLength = 6;
 const passwordMaxLength = 30;
@@ -52,8 +52,8 @@ const defaultValues = {
 };
 
 export default function ChangePasswordPage() {
-  const { data: session, status } = useSession();
-  const { authHeader } = useAuthHeader(session);
+  const {  status } = useSession();
+  const { authHeader } = useAuthHeader();
 
   const { control, handleSubmit, formState, reset } =
     useForm<ChangePaswordForm>({
@@ -75,9 +75,9 @@ export default function ChangePasswordPage() {
       reset(defaultValues);
     },
   });
-  useHandleGQLUnauthorized([changePasswordMutation.error]);
+  useHandleGqlUnauthorized([changePasswordMutation.error]);
 
-  useHandleGQLUnauthorized([changePasswordMutation.isError]);
+  useHandleGqlUnauthorized([changePasswordMutation.isError]);
   useRedirectOnUnauthenticated(status);
 
   function onSubmit(data: ChangePaswordForm) {

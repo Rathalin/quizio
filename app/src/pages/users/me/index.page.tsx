@@ -1,7 +1,7 @@
 import GenericLoadingErrorMessage from '@/components/GenericLoadingErrorMessage';
 import HomeButton from '@/components/buttons/HomeButton';
 import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
-import { useHandleGQLUnauthorized } from '@/custom-hooks/useHandleGQLUnauthorized';
+import { useHandleGqlUnauthorized } from '@/custom-hooks/useHandleGqlUnauthorized';
 import { useRedirectOnUnauthenticated } from '@/custom-hooks/useRedirectOnUnauthenticated';
 import { getMeGQL } from '@/graphql/users';
 import MyProfile from '@/page-components/user/me/MyProfile';
@@ -19,8 +19,9 @@ import request from 'graphql-request';
 import { useSession } from 'next-auth/react';
 
 export default function MePage() {
-  const { data: session, status } = useSession();
-  const { authHeader } = useAuthHeader(session);
+  const { status } = useSession();
+  const { authHeader } = useAuthHeader();
+
   const { isLoading, isError, error, isSuccess, data } = useQuery({
     queryKey: ['me'],
     queryFn: () =>
@@ -28,7 +29,7 @@ export default function MePage() {
     enabled: status === 'authenticated',
   });
 
-  useHandleGQLUnauthorized([error]);
+  useHandleGqlUnauthorized([error]);
   useRedirectOnUnauthenticated(status);
 
   const username = data?.me?.username ?? '';
