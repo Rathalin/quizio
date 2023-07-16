@@ -2,11 +2,14 @@ import { Alert, AlertTitle, Box, Collapse } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
+const collapseDuration = 300;
+
 export default function InvalidTokenAlert() {
   const router = useRouter();
   const [open, setOpen] = useState(true);
 
-  function removeSessionExpiredQueryParam() {
+  async function removeSessionExpiredQueryParam() {
+    await new Promise((resolve) => setTimeout(resolve, collapseDuration));
     const { pathname, query } = router;
     delete query.sessionExpired;
 
@@ -17,7 +20,7 @@ export default function InvalidTokenAlert() {
   }
 
   return (
-    <Collapse in={open}>
+    <Collapse in={open} timeout={collapseDuration}>
       <Alert
         variant="filled"
         severity="error"
