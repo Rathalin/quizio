@@ -22,19 +22,14 @@ export default function QuizzesOverview() {
   const [sort, setSort] = useState<Sort>(defaultSort);
   const [filters, setFilters] = useState<Set<FilterOption>>(new Set());
   const composeFilters = useComposeFilters(filters, session?.user.username);
+  const gqlFilters = useMemo(() => composeFilters(), [composeFilters]);
 
   const { data, isSuccess, isLoading, isError } = useQuery({
-    queryKey: [
-      'allPublishedQuizzes',
-      sort.option,
-      sort.mode,
-      composeFilters(),
-      session?.user.username,
-    ],
+    queryKey: ['allPublishedQuizzes', gqlFilters],
     queryFn: () =>
       request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getAllPublishedQuizzesGQL, {
         sortFields: [`${sort.option}:${sort.mode}`],
-        filters: composeFilters(),
+        filters: gqlFilters,
       }),
     staleTime: 1000 * 30,
   });
