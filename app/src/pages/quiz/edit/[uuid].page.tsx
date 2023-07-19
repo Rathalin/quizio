@@ -17,7 +17,6 @@ import {
   QuestionInput,
   AnswerInput,
   UploadFileEntity,
-  GetAllPublishedQuizzesQuery,
 } from '@/graphql/generated/graphql';
 import { getMyQuizzesByUuidGQL } from '@/graphql/myQuizzes';
 import OverviewForm from '@/page-components/quiz/create/OverviewForm';
@@ -57,7 +56,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { getServerSession } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   QuizOverviewForm,
   QuizQuestionsForm,
@@ -132,6 +131,7 @@ export default function QuizCreatePage({
   const [questionsFormData, setQuestionsFormData] = useState<QuizQuestionsForm>(
     defaultQuestionsFormData
   );
+  const [removeImage, setRemoveImage] = useState(false);
 
   const ownerId = session?.user?.id?.toString();
   const quizQuery = useQuery({
@@ -151,6 +151,15 @@ export default function QuizCreatePage({
   });
   const quiz = quizQuery.data?.quizzes?.data?.at(0);
   const quizImage = quiz?.attributes?.image?.data;
+  const previewImage = useMemo(() => {
+    if (removeImage) return undefined;
+    return quizImage?.attributes?.url != null
+      ? {
+          url: getBackendImageUrl(quizImage?.attributes?.url),
+          name: quizImage?.attributes?.name ?? '',
+        }
+      : undefined;
+  }, [quizImage?.attributes?.name, quizImage?.attributes?.url, removeImage]);
 
   useEffect(() => {
     if (quiz != null) {
@@ -341,9 +350,8 @@ export default function QuizCreatePage({
     const { questions } = questionsFormData;
     try {
       let imageId = quiz?.attributes?.image?.data?.id ?? null;
-      let newImageUrl: string | null = null;
       // Delete image
-      if (image.file != null && imageId != null) {
+      if (imageId != null && (image.file != null || removeImage)) {
         await deleteImageMutation.mutateAsync({
           id: imageId,
         });
@@ -355,7 +363,6 @@ export default function QuizCreatePage({
           file: image.file,
         });
         imageId = uploadImageResponse.at(0)?.id?.toString() ?? '';
-        newImageUrl = uploadImageResponse.at(0)?.url ?? null;
       }
 
       // Update quiz
@@ -441,36 +448,10 @@ export default function QuizCreatePage({
         }
       }
 
-      // Set query cache to avoid image loading error while cache is stale
-      queryClient.setQueryData(
-        ['allPublishedQuizzes'],
-        (oldData: GetAllPublishedQuizzesQuery | undefined) => {
-          const currentQuiz = oldData?.quizzes?.data?.find(
-            (q) => q.id === quiz?.id
-          );
-          if (
-            currentQuiz?.attributes?.image?.data?.attributes?.url == null ||
-            newImageUrl == null
-          )
-            return oldData;
-          currentQuiz.attributes.image.data.attributes.url = newImageUrl;
-          return {
-            ...oldData,
-            quizzes: {
-              ...oldData?.quizzes,
-              data: [
-                ...(oldData?.quizzes?.data?.filter((q) => q.id !== quiz?.id) ??
-                  []),
-                currentQuiz,
-              ],
-            },
-          };
-        }
-      );
-
       // Refetch quiz
       setAlertType('saved');
       queryClient.invalidateQueries(['quiz', uuid]);
+      queryClient.removeQueries(['allPublishedQuizzes']);
       queryClient.invalidateQueries(['allPublishedQuizzes']);
       await router.push('/');
     } catch (error) {
@@ -619,14 +600,8 @@ export default function QuizCreatePage({
                   backLabel={backLabel}
                   nextLabel={nextLabel}
                   editMode={true}
-                  previewImage={
-                    quizImage?.attributes?.url != null
-                      ? {
-                          url: getBackendImageUrl(quizImage?.attributes?.url),
-                          name: quizImage?.attributes?.name ?? '',
-                        }
-                      : undefined
-                  }
+                  previewImage={previewImage}
+                  onRemoveImage={() => setRemoveImage(true)}
                 />
               )}
               {steps[activeStep].title === 'Questions' && (

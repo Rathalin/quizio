@@ -19,6 +19,7 @@ import { useStorage } from '@/custom-hooks/useStorage';
 import { storageKeys } from '@/persistence/storage-keys';
 import { DevTool } from '@hookform/devtools';
 import Image from 'next/image';
+import { Clear } from '@mui/icons-material';
 
 const imageInput = {
   width: 300,
@@ -35,6 +36,7 @@ type OverviewFormProps = {
     url: string;
     name: string;
   };
+  onRemoveImage?: () => void;
 };
 
 export default function OverviewForm({
@@ -44,6 +46,7 @@ export default function OverviewForm({
   nextLabel,
   editMode,
   previewImage,
+  onRemoveImage,
 }: OverviewFormProps) {
   const isMobile = useIsMobile();
   const methods = useForm<QuizOverviewForm>({
@@ -149,62 +152,80 @@ export default function OverviewForm({
                 </Box>
               </Stack>
               <Stack direction="column" alignItems="start" gap={1}>
-                <Controller
-                  name="image.file"
-                  render={({ field }) => (
-                    <Box>
-                      <input
-                        {...field}
-                        id="quiz-image"
-                        type="file"
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                        value={undefined}
-                        onChange={(e) => {
-                          setValue(
-                            'image.file',
-                            e.target.files != null ? e.target.files[0] : null
-                          );
-                        }}
-                      />
-                      <label
-                        htmlFor="quiz-image"
-                        style={{
-                          display: 'flex',
-                        }}
-                      >
-                        <Button
-                          variant="outlined"
-                          component="span"
-                          sx={{
-                            padding: 2,
-                            width: imageWidth,
-                            minHeight: imageHeight,
+                <Stack alignItems="center" gap={1}>
+                  <Controller
+                    name="image.file"
+                    render={({ field }) => (
+                      <Box>
+                        <input
+                          {...field}
+                          id="quiz-image"
+                          type="file"
+                          accept="image/*"
+                          style={{ display: 'none' }}
+                          value={undefined}
+                          onChange={(e) => {
+                            setValue(
+                              'image.file',
+                              e.target.files != null ? e.target.files[0] : null
+                            );
+                          }}
+                        />
+                        <label
+                          htmlFor="quiz-image"
+                          style={{
+                            display: 'flex',
                           }}
                         >
-                          {imageUrl != null ? (
-                            <Stack alignItems="center">
-                              <Image
-                                src={imageUrl}
-                                width={imageWidth - 34}
-                                height={imageHeight - 64}
-                                alt="quiz-image"
-                                style={{ borderRadius: 2, objectFit: 'cover' }}
-                                unoptimized
-                              />
-                              <Box sx={{ overflowWrap: 'anywhere' }}>
-                                {imageName}
-                              </Box>
-                            </Stack>
-                          ) : (
-                            <Box>Upload Image</Box>
-                          )}
-                        </Button>
-                      </label>
-                    </Box>
-                  )}
-                  control={control}
-                />
+                          <Button
+                            variant="outlined"
+                            component="span"
+                            sx={{
+                              padding: 2,
+                              width: imageWidth,
+                              minHeight: imageHeight,
+                            }}
+                          >
+                            {imageUrl != null ? (
+                              <Stack alignItems="center">
+                                <Image
+                                  src={imageUrl}
+                                  width={imageWidth - 34}
+                                  height={imageHeight - 64}
+                                  alt="quiz-image"
+                                  style={{
+                                    borderRadius: 2,
+                                    objectFit: 'cover',
+                                  }}
+                                  unoptimized
+                                />
+                                <Box sx={{ overflowWrap: 'anywhere' }}>
+                                  {imageName}
+                                </Box>
+                              </Stack>
+                            ) : (
+                              <Box>Upload Image</Box>
+                            )}
+                          </Button>
+                        </label>
+                      </Box>
+                    )}
+                    control={control}
+                  />
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    startIcon={<Clear />}
+                    onClick={() => {
+                      setValue('image.file', null);
+                      if (onRemoveImage != null) {
+                        onRemoveImage();
+                      }
+                    }}
+                  >
+                    Remove
+                  </Button>
+                </Stack>
               </Stack>
             </Stack>
           </CardContent>
