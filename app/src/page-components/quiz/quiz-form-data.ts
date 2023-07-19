@@ -21,5 +21,7 @@ export const defaultQuestionsFormData: QuizQuestionsForm = {
 export const defaultOverviewFormData: QuizOverviewForm = {
   title: '',
   description: '',
-  image: null,
+  image: {
+    file: null
+  },
 };
