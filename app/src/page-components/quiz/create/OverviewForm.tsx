@@ -16,7 +16,7 @@ import { QuizOverviewForm, quizOverviewFormSchema } from '../quiz-form-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import BackButton from './BackButton';
 import NextButton from './NextButton';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useStorage } from '@/custom-hooks/useStorage';
 import { storageKeys } from '@/persistence/storage-keys';
 import { DevTool } from '@hookform/devtools';
@@ -33,6 +33,7 @@ type OverviewFormProps = {
   backLabel: string | null;
   nextLabel: string | null;
   editMode: boolean;
+  previewImageUrl?: string;
 };
 
 export default function OverviewForm({
@@ -42,6 +43,7 @@ export default function OverviewForm({
   backLabel,
   nextLabel,
   editMode,
+  previewImageUrl,
 }: OverviewFormProps) {
   const isMobile = useIsMobile();
   const methods = useForm<QuizOverviewForm>({
@@ -80,12 +82,17 @@ export default function OverviewForm({
   }, [defaultData, editMode, reset]);
 
   const image = watch('image');
-  const previewImageUrl = image != null ? URL.createObjectURL(image) : null;
+  const imageUrl = useMemo(() => {
+    if (image != null) {
+      return URL.createObjectURL(image);
+    }
+    return previewImageUrl;
+  }, [image, previewImageUrl]);
   const imageWidth = isMobile ? imageInput.width * 0.8 : imageInput.width;
   const imageHeight = isMobile ? imageInput.height * 0.8 : imageInput.height;
 
   function getFileNameFromPath(path: string) {
-    return path.split('\\').pop()?.split('/').pop();
+    return path?.split('\\').pop()?.split('/').pop();
   }
 
   function handleFormSubmit(data: QuizOverviewForm) {
@@ -174,17 +181,18 @@ export default function OverviewForm({
                           }}
                           disabled={tempDisableImageInput}
                         >
-                          {previewImageUrl != null ? (
+                          {imageUrl != null ? (
                             <Stack alignItems="center">
                               <Image
-                                src={previewImageUrl}
+                                src={imageUrl}
                                 width={imageWidth - 34}
                                 height={imageHeight - 64}
                                 alt="quiz-image"
                                 style={{ borderRadius: 2, objectFit: 'cover' }}
+                                unoptimized
                               />
                               <Box sx={{ overflowWrap: 'anywhere' }}>
-                                {getFileNameFromPath(image!.name)}
+                                {getFileNameFromPath(image?.name)}
                               </Box>
                             </Stack>
                           ) : (

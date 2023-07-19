@@ -62,6 +62,7 @@ import {
   QuizQuestionsForm,
 } from '@/page-components/quiz/quiz-form-schema';
 import LoadingCircle from '@/components/LoadingCircle';
+import { getBackendImageUrl } from '@/utilities/getImageUrl';
 
 export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
   ctx
@@ -521,6 +522,9 @@ export default function QuizCreatePage({
                   backLabel={backLabel}
                   nextLabel={nextLabel}
                   editMode={true}
+                  previewImageUrl={getBackendImageUrl(
+                    quiz.attributes?.image?.data?.attributes?.url
+                  )}
                   tempDisableImageInput={true}
                 />
               )}

@@ -6,6 +6,7 @@ import GameSummary from '@/page-components/quiz/game/GameSummary';
 import PickAnAnswer from '@/page-components/quiz/game/PickAnAnswer';
 import PickAnAnswerPlaceholder from '@/page-components/quiz/game/PickAnAnswerPlaceholder';
 import QuizNotFound from '@/page-components/quiz/game/QuizNotFound';
+import { getBackendImageUrl } from '@/utilities/getImageUrl';
 import { ContentCopy } from '@mui/icons-material';
 import {
   Box,
@@ -214,9 +215,9 @@ export default function PlayIdPage({
             />
             <meta
               property="og:image"
-              content={`${process.env.NEXT_PUBLIC_BACKEND_URL}${
-                quiz?.attributes?.image?.data?.attributes?.url ?? ''
-              }`}
+              content={getBackendImageUrl(
+                quiz?.attributes?.image?.data?.attributes?.url
+              )}
             />
           </Head>
           {questions.length === 0 ? (

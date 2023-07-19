@@ -2,6 +2,7 @@ import { getAlertsGQL } from '@/graphql/alerts';
 import { Enum_Alert_Imagesize } from '@/graphql/generated/graphql';
 import { useColorMode } from '@/page-components/theme.context';
 import { useDismissedAlertIds } from '@/persistence/dismissed-alert-ids';
+import { getBackendImageUrl } from '@/utilities/getImageUrl';
 import { Alert, Collapse, Grid, Stack } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
@@ -67,7 +68,9 @@ export default function AlertsViewer() {
                 >
                   {alert.attributes?.image?.data?.attributes?.url != null && (
                     <Image
-                      src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${alert.attributes.image.data.attributes.url}`}
+                      src={getBackendImageUrl(
+                        alert.attributes.image.data.attributes.url
+                      )}
                       alt={
                         alert.attributes?.image?.data?.attributes
                           ?.alternativeText ?? 'alert image'
