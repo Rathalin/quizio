@@ -17,6 +17,7 @@ import {
   QuestionInput,
   AnswerInput,
   UploadFileEntity,
+  GetAllPublishedQuizzesQuery,
 } from '@/graphql/generated/graphql';
 import { getMyQuizzesByUuidGQL } from '@/graphql/myQuizzes';
 import OverviewForm from '@/page-components/quiz/create/OverviewForm';
@@ -340,6 +341,7 @@ export default function QuizCreatePage({
     const { questions } = questionsFormData;
     try {
       let imageId = quiz?.attributes?.image?.data?.id ?? null;
+      let newImageUrl: string | null = null;
       // Delete image
       if (image.file != null && imageId != null) {
         await deleteImageMutation.mutateAsync({
@@ -349,14 +351,11 @@ export default function QuizCreatePage({
       }
       // Upload image
       if (image.file != null) {
-        imageId =
-          (
-            await uploadImageMutation.mutateAsync({
-              file: image.file,
-            })
-          )
-            .at(0)
-            ?.id?.toString() ?? '';
+        const uploadImageResponse = await uploadImageMutation.mutateAsync({
+          file: image.file,
+        });
+        imageId = uploadImageResponse.at(0)?.id?.toString() ?? '';
+        newImageUrl = uploadImageResponse.at(0)?.url ?? null;
       }
 
       // Update quiz
@@ -441,6 +440,33 @@ export default function QuizCreatePage({
           });
         }
       }
+
+      // Set query cache to avoid image loading error while cache is stale
+      queryClient.setQueryData(
+        ['allPublishedQuizzes'],
+        (oldData: GetAllPublishedQuizzesQuery | undefined) => {
+          const currentQuiz = oldData?.quizzes?.data?.find(
+            (q) => q.id === quiz?.id
+          );
+          if (
+            currentQuiz?.attributes?.image?.data?.attributes?.url == null ||
+            newImageUrl == null
+          )
+            return oldData;
+          currentQuiz.attributes.image.data.attributes.url = newImageUrl;
+          return {
+            ...oldData,
+            quizzes: {
+              ...oldData?.quizzes,
+              data: [
+                ...(oldData?.quizzes?.data?.filter((q) => q.id !== quiz?.id) ??
+                  []),
+                currentQuiz,
+              ],
+            },
+          };
+        }
+      );
 
       // Refetch quiz
       setAlertType('saved');
