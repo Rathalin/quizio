@@ -107,7 +107,7 @@ export default function QuizCreatePage() {
       file,
     }: {
       file: File;
-    }): Promise<[UploadFileEntity['attributes'] & { id: number }]> => {
+    }): Promise<[UploadFileEntity['attributes'] & { id: string }]> => {
       const formData = new FormData();
       formData.append('files', file);
       const response = await fetch(
@@ -140,9 +140,8 @@ export default function QuizCreatePage() {
       let imageId: string | null = null;
       if (image != null) {
         imageId =
-          (await uploadImageMutation.mutateAsync({ file: image }))
-            .at(0)
-            ?.id?.toString() ?? '';
+          (await uploadImageMutation.mutateAsync({ file: image.file })).at(0)
+            ?.id ?? '';
       }
       // Create quiz
       const res = await createQuizMutation.mutateAsync({

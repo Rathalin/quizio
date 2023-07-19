@@ -28,6 +28,7 @@ import { useColorMode } from '@/page-components/theme.context';
 import Link from 'next/link';
 import { usePageTransition } from '@/persistence/page-transition.store';
 import LoadingCircle from './LoadingCircle';
+import { getBackendImageUrl } from '@/utilities/getImageUrl';
 
 type QuizOverviewProps = {
   uuid: string;
@@ -105,7 +106,7 @@ export default function QuizOverview({
       >
         {imageUrl != null ? (
           <Image
-            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${imageUrl}`}
+            src={getBackendImageUrl(imageUrl)}
             alt="QuizImage"
             width={300}
             height={200}
