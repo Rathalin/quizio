@@ -1,6 +1,5 @@
 import QuizioTextField from '@/components/inputs/QuizioTextField';
 import {
-  Alert,
   Box,
   Button,
   Card,
@@ -9,7 +8,6 @@ import {
   Stack,
 } from '@mui/material';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
-import Image from 'next/image';
 import { useIsMobile } from '@/custom-hooks/useIsMobile';
 import { constraints } from '@/content-type-utilities/content-type-constraints';
 import { QuizOverviewForm, quizOverviewFormSchema } from '../quiz-form-schema';
@@ -20,6 +18,7 @@ import { useEffect, useMemo } from 'react';
 import { useStorage } from '@/custom-hooks/useStorage';
 import { storageKeys } from '@/persistence/storage-keys';
 import { DevTool } from '@hookform/devtools';
+import Image from 'next/image';
 
 const imageInput = {
   width: 300,
@@ -27,23 +26,24 @@ const imageInput = {
 } as const;
 
 type OverviewFormProps = {
-  tempDisableImageInput?: boolean;
   defaultData: QuizOverviewForm;
   onSubmit: (data: QuizOverviewForm) => void;
   backLabel: string | null;
   nextLabel: string | null;
   editMode: boolean;
-  previewImageUrl?: string;
+  previewImage?: {
+    url: string;
+    name: string;
+  };
 };
 
 export default function OverviewForm({
-  tempDisableImageInput = false,
   defaultData,
   onSubmit,
   backLabel,
   nextLabel,
   editMode,
-  previewImageUrl,
+  previewImage,
 }: OverviewFormProps) {
   const isMobile = useIsMobile();
   const methods = useForm<QuizOverviewForm>({
@@ -81,19 +81,22 @@ export default function OverviewForm({
     reset(defaultData);
   }, [defaultData, editMode, reset]);
 
-  const image = watch('image');
+  const imageFile = watch('image.file') as File | null;
   const imageUrl = useMemo(() => {
-    if (image != null) {
-      return URL.createObjectURL(image);
+    if (imageFile != null) {
+      return URL.createObjectURL(imageFile);
     }
-    return previewImageUrl;
-  }, [image, previewImageUrl]);
+    return previewImage?.url ?? null;
+  }, [imageFile, previewImage?.url]);
+  const imageName = useMemo(() => {
+    if (imageFile != null) {
+      return imageFile?.name?.split('\\').pop()?.split('/').pop();
+    }
+    return previewImage?.name;
+  }, [imageFile, previewImage?.name]);
+
   const imageWidth = isMobile ? imageInput.width * 0.8 : imageInput.width;
   const imageHeight = isMobile ? imageInput.height * 0.8 : imageInput.height;
-
-  function getFileNameFromPath(path: string) {
-    return path?.split('\\').pop()?.split('/').pop();
-  }
 
   function handleFormSubmit(data: QuizOverviewForm) {
     onSubmit(data);
@@ -147,7 +150,7 @@ export default function OverviewForm({
               </Stack>
               <Stack direction="column" alignItems="start" gap={1}>
                 <Controller
-                  name="image"
+                  name="image.file"
                   render={({ field }) => (
                     <Box>
                       <input
@@ -159,11 +162,10 @@ export default function OverviewForm({
                         value={undefined}
                         onChange={(e) => {
                           setValue(
-                            'image',
+                            'image.file',
                             e.target.files != null ? e.target.files[0] : null
                           );
                         }}
-                        disabled={tempDisableImageInput}
                       />
                       <label
                         htmlFor="quiz-image"
@@ -179,7 +181,6 @@ export default function OverviewForm({
                             width: imageWidth,
                             minHeight: imageHeight,
                           }}
-                          disabled={tempDisableImageInput}
                         >
                           {imageUrl != null ? (
                             <Stack alignItems="center">
@@ -192,7 +193,7 @@ export default function OverviewForm({
                                 unoptimized
                               />
                               <Box sx={{ overflowWrap: 'anywhere' }}>
-                                {getFileNameFromPath(image?.name)}
+                                {imageName}
                               </Box>
                             </Stack>
                           ) : (
@@ -204,11 +205,6 @@ export default function OverviewForm({
                   )}
                   control={control}
                 />
-                {tempDisableImageInput && (
-                  <Alert severity="warning">
-                    Changing the image is not supported yet 😕
-                  </Alert>
-                )}
               </Stack>
             </Stack>
           </CardContent>
