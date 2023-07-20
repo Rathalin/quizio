@@ -22,7 +22,10 @@ export default function QuizzesOverview() {
   const { data: session } = useSession();
   const [searchText, setSearchText] = useState('');
   const [sort, setSort] = useStorage(storageKeys.sort, defaultSort);
-  const [filters, setFilters] = useState<Set<FilterOption>>(new Set());
+  const [filters, setFilters] = useStorage<FilterOption[]>(
+    storageKeys.filters,
+    []
+  );
   const composeFilters = useComposeFilters(filters, session?.user.username);
   const gqlFilters = useMemo(() => composeFilters(), [composeFilters]);
 

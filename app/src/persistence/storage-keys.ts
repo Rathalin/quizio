@@ -5,4 +5,5 @@ export const storageKeys = {
   quizOverviewDraft: `${prefix}-quiz-overview-draft`,
   quizQuestionsDraft: `${prefix}-quiz-questions-draft`,
   sort: `${prefix}-sort`,
+  filters: `${prefix}-filters`,
 } as const;
