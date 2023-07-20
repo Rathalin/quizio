@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { useSession } from 'next-auth/react';
 import { useMemo, useState } from 'react';
-import { Sort, SortProvider, defaultSort } from './sort.context';
+import { SortProvider, defaultSort } from './sort.context';
 import FilterBar from './filter-bar/FilterBar';
 import { SearchProvider } from './search.context';
 import {
@@ -15,11 +15,13 @@ import {
   useComposeFilters,
 } from './filter.context';
 import GenericLoadingErrorMessage from '@/components/GenericLoadingErrorMessage';
+import { storageKeys } from '@/persistence/storage-keys';
+import useStorage from '@/custom-hooks/useStorage';
 
 export default function QuizzesOverview() {
   const { data: session } = useSession();
   const [searchText, setSearchText] = useState('');
-  const [sort, setSort] = useState<Sort>(defaultSort);
+  const [sort, setSort] = useStorage(storageKeys.sort, defaultSort);
   const [filters, setFilters] = useState<Set<FilterOption>>(new Set());
   const composeFilters = useComposeFilters(filters, session?.user.username);
   const gqlFilters = useMemo(() => composeFilters(), [composeFilters]);

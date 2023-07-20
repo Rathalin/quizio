@@ -14,12 +14,12 @@ import { QuizOverviewForm, quizOverviewFormSchema } from '../quiz-form-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import BackButton from './BackButton';
 import NextButton from './NextButton';
-import { useEffect, useMemo } from 'react';
-import { useStorage } from '@/custom-hooks/useStorage';
+import { useCallback, useEffect, useMemo } from 'react';
 import { storageKeys } from '@/persistence/storage-keys';
 import { DevTool } from '@hookform/devtools';
 import Image from 'next/image';
 import { Clear } from '@mui/icons-material';
+import { isBrowser } from '@/utilities/isBrowser';
 
 const imageInput = {
   width: 300,
@@ -62,9 +62,26 @@ export default function OverviewForm({
     handleSubmit,
   } = methods;
 
-  const { getStorageItem, setStorageItem } = useStorage<QuizOverviewForm>(
-    storageKeys.quizOverviewDraft
-  );
+  const getStorageItem = useCallback((): QuizOverviewForm | null => {
+    if (!isBrowser()) return null;
+    try {
+      return JSON.parse(
+        localStorage.getItem(storageKeys.quizOverviewDraft) ?? ''
+      );
+    } catch (error) {
+      return null;
+    }
+  }, []);
+
+  const setStorageItem = useCallback((value: QuizOverviewForm) => {
+    if (isBrowser()) {
+      localStorage.setItem(
+        storageKeys.quizOverviewDraft,
+        JSON.stringify(value)
+      );
+    }
+  }, []);
+
   useEffect(() => {
     if (editMode) return;
     reset(getStorageItem() as QuizOverviewForm);
@@ -78,7 +95,6 @@ export default function OverviewForm({
     });
     return () => subscription.unsubscribe();
   }, [editMode, setStorageItem, watch]);
-
   useEffect(() => {
     if (!editMode) return;
     reset(defaultData);

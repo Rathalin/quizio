@@ -11,7 +11,7 @@ import { Add as AddIcon } from '@mui/icons-material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { QuestionIndexContext } from './question/QuestionIndexContext';
 import { defaultQuestionFormData } from '../quiz-form-data';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   minQuestions,
   maxQuestions,
@@ -21,9 +21,9 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import BackButton from './BackButton';
 import NextButton from './NextButton';
-import { useStorage } from '@/custom-hooks/useStorage';
 import { storageKeys } from '@/persistence/storage-keys';
 import { DevTool } from '@hookform/devtools';
+import { isBrowser } from '@/utilities/isBrowser';
 
 type QuestionsFormProps = {
   defaultData: QuizQuestionsForm;
@@ -53,14 +53,30 @@ export default function QuestionsForm({
     control,
   });
 
-  const { getStorageItem, setStorageItem } = useStorage<QuizQuestionsForm>(
-    storageKeys.quizQuestionsDraft
-  );
+  const getStorageItem = useCallback((): QuizQuestionsForm | null => {
+    if (!isBrowser()) return null;
+    try {
+      return JSON.parse(
+        localStorage.getItem(storageKeys.quizQuestionsDraft) ?? ''
+      );
+    } catch (error) {
+      return null;
+    }
+  }, []);
+
+  const setStorageItem = useCallback((value: QuizQuestionsForm) => {
+    if (isBrowser()) {
+      localStorage.setItem(
+        storageKeys.quizQuestionsDraft,
+        JSON.stringify(value)
+      );
+    }
+  }, []);
+
   useEffect(() => {
     if (editMode) return;
     reset(getStorageItem() as QuizQuestionsForm);
   }, [editMode, getStorageItem, reset]);
-
   useEffect(() => {
     if (editMode) return;
     const subscription = watch((value) => {
@@ -68,7 +84,6 @@ export default function QuestionsForm({
     });
     return () => subscription.unsubscribe();
   }, [watch, setStorageItem, editMode]);
-
   useEffect(() => {
     if (!editMode) return;
     reset(defaultData);
