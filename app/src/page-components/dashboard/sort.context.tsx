@@ -48,11 +48,10 @@ export function useSort() {
   const { sort, setSort } = useContext(SortContext);
 
   const toggleSortMode = useCallback(() => {
-    if (sort.mode === 'asc') {
-      setSort((prevSort) => ({ ...prevSort, mode: 'desc' }));
-    } else {
-      setSort((prevSort) => ({ ...prevSort, mode: 'asc' }));
-    }
+    setSort((prevSort) => ({
+      ...prevSort,
+      mode: sort.mode === 'asc' ? 'desc' : 'asc',
+    }));
   }, [setSort, sort.mode]);
 
   const setSortOption = useCallback(

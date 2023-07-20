@@ -1,28 +1,44 @@
-import { useCallback } from 'react';
+import { isBrowser } from '@/utilities/isBrowser';
+import { SetStateAction, useCallback, useEffect, useState } from 'react';
 
-const isBrowser = typeof window !== 'undefined';
+export default function useStorage<T>(key: string, initialValue: T) {
+  const [value, setValue] = useState<T>(initialValue);
+  const [loaded, setLoaded] = useState(false);
 
-export function useStorage<T>(
-  key: string,
-  storage: Storage | undefined = isBrowser ? localStorage : undefined
-) {
-  const getStorageItem = useCallback(() => {
-    if (!isBrowser) return null;
-    try {
-      return JSON.parse(storage?.getItem(key) ?? '') as T;
-    } catch (error) {
-      return null;
+  useEffect(() => {
+    setLoaded(false);
+  }, [key]);
+
+  useEffect(() => {
+    if (!loaded && isBrowser()) {
+      const storedValue = localStorage.getItem(key);
+      try {
+        if (storedValue != null) {
+          setValue(JSON.parse(storedValue));
+        }
+      } catch (e) {
+        console.error(`Invalid localStorage value for key '${key}'`);
+      } finally {
+        setLoaded(true);
+      }
     }
-  }, [key, storage]);
+  }, [key, loaded]);
 
-  const setStorageItem = useCallback(
-    (value: T) => {
-      if (isBrowser) {
-        storage?.setItem(key, JSON.stringify(value));
+  const setStorageValue = useCallback(
+    (setStateAction: SetStateAction<T>) => {
+      if (isBrowser()) {
+        setValue((prevState) => {
+          const newValue =
+            typeof setStateAction === 'function'
+              ? (setStateAction as (prevState: T) => T)(prevState)
+              : setStateAction;
+          localStorage.setItem(key, JSON.stringify(newValue));
+          return newValue;
+        });
       }
     },
-    [key, storage]
+    [key]
   );
 
-  return { getStorageItem, setStorageItem };
+  return [value, setStorageValue] as const;
 }

@@ -20,8 +20,8 @@ import createEmotionCache from '@/createEmotionCache';
 import { Analytics } from '@vercel/analytics/react';
 import { createThemeWithMode } from '@/theme';
 import { ColorModeProvider } from '@/page-components/theme.context';
-import { useStorage } from '@/custom-hooks/useStorage';
 import { storageKeys } from '@/persistence/storage-keys';
+import useStorage from '@/custom-hooks/useStorage';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -38,30 +38,15 @@ const defaultColorMode: PaletteMode = 'dark';
 
 export default function App(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
-  const [colorMode, setColorMode] = useState<'light' | 'dark'>(
+
+  const [colorMode, setColorMode] = useStorage<PaletteMode>(
+    storageKeys.theme,
     defaultColorMode
   );
-  const { getStorageItem, setStorageItem } = useStorage<PaletteMode>(
-    storageKeys.theme
-  );
-  const [colorModeLoadedFromStorage, setColorModeLoadedFromStorage] =
-    useState(false);
   const theme = useMemo(() => createThemeWithMode(colorMode), [colorMode]);
   const toggleColorMode = useCallback(() => {
     setColorMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  }, []);
-
-  useEffect(() => {
-    const storedColorMode = getStorageItem();
-    setColorMode(storedColorMode ?? defaultColorMode);
-    setColorModeLoadedFromStorage(true);
-  }, [getStorageItem]);
-  useEffect(() => {
-    if (colorModeLoadedFromStorage) {
-      setStorageItem(colorMode);
-      document.body.setAttribute('data-theme', colorMode);
-    }
-  }, [colorMode, colorModeLoadedFromStorage, getStorageItem, setStorageItem]);
+  }, [setColorMode]);
 
   const [queryClient] = useState(() => new QueryClient());
 
