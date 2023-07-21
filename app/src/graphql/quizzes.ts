@@ -4,8 +4,14 @@ export const getAllPublishedQuizzesGQL = graphql(`
   query getAllPublishedQuizzes(
     $sortFields: [String]
     $filters: QuizFiltersInput!
+    $page: Int!
+    $pageSize: Int!
   ) {
-    quizzes(filters: $filters, sort: $sortFields, pagination: { limit: 100 }) {
+    quizzes(
+      filters: $filters
+      sort: $sortFields
+      pagination: { page: $page, pageSize: $pageSize }
+    ) {
       data {
         id
         attributes {
@@ -37,6 +43,14 @@ export const getAllPublishedQuizzesGQL = graphql(`
               }
             }
           }
+        }
+      }
+      meta {
+        pagination {
+          page
+          pageSize
+          pageCount
+          total
         }
       }
     }
