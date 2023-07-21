@@ -51,6 +51,7 @@ export const getMyQuizzesByUuidGQL = graphql(`
               id
               attributes {
                 url
+                name
               }
             }
           }

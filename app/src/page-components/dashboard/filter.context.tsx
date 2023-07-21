@@ -12,13 +12,13 @@ export const filterOptions = ['my-quizzes'] as const;
 export type FilterOption = (typeof filterOptions)[number];
 
 type FilterContextType = {
-  filters: Set<FilterOption>;
-  setFilters: Dispatch<SetStateAction<Set<FilterOption>>>;
+  filters: FilterOption[];
+  setFilters: Dispatch<SetStateAction<FilterOption[]>>;
 };
 
 const FilterContext = createContext<FilterContextType>({
-  filters: new Set(),
-  setFilters: () => new Set(),
+  filters: [],
+  setFilters: () => [],
 });
 
 export function FilterProvider({
@@ -37,44 +37,33 @@ export function useFilter() {
   const { filters, setFilters } = useContext(FilterContext);
 
   const hasFilter = useCallback(
-    (key: FilterOption) => {
-      return filters.has(key);
-    },
-
+    (filter: FilterOption) => filters.includes(filter),
     [filters]
   );
 
   const addFilter = useCallback(
-    (key: FilterOption) => {
-      setFilters((prev) => new Set(prev).add(key));
-    },
-    [setFilters]
-  );
-
-  const toggleFilter = useCallback(
-    (key: FilterOption) => {
-      setFilters((prev) => {
-        const newSet = new Set(prev);
-        if (newSet.has(key)) {
-          newSet.delete(key);
-        } else {
-          newSet.add(key);
-        }
-        return newSet;
-      });
+    (filter: FilterOption) => {
+      setFilters((prevFilters) => [...prevFilters, filter]);
     },
     [setFilters]
   );
 
   const removeFilter = useCallback(
-    (key: FilterOption) => {
-      setFilters((prev) => {
-        const newSet = new Set(prev);
-        newSet.delete(key);
-        return newSet;
-      });
+    (filter: FilterOption) => {
+      setFilters((prevFilters) => prevFilters.filter((f) => f !== filter));
     },
     [setFilters]
+  );
+
+  const toggleFilter = useCallback(
+    (filter: FilterOption) => {
+      if (filters.includes(filter)) {
+        removeFilter(filter);
+      } else {
+        addFilter(filter);
+      }
+    },
+    [addFilter, filters, removeFilter]
   );
 
   return {
@@ -87,13 +76,10 @@ export function useFilter() {
   };
 }
 
-export function useComposeFilters(
-  filters: Set<FilterOption>,
-  username?: string
-) {
+export function useComposeFilters(filters: FilterOption[], username?: string) {
   return useCallback(() => {
     const graphqlFilters: QuizFiltersInput = {};
-    if (username != null && filters.has('my-quizzes')) {
+    if (username != null && filters.includes('my-quizzes')) {
       graphqlFilters.owner = { username: { eqi: username } };
     }
     return graphqlFilters;

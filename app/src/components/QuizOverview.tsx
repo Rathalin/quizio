@@ -25,11 +25,16 @@ import LinkButton from './LinkButton';
 import { useMemo, useState } from 'react';
 import LinkIconButton from './LinkIconButton';
 import { useColorMode } from '@/page-components/theme.context';
+import Link from 'next/link';
+import { usePageTransition } from '@/persistence/page-transition.store';
+import LoadingCircle from './LoadingCircle';
+import { getBackendImageUrl } from '@/utilities/getImageUrl';
 
 type QuizOverviewProps = {
   uuid: string;
   title: string;
   description: string;
+  userUuid: string;
   username: string;
   createdAt: Date;
   questionCount: number;
@@ -43,6 +48,7 @@ export default function QuizOverview({
   uuid,
   title,
   description,
+  userUuid,
   username,
   createdAt,
   questionCount,
@@ -54,6 +60,7 @@ export default function QuizOverview({
   const { mode } = useColorMode();
   const isQuestionCountSingular = questionCount === 1;
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
+  const { transitionHref } = usePageTransition();
 
   const dateFormat = useMemo(
     () => new Intl.DateTimeFormat('en-GB', { dateStyle: 'short' }),
@@ -99,7 +106,7 @@ export default function QuizOverview({
       >
         {imageUrl != null ? (
           <Image
-            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${imageUrl}`}
+            src={getBackendImageUrl(imageUrl)}
             alt="QuizImage"
             width={300}
             height={200}
@@ -109,7 +116,6 @@ export default function QuizOverview({
               minHeight: '180px',
               filter: mode === 'light' ? 'opacity(0.8)' : 'none',
             }}
-            priority
             unoptimized
           ></Image>
         ) : (
@@ -180,13 +186,31 @@ export default function QuizOverview({
                   marginBottom: '.8rem',
                   whiteSpace: 'break-spaces',
                   overflow: 'auto',
-                  maxHeight: '12ch',
+                  maxHeight: '8rem',
                 }}
               >
                 {description}
               </Typography>
               <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                <Chip label={username} variant="filled" />
+                <Link href={`/users/${userUuid}`}>
+                  <Chip
+                    label={
+                      <Stack direction="row" alignItems="center" gap={1}>
+                        <Box component="span">{username}</Box>
+                        {transitionHref === `/users/${userUuid}` && (
+                          <LoadingCircle />
+                        )}
+                      </Stack>
+                    }
+                    variant="filled"
+                    sx={{
+                      cursor: 'pointer',
+                      '&:hover': {
+                        textDecoration: 'underline',
+                      },
+                    }}
+                  />
+                </Link>
                 <Chip
                   label={`${questionCount} question${
                     isQuestionCountSingular ? '' : 's'

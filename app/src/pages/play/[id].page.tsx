@@ -6,7 +6,8 @@ import GameSummary from '@/page-components/quiz/game/GameSummary';
 import PickAnAnswer from '@/page-components/quiz/game/PickAnAnswer';
 import PickAnAnswerPlaceholder from '@/page-components/quiz/game/PickAnAnswerPlaceholder';
 import QuizNotFound from '@/page-components/quiz/game/QuizNotFound';
-import { ContentCopy as ContentCopyIcon } from '@mui/icons-material';
+import { getBackendImageUrl } from '@/utilities/getImageUrl';
+import { ContentCopy } from '@mui/icons-material';
 import {
   Box,
   Card,
@@ -17,6 +18,8 @@ import {
   Snackbar,
   CardActions,
   Divider,
+  Typography,
+  Stack,
 } from '@mui/material';
 import {
   QueryClient,
@@ -159,7 +162,7 @@ export default function PlayIdPage({
     setQuestionIndex((index) => index + 1);
   }
 
-  function resultToClipboard() {
+  const resultScore = useMemo(() => {
     const answeredStates = answeredProgress.map(
       (answered) => answered.correctAnswerId === answered.selectedAnswerId
     );
@@ -174,10 +177,14 @@ export default function PlayIdPage({
       answeredStates.map((correct) => (correct ? '🟩' : '🟥')).join('')
     );
     lines.push(`${window.location.origin}${router.asPath}`);
+    return lines.join('\n');
+  }, [answeredProgress, quiz?.attributes?.title, router.asPath]);
 
-    navigator.clipboard.writeText(lines.join('\n'));
-
-    setShowCopiedAlert(true);
+  function writeResultToClipboard() {
+    if (resultScore != null) {
+      navigator.clipboard.writeText(resultScore);
+      setShowCopiedAlert(true);
+    }
   }
 
   function handleCopiedAlertClose(_event: unknown, reason?: string) {
@@ -208,9 +215,9 @@ export default function PlayIdPage({
             />
             <meta
               property="og:image"
-              content={`${process.env.NEXT_PUBLIC_BACKEND_URL}${
-                quiz?.attributes?.image?.data?.attributes?.url ?? ''
-              }`}
+              content={getBackendImageUrl(
+                quiz?.attributes?.image?.data?.attributes?.url
+              )}
             />
           </Head>
           {questions.length === 0 ? (
@@ -283,9 +290,29 @@ export default function PlayIdPage({
                           title: answer.attributes?.title ?? '',
                           correct: answer.attributes?.correct ?? false,
                         })) ?? [],
+                      explanation: question.attributes?.explanation ?? '',
                     }))}
                     answeredProgress={answeredProgress}
                   />
+                  <Divider />
+                  <Stack
+                    alignItems="center"
+                    gap={2}
+                    sx={{ marginBottom: 2, marginTop: 2 }}
+                  >
+                    <Typography
+                      sx={{ whiteSpace: 'pre-line', textAlign: 'center' }}
+                    >
+                      {resultScore}
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      endIcon={<ContentCopy />}
+                      onClick={writeResultToClipboard}
+                    >
+                      Copy
+                    </Button>
+                  </Stack>
                   <CardActions
                     sx={{
                       marginTop: 4,
@@ -296,13 +323,6 @@ export default function PlayIdPage({
                     }}
                   >
                     <HomeButton />
-                    <Button
-                      variant="contained"
-                      endIcon={<ContentCopyIcon />}
-                      onClick={resultToClipboard}
-                    >
-                      Share
-                    </Button>
                   </CardActions>
                 </CardContent>
               )}

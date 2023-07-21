@@ -33,6 +33,7 @@ export const getAllPublishedQuizzesGQL = graphql(`
               id
               attributes {
                 username
+                uuid
               }
             }
           }

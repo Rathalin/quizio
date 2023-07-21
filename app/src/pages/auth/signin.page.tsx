@@ -1,4 +1,5 @@
 import GradientWord from '@/components/GradientWord';
+import LoadingCircle from '@/components/LoadingCircle';
 import HomeButton from '@/components/buttons/HomeButton';
 import {
   Alert,
@@ -9,6 +10,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { useMutation } from '@tanstack/react-query';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -17,23 +19,46 @@ import { FormEvent, useState } from 'react';
 export default function SigninPage() {
   const router = useRouter();
 
+  const { mutate: login } = useMutation({
+    mutationKey: ['signIn'],
+    mutationFn: () => {
+      return signIn('credentials', {
+        identifier,
+        password,
+        redirect: false,
+      });
+    },
+    onMutate: () => {
+      setIsLoading(true);
+      setIsSuccess(false);
+      setIsError(false);
+    },
+    onSuccess: (res) => {
+      if (res?.ok) {
+        setIsSuccess(true);
+        router.push('/');
+      } else {
+        setIsLoading(false);
+        setIsError(true);
+      }
+    },
+    onError: () => {
+      setIsLoading(false);
+      setIsError(true);
+      setIsSuccess(false);
+    },
+  });
+
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const res = await signIn('credentials', {
-      identifier,
-      password,
-      redirect: false,
-    });
-    if (res?.status === 200) {
-      router.push('/');
-    } else if (res?.error != null) {
-      setError(res.error);
-    }
+    login();
   }
 
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   return (
     <Box>
@@ -75,7 +100,7 @@ export default function SigninPage() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </Box>
-            {error != null && (
+            {isError && (
               <Typography sx={{ marginTop: 2 }} variant="body2" color="error">
                 Invalid credentials
               </Typography>
@@ -89,7 +114,13 @@ export default function SigninPage() {
           }}
         >
           <HomeButton />
-          <Button variant="contained" color="primary" type="submit">
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            startIcon={isLoading ? <LoadingCircle /> : undefined}
+            disabled={isLoading || isSuccess}
+          >
             Login
           </Button>
         </Box>

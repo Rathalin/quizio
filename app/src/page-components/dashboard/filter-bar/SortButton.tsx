@@ -23,12 +23,12 @@ export default function SortButton({ option, children }: SortButtonProps) {
   }, [option, sortMode, sortOption]);
 
   function handleClick() {
+    setSortOption(option);
     if (sortOption === option) {
       toggleSortMode();
     } else {
       setSortMode('desc');
     }
-    setSortOption(option);
   }
 
   return (

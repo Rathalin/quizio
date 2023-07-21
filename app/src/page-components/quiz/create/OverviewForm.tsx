@@ -1,6 +1,5 @@
 import QuizioTextField from '@/components/inputs/QuizioTextField';
 import {
-  Alert,
   Box,
   Button,
   Card,
@@ -9,17 +8,18 @@ import {
   Stack,
 } from '@mui/material';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
-import Image from 'next/image';
 import { useIsMobile } from '@/custom-hooks/useIsMobile';
 import { constraints } from '@/content-type-utilities/content-type-constraints';
 import { QuizOverviewForm, quizOverviewFormSchema } from '../quiz-form-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import BackButton from './BackButton';
 import NextButton from './NextButton';
-import { useEffect } from 'react';
-import { useStorage } from '@/custom-hooks/useStorage';
+import { useCallback, useEffect, useMemo } from 'react';
 import { storageKeys } from '@/persistence/storage-keys';
 import { DevTool } from '@hookform/devtools';
+import Image from 'next/image';
+import { Clear } from '@mui/icons-material';
+import { isBrowser } from '@/utilities/isBrowser';
 
 const imageInput = {
   width: 300,
@@ -27,21 +27,26 @@ const imageInput = {
 } as const;
 
 type OverviewFormProps = {
-  tempDisableImageInput?: boolean;
   defaultData: QuizOverviewForm;
   onSubmit: (data: QuizOverviewForm) => void;
   backLabel: string | null;
   nextLabel: string | null;
   editMode: boolean;
+  previewImage?: {
+    url: string;
+    name: string;
+  };
+  onRemoveImage?: () => void;
 };
 
 export default function OverviewForm({
-  tempDisableImageInput = false,
   defaultData,
   onSubmit,
   backLabel,
   nextLabel,
   editMode,
+  previewImage,
+  onRemoveImage,
 }: OverviewFormProps) {
   const isMobile = useIsMobile();
   const methods = useForm<QuizOverviewForm>({
@@ -57,9 +62,26 @@ export default function OverviewForm({
     handleSubmit,
   } = methods;
 
-  const { getStorageItem, setStorageItem } = useStorage<QuizOverviewForm>(
-    storageKeys.quizOverviewDraft
-  );
+  const getStorageItem = useCallback((): QuizOverviewForm | null => {
+    if (!isBrowser()) return null;
+    try {
+      return JSON.parse(
+        localStorage.getItem(storageKeys.quizOverviewDraft) ?? ''
+      );
+    } catch (error) {
+      return null;
+    }
+  }, []);
+
+  const setStorageItem = useCallback((value: QuizOverviewForm) => {
+    if (isBrowser()) {
+      localStorage.setItem(
+        storageKeys.quizOverviewDraft,
+        JSON.stringify(value)
+      );
+    }
+  }, []);
+
   useEffect(() => {
     if (editMode) return;
     reset(getStorageItem() as QuizOverviewForm);
@@ -73,20 +95,27 @@ export default function OverviewForm({
     });
     return () => subscription.unsubscribe();
   }, [editMode, setStorageItem, watch]);
-
   useEffect(() => {
     if (!editMode) return;
     reset(defaultData);
   }, [defaultData, editMode, reset]);
 
-  const image = watch('image');
-  const previewImageUrl = image != null ? URL.createObjectURL(image) : null;
+  const imageFile = watch('image.file') as File | null;
+  const imageUrl = useMemo(() => {
+    if (imageFile != null) {
+      return URL.createObjectURL(imageFile);
+    }
+    return previewImage?.url ?? null;
+  }, [imageFile, previewImage?.url]);
+  const imageName = useMemo(() => {
+    if (imageFile != null) {
+      return imageFile?.name?.split('\\').pop()?.split('/').pop();
+    }
+    return previewImage?.name;
+  }, [imageFile, previewImage?.name]);
+
   const imageWidth = isMobile ? imageInput.width * 0.8 : imageInput.width;
   const imageHeight = isMobile ? imageInput.height * 0.8 : imageInput.height;
-
-  function getFileNameFromPath(path: string) {
-    return path.split('\\').pop()?.split('/').pop();
-  }
 
   function handleFormSubmit(data: QuizOverviewForm) {
     onSubmit(data);
@@ -139,68 +168,80 @@ export default function OverviewForm({
                 </Box>
               </Stack>
               <Stack direction="column" alignItems="start" gap={1}>
-                <Controller
-                  name="image"
-                  render={({ field }) => (
-                    <Box>
-                      <input
-                        {...field}
-                        id="quiz-image"
-                        type="file"
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                        value={undefined}
-                        onChange={(e) => {
-                          setValue(
-                            'image',
-                            e.target.files != null ? e.target.files[0] : null
-                          );
-                        }}
-                        disabled={tempDisableImageInput}
-                      />
-                      <label
-                        htmlFor="quiz-image"
-                        style={{
-                          display: 'flex',
-                        }}
-                      >
-                        <Button
-                          variant="outlined"
-                          component="span"
-                          sx={{
-                            padding: 2,
-                            width: imageWidth,
-                            minHeight: imageHeight,
+                <Stack alignItems="center" gap={1}>
+                  <Controller
+                    name="image.file"
+                    render={({ field }) => (
+                      <Box>
+                        <input
+                          {...field}
+                          id="quiz-image"
+                          type="file"
+                          accept="image/*"
+                          style={{ display: 'none' }}
+                          value={undefined}
+                          onChange={(e) => {
+                            setValue(
+                              'image.file',
+                              e.target.files != null ? e.target.files[0] : null
+                            );
                           }}
-                          disabled={tempDisableImageInput}
+                        />
+                        <label
+                          htmlFor="quiz-image"
+                          style={{
+                            display: 'flex',
+                          }}
                         >
-                          {previewImageUrl != null ? (
-                            <Stack alignItems="center">
-                              <Image
-                                src={previewImageUrl}
-                                width={imageWidth - 34}
-                                height={imageHeight - 64}
-                                alt="quiz-image"
-                                style={{ borderRadius: 2, objectFit: 'cover' }}
-                              />
-                              <Box sx={{ overflowWrap: 'anywhere' }}>
-                                {getFileNameFromPath(image!.name)}
-                              </Box>
-                            </Stack>
-                          ) : (
-                            <Box>Upload Image</Box>
-                          )}
-                        </Button>
-                      </label>
-                    </Box>
-                  )}
-                  control={control}
-                />
-                {tempDisableImageInput && (
-                  <Alert severity="warning">
-                    Changing the image is not supported yet 😕
-                  </Alert>
-                )}
+                          <Button
+                            variant="outlined"
+                            component="span"
+                            sx={{
+                              padding: 2,
+                              width: imageWidth,
+                              minHeight: imageHeight,
+                            }}
+                          >
+                            {imageUrl != null ? (
+                              <Stack alignItems="center">
+                                <Image
+                                  src={imageUrl}
+                                  width={imageWidth - 34}
+                                  height={imageHeight - 64}
+                                  alt="quiz-image"
+                                  style={{
+                                    borderRadius: 2,
+                                    objectFit: 'cover',
+                                  }}
+                                  unoptimized
+                                />
+                                <Box sx={{ overflowWrap: 'anywhere' }}>
+                                  {imageName}
+                                </Box>
+                              </Stack>
+                            ) : (
+                              <Box>Upload Image</Box>
+                            )}
+                          </Button>
+                        </label>
+                      </Box>
+                    )}
+                    control={control}
+                  />
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    startIcon={<Clear />}
+                    onClick={() => {
+                      setValue('image.file', null);
+                      if (onRemoveImage != null) {
+                        onRemoveImage();
+                      }
+                    }}
+                  >
+                    Remove
+                  </Button>
+                </Stack>
               </Stack>
             </Stack>
           </CardContent>

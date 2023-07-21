@@ -1,6 +1,6 @@
 import GradientWord from '@/components/GradientWord';
 import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
-import { useHandleGQLUnauthorized } from '@/custom-hooks/useHandleGQLUnauthorized';
+import { useHandleGqlUnauthorized } from '@/custom-hooks/useHandleGqlUnauthorized';
 import { useRedirectOnUnauthenticated } from '@/custom-hooks/useRedirectOnUnauthenticated';
 import {
   createQuestionGQL,
@@ -16,7 +16,7 @@ import {
   QuizInput,
   QuestionInput,
   AnswerInput,
-  Exact,
+  UploadFileEntity,
 } from '@/graphql/generated/graphql';
 import { getMyQuizzesByUuidGQL } from '@/graphql/myQuizzes';
 import OverviewForm from '@/page-components/quiz/create/OverviewForm';
@@ -56,12 +56,13 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { getServerSession } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   QuizOverviewForm,
   QuizQuestionsForm,
 } from '@/page-components/quiz/quiz-form-schema';
 import LoadingCircle from '@/components/LoadingCircle';
+import { getBackendImageUrl } from '@/utilities/getImageUrl';
 
 export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
   ctx
@@ -118,7 +119,7 @@ export default function QuizCreatePage({
   const queryClient = useQueryClient();
   const router = useRouter();
   const { data: session, status } = useSession();
-  const { authHeader } = useAuthHeader(session);
+  const { authHeader } = useAuthHeader();
   const [activeStep, setActiveStep] = useState(0);
   const [alertType, setAlertType] = useState<'saved' | 'save-error' | null>(
     null
@@ -130,8 +131,7 @@ export default function QuizCreatePage({
   const [questionsFormData, setQuestionsFormData] = useState<QuizQuestionsForm>(
     defaultQuestionsFormData
   );
-
-  useRedirectOnUnauthenticated(status);
+  const [removeImage, setRemoveImage] = useState(false);
 
   const ownerId = session?.user?.id?.toString();
   const quizQuery = useQuery({
@@ -150,13 +150,25 @@ export default function QuizCreatePage({
     enabled: ownerId != null,
   });
   const quiz = quizQuery.data?.quizzes?.data?.at(0);
+  const quizImage = quiz?.attributes?.image?.data;
+  const previewImage = useMemo(() => {
+    if (removeImage) return undefined;
+    return quizImage?.attributes?.url != null
+      ? {
+          url: getBackendImageUrl(quizImage?.attributes?.url),
+          name: quizImage?.attributes?.name ?? '',
+        }
+      : undefined;
+  }, [quizImage?.attributes?.name, quizImage?.attributes?.url, removeImage]);
 
   useEffect(() => {
     if (quiz != null) {
       setOverviewFormData({
         title: quiz.attributes?.title ?? '',
         description: quiz.attributes?.description ?? '',
-        image: null,
+        image: {
+          file: null,
+        },
       });
       setQuestionsFormData({
         questions:
@@ -177,7 +189,7 @@ export default function QuizCreatePage({
 
   const createQuestionMutation = useMutation({
     mutationKey: ['createQuestion'],
-    mutationFn: ({ data }: Exact<{ data: QuestionInput }>) =>
+    mutationFn: ({ data }: { data: QuestionInput }) =>
       request(
         process.env.NEXT_PUBLIC_GRAPHQL_URL,
         createQuestionGQL,
@@ -189,7 +201,7 @@ export default function QuizCreatePage({
   });
   const createAnswerMutation = useMutation({
     mutationKey: ['createAnswer'],
-    mutationFn: ({ data }: Exact<{ data: AnswerInput }>) =>
+    mutationFn: ({ data }: { data: AnswerInput }) =>
       request(
         process.env.NEXT_PUBLIC_GRAPHQL_URL,
         createAnswerGQL,
@@ -201,7 +213,7 @@ export default function QuizCreatePage({
   });
   const updateQuizMutation = useMutation({
     mutationKey: ['updateQuiz'],
-    mutationFn: ({ id, data }: Exact<{ id: string; data: QuizInput }>) =>
+    mutationFn: ({ id, data }: { id: string; data: QuizInput }) =>
       request(
         process.env.NEXT_PUBLIC_GRAPHQL_URL,
         updateQuizGQL,
@@ -214,7 +226,7 @@ export default function QuizCreatePage({
   });
   const updateQuestionMutation = useMutation({
     mutationKey: ['updateQuestion'],
-    mutationFn: ({ id, data }: Exact<{ id: string; data: QuestionInput }>) =>
+    mutationFn: ({ id, data }: { id: string; data: QuestionInput }) =>
       request(
         process.env.NEXT_PUBLIC_GRAPHQL_URL,
         updateQuestionGQL,
@@ -227,7 +239,7 @@ export default function QuizCreatePage({
   });
   const updateAnswerMutation = useMutation({
     mutationKey: ['updateAnswer'],
-    mutationFn: ({ id, data }: Exact<{ id: string; data: AnswerInput }>) =>
+    mutationFn: ({ id, data }: { id: string; data: AnswerInput }) =>
       request(
         process.env.NEXT_PUBLIC_GRAPHQL_URL,
         updateAnswerGQL,
@@ -240,7 +252,7 @@ export default function QuizCreatePage({
   });
   const deleteQuizMutation = useMutation({
     mutationKey: ['deleteQuiz'],
-    mutationFn: ({ id }: Exact<{ id: string }>) =>
+    mutationFn: ({ id }: { id: string }) =>
       request(
         process.env.NEXT_PUBLIC_GRAPHQL_URL,
         deleteQuizGQL,
@@ -252,7 +264,7 @@ export default function QuizCreatePage({
   });
   const deleteQuestionMutation = useMutation({
     mutationKey: ['deleteQuestion'],
-    mutationFn: ({ id }: Exact<{ id: string }>) =>
+    mutationFn: ({ id }: { id: string }) =>
       request(
         process.env.NEXT_PUBLIC_GRAPHQL_URL,
         deleteQuestionGQL,
@@ -264,7 +276,7 @@ export default function QuizCreatePage({
   });
   const deleteAnswerMutation = useMutation({
     mutationKey: ['deleteAnswer'],
-    mutationFn: ({ id }: Exact<{ id: string }>) =>
+    mutationFn: ({ id }: { id: string }) =>
       request(
         process.env.NEXT_PUBLIC_GRAPHQL_URL,
         deleteAnswerGQL,
@@ -274,6 +286,42 @@ export default function QuizCreatePage({
         authHeader
       ),
   });
+  const uploadImageMutation = useMutation({
+    mutationKey: ['uploadImage'],
+    mutationFn: async ({
+      file,
+    }: {
+      file: File;
+    }): Promise<[UploadFileEntity['attributes'] & { id: number }]> => {
+      const formData = new FormData();
+      formData.append('files', file);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/upload`,
+        {
+          method: 'POST',
+          body: formData,
+          headers: {
+            ...authHeader,
+          },
+        }
+      );
+      return response.json();
+    },
+  });
+  const deleteImageMutation = useMutation({
+    mutationKey: ['deleteImage'],
+    mutationFn: async ({ id }: { id: string }): Promise<void> => {
+      await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/upload/files/${id}`,
+        {
+          method: 'DELETE',
+          headers: {
+            ...authHeader,
+          },
+        }
+      );
+    },
+  });
 
   const createOrUpdateMutations = [
     createQuestionMutation,
@@ -281,22 +329,42 @@ export default function QuizCreatePage({
     updateQuizMutation,
     updateQuestionMutation,
     updateAnswerMutation,
+    uploadImageMutation,
   ];
   const deleteMutations = [
     deleteQuizMutation,
     deleteQuestionMutation,
     deleteAnswerMutation,
+    deleteImageMutation,
   ];
   const mutations = [...createOrUpdateMutations, ...deleteMutations];
-  useHandleGQLUnauthorized([
+
+  useHandleGqlUnauthorized([
     quizQuery.error,
     ...mutations.map((mutation) => mutation.error),
   ]);
+  useRedirectOnUnauthenticated(status);
 
   async function handleSaveClick() {
-    const { title, description } = overviewFormData;
+    const { title, description, image } = overviewFormData;
     const { questions } = questionsFormData;
     try {
+      let imageId = quiz?.attributes?.image?.data?.id ?? null;
+      // Delete image
+      if (imageId != null && (image.file != null || removeImage)) {
+        await deleteImageMutation.mutateAsync({
+          id: imageId,
+        });
+        imageId = null;
+      }
+      // Upload image
+      if (image.file != null) {
+        const uploadImageResponse = await uploadImageMutation.mutateAsync({
+          file: image.file,
+        });
+        imageId = uploadImageResponse.at(0)?.id?.toString() ?? '';
+      }
+
       // Update quiz
       await updateQuizMutation.mutateAsync({
         id: quiz?.id ?? '',
@@ -305,6 +373,7 @@ export default function QuizCreatePage({
           description: description?.trim(),
           published: true,
           owner: session?.user?.id?.toString() ?? '0',
+          image: imageId,
         },
       });
 
@@ -382,6 +451,8 @@ export default function QuizCreatePage({
       // Refetch quiz
       setAlertType('saved');
       queryClient.invalidateQueries(['quiz', uuid]);
+      queryClient.removeQueries(['allPublishedQuizzes']);
+      queryClient.invalidateQueries(['allPublishedQuizzes']);
       await router.push('/');
     } catch (error) {
       console.error(error);
@@ -408,12 +479,20 @@ export default function QuizCreatePage({
         });
       }
     }
+    // Delete image
+    if (quiz?.attributes?.image?.data?.id != null) {
+      await deleteImageMutation.mutateAsync({
+        id: quiz?.attributes?.image?.data?.id,
+      });
+    }
+
     // Delete quiz
     if (quiz?.id != null) {
       await deleteQuizMutation.mutateAsync({
         id: quiz.id,
       });
     }
+
     await router.push('/');
     setDialogOpen(false);
   }
@@ -509,7 +588,7 @@ export default function QuizCreatePage({
           </Card>
         </Grid>
         <Grid item xs={12} md={9}>
-          {quizQuery.isSuccess ? (
+          {quiz != null ? (
             <>
               {steps[activeStep].title === 'Overview' && (
                 <OverviewForm
@@ -521,7 +600,8 @@ export default function QuizCreatePage({
                   backLabel={backLabel}
                   nextLabel={nextLabel}
                   editMode={true}
-                  tempDisableImageInput={true}
+                  previewImage={previewImage}
+                  onRemoveImage={() => setRemoveImage(true)}
                 />
               )}
               {steps[activeStep].title === 'Questions' && (

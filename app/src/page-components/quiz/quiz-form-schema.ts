@@ -20,14 +20,17 @@ export const quizOverviewFormSchema = z.object({
     .trim()
     .max(constraints.quiz.description.maxLength)
     .optional(),
-  image: z.any().nullable(),
+  image: z.object({
+    id: z.string().optional(),
+    file: z.any().nullable(),
+  }),
 });
 export type QuizOverviewForm = z.infer<typeof quizOverviewFormSchema>;
 
 export const minQuestions = 1;
 export const maxQuestions = 20;
 export const minAnswers = 2;
-export const maxAnswers = 20;
+export const maxAnswers = 10;
 export const quizQuestionsFormSchema = z.object({
   questions: z
     .array(

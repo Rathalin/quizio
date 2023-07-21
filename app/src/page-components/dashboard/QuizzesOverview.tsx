@@ -6,8 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { useSession } from 'next-auth/react';
 import { useMemo, useState } from 'react';
-import { Sort, SortProvider, defaultSort } from './sort.context';
-import { QuizEntity } from '@/graphql/generated/graphql';
+import { SortProvider, defaultSort } from './sort.context';
 import FilterBar from './filter-bar/FilterBar';
 import { SearchProvider } from './search.context';
 import {
@@ -16,31 +15,32 @@ import {
   useComposeFilters,
 } from './filter.context';
 import GenericLoadingErrorMessage from '@/components/GenericLoadingErrorMessage';
+import { storageKeys } from '@/persistence/storage-keys';
+import useStorage from '@/custom-hooks/useStorage';
 
 export default function QuizzesOverview() {
   const { data: session } = useSession();
   const [searchText, setSearchText] = useState('');
-  const [sort, setSort] = useState<Sort>(defaultSort);
-  const [filters, setFilters] = useState<Set<FilterOption>>(new Set());
+  const [sort, setSort] = useStorage(storageKeys.sort, defaultSort);
+  const [filters, setFilters] = useStorage<FilterOption[]>(
+    storageKeys.filters,
+    []
+  );
   const composeFilters = useComposeFilters(filters, session?.user.username);
+  const gqlFilters = useMemo(() => composeFilters(), [composeFilters]);
 
   const { data, isSuccess, isLoading, isError } = useQuery({
-    queryKey: [
-      'allPublishedQuizzes',
-      sort.option,
-      sort.mode,
-      composeFilters(),
-      session?.user.username,
-    ],
+    queryKey: ['allPublishedQuizzes', sort, gqlFilters],
     queryFn: () =>
       request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getAllPublishedQuizzesGQL, {
         sortFields: [`${sort.option}:${sort.mode}`],
-        filters: composeFilters(),
+        filters: gqlFilters,
       }),
+    staleTime: 1000 * 30,
   });
 
   const quizzes = useMemo(
-    () => (data?.quizzes?.data ?? []) as QuizEntity[],
+    () => data?.quizzes?.data ?? [],
     [data?.quizzes?.data]
   );
   const searchedQuizzes = useMemo(() => {
@@ -88,6 +88,9 @@ export default function QuizzesOverview() {
                     uuid={quiz.attributes?.uuid ?? ''}
                     title={quiz.attributes?.title ?? ''}
                     description={quiz.attributes?.description ?? ''}
+                    userUuid={
+                      quiz.attributes?.owner?.data?.attributes?.uuid ?? ''
+                    }
                     username={
                       quiz.attributes?.owner?.data?.attributes?.username ?? ''
                     }
