@@ -54,6 +54,10 @@ export default function App(props: MyAppProps) {
   const { startTransitioning, stopTransitioning } = usePageTransition();
 
   useEffect(() => {
+    document.body.setAttribute('data-theme', colorMode);
+  }, [colorMode]);
+
+  useEffect(() => {
     function handleRouteChange(url: any, { shallow }: { shallow: boolean }) {
       startTransitioning(url);
       return;
