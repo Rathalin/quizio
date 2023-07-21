@@ -140,7 +140,6 @@ export default function QuizCreatePage() {
       // Upload image
       let imageId: string | null = null;
       if (image.file != null) {
-        console.log(image);
         imageId =
           (await uploadImageMutation.mutateAsync({ file: image.file })).at(0)
             ?.id ?? '';

@@ -3,10 +3,12 @@ import { Clear as ClearIcon, Search as SearchIcon } from '@mui/icons-material';
 import { InputAdornment, IconButton, debounce } from '@mui/material';
 import { useSearch } from '../search.context';
 import { useEffect, useMemo, useState } from 'react';
+import { useIsMobile } from '@/custom-hooks/useIsMobile';
 
 const debounceTime = 300;
 
 export default function SearchInput() {
+  const isMobile = useIsMobile();
   const { searchText, setSearchText } = useSearch();
   const [inputValue, setInputValue] = useState('');
 
@@ -28,7 +30,7 @@ export default function SearchInput() {
       placeholder="Search quizzes"
       onChange={(e) => setInputValue(e.target.value)}
       size="small"
-      sx={{ marginTop: '3px' }}
+      sx={{ marginTop: '2px', width: isMobile ? '230px' : 'auto' }}
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
