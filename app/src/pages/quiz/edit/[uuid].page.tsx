@@ -493,6 +493,7 @@ export default function QuizCreatePage({
       });
     }
 
+    queryClient.invalidateQueries(['allPublishedQuizzes']);
     await router.push('/');
     setDialogOpen(false);
   }

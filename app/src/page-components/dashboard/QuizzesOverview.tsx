@@ -1,8 +1,8 @@
 import QuizOverview from '@/components/QuizOverview';
 import QuizOverviewPlaceholder from '@/components/QuizOverviewPlaceholder';
 import { getAllPublishedQuizzesGQL } from '@/graphql/quizzes';
-import { Box, Typography } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
+import { Box, Button, Stack, Typography } from '@mui/material';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { useSession } from 'next-auth/react';
 import { useMemo, useState } from 'react';
@@ -17,6 +17,9 @@ import {
 import GenericLoadingErrorMessage from '@/components/GenericLoadingErrorMessage';
 import { storageKeys } from '@/persistence/storage-keys';
 import useStorage from '@/custom-hooks/useStorage';
+import LoadingCircle from '@/components/LoadingCircle';
+import GradientWord from '@/components/GradientWord';
+import GradientDivider from '@/components/GradientDivider';
 
 export default function QuizzesOverview() {
   const { data: session } = useSession();
@@ -29,19 +32,36 @@ export default function QuizzesOverview() {
   const composeFilters = useComposeFilters(filters, session?.user.username);
   const gqlFilters = useMemo(() => composeFilters(), [composeFilters]);
 
-  const { data, isSuccess, isLoading, isError } = useQuery({
+  const {
+    data,
+    isSuccess,
+    isLoading,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+    isError,
+  } = useInfiniteQuery({
     queryKey: ['allPublishedQuizzes', sort, gqlFilters],
-    queryFn: () =>
+    queryFn: ({ pageParam = 1 }) =>
       request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getAllPublishedQuizzesGQL, {
         sortFields: [`${sort.option}:${sort.mode}`],
         filters: gqlFilters,
+        page: pageParam,
+        pageSize: 12,
       }),
+    getNextPageParam: (lastPage, pages) => {
+      const pagination = lastPage.quizzes?.meta?.pagination;
+      if (pagination!.page * pagination!.pageSize < pagination!.total) {
+        return pagination!.page + 1;
+      }
+      return undefined;
+    },
     staleTime: 1000 * 30,
   });
 
   const quizzes = useMemo(
-    () => data?.quizzes?.data ?? [],
-    [data?.quizzes?.data]
+    () => data?.pages.map((page) => page.quizzes?.data).flat() ?? [],
+    [data?.pages]
   );
   const searchedQuizzes = useMemo(() => {
     const searchKey = searchText.trim().toLowerCase();
@@ -49,9 +69,9 @@ export default function QuizzesOverview() {
       ? quizzes
       : quizzes.filter((quiz) => {
           const textToSearch = `${
-            quiz.attributes?.title?.toLowerCase() ?? ''
-          } ${quiz.attributes?.description?.toLowerCase() ?? ''} ${
-            quiz.attributes?.owner?.data?.attributes?.username.toLocaleLowerCase() ??
+            quiz?.attributes?.title?.toLowerCase() ?? ''
+          } ${quiz?.attributes?.description?.toLowerCase() ?? ''} ${
+            quiz?.attributes?.owner?.data?.attributes?.username.toLocaleLowerCase() ??
             ''
           }`;
           return textToSearch.includes(searchKey);
@@ -84,28 +104,30 @@ export default function QuizzesOverview() {
               {data != null &&
                 searchedQuizzes.map((quiz) => (
                   <QuizOverview
-                    key={quiz.attributes?.uuid}
-                    uuid={quiz.attributes?.uuid ?? ''}
-                    title={quiz.attributes?.title ?? ''}
-                    description={quiz.attributes?.description ?? ''}
+                    key={quiz?.attributes?.uuid}
+                    uuid={quiz?.attributes?.uuid ?? ''}
+                    title={quiz?.attributes?.title ?? ''}
+                    description={quiz?.attributes?.description ?? ''}
                     userUuid={
-                      quiz.attributes?.owner?.data?.attributes?.uuid ?? ''
+                      quiz?.attributes?.owner?.data?.attributes?.uuid ?? ''
                     }
                     username={
-                      quiz.attributes?.owner?.data?.attributes?.username ?? ''
+                      quiz?.attributes?.owner?.data?.attributes?.username ?? ''
                     }
-                    createdAt={new Date(quiz.attributes?.createdAt)}
-                    published={quiz.attributes?.published ?? false}
-                    questionCount={quiz.attributes?.questions?.data.length ?? 0}
-                    playCount={quiz.attributes?.playCount ?? 0}
-                    imageUrl={quiz.attributes?.image?.data?.attributes?.url}
+                    createdAt={new Date(quiz?.attributes?.createdAt)}
+                    published={quiz?.attributes?.published ?? false}
+                    questionCount={
+                      quiz?.attributes?.questions?.data.length ?? 0
+                    }
+                    playCount={quiz?.attributes?.playCount ?? 0}
+                    imageUrl={quiz?.attributes?.image?.data?.attributes?.url}
                     isMyQuiz={
-                      quiz.attributes?.owner?.data?.attributes?.username ===
+                      quiz?.attributes?.owner?.data?.attributes?.username ===
                       session?.user.username
                     }
                   />
                 ))}
-              {isLoading &&
+              {(isLoading || isFetchingNextPage) &&
                 Array.from({ length: 6 }).map((_, index) => (
                   <QuizOverviewPlaceholder key={index} />
                 ))}
@@ -116,6 +138,32 @@ export default function QuizzesOverview() {
               </Typography>
             )}
             {isError && <GenericLoadingErrorMessage />}
+            <Box sx={{ marginTop: 8 }}>
+              {hasNextPage ? (
+                <Stack direction="row" justifyContent="center">
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => fetchNextPage()}
+                    disabled={isFetchingNextPage}
+                    startIcon={isFetchingNextPage ? <LoadingCircle /> : null}
+                  >
+                    {'Load more quizzes'}
+                  </Button>
+                </Stack>
+              ) : (
+                <Stack gap={2}>
+                  <GradientDivider />
+                  <Stack direction="row" justifyContent="center">
+                    <Typography>
+                      <span>{'No more '}</span>
+                      <GradientWord>{'quizzes'}</GradientWord>
+                      <span>{' to load.'}</span>
+                    </Typography>
+                  </Stack>
+                </Stack>
+              )}
+            </Box>
           </FilterProvider>
         </SortProvider>
       </SearchProvider>

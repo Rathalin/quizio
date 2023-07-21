@@ -27,6 +27,14 @@ export function createThemeWithMode(mode: PaletteMode) {
                 default: '#e2e2e2',
                 paper: '#f9f9f9',
               },
+              accent: {
+                primary: {
+                  main: '#c97900',
+                },
+                secondary: {
+                  main: '#0097d7',
+                },
+              },
             }
           : {
               text: {
@@ -48,6 +56,14 @@ export function createThemeWithMode(mode: PaletteMode) {
               background: {
                 default: '#0f0f0f',
                 paper: '#121212',
+              },
+              accent: {
+                primary: {
+                  main: '#ffaf37',
+                },
+                secondary: {
+                  main: '#2cc0ff',
+                },
               },
             }),
       },
@@ -103,10 +119,18 @@ declare module '@mui/material/styles/createPalette' {
   interface Palette {
     loading: Palette['primary'];
     placeholder: Palette['primary'];
+    accent: {
+      primary: Palette['primary'];
+      secondary: Palette['primary'];
+    };
   }
   interface PaletteOptions {
     loading: PaletteOptions['primary'];
     placeholder: PaletteOptions['primary'];
+    accent: {
+      primary: PaletteOptions['primary'];
+      secondary: PaletteOptions['primary'];
+    };
   }
 }
 

@@ -23,7 +23,7 @@ import {
   AnswerInput,
   UploadFileEntity,
 } from '@/graphql/generated/graphql';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { useSession } from 'next-auth/react';
 import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
@@ -55,6 +55,7 @@ const steps = stepTitles.map((title, index) => ({
 
 export default function QuizCreatePage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { data: session, status } = useSession();
   const { authHeader } = useAuthHeader();
   const [activeStep, setActiveStep] = useState(0);
@@ -138,7 +139,7 @@ export default function QuizCreatePage() {
     try {
       // Upload image
       let imageId: string | null = null;
-      if (image != null) {
+      if (image.file != null) {
         imageId =
           (await uploadImageMutation.mutateAsync({ file: image.file })).at(0)
             ?.id ?? '';
@@ -167,6 +168,8 @@ export default function QuizCreatePage() {
           });
         }
       }
+
+      queryClient.invalidateQueries(['allPublishedQuizzes']);
       await router.push('/');
       resetQuizLocalStorage();
       setOverviewFormData(defaultOverviewFormData);

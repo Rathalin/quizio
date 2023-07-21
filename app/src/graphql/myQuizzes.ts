@@ -33,7 +33,7 @@ export const getMyQuizzesByUuidGQL = graphql(`
               id
               attributes {
                 title
-                answers(pagination: { limit: 10 }) {
+                answers(pagination: { limit: 100 }) {
                   data {
                     id
                     attributes {
