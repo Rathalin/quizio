@@ -17,6 +17,9 @@ import {
 import GenericLoadingErrorMessage from '@/components/GenericLoadingErrorMessage';
 import { storageKeys } from '@/persistence/storage-keys';
 import useStorage from '@/custom-hooks/useStorage';
+import LoadingCircle from '@/components/LoadingCircle';
+import GradientWord from '@/components/GradientWord';
+import GradientDivider from '@/components/GradientDivider';
 
 export default function QuizzesOverview() {
   const { data: session } = useSession();
@@ -44,7 +47,7 @@ export default function QuizzesOverview() {
         sortFields: [`${sort.option}:${sort.mode}`],
         filters: gqlFilters,
         page: pageParam,
-        pageSize: 3,
+        pageSize: 12,
       }),
     getNextPageParam: (lastPage, pages) => {
       const pagination = lastPage.quizzes?.meta?.pagination;
@@ -124,7 +127,7 @@ export default function QuizzesOverview() {
                     }
                   />
                 ))}
-              {isLoading &&
+              {(isLoading || isFetchingNextPage) &&
                 Array.from({ length: 6 }).map((_, index) => (
                   <QuizOverviewPlaceholder key={index} />
                 ))}
@@ -135,19 +138,32 @@ export default function QuizzesOverview() {
               </Typography>
             )}
             {isError && <GenericLoadingErrorMessage />}
-            <Stack direction="row" justifyContent="center">
-              <Button
-                variant="contained"
-                onClick={() => fetchNextPage()}
-                disabled={!hasNextPage || isFetchingNextPage}
-              >
-                {isFetchingNextPage
-                  ? 'Loading more...'
-                  : hasNextPage
-                  ? 'Load More'
-                  : 'Nothing more to load'}
-              </Button>
-            </Stack>
+            <Box sx={{ marginTop: 8 }}>
+              {hasNextPage ? (
+                <Stack direction="row" justifyContent="center">
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => fetchNextPage()}
+                    disabled={isFetchingNextPage}
+                    startIcon={isFetchingNextPage ? <LoadingCircle /> : null}
+                  >
+                    {'Load more quizzes'}
+                  </Button>
+                </Stack>
+              ) : (
+                <Stack gap={2}>
+                  <GradientDivider />
+                  <Stack direction="row" justifyContent="center">
+                    <Typography>
+                      <span>{'No more '}</span>
+                      <GradientWord>{'quizzes'}</GradientWord>
+                      <span>{' to load.'}</span>
+                    </Typography>
+                  </Stack>
+                </Stack>
+              )}
+            </Box>
           </FilterProvider>
         </SortProvider>
       </SearchProvider>

@@ -1,20 +1,20 @@
-import { Box } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import { PropsWithChildren } from 'react';
 
 type GradientWordProps = PropsWithChildren<{
-  startColor?: string;
-  endColor?: string;
+  startColorLight?: string;
+  endColorLight?: string;
+  startColorDark?: string;
+  endColorDark?: string;
 }>;
 
-export default function GradientWord({
-  startColor = '#00B3FF',
-  endColor = '#FF9900',
-  children,
-}: GradientWordProps) {
+export default function GradientWord({ children }: GradientWordProps) {
+  const theme = useTheme();
+
   return (
     <Box
       sx={{
-        background: `linear-gradient(270deg, ${endColor} 00%, ${startColor} 100%)`,
+        background: `linear-gradient(270deg, ${theme.palette.accent.primary.main} 00%, ${theme.palette.accent.secondary.main} 100%)`,
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
       }}
