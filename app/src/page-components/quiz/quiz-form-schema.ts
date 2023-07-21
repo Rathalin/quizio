@@ -30,7 +30,7 @@ export type QuizOverviewForm = z.infer<typeof quizOverviewFormSchema>;
 export const minQuestions = 1;
 export const maxQuestions = 20;
 export const minAnswers = 2;
-export const maxAnswers = 10;
+export const maxAnswers = 12;
 export const quizQuestionsFormSchema = z.object({
   questions: z
     .array(
