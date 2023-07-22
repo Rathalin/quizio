@@ -37,7 +37,13 @@ export default function LinkButton({
 
   return (
     <Box sx={sx}>
-      {navigateOnClick ? <Link href={hrefObserver}>{button}</Link> : button}
+      {navigateOnClick ? (
+        <Link href={hrefObserver} className="no-underline">
+          {button}
+        </Link>
+      ) : (
+        button
+      )}
     </Box>
   );
 }
