@@ -1,6 +1,7 @@
 import { Container, Box } from '@mui/material';
 import { PropsWithChildren } from 'react';
 import Header from './Header';
+import Footer from './footer/Footer';
 
 type LayoutProps = PropsWithChildren<{}>;
 
@@ -11,14 +12,17 @@ export default function Layout({ children }: LayoutProps) {
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        paddingBottom: 10,
       }}
     >
       <Header />
       <Container maxWidth="lg" sx={{ flex: 1, marginTop: 4 }}>
         <main>{children}</main>
       </Container>
-      <footer></footer>
+      <Footer
+        sx={{
+          marginTop: 10,
+        }}
+      />
     </Box>
   );
 }

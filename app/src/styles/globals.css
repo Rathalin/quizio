@@ -1,6 +1,7 @@
 @import './fonts.css';
 @import './animation.css';
 @import './scrollbar.css';
+@import './heart.css';
 
 html,
 body {
@@ -16,5 +17,12 @@ body {
 
 a {
   color: inherit;
+}
+
+a:hover {
+  font-weight: bold;
+}
+
+a.no-underline {
   text-decoration: none;
 }

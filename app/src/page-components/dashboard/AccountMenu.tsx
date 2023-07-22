@@ -111,7 +111,7 @@ export default function AccountMenu() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <Link href="/quiz/create">
+        <Link href="/quiz/create" className="no-underline">
           <MenuItem>
             <ListItemIcon>
               <AddCircle />
@@ -120,7 +120,7 @@ export default function AccountMenu() {
           </MenuItem>
         </Link>
         <Divider />
-        <Link href="/users/me">
+        <Link href="/users/me" className="no-underline">
           <MenuItem onClick={handleClose}>
             <ListItemIcon>
               <AccountCircleIcon />

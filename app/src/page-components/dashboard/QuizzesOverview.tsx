@@ -1,7 +1,7 @@
 import QuizOverview from '@/components/QuizOverview';
 import QuizOverviewPlaceholder from '@/components/QuizOverviewPlaceholder';
 import { getAllPublishedQuizzesGQL } from '@/graphql/quizzes';
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { useSession } from 'next-auth/react';
@@ -17,9 +17,9 @@ import {
 import GenericLoadingErrorMessage from '@/components/GenericLoadingErrorMessage';
 import { storageKeys } from '@/persistence/storage-keys';
 import useStorage from '@/custom-hooks/useStorage';
-import LoadingCircle from '@/components/LoadingCircle';
 import GradientWord from '@/components/GradientWord';
 import GradientDivider from '@/components/GradientDivider';
+import ScrollObserver from '@/components/ScrollObserver';
 
 export default function QuizzesOverview() {
   const { data: session } = useSession();
@@ -32,6 +32,8 @@ export default function QuizzesOverview() {
   const composeFilters = useComposeFilters(filters, session?.user.username);
   const gqlFilters = useMemo(() => composeFilters(), [composeFilters]);
 
+  const pageSize = 12;
+  const placeholderCount = 6;
   const {
     data,
     isSuccess,
@@ -47,7 +49,7 @@ export default function QuizzesOverview() {
         sortFields: [`${sort.option}:${sort.mode}`],
         filters: gqlFilters,
         page: pageParam,
-        pageSize: 12,
+        pageSize,
       }),
     getNextPageParam: (lastPage, pages) => {
       const pagination = lastPage.quizzes?.meta?.pagination;
@@ -78,7 +80,7 @@ export default function QuizzesOverview() {
         });
   }, [quizzes, searchText]);
 
-  const quizzesCount = searchedQuizzes.length;
+  const quizzesCount = data?.pages[0]?.quizzes?.meta?.pagination?.total ?? 0;
 
   return (
     <Box>
@@ -128,7 +130,7 @@ export default function QuizzesOverview() {
                   />
                 ))}
               {(isLoading || isFetchingNextPage) &&
-                Array.from({ length: 6 }).map((_, index) => (
+                Array.from({ length: placeholderCount }).map((_, index) => (
                   <QuizOverviewPlaceholder key={index} />
                 ))}
             </Box>
@@ -139,18 +141,23 @@ export default function QuizzesOverview() {
             )}
             {isError && <GenericLoadingErrorMessage />}
             <Box sx={{ marginTop: 8 }}>
-              {hasNextPage ? (
-                <Stack direction="row" justifyContent="center">
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => fetchNextPage()}
-                    disabled={isFetchingNextPage}
-                    startIcon={isFetchingNextPage ? <LoadingCircle /> : null}
-                  >
-                    {'Load more quizzes'}
-                  </Button>
-                </Stack>
+              {hasNextPage && !isFetchingNextPage ? (
+                // <Stack direction="row" justifyContent="center">
+                //   <Button
+                //     variant="contained"
+                //     color="secondary"
+                //     onClick={() => fetchNextPage()}
+                //     disabled={isFetchingNextPage}
+                //     startIcon={isFetchingNextPage ? <LoadingCircle /> : null}
+                //   >
+                //     {'Load more quizzes'}
+                //   </Button>
+                // </Stack>
+                <ScrollObserver
+                  onIntersect={() => {
+                    fetchNextPage();
+                  }}
+                />
               ) : (
                 <Stack gap={2}>
                   <GradientDivider />

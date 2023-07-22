@@ -132,9 +132,7 @@ export default function SigninPage() {
               'Do you need an account to create quizzes? Feel free to contact me on '
             }
           </span>
-          <Link href="mailto:daniel@flockert.at" style={{ color: 'inherit' }}>
-            daniel@flockert.at
-          </Link>
+          <Link href="mailto:daniel@flockert.at">daniel@flockert.at</Link>
           <span>{'.'}</span>
         </Typography>
       </Alert>
