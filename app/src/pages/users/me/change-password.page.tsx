@@ -45,14 +45,14 @@ const schema = z
     path: ['global', 'passwordDifferent'],
   });
 type ChangePaswordForm = z.infer<typeof schema>;
-const defaultValues = {
+const defaultValues: ChangePaswordForm = {
   currentPassword: '',
   password: '',
   passwordConfirmation: '',
 };
 
 export default function ChangePasswordPage() {
-  const {  status } = useSession();
+  const { status } = useSession();
   const { authHeader } = useAuthHeader();
 
   const { control, handleSubmit, formState, reset } =
@@ -75,9 +75,8 @@ export default function ChangePasswordPage() {
       reset(defaultValues);
     },
   });
-  useHandleGqlUnauthorized([changePasswordMutation.error]);
 
-  useHandleGqlUnauthorized([changePasswordMutation.isError]);
+  useHandleGqlUnauthorized([changePasswordMutation.error]);
   useRedirectOnUnauthenticated(status);
 
   function onSubmit(data: ChangePaswordForm) {
