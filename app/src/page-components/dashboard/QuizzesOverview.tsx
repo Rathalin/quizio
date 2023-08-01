@@ -29,7 +29,11 @@ export default function QuizzesOverview() {
     storageKeys.filters,
     []
   );
-  const composeFilters = useComposeFilters(filters, session?.user.username);
+  const composeFilters = useComposeFilters(
+    filters,
+    { published: { eq: true } },
+    session?.user.username
+  );
   const gqlFilters = useMemo(() => composeFilters(), [composeFilters]);
 
   const pageSize = 12;
