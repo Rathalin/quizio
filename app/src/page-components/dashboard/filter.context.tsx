@@ -76,12 +76,16 @@ export function useFilter() {
   };
 }
 
-export function useComposeFilters(filters: FilterOption[], username?: string) {
+export function useComposeFilters(
+  filters: FilterOption[],
+  staticFilters?: QuizFiltersInput,
+  username?: string
+) {
   return useCallback(() => {
-    const graphqlFilters: QuizFiltersInput = {};
+    const graphqlFilters: QuizFiltersInput = { ...staticFilters };
     if (username != null && filters.includes('my-quizzes')) {
       graphqlFilters.owner = { username: { eqi: username } };
     }
     return graphqlFilters;
-  }, [filters, username]);
+  }, [filters, staticFilters, username]);
 }

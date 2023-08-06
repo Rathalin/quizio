@@ -7,6 +7,7 @@ import PickAnAnswer from '@/page-components/quiz/game/PickAnAnswer';
 import PickAnAnswerPlaceholder from '@/page-components/quiz/game/PickAnAnswerPlaceholder';
 import QuizNotFound from '@/page-components/quiz/game/QuizNotFound';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
+import { isBrowser } from '@/utilities/isBrowser';
 import { ContentCopy } from '@mui/icons-material';
 import {
   Box,
@@ -163,6 +164,7 @@ export default function PlayIdPage({
   }
 
   const resultScore = useMemo(() => {
+    if (!isBrowser()) return null;
     const answeredStates = answeredProgress.map(
       (answered) => answered.correctAnswerId === answered.selectedAnswerId
     );
