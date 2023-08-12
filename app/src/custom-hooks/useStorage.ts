@@ -14,7 +14,7 @@ export default function useStorage<T>(key: string, initialValue: T) {
       const storedValue = localStorage.getItem(key);
       try {
         if (storedValue != null) {
-          setValue(JSON.parse(storedValue));
+          setValue(JSON.parse(storedValue) as T);
         }
       } catch (e) {
         console.error(`Invalid localStorage value for key '${key}'`);

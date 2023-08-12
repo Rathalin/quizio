@@ -67,7 +67,7 @@ export default function OverviewForm({
     try {
       return JSON.parse(
         localStorage.getItem(storageKeys.quizOverviewDraft) ?? ''
-      );
+      ) as QuizOverviewForm | null;
     } catch (error) {
       return null;
     }

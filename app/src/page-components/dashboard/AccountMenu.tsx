@@ -20,12 +20,10 @@ import {
 } from '@mui/material';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { useState, type MouseEvent } from 'react';
 
 export default function AccountMenu() {
   const theme = useTheme();
-  const router = useRouter();
   const { data: session, status } = useSession();
   const isAuthenticated = status === 'authenticated';
 
@@ -128,17 +126,14 @@ export default function AccountMenu() {
             Profile
           </MenuItem>
         </Link>
-        <MenuItem
-          onClick={() => {
-            handleClose();
-            router.push('/users/me/change-password');
-          }}
-        >
-          <ListItemIcon>
-            <AdminPanelSettings />
-          </ListItemIcon>
-          Change Password
-        </MenuItem>
+        <Link href="/users/me/change-password" className="no-underline">
+          <MenuItem onClick={handleClose}>
+            <ListItemIcon>
+              <AdminPanelSettings />
+            </ListItemIcon>
+            Change Password
+          </MenuItem>
+        </Link>
         <Divider />
         <MenuItem
           onClick={() => {

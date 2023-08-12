@@ -22,6 +22,7 @@ import { createThemeWithMode } from '@/theme';
 import { ColorModeProvider } from '@/page-components/theme.context';
 import { storageKeys } from '@/persistence/storage-keys';
 import useStorage from '@/custom-hooks/useStorage';
+import '@total-typescript/ts-reset';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
