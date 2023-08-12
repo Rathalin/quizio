@@ -305,7 +305,7 @@ export default function QuizCreatePage({
           },
         }
       );
-      return response.json();
+      return response.json() as any;
     },
   });
   const deleteImageMutation = useMutation({
