@@ -105,14 +105,14 @@ export default function QuestionInput({
               >
                 {`Question ${index + 1}`}
               </Typography>
-              <Tooltip
-                title="Some inputs require your attention."
-                arrow
-                sx={{
-                  visibility: questionErrors != null ? 'visible' : 'hidden',
-                }}
-              >
-                <FormErrorIcon />
+              <Tooltip title="Some inputs require your attention." arrow>
+                <Box
+                  sx={{
+                    visibility: questionErrors != null ? 'visible' : 'hidden',
+                  }}
+                >
+                  <FormErrorIcon />
+                </Box>
               </Tooltip>
             </Stack>
             <Typography

@@ -152,17 +152,19 @@ export default function QuestionsForm({
           </CardContent>
           <CardActions sx={{ padding: 2 }}>
             <Stack gap={2} sx={{ flex: 1 }}>
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="end"
-                gap={1}
-              >
-                <FormErrorIcon />
-                <Typography color="error">
-                  This form still contains errors!
-                </Typography>
-              </Stack>
+              {!isValid && (
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="end"
+                  gap={1}
+                >
+                  <FormErrorIcon />
+                  <Typography color="error">
+                    This form still contains errors!
+                  </Typography>
+                </Stack>
+              )}
               <Stack
                 direction="row"
                 justifyContent="space-between"
