@@ -29,7 +29,7 @@ export const authOptions: AuthOptions = {
           }
         );
         if (response.ok) {
-          return await response.json();
+          return (await response.json()) as any;
         }
         return null;
       },

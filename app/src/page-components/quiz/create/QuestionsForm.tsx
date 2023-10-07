@@ -58,7 +58,7 @@ export default function QuestionsForm({
     try {
       return JSON.parse(
         localStorage.getItem(storageKeys.quizQuestionsDraft) ?? ''
-      );
+      ) as QuizQuestionsForm | null;
     } catch (error) {
       return null;
     }
