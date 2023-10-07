@@ -31,6 +31,7 @@ import {
 } from '../../quiz-form-schema';
 import { constraints } from '@/content-type-utilities/content-type-constraints';
 import { ZodFieldErrors } from '../../../../../types/hook-form-zod';
+import { FormErrorIcon } from '../../FormErrorIcon';
 
 type QuestionInputProps = {
   deletable: boolean;
@@ -111,7 +112,7 @@ export default function QuestionInput({
                   visibility: questionErrors != null ? 'visible' : 'hidden',
                 }}
               >
-                <ReportProblemIcon color="error" />
+                <FormErrorIcon />
               </Tooltip>
             </Stack>
             <Typography

@@ -4,7 +4,9 @@ import {
   Card,
   CardActions,
   CardContent,
+  Stack,
   Tooltip,
+  Typography,
 } from '@mui/material';
 import QuestionInput from './question/QuestionInput';
 import { Add as AddIcon } from '@mui/icons-material';
@@ -24,6 +26,7 @@ import NextButton from './NextButton';
 import { storageKeys } from '@/persistence/storage-keys';
 import { DevTool } from '@hookform/devtools';
 import { isBrowser } from '@/utilities/isBrowser';
+import { FormErrorIcon } from '../FormErrorIcon';
 
 type QuestionsFormProps = {
   defaultData: QuizQuestionsForm;
@@ -47,7 +50,14 @@ export default function QuestionsForm({
     defaultValues: defaultData,
     resolver: zodResolver(quizQuestionsFormSchema),
   });
-  const { control, handleSubmit, getValues, reset, watch } = methods;
+  const {
+    control,
+    handleSubmit,
+    getValues,
+    reset,
+    watch,
+    formState: { isValid },
+  } = methods;
   const { fields, append, remove } = useFieldArray({
     name: 'questions',
     control,
@@ -140,11 +150,30 @@ export default function QuestionsForm({
               </Tooltip>
             </Box>
           </CardContent>
-          <CardActions sx={{ padding: 2, justifyContent: 'space-between' }}>
-            <BackButton onClick={() => onBack(getValues())}>
-              {backLabel}
-            </BackButton>
-            <NextButton>{nextLabel}</NextButton>
+          <CardActions sx={{ padding: 2 }}>
+            <Stack gap={2} sx={{ flex: 1 }}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="end"
+                gap={1}
+              >
+                <FormErrorIcon />
+                <Typography color="error">
+                  This form still contains errors!
+                </Typography>
+              </Stack>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                flexWrap="wrap"
+              >
+                <BackButton onClick={() => onBack(getValues())}>
+                  {backLabel}
+                </BackButton>
+                <NextButton>{nextLabel}</NextButton>
+              </Stack>
+            </Stack>
           </CardActions>
         </Card>
       </form>
