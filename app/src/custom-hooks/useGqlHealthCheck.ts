@@ -14,7 +14,8 @@ export function useGqlHealthCheck() {
     queryFn: () =>
       request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getMeGQL, {}, authHeader),
     enabled: session != null,
-    staleTime: 1000 * 30,
+    staleTime: 1000 * 10,
+    retry: false,
   });
 
   useHandleGqlUnauthorized([error]);
