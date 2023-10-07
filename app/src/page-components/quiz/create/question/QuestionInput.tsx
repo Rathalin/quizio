@@ -9,6 +9,7 @@ import {
   Stack,
   Tooltip,
   Typography,
+  useTheme,
 } from '@mui/material';
 import AnswerInput from './answer/AnswerInput';
 import {
@@ -44,11 +45,13 @@ export default function QuestionInput({
   expanded,
   onExpand,
 }: QuestionInputProps) {
+  const theme = useTheme();
   const index = useQuestionIndex();
   const {
     control,
     getValues,
     formState: { errors: formErrors },
+    watch,
   } = useFormContext<QuizQuestionsForm>();
   const name = `questions.${index}` as const;
   const { fields, append, remove } = useFieldArray<QuizQuestionsForm>({
@@ -84,20 +87,39 @@ export default function QuestionInput({
           justifyContent="space-between"
           sx={{ flex: 1 }}
         >
-          <Stack direction="row" alignItems="center" gap={4} sx={{ flex: 1 }}>
-            <Typography
-              variant="h5"
-              sx={{
-                marginBlock: 0,
-              }}
+          <Stack gap={0}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              columnGap={3}
+              rowGap={1}
+              flexWrap="wrap"
+              sx={{ flex: 1 }}
             >
-              {`Question ${index + 1}`}
-            </Typography>
-            {questionErrors != null && (
-              <Tooltip title="Some inputs require your attention." arrow>
+              <Typography
+                variant="h5"
+                sx={{
+                  marginBlock: 0,
+                }}
+              >
+                {`Question ${index + 1}`}
+              </Typography>
+              <Tooltip
+                title="Some inputs require your attention."
+                arrow
+                sx={{
+                  visibility: questionErrors != null ? 'visible' : 'hidden',
+                }}
+              >
                 <ReportProblemIcon color="error" />
               </Tooltip>
-            )}
+            </Stack>
+            <Typography
+              variant="body2"
+              sx={{ color: theme.palette.text.disabled }}
+            >
+              {watch(`${name}.title`)}
+            </Typography>
           </Stack>
           <DeleteQuestionButton disabled={!deletable} onDelete={onDelete} />
         </Stack>
