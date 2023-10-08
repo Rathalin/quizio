@@ -632,7 +632,7 @@ export default function QuizCreatePage({
                   isLoading={mutations.some((mutation) => mutation.isLoading)}
                   isDisabled={
                     mutations.some((mutation) => mutation.isLoading) ||
-                    mutations.some((mutation) => mutation.isSuccess)
+                    mutations.every((mutation) => mutation.isSuccess)
                   }
                 />
               )}
