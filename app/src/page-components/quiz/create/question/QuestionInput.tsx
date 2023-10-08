@@ -16,7 +16,6 @@ import {
   Add as AddIcon,
   ExpandMore as ExpandMoreIcon,
   Help,
-  ReportProblem as ReportProblemIcon,
 } from '@mui/icons-material';
 import DeleteQuestionButton from './DeleteQuestionButton';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
