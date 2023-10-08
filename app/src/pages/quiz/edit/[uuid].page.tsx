@@ -28,7 +28,6 @@ import {
 } from '@/page-components/quiz/quiz-form-data';
 import DeleteQuizDialog from '@/page-components/quiz/edit/DeleteQuizDialog';
 import OverviewFormPlaceholder from '@/page-components/quiz/edit/OverviewFormPlaceholder';
-import { authOptions } from '@/pages/api/auth/[...nextauth].page';
 import { Delete as DeleteIcon } from '@mui/icons-material';
 import {
   Box,
@@ -45,15 +44,12 @@ import {
   Alert,
 } from '@mui/material';
 import {
-  QueryClient,
-  dehydrate,
   useMutation,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { getServerSession } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
@@ -74,29 +70,28 @@ export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
     };
   }
 
-  const session = await getServerSession(ctx.req, ctx.res, authOptions);
-
-  const queryClient = new QueryClient();
-  await queryClient.prefetchQuery({
-    queryKey: ['quiz', uuid],
-    queryFn: () =>
-      request(
-        process.env.NEXT_PUBLIC_GRAPHQL_URL,
-        getMyQuizzesByUuidGQL,
-        {
-          uuid,
-          ownerId: session?.user?.id?.toString() ?? '',
-        },
-        {
-          Authorization: `Bearer ${session?.user.acessToken}`,
-        }
-      ),
-  });
+  // const session = await getServerSession(ctx.req, ctx.res, authOptions);
+  // const queryClient = new QueryClient();
+  // await queryClient.prefetchQuery({
+  //   queryKey: ['quiz', uuid],
+  //   queryFn: () =>
+  //     request(
+  //       process.env.NEXT_PUBLIC_GRAPHQL_URL,
+  //       getMyQuizzesByUuidGQL,
+  //       {
+  //         uuid,
+  //         ownerId: session?.user?.id?.toString() ?? '',
+  //       },
+  //       {
+  //         Authorization: `Bearer ${session?.user.acessToken}`,
+  //       }
+  //     ),
+  // });
 
   return {
     props: {
       uuid,
-      dehydratedState: dehydrate(queryClient),
+      // dehydratedState: dehydrate(queryClient),
     },
   };
 };
