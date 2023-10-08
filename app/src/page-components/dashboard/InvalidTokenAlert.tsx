@@ -1,3 +1,4 @@
+import SignInButton from '@/components/buttons/SignInButton';
 import { Alert, AlertTitle, Box, Collapse } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -31,7 +32,10 @@ export default function InvalidTokenAlert() {
         }}
       >
         <AlertTitle>Your session has expired!</AlertTitle>
-        <Box>Please log in again.</Box>
+        <Box>Please sign in again.</Box>
+        <Box sx={{ marginBlock: 2 }}>
+          <SignInButton color="inherit" />
+        </Box>
       </Alert>
     </Collapse>
   );
