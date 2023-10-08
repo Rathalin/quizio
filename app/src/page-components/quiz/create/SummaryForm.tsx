@@ -53,10 +53,11 @@ export default function SummaryForm({
           {title}
         </Typography>
         <Typography variant="body1">{description}</Typography>
+        <Divider sx={{ marginTop: 2 }} />
         <List>
           {questions.map((question, qIndex) => (
             <Box key={`question-${qIndex}`}>
-              {qIndex > 0 && <Divider />}
+              {qIndex > 0 && <Divider sx={{ marginBottom: 1 }} />}
               <ListItem>
                 <Box>
                   <Stack direction="row" alignItems="center" gap={2}>

@@ -49,7 +49,13 @@ export default function App(props: MyAppProps) {
     setColorMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
   }, [setColorMode]);
 
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      }
+    }
+  }));
 
   const router = useRouter();
   const { startTransitioning, stopTransitioning } = usePageTransition();

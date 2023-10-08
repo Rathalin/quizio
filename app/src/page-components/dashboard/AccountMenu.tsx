@@ -1,24 +1,22 @@
+import SignInButton from '@/components/buttons/SignInButton';
 import {
   AccountCircle as AccountCircleIcon,
   AddCircle,
   AdminPanelSettings,
-  Login as LoginIcon,
   Logout as LogoutIcon,
   // Settings as SettingsIcon,
 } from '@mui/icons-material';
 import {
   Avatar,
-  Button,
   Divider,
   IconButton,
   ListItemIcon,
   Menu,
   MenuItem,
   lighten,
-  useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { signIn, signOut, useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useState, type MouseEvent } from 'react';
 
@@ -30,8 +28,6 @@ export default function AccountMenu() {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = anchorEl != null;
 
-  const isSmScreen = useMediaQuery(theme.breakpoints.down('sm'));
-
   function handleClick(event: MouseEvent<HTMLElement>) {
     setAnchorEl(event.currentTarget);
   }
@@ -41,26 +37,7 @@ export default function AccountMenu() {
   }
 
   if (!isAuthenticated || session == null) {
-    if (isSmScreen) {
-      return (
-        <IconButton
-          color="primary"
-          onClick={() => signIn()}
-          aria-label="Sign in"
-        >
-          <LoginIcon />
-        </IconButton>
-      );
-    }
-    return (
-      <Button
-        variant="outlined"
-        endIcon={<LoginIcon />}
-        onClick={() => signIn()}
-      >
-        Sign In
-      </Button>
-    );
+    return <SignInButton />;
   }
 
   const initial = session.user.username.at(0)?.toUpperCase();
