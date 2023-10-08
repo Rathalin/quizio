@@ -24,6 +24,7 @@ const documents = {
     "\n  mutation deleteQuiz($id: ID!) {\n    deleteQuiz(id: $id) {\n      data {\n        id\n      }\n    }\n  }\n": types.DeleteQuizDocument,
     "\n  mutation deleteQuestion($id: ID!) {\n    deleteQuestion(id: $id) {\n      data {\n        id\n      }\n    }\n  }\n": types.DeleteQuestionDocument,
     "\n  mutation deleteAnswer($id: ID!) {\n    deleteAnswer(id: $id) {\n      data {\n        id\n      }\n    }\n  }\n": types.DeleteAnswerDocument,
+    "\n  query gqlHealthCheck {\n    me {\n      id\n    }\n  }\n": types.GqlHealthCheckDocument,
     "\n  query getMyQuizsOverviewsOfOwner($ownerId: ID!) {\n    quizzes(filters: { owner: { id: { eq: $ownerId } } }) {\n      data {\n        id\n        attributes {\n          title\n          description\n          published\n          questions {\n            data {\n              id\n            }\n          }\n        }\n      }\n    }\n  }\n": types.GetMyQuizsOverviewsOfOwnerDocument,
     "\n  query getMyQuizzesByUuid($uuid: String!, $ownerId: ID!) {\n    quizzes(filters: { uuid: { eq: $uuid }, owner: { id: { eq: $ownerId } } }) {\n      data {\n        id\n        attributes {\n          title\n          description\n          questions(pagination: { limit: 100 }) {\n            data {\n              id\n              attributes {\n                title\n                answers(pagination: { limit: 100 }) {\n                  data {\n                    id\n                    attributes {\n                      title\n                      correct\n                    }\n                  }\n                }\n                explanation\n              }\n            }\n          }\n          image {\n            data {\n              id\n              attributes {\n                url\n                name\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n": types.GetMyQuizzesByUuidDocument,
     "\n  query getPlayCountOfQuiz($quizId: ID!) {\n    quiz(id: $quizId) {\n      data {\n        attributes {\n          playCount\n        }\n      }\n    }\n  }\n": types.GetPlayCountOfQuizDocument,
@@ -93,6 +94,10 @@ export function graphql(source: "\n  mutation deleteQuestion($id: ID!) {\n    de
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation deleteAnswer($id: ID!) {\n    deleteAnswer(id: $id) {\n      data {\n        id\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation deleteAnswer($id: ID!) {\n    deleteAnswer(id: $id) {\n      data {\n        id\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query gqlHealthCheck {\n    me {\n      id\n    }\n  }\n"): (typeof documents)["\n  query gqlHealthCheck {\n    me {\n      id\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
