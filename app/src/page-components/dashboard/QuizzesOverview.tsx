@@ -20,6 +20,7 @@ import useStorage from '@/custom-hooks/useStorage';
 import GradientWord from '@/components/GradientWord';
 import GradientDivider from '@/components/GradientDivider';
 import ScrollObserver from '@/components/ScrollObserver';
+import { seconds } from '@/utilities/time';
 
 export default function QuizzesOverview() {
   const { data: session } = useSession();
@@ -62,7 +63,7 @@ export default function QuizzesOverview() {
       }
       return undefined;
     },
-    staleTime: 1000 * 30,
+    staleTime: seconds(30),
   });
 
   const quizzes = useMemo(

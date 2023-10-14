@@ -4,6 +4,7 @@ import { useAuthHeader } from './useAuthHeader';
 import { useHandleGqlUnauthorized } from './useHandleGqlUnauthorized';
 import { useSession } from 'next-auth/react';
 import { healthCheckGql } from '@/graphql/health';
+import { seconds } from '@/utilities/time';
 
 export function useGqlHealthCheck() {
   const { data: session } = useSession();
@@ -19,7 +20,7 @@ export function useGqlHealthCheck() {
         authHeader
       ),
     enabled: session != null,
-    staleTime: 1000 * 10,
+    staleTime: seconds(10),
   });
 
   useHandleGqlUnauthorized([error]);
