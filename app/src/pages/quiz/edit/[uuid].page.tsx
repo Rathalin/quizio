@@ -76,21 +76,37 @@ export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
 
   const session = await getServerSession(ctx.req, ctx.res, authOptions);
   const queryClient = new QueryClient();
+
+  async function fetchMyQuizzedByUuid(uuid: string) {
+    return request(
+      process.env.NEXT_PUBLIC_GRAPHQL_URL,
+      getMyQuizzesByUuidGQL,
+      {
+        uuid,
+        ownerId: session?.user?.id?.toString() ?? '',
+      },
+      {
+        Authorization: `Bearer ${session?.user.acessToken}`,
+      }
+    );
+  }
+
   await queryClient.prefetchQuery({
     queryKey: ['quiz', uuid],
-    queryFn: () =>
-      request(
-        process.env.NEXT_PUBLIC_GRAPHQL_URL,
-        getMyQuizzesByUuidGQL,
-        {
-          uuid,
-          ownerId: session?.user?.id?.toString() ?? '',
-        },
-        {
-          Authorization: `Bearer ${session?.user.acessToken}`,
-        }
-      ),
+    queryFn: () => fetchMyQuizzedByUuid(uuid),
   });
+
+  if (
+    (
+      queryClient.getQueryData(['quiz', uuid]) as Awaited<
+        ReturnType<typeof fetchMyQuizzedByUuid>
+      >
+    )?.quizzes?.data?.length === 0
+  ) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {
