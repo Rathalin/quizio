@@ -43,6 +43,7 @@ import {
   Alert,
 } from '@mui/material';
 import {
+  QueryClient,
   dehydrate,
   useMutation,
   useQuery,
@@ -60,6 +61,8 @@ import {
 import LoadingCircle from '@/components/LoadingCircle';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
 import QuestionsForm from '@/page-components/quiz/create/QuestionsForm';
+import { authOptions } from '@/pages/api/auth/[...nextauth].page';
+import { getServerSession } from 'next-auth';
 
 export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
   ctx
