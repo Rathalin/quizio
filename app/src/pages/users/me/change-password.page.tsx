@@ -58,6 +58,7 @@ export default function ChangePasswordPage() {
   const { control, handleSubmit, formState, reset } =
     useForm<ChangePaswordForm>({
       defaultValues,
+      //@ts-ignore
       resolver: zodResolver(schema),
     });
   const errors = formState.errors as ZodFieldErrors<ChangePaswordForm>;

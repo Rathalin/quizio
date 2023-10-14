@@ -48,6 +48,7 @@ export default function QuestionsForm({
   const [expanded, setExpanded] = useState<string | null>(null);
   const methods = useForm({
     defaultValues: defaultData,
+    //@ts-ignore
     resolver: zodResolver(quizQuestionsFormSchema),
   });
   const {

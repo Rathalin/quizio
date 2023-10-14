@@ -51,6 +51,7 @@ export default function OverviewForm({
   const isMobile = useIsMobile();
   const methods = useForm<QuizOverviewForm>({
     defaultValues: defaultData,
+    //@ts-ignore
     resolver: zodResolver(quizOverviewFormSchema),
   });
   const {
