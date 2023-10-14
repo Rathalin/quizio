@@ -20,7 +20,6 @@ import {
 } from '@/graphql/generated/graphql';
 import { getMyQuizzesByUuidGQL } from '@/graphql/myQuizzes';
 import OverviewForm from '@/page-components/quiz/create/OverviewForm';
-import QuestionsForm from '@/page-components/quiz/create/QuestionsForm';
 import SummaryForm from '@/page-components/quiz/create/SummaryForm';
 import {
   defaultOverviewFormData,
@@ -43,11 +42,7 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material';
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useSession } from 'next-auth/react';
@@ -601,6 +596,9 @@ export default function QuizCreatePage({
                 />
               )}
               {steps[activeStep].title === 'Questions' && (
+                <>
+                  Temporary removed component
+                  {/* 
                 <QuestionsForm
                   defaultData={questionsFormData}
                   onSubmit={(data) => {
@@ -614,7 +612,8 @@ export default function QuizCreatePage({
                   backLabel={backLabel}
                   nextLabel={nextLabel}
                   editMode={true}
-                />
+                /> */}
+                </>
               )}
               {steps[activeStep].title === 'Summary' && (
                 <SummaryForm
