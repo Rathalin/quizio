@@ -1,10 +1,8 @@
 import { AnsweredState } from '@/pages/play/[id].page';
-import {
-  Cancel as CancelIcon,
-  CheckCircle as CheckCircleIcon,
-  Circle as CircleIcon,
-} from '@mui/icons-material';
 import { Stack } from '@mui/material';
+import CancelIcon from '@mui/icons-material/Cancel';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CircleIcon from '@mui/icons-material/RadioButtonUnchecked';
 
 type ScoreProgressProps = {
   answeredProgress: AnsweredState[];

@@ -20,7 +20,6 @@ import {
 } from '@/graphql/generated/graphql';
 import { getMyQuizzesByUuidGQL } from '@/graphql/myQuizzes';
 import OverviewForm from '@/page-components/quiz/create/OverviewForm';
-import QuestionsForm from '@/page-components/quiz/create/QuestionsForm';
 import SummaryForm from '@/page-components/quiz/create/SummaryForm';
 import {
   defaultOverviewFormData,
@@ -28,7 +27,7 @@ import {
 } from '@/page-components/quiz/quiz-form-data';
 import DeleteQuizDialog from '@/page-components/quiz/edit/DeleteQuizDialog';
 import OverviewFormPlaceholder from '@/page-components/quiz/edit/OverviewFormPlaceholder';
-import { Delete as DeleteIcon } from '@mui/icons-material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
   Box,
   Typography,
@@ -43,11 +42,7 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material';
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useSession } from 'next-auth/react';
@@ -59,6 +54,7 @@ import {
 } from '@/page-components/quiz/quiz-form-schema';
 import LoadingCircle from '@/components/LoadingCircle';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
+import QuestionsForm from '@/page-components/quiz/create/QuestionsForm';
 
 export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
   ctx

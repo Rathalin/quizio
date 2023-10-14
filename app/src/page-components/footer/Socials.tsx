@@ -1,22 +1,25 @@
-import { AccountBox, GitHub, LinkedIn, Twitter } from '@mui/icons-material';
 import { Box, Stack, useTheme } from '@mui/material';
 import Link from 'next/link';
 import { PropsWithChildren } from 'react';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import TwitterIcon from '@mui/icons-material/Twitter';
 
 export default function Socials() {
   return (
     <Stack direction="row" gap={2} flexWrap="wrap">
       <SocialIcon href="https://flockert.at/">
-        <AccountBox />
+        <AccountBoxIcon />
       </SocialIcon>
       <SocialIcon href="https://github.com/rathalin/">
-        <GitHub />
+        <GitHubIcon />
       </SocialIcon>
       <SocialIcon href="https://www.linkedin.com/in/daniel-flockert-63ba26201/">
-        <LinkedIn />
+        <LinkedInIcon />
       </SocialIcon>
       <SocialIcon href="https://twitter.com/Rathalin">
-        <Twitter />
+        <TwitterIcon />
       </SocialIcon>
     </Stack>
   );

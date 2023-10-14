@@ -1,5 +1,5 @@
-import { Delete as DeleteIcon } from '@mui/icons-material';
 import { Tooltip, IconButton, Box } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 type DeleteQuestionButtonProps = {
   onDelete: () => void;

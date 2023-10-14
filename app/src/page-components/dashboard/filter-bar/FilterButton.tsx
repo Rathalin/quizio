@@ -1,6 +1,7 @@
 import { Button } from '@mui/material';
 import { FilterOption, useFilter } from '../filter.context';
-import { CheckBoxOutlineBlank, CheckBoxOutlined } from '@mui/icons-material';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import { PropsWithChildren } from 'react';
 
 type FilterButtonProps = PropsWithChildren<{
@@ -15,7 +16,11 @@ export default function FilterButton({ filter, children }: FilterButtonProps) {
       variant="outlined"
       onClick={() => toggleFilter(filter)}
       startIcon={
-        hasFilter(filter) ? <CheckBoxOutlined /> : <CheckBoxOutlineBlank />
+        hasFilter(filter) ? (
+          <CheckBoxOutlinedIcon />
+        ) : (
+          <CheckBoxOutlineBlankIcon />
+        )
       }
     >
       {children}

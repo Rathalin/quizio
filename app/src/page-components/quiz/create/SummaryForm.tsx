@@ -1,9 +1,4 @@
 import {
-  Check as CheckIcon,
-  Clear as ClearIcon,
-  Publish as PublishIcon,
-} from '@mui/icons-material';
-import {
   Box,
   Button,
   Card,
@@ -20,6 +15,9 @@ import IndexAvatar from '../game/IndexAvatar';
 import { QuizOverviewForm, QuizQuestionsForm } from '../quiz-form-schema';
 import LoadingCircle from '@/components/LoadingCircle';
 import BackButton from './BackButton';
+import PublishIcon from '@mui/icons-material/Publish';
+import CheckIcon from '@mui/icons-material/Check';
+import ClearIcon from '@mui/icons-material/Clear';
 
 type SummaryFormProps = {
   overviewFormData: QuizOverviewForm;

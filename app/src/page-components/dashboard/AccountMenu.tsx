@@ -1,11 +1,8 @@
 import SignInButton from '@/components/buttons/SignInButton';
-import {
-  AccountCircle as AccountCircleIcon,
-  AddCircle,
-  AdminPanelSettings,
-  Logout as LogoutIcon,
-  // Settings as SettingsIcon,
-} from '@mui/icons-material';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import LogoutIcon from '@mui/icons-material/Logout';
 import {
   Avatar,
   Divider,
@@ -89,7 +86,7 @@ export default function AccountMenu() {
         <Link href="/quiz/create" className="no-underline">
           <MenuItem>
             <ListItemIcon>
-              <AddCircle />
+              <AddCircleIcon />
             </ListItemIcon>
             Create a new quiz
           </MenuItem>
@@ -106,7 +103,7 @@ export default function AccountMenu() {
         <Link href="/users/me/change-password" className="no-underline">
           <MenuItem onClick={handleClose}>
             <ListItemIcon>
-              <AdminPanelSettings />
+              <AdminPanelSettingsIcon />
             </ListItemIcon>
             Change Password
           </MenuItem>

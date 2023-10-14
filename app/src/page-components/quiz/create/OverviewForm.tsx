@@ -18,8 +18,8 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { storageKeys } from '@/persistence/storage-keys';
 import { DevTool } from '@hookform/devtools';
 import Image from 'next/image';
-import { Clear } from '@mui/icons-material';
 import { isBrowser } from '@/utilities/isBrowser';
+import ClearIcon from '@mui/icons-material/Clear';
 
 const imageInput = {
   width: 300,
@@ -51,6 +51,7 @@ export default function OverviewForm({
   const isMobile = useIsMobile();
   const methods = useForm<QuizOverviewForm>({
     defaultValues: defaultData,
+    //@ts-ignore
     resolver: zodResolver(quizOverviewFormSchema),
   });
   const {
@@ -231,7 +232,7 @@ export default function OverviewForm({
                   <Button
                     variant="outlined"
                     color="error"
-                    startIcon={<Clear />}
+                    startIcon={<ClearIcon />}
                     onClick={() => {
                       setValue('image.file', null);
                       if (onRemoveImage != null) {
