@@ -26,9 +26,9 @@ import {
 import { constraints } from '@/content-type-utilities/content-type-constraints';
 import { ZodFieldErrors } from '../../../../../types/hook-form-zod';
 import { FormErrorIcon } from '../../FormErrorIcon';
-import HelpIcon from '@mui/icons-material/Help';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
+import InfoIcon from '@mui/icons-material/Info';
 
 type QuestionInputProps = {
   deletable: boolean;
@@ -215,7 +215,7 @@ export default function QuestionInput({
                           title="Explain the correct answer or give some context. This input is optional."
                           arrow
                         >
-                          <HelpIcon />
+                          <InfoIcon />
                         </Tooltip>
                       </InputAdornment>
                     ),
