@@ -190,6 +190,9 @@ export default function QuizCreatePage({
           quiz?.attributes?.questions?.data.map((question) => ({
             id: question.id ?? '',
             title: question.attributes?.title ?? '',
+            questionImage: {
+              file: null,
+            },
             answers:
               question.attributes?.answers?.data.map((answer) => ({
                 id: answer.id ?? '',
@@ -197,6 +200,9 @@ export default function QuizCreatePage({
                 isCorrect: answer.attributes?.correct ?? false,
               })) ?? [],
             explanation: question.attributes?.explanation ?? '',
+            explanationImage: {
+              file: null,
+            },
           })) ?? [],
       });
     }

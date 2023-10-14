@@ -749,6 +749,8 @@ export type Question = {
   answers?: Maybe<AnswerRelationResponseCollection>;
   createdAt?: Maybe<Scalars['DateTime']['output']>;
   explanation?: Maybe<Scalars['String']['output']>;
+  explanationImage?: Maybe<UploadFileEntityResponse>;
+  questionImage?: Maybe<UploadFileEntityResponse>;
   quiz?: Maybe<QuizEntityResponse>;
   title: Scalars['String']['output'];
   updatedAt?: Maybe<Scalars['DateTime']['output']>;
@@ -794,6 +796,8 @@ export type QuestionFiltersInput = {
 export type QuestionInput = {
   answers?: InputMaybe<Array<InputMaybe<Scalars['ID']['input']>>>;
   explanation?: InputMaybe<Scalars['String']['input']>;
+  explanationImage?: InputMaybe<Scalars['ID']['input']>;
+  questionImage?: InputMaybe<Scalars['ID']['input']>;
   quiz?: InputMaybe<Scalars['ID']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
 };

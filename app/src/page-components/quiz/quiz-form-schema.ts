@@ -36,6 +36,10 @@ export const quizQuestionsFormSchema = z.object({
     .array(
       z.object({
         id: z.string().optional(),
+        questionImage: z.object({
+          id: z.string().optional(),
+          file: z.any().nullable(),
+        }),
         title: z
           .string()
           .trim()
@@ -74,6 +78,10 @@ export const quizQuestionsFormSchema = z.object({
           .trim()
           .max(constraints.quiz.question.explanation.maxLength)
           .optional(),
+        explanationImage: z.object({
+          id: z.string().optional(),
+          file: z.any().nullable(),
+        }),
       })
     )
     .min(minQuestions)

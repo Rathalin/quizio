@@ -85,7 +85,7 @@ export default function AlertsViewer() {
                       style={{
                         objectFit: 'cover',
                         filter: mode === 'light' ? 'opacity(0.8)' : 'none',
-                        borderRadius: 2,
+                        borderRadius: 4,
                       }}
                       unoptimized
                     />

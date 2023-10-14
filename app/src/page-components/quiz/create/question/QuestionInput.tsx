@@ -29,12 +29,21 @@ import { FormErrorIcon } from '../../FormErrorIcon';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
 import InfoIcon from '@mui/icons-material/Info';
+import { ClearImageInputIcon } from '../ClearImageInputIcon';
+import { useImageInputDimensions } from '../useImageInputDimensions';
+import { useMemo } from 'react';
+import Image from 'next/image';
 
 type QuestionInputProps = {
   deletable: boolean;
   onDelete: () => void;
   expanded: boolean;
   onExpand: () => void;
+  previewImage?: {
+    url: string;
+    name: string;
+  };
+  onRemoveImage?: () => void;
 };
 
 export default function QuestionInput({
@@ -42,14 +51,18 @@ export default function QuestionInput({
   onDelete,
   expanded,
   onExpand,
+  previewImage,
+  onRemoveImage,
 }: QuestionInputProps) {
   const theme = useTheme();
   const index = useQuestionIndex();
+  const { width: imageWidth, height: imageHeight } = useImageInputDimensions();
   const {
     control,
     getValues,
     formState: { errors: formErrors },
     watch,
+    setValue,
   } = useFormContext<QuizQuestionsForm>();
   const name = `questions.${index}` as const;
   const { fields, append, remove } = useFieldArray<QuizQuestionsForm>({
@@ -70,6 +83,20 @@ export default function QuestionInput({
         };
       }
     )?.oneCorrectAnswer?.message?.toString() ?? '';
+
+  const imageFile = watch(`${name}.questionImage.file`) as File | null;
+  const imageUrl = useMemo(() => {
+    if (imageFile != null) {
+      return URL.createObjectURL(imageFile);
+    }
+    return previewImage?.url ?? null;
+  }, [imageFile, previewImage?.url]);
+  const imageName = useMemo(() => {
+    if (imageFile != null) {
+      return imageFile?.name?.split('\\').pop()?.split('/').pop();
+    }
+    return previewImage?.name;
+  }, [imageFile, previewImage?.name]);
 
   return (
     <Accordion
@@ -123,6 +150,78 @@ export default function QuestionInput({
         </Stack>
       </AccordionSummary>
       <AccordionDetails>
+        <Stack alignItems="start" gap={1} sx={{ marginBottom: 4 }}>
+          <Controller
+            name={`${name}.questionImage.file`}
+            render={({ field }) => (
+              <Box>
+                <input
+                  {...field}
+                  id="quiz-image"
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  value={undefined}
+                  onChange={(e) => {
+                    setValue(
+                      `${name}.questionImage.file`,
+                      e.target.files != null ? e.target.files[0] : null
+                    );
+                  }}
+                />
+                <label
+                  htmlFor="quiz-image"
+                  style={{
+                    display: 'flex',
+                  }}
+                >
+                  <Button
+                    variant="outlined"
+                    component="span"
+                    sx={{
+                      padding: 2,
+                      width: imageWidth,
+                      minHeight: imageHeight,
+                    }}
+                  >
+                    {imageUrl != null ? (
+                      <Stack alignItems="center">
+                        <Image
+                          src={imageUrl}
+                          width={imageWidth - 34}
+                          height={imageHeight - 64}
+                          alt="quiz-image"
+                          style={{
+                            borderRadius: 2,
+                            objectFit: 'cover',
+                          }}
+                          unoptimized
+                        />
+                        <Box sx={{ overflowWrap: 'anywhere' }}>{imageName}</Box>
+                      </Stack>
+                    ) : (
+                      <Box>{'Upload Image'}</Box>
+                    )}
+                  </Button>
+                </label>
+              </Box>
+            )}
+            control={control}
+          />
+          <Button
+            variant="outlined"
+            color="error"
+            startIcon={<ClearImageInputIcon />}
+            onClick={() => {
+              setValue(`${name}.questionImage.file`, null);
+              if (onRemoveImage != null) {
+                onRemoveImage();
+              }
+            }}
+          >
+            {'Remove'}
+          </Button>
+        </Stack>
         <Box
           sx={{
             marginBottom: 4,
@@ -190,7 +289,7 @@ export default function QuestionInput({
                   onClick={() => append(defaultAnswerFormData)}
                   disabled={fields.length >= maxAnswers}
                 >
-                  Answer
+                  {'Answer'}
                 </Button>
               </Box>
             </Tooltip>

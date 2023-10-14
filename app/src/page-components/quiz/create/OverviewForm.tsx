@@ -8,7 +8,6 @@ import {
   Stack,
 } from '@mui/material';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
-import { useIsMobile } from '@/custom-hooks/useIsMobile';
 import { constraints } from '@/content-type-utilities/content-type-constraints';
 import { QuizOverviewForm, quizOverviewFormSchema } from '../quiz-form-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -19,12 +18,8 @@ import { storageKeys } from '@/persistence/storage-keys';
 import { DevTool } from '@hookform/devtools';
 import Image from 'next/image';
 import { isBrowser } from '@/utilities/isBrowser';
-import ClearIcon from '@mui/icons-material/Clear';
-
-const imageInput = {
-  width: 300,
-  height: 200,
-} as const;
+import { ClearImageInputIcon } from './ClearImageInputIcon';
+import { useImageInputDimensions } from './useImageInputDimensions';
 
 type OverviewFormProps = {
   defaultData: QuizOverviewForm;
@@ -48,7 +43,7 @@ export default function OverviewForm({
   previewImage,
   onRemoveImage,
 }: OverviewFormProps) {
-  const isMobile = useIsMobile();
+  const { width: imageWidth, height: imageHeight } = useImageInputDimensions();
   const methods = useForm<QuizOverviewForm>({
     defaultValues: defaultData,
     //@ts-ignore
@@ -114,9 +109,6 @@ export default function OverviewForm({
     }
     return previewImage?.name;
   }, [imageFile, previewImage?.name]);
-
-  const imageWidth = isMobile ? imageInput.width * 0.8 : imageInput.width;
-  const imageHeight = isMobile ? imageInput.height * 0.8 : imageInput.height;
 
   function handleFormSubmit(data: QuizOverviewForm) {
     onSubmit(data);
@@ -221,7 +213,7 @@ export default function OverviewForm({
                                 </Box>
                               </Stack>
                             ) : (
-                              <Box>Upload Image</Box>
+                              <Box>{'Upload Image'}</Box>
                             )}
                           </Button>
                         </label>
@@ -232,7 +224,7 @@ export default function OverviewForm({
                   <Button
                     variant="outlined"
                     color="error"
-                    startIcon={<ClearIcon />}
+                    startIcon={<ClearImageInputIcon />}
                     onClick={() => {
                       setValue('image.file', null);
                       if (onRemoveImage != null) {
@@ -240,7 +232,7 @@ export default function OverviewForm({
                       }
                     }}
                   >
-                    Remove
+                    {'Remove'}
                   </Button>
                 </Stack>
               </Stack>

@@ -33,6 +33,20 @@
     "explanation": {
       "type": "text",
       "maxLength": 400
+    },
+    "questionImage": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "explanationImage": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }
