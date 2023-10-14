@@ -54,6 +54,7 @@ import {
 } from '@/page-components/quiz/quiz-form-schema';
 import LoadingCircle from '@/components/LoadingCircle';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
+import QuestionsForm from '@/page-components/quiz/create/QuestionsForm';
 
 export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
   ctx
@@ -596,9 +597,6 @@ export default function QuizCreatePage({
                 />
               )}
               {steps[activeStep].title === 'Questions' && (
-                <>
-                  Temporary removed component
-                  {/* 
                 <QuestionsForm
                   defaultData={questionsFormData}
                   onSubmit={(data) => {
@@ -612,8 +610,7 @@ export default function QuizCreatePage({
                   backLabel={backLabel}
                   nextLabel={nextLabel}
                   editMode={true}
-                /> */}
-                </>
+                />
               )}
               {steps[activeStep].title === 'Summary' && (
                 <SummaryForm
