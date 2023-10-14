@@ -42,7 +42,12 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  dehydrate,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import request from 'graphql-request';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useSession } from 'next-auth/react';
@@ -66,28 +71,28 @@ export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
     };
   }
 
-  // const session = await getServerSession(ctx.req, ctx.res, authOptions);
-  // const queryClient = new QueryClient();
-  // await queryClient.prefetchQuery({
-  //   queryKey: ['quiz', uuid],
-  //   queryFn: () =>
-  //     request(
-  //       process.env.NEXT_PUBLIC_GRAPHQL_URL,
-  //       getMyQuizzesByUuidGQL,
-  //       {
-  //         uuid,
-  //         ownerId: session?.user?.id?.toString() ?? '',
-  //       },
-  //       {
-  //         Authorization: `Bearer ${session?.user.acessToken}`,
-  //       }
-  //     ),
-  // });
+  const session = await getServerSession(ctx.req, ctx.res, authOptions);
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ['quiz', uuid],
+    queryFn: () =>
+      request(
+        process.env.NEXT_PUBLIC_GRAPHQL_URL,
+        getMyQuizzesByUuidGQL,
+        {
+          uuid,
+          ownerId: session?.user?.id?.toString() ?? '',
+        },
+        {
+          Authorization: `Bearer ${session?.user.acessToken}`,
+        }
+      ),
+  });
 
   return {
     props: {
       uuid,
-      // dehydratedState: dehydrate(queryClient),
+      dehydratedState: dehydrate(queryClient),
     },
   };
 };
