@@ -1,5 +1,5 @@
-import { KeyboardArrowLeft as KeyboardArrowLeftIcon } from '@mui/icons-material';
 import { Box, Button, ButtonProps } from '@mui/material';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 
 type BackButtonProps = ButtonProps & {};
 

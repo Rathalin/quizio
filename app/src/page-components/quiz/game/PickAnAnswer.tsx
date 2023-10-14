@@ -10,8 +10,9 @@ import {
 } from '@mui/material';
 import AnsweredProgress from './AnsweredProgress';
 import { AnsweredState } from '@/pages/play/[id].page';
-import { Check as CheckIcon, Clear as ClearIcon } from '@mui/icons-material';
 import IndexAvatar from './IndexAvatar';
+import CheckIcon from '@mui/icons-material/Check';
+import ClearIcon from '@mui/icons-material/Clear';
 
 type PickAnAnswerProps = {
   index: number;

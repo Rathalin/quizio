@@ -1,9 +1,10 @@
 import QuizioTextField from '@/components/inputs/QuizioTextField';
-import { Clear as ClearIcon, Search as SearchIcon } from '@mui/icons-material';
 import { InputAdornment, IconButton, debounce } from '@mui/material';
 import { useSearch } from '../search.context';
 import { useEffect, useMemo, useState } from 'react';
 import { useIsMobile } from '@/custom-hooks/useIsMobile';
+import SearchIcon from '@mui/icons-material/Search';
+import ClearIcon from '@mui/icons-material/Clear';
 
 const debounceTime = 300;
 

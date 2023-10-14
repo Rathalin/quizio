@@ -12,11 +12,6 @@ import {
   useTheme,
 } from '@mui/material';
 import AnswerInput from './answer/AnswerInput';
-import {
-  Add as AddIcon,
-  ExpandMore as ExpandMoreIcon,
-  Help,
-} from '@mui/icons-material';
 import DeleteQuestionButton from './DeleteQuestionButton';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import { useQuestionIndex } from './QuestionIndexContext';
@@ -31,6 +26,9 @@ import {
 import { constraints } from '@/content-type-utilities/content-type-constraints';
 import { ZodFieldErrors } from '../../../../../types/hook-form-zod';
 import { FormErrorIcon } from '../../FormErrorIcon';
+import HelpIcon from '@mui/icons-material/Help';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AddIcon from '@mui/icons-material/Add';
 
 type QuestionInputProps = {
   deletable: boolean;
@@ -217,7 +215,7 @@ export default function QuestionInput({
                           title="Explain the correct answer or give some context. This input is optional."
                           arrow
                         >
-                          <Help />
+                          <HelpIcon />
                         </Tooltip>
                       </InputAdornment>
                     ),

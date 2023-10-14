@@ -1,4 +1,4 @@
-import { Login as LoginIcon } from '@mui/icons-material';
+import LoginIcon from '@mui/icons-material/Login';
 import {
   Button,
   ButtonProps,

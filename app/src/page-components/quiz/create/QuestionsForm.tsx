@@ -9,7 +9,6 @@ import {
   Typography,
 } from '@mui/material';
 import QuestionInput from './question/QuestionInput';
-import { Add as AddIcon } from '@mui/icons-material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { QuestionIndexContext } from './question/QuestionIndexContext';
 import { defaultQuestionFormData } from '../quiz-form-data';
@@ -27,6 +26,7 @@ import { storageKeys } from '@/persistence/storage-keys';
 import { DevTool } from '@hookform/devtools';
 import { isBrowser } from '@/utilities/isBrowser';
 import { FormErrorIcon } from '../FormErrorIcon';
+import AddIcon from '@mui/icons-material/Add';
 
 type QuestionsFormProps = {
   defaultData: QuizQuestionsForm;

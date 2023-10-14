@@ -8,7 +8,7 @@ import PickAnAnswerPlaceholder from '@/page-components/quiz/game/PickAnAnswerPla
 import QuizNotFound from '@/page-components/quiz/game/QuizNotFound';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
 import { isBrowser } from '@/utilities/isBrowser';
-import { ContentCopy } from '@mui/icons-material';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import {
   Box,
   Card,
@@ -309,7 +309,7 @@ export default function PlayIdPage({
                     </Typography>
                     <Button
                       variant="contained"
-                      endIcon={<ContentCopy />}
+                      endIcon={<ContentCopyIcon />}
                       onClick={writeResultToClipboard}
                     >
                       Copy

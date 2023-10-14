@@ -1,6 +1,6 @@
 import { useIsMobile } from '@/custom-hooks/useIsMobile';
-import { Delete as DeleteIcon } from '@mui/icons-material';
 import { Tooltip, IconButton, Box } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 type DeleteAnswerButtonProps = {
   minAnswers: number;

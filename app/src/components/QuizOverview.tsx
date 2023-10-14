@@ -14,13 +14,11 @@ import {
   useTheme,
 } from '@mui/material';
 import Image from 'next/image';
-import {
-  BarChart as BarChartIcon,
-  Edit as EditIcon,
-  Image as ImageIcon,
-  PlayArrow as PlayArrowIcon,
-  Share as ShareIcon,
-} from '@mui/icons-material';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import EditIcon from '@mui/icons-material/Edit';
+import ImageIcon from '@mui/icons-material/Image';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import ShareIcon from '@mui/icons-material/Share';
 import LinkButton from './LinkButton';
 import { useMemo, useState } from 'react';
 import LinkIconButton from './LinkIconButton';

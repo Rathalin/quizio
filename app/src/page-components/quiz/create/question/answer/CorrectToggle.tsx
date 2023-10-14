@@ -1,9 +1,10 @@
-import { Check as CheckIcon, Clear as ClearIcon } from '@mui/icons-material';
 import { Box, Checkbox, Tooltip } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 import { useQuestionIndex } from '../QuestionIndexContext';
 import { useAnswerIndex } from './AnswerIndexContext';
 import { useIsMobile } from '@/custom-hooks/useIsMobile';
+import CheckIcon from '@mui/icons-material/Check';
+import ClearIcon from '@mui/icons-material/Clear';
 
 export default function CorrectToggle() {
   const isMobile = useIsMobile();

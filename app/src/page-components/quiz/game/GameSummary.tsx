@@ -11,10 +11,10 @@ import {
   lighten,
   Divider,
 } from '@mui/material';
-import { Check as CheckIcon } from '@mui/icons-material';
 import GradientWord from '@/components/GradientWord';
 import { AnsweredState } from '@/pages/play/[id].page';
 import { useColorMode } from '@/page-components/theme.context';
+import CheckIcon from '@mui/icons-material/Check';
 
 type GameSummaryProps = {
   questions: {

@@ -1,10 +1,8 @@
-import {
-  ArrowDownward as ArrowDownwardIcon,
-  ArrowUpward as ArrowUpwardIcon,
-} from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { SortOption, useSort } from '../sort.context';
 import { PropsWithChildren, useMemo } from 'react';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
 type SortButtonProps = PropsWithChildren<{ option: SortOption }>;
 
