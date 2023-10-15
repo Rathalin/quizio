@@ -150,7 +150,12 @@ export default function QuestionInput({
         </Stack>
       </AccordionSummary>
       <AccordionDetails>
-        <Stack alignItems="start" gap={1} sx={{ marginBottom: 4 }}>
+        <Stack
+          display="inline-flex"
+          alignItems="center"
+          gap={1}
+          sx={{ marginBottom: 4 }}
+        >
           <Controller
             name={`${name}.questionImage.file`}
             render={({ field }) => (
@@ -200,7 +205,7 @@ export default function QuestionInput({
                         <Box sx={{ overflowWrap: 'anywhere' }}>{imageName}</Box>
                       </Stack>
                     ) : (
-                      <Box>{'Upload Image'}</Box>
+                      <Box>{'Upload question image'}</Box>
                     )}
                   </Button>
                 </label>
@@ -218,6 +223,7 @@ export default function QuestionInput({
                 onRemoveImage();
               }
             }}
+            disabled={imageUrl == null}
           >
             {'Remove'}
           </Button>

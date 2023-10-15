@@ -231,6 +231,7 @@ export default function OverviewForm({
                         onRemoveImage();
                       }
                     }}
+                    disabled={imageUrl == null}
                   >
                     {'Remove'}
                   </Button>
