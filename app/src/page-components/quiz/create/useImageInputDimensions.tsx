@@ -8,6 +8,7 @@ const imageInput = {
 
 export function useImageInputDimensions() {
   const isMobile = useIsMobile();
+
   return useMemo(
     () => ({
       width: isMobile ? imageInput.width * 0.8 : imageInput.width,

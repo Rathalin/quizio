@@ -68,6 +68,14 @@ export const getQuizzesByUuidGQL = graphql(`
             data {
               id
               attributes {
+                questionImage {
+                  data {
+                    id
+                    attributes {
+                      url
+                    }
+                  }
+                }
                 title
                 answers(pagination: { limit: 10 }) {
                   data {
@@ -79,6 +87,14 @@ export const getQuizzesByUuidGQL = graphql(`
                   }
                 }
                 explanation
+                explanationImage {
+                  data {
+                    id
+                    attributes {
+                      url
+                    }
+                  }
+                }
               }
             }
           }
