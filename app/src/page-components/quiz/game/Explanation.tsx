@@ -37,7 +37,9 @@ export default function Explanation({
             width={width}
             height={height}
             style={{
-              objectFit: 'contain',
+              objectFit: 'cover',
+              borderRadius: '4px',
+              boxShadow: theme.shadows[4],
             }}
             unoptimized
           />
