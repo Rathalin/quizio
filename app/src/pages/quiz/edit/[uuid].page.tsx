@@ -164,7 +164,6 @@ export default function QuizCreatePage({
     enabled: ownerId != null,
   });
   const quiz = quizQuery.data?.quizzes?.data?.at(0);
-  const quizImage = quiz?.attributes?.image?.data;
 
   useEffect(() => {
     if (quiz != null) {
@@ -176,10 +175,12 @@ export default function QuizCreatePage({
             file: null,
           },
           preview:
-            quizImage?.attributes?.url != null
+            quiz?.attributes?.image?.data?.attributes?.url != null
               ? {
-                  url: getBackendImageUrl(quizImage?.attributes?.url),
-                  name: quizImage?.attributes?.name ?? '',
+                  url: getBackendImageUrl(
+                    quiz?.attributes?.image?.data?.attributes?.url
+                  ),
+                  name: quiz?.attributes?.image?.data?.attributes?.name ?? '',
                 }
               : undefined,
         },
@@ -193,6 +194,19 @@ export default function QuizCreatePage({
               data: {
                 file: null,
               },
+              preview:
+                question.attributes?.questionImage?.data?.attributes?.url !=
+                null
+                  ? {
+                      url: getBackendImageUrl(
+                        question.attributes?.questionImage?.data?.attributes
+                          ?.url
+                      ),
+                      name:
+                        question.attributes?.questionImage?.data?.attributes
+                          ?.name ?? '',
+                    }
+                  : undefined,
             },
             answers:
               question.attributes?.answers?.data.map((answer) => ({
@@ -205,11 +219,24 @@ export default function QuizCreatePage({
               data: {
                 file: null,
               },
+              preview:
+                question.attributes?.explanationImage?.data?.attributes?.url !=
+                null
+                  ? {
+                      url: getBackendImageUrl(
+                        question.attributes?.explanationImage?.data?.attributes
+                          ?.url
+                      ),
+                      name:
+                        question.attributes?.explanationImage?.data?.attributes
+                          ?.name ?? '',
+                    }
+                  : undefined,
             },
           })) ?? [],
       });
     }
-  }, [quiz, quizImage?.attributes?.name, quizImage?.attributes?.url]);
+  }, [quiz]);
 
   const createQuestionMutation = useMutation({
     mutationKey: ['createQuestion'],
