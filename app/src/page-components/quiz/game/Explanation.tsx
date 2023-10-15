@@ -30,7 +30,7 @@ export default function Explanation({
   return (
     <>
       {imageUrl != null && (
-        <Stack>
+        <Stack sx={{ marginBottom: 4 }}>
           <Image
             src={getBackendImageUrl(imageUrl)}
             alt={`Explanation image`}

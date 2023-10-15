@@ -8,6 +8,7 @@ import {
   Stack,
   Grid,
   useTheme,
+  Box,
 } from '@mui/material';
 import AnsweredProgress from './AnsweredProgress';
 import { AnsweredState } from '@/pages/play/[id].page';
@@ -43,47 +44,44 @@ export default function PickAnAnswer({
 
   return (
     <>
-      <Grid
-        container
-        spacing={4}
-        wrap="wrap-reverse"
-        sx={{ paddingTop: 6, paddingInline: 6, paddingBottom: 2 }}
-      >
-        <Grid item xs={12} md={8}>
-          {imageUrl != null && (
-            <Stack>
-              <Image
-                src={getBackendImageUrl(imageUrl)}
-                alt={`Question image`}
-                width={width}
-                height={height}
-                style={{
-                  objectFit: 'cover',
-                  borderRadius: '4px',
-                  boxShadow: theme.shadows[4],
-                }}
-                unoptimized
-              />
-            </Stack>
-          )}
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Stack direction="row" justifyContent="end">
-            <AnsweredProgress answeredProgress={answeredProgress} />
+      <Box sx={{ paddingTop: 6, paddingInline: 6 }}>
+        {imageUrl != null && (
+          <Stack sx={{ paddingBottom: 4 }}>
+            <Image
+              src={getBackendImageUrl(imageUrl)}
+              alt={`Question image`}
+              width={width}
+              height={height}
+              style={{
+                objectFit: 'cover',
+                borderRadius: '4px',
+                boxShadow: theme.shadows[4],
+              }}
+              unoptimized
+            />
           </Stack>
+        )}
+        <Grid
+          container
+          spacing={4}
+          wrap="wrap-reverse"
+          sx={{ paddingBottom: 2 }}
+        >
+          <Grid item xs={12} md={8}>
+            <Stack direction="row" alignItems="center" gap={2}>
+              <IndexAvatar index={index} />
+              <Typography variant="h4" component="h1" sx={{ margin: 0 }}>
+                {title}
+              </Typography>
+            </Stack>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Stack direction="row" justifyContent="end">
+              <AnsweredProgress answeredProgress={answeredProgress} />
+            </Stack>
+          </Grid>
         </Grid>
-      </Grid>
-      <Stack
-        direction="row"
-        alignItems="center"
-        gap={2}
-        sx={{ paddingBlock: 2, paddingInline: 6 }}
-      >
-        <IndexAvatar index={index} />
-        <Typography variant="h4" component="h1" sx={{ margin: 0 }}>
-          {title}
-        </Typography>
-      </Stack>
+      </Box>
       <List disablePadding>
         {answers.map((answer) => (
           <ListItem key={answer.id} disableGutters>
