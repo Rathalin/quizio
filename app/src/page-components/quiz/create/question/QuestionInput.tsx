@@ -235,6 +235,7 @@ export default function QuestionInput({
             startIcon={<ClearImageInputIcon />}
             onClick={() => {
               setValue(`${name}.questionImage.data.file`, null);
+              setValue(`${name}.questionImage.data.file`, undefined);
             }}
             disabled={questionImageUrl == null}
           >
@@ -415,6 +416,7 @@ export default function QuestionInput({
               startIcon={<ClearImageInputIcon />}
               onClick={() => {
                 setValue(`${name}.explanationImage.data.file`, null);
+                setValue(`${name}.explanationImage.data.file`, undefined);
               }}
               disabled={explanationImageUrl == null}
             >

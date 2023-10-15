@@ -433,6 +433,44 @@ export default function QuizCreatePage({
 
       for (const question of questions) {
         let questionId: string;
+        let questionImageId = question.questionImage.data.id ?? null;
+        // Delete question image
+        if (
+          questionImageId != null &&
+          (question.questionImage.data.file != null ||
+            question.questionImage.preview == null)
+        ) {
+          await deleteImageMutation.mutateAsync({
+            id: questionImageId,
+          });
+          questionImageId = null;
+        }
+        // Upload question image
+        if (question.questionImage.data.file != null) {
+          const uploadImageResponse = await uploadImageMutation.mutateAsync({
+            file: question.questionImage.data.file,
+          });
+          questionImageId = uploadImageResponse.at(0)?.id?.toString() ?? '';
+        }
+        let explanationImageId = question.explanationImage.data.id ?? null;
+        // Delete explanation image
+        if (
+          explanationImageId != null &&
+          (question.explanationImage.data.file != null ||
+            question.explanationImage.preview == null)
+        ) {
+          await deleteImageMutation.mutateAsync({
+            id: explanationImageId,
+          });
+          explanationImageId = null;
+        }
+        // Upload question image
+        if (question.explanationImage.data.file != null) {
+          const uploadImageResponse = await uploadImageMutation.mutateAsync({
+            file: question.explanationImage.data.file,
+          });
+          explanationImageId = uploadImageResponse.at(0)?.id?.toString() ?? '';
+        }
         if (question.id == null) {
           // Create new question
           const res = await createQuestionMutation.mutateAsync({
@@ -449,6 +487,8 @@ export default function QuizCreatePage({
             data: {
               title: question.title.trim() ?? '',
               explanation: question.explanation?.trim() ?? '',
+              questionImage: questionImageId,
+              explanationImage: explanationImageId,
             },
           });
           questionId = question.id;
