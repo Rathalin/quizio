@@ -18,10 +18,16 @@ export default function AnsweredProgress({
     return state.selectedAnswerId === state.correctAnswerId;
   }
 
+  const groups = splitArrayIntoGroups(answeredProgress, 5);
+
   return (
-    <Stack direction="row" flexWrap="wrap">
-      {answeredProgress.map((state, index) => (
-        <AnsweredStateItem key={index} correct={isAnswerCorrect(state)} />
+    <Stack>
+      {groups.map((row, index) => (
+        <Stack direction="row" flexWrap="wrap" key={index}>
+          {row.map((state, index) => (
+            <AnsweredStateItem key={index} correct={isAnswerCorrect(state)} />
+          ))}
+        </Stack>
       ))}
     </Stack>
   );
@@ -36,4 +42,12 @@ function AnsweredStateItem({ correct }: { correct: boolean | null }) {
     return <CheckCircleIcon color="success" fontSize="large" />;
   }
   return <CancelIcon color="error" fontSize="large" />;
+}
+
+function splitArrayIntoGroups<T>(array: T[], groupSize = 10): T[][] {
+  const result: T[][] = [];
+  for (let i = 0; i < array.length; i += groupSize) {
+    result.push(array.slice(i, i + groupSize));
+  }
+  return result;
 }
