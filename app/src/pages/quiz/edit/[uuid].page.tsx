@@ -53,7 +53,7 @@ import request from 'graphql-request';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   QuizOverviewForm,
   QuizQuestionsForm,
@@ -146,7 +146,6 @@ export default function QuizCreatePage({
   const [questionsFormData, setQuestionsFormData] = useState<QuizQuestionsForm>(
     defaultQuestionsFormData
   );
-  const [removeImage, setRemoveImage] = useState(false);
 
   const ownerId = session?.user?.id?.toString();
   const quizQuery = useQuery({
@@ -166,15 +165,6 @@ export default function QuizCreatePage({
   });
   const quiz = quizQuery.data?.quizzes?.data?.at(0);
   const quizImage = quiz?.attributes?.image?.data;
-  const previewImage = useMemo(() => {
-    if (removeImage) return undefined;
-    return quizImage?.attributes?.url != null
-      ? {
-          url: getBackendImageUrl(quizImage?.attributes?.url),
-          name: quizImage?.attributes?.name ?? '',
-        }
-      : undefined;
-  }, [quizImage?.attributes?.name, quizImage?.attributes?.url, removeImage]);
 
   useEffect(() => {
     if (quiz != null) {
@@ -182,7 +172,16 @@ export default function QuizCreatePage({
         title: quiz.attributes?.title ?? '',
         description: quiz.attributes?.description ?? '',
         image: {
-          file: null,
+          data: {
+            file: null,
+          },
+          preview:
+            quizImage?.attributes?.url != null
+              ? {
+                  url: getBackendImageUrl(quizImage?.attributes?.url),
+                  name: quizImage?.attributes?.name ?? '',
+                }
+              : undefined,
         },
       });
       setQuestionsFormData({
@@ -191,7 +190,9 @@ export default function QuizCreatePage({
             id: question.id ?? '',
             title: question.attributes?.title ?? '',
             questionImage: {
-              file: null,
+              data: {
+                file: null,
+              },
             },
             answers:
               question.attributes?.answers?.data.map((answer) => ({
@@ -201,12 +202,14 @@ export default function QuizCreatePage({
               })) ?? [],
             explanation: question.attributes?.explanation ?? '',
             explanationImage: {
-              file: null,
+              data: {
+                file: null,
+              },
             },
           })) ?? [],
       });
     }
-  }, [quiz]);
+  }, [quiz, quizImage?.attributes?.name, quizImage?.attributes?.url]);
 
   const createQuestionMutation = useMutation({
     mutationKey: ['createQuestion'],
@@ -372,16 +375,19 @@ export default function QuizCreatePage({
     try {
       let imageId = quiz?.attributes?.image?.data?.id ?? null;
       // Delete image
-      if (imageId != null && (image.file != null || removeImage)) {
+      if (
+        imageId != null &&
+        (image.data.file != null || image.preview == null)
+      ) {
         await deleteImageMutation.mutateAsync({
           id: imageId,
         });
         imageId = null;
       }
       // Upload image
-      if (image.file != null) {
+      if (image.data.file != null) {
         const uploadImageResponse = await uploadImageMutation.mutateAsync({
-          file: image.file,
+          file: image.data.file,
         });
         imageId = uploadImageResponse.at(0)?.id?.toString() ?? '';
       }
@@ -622,8 +628,6 @@ export default function QuizCreatePage({
                   backLabel={backLabel}
                   nextLabel={nextLabel}
                   editMode={true}
-                  previewImage={previewImage}
-                  onRemoveImage={() => setRemoveImage(true)}
                 />
               )}
               {steps[activeStep].title === 'Questions' && (

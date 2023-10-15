@@ -27,11 +27,6 @@ type OverviewFormProps = {
   backLabel: string | null;
   nextLabel: string | null;
   editMode: boolean;
-  previewImage?: {
-    url: string;
-    name: string;
-  };
-  onRemoveImage?: () => void;
 };
 
 export default function OverviewForm({
@@ -40,8 +35,6 @@ export default function OverviewForm({
   backLabel,
   nextLabel,
   editMode,
-  previewImage,
-  onRemoveImage,
 }: OverviewFormProps) {
   const { width: imageWidth, height: imageHeight } = useImageInputDimensions();
   const methods = useForm<QuizOverviewForm>({
@@ -96,13 +89,14 @@ export default function OverviewForm({
     reset(defaultData);
   }, [defaultData, editMode, reset]);
 
-  const imageFile = watch('image.file') as File | null;
+  const imageFile = watch('image.data.file') as File | null;
+  const previewImage = watch('image.preview');
   const imageUrl = useMemo(() => {
     if (imageFile != null) {
       return URL.createObjectURL(imageFile);
     }
     return previewImage?.url ?? null;
-  }, [imageFile, previewImage?.url]);
+  }, [imageFile, previewImage]);
   const imageName = useMemo(() => {
     if (imageFile != null) {
       return imageFile?.name?.split('\\').pop()?.split('/').pop();
@@ -163,7 +157,7 @@ export default function OverviewForm({
               <Stack direction="column" alignItems="start" gap={1}>
                 <Stack alignItems="center" gap={1}>
                   <Controller
-                    name="image.file"
+                    name="image.data.file"
                     render={({ field }) => (
                       <Box>
                         <input
@@ -175,7 +169,7 @@ export default function OverviewForm({
                           value={undefined}
                           onChange={(e) => {
                             setValue(
-                              'image.file',
+                              'image.data.file',
                               e.target.files != null ? e.target.files[0] : null
                             );
                           }}
@@ -226,10 +220,8 @@ export default function OverviewForm({
                     color="error"
                     startIcon={<ClearImageInputIcon />}
                     onClick={() => {
-                      setValue('image.file', null);
-                      if (onRemoveImage != null) {
-                        onRemoveImage();
-                      }
+                      setValue('image.data.file', null);
+                      setValue('image.preview', undefined);
                     }}
                     disabled={imageUrl == null}
                   >

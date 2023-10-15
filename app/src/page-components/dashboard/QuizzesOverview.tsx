@@ -56,14 +56,14 @@ export default function QuizzesOverview() {
         page: pageParam,
         pageSize,
       }),
-    getNextPageParam: (lastPage, pages) => {
+    getNextPageParam: (lastPage, _pages) => {
       const pagination = lastPage.quizzes?.meta?.pagination;
       if (pagination!.page * pagination!.pageSize < pagination!.total) {
         return pagination!.page + 1;
       }
       return undefined;
     },
-    staleTime: seconds(30),
+    staleTime: seconds(20),
   });
 
   const quizzes = useMemo(
@@ -147,17 +147,6 @@ export default function QuizzesOverview() {
             {isError && <GenericLoadingErrorMessage />}
             <Box sx={{ marginTop: 8 }}>
               {hasNextPage && !isFetchingNextPage ? (
-                // <Stack direction="row" justifyContent="center">
-                //   <Button
-                //     variant="contained"
-                //     color="secondary"
-                //     onClick={() => fetchNextPage()}
-                //     disabled={isFetchingNextPage}
-                //     startIcon={isFetchingNextPage ? <LoadingCircle /> : null}
-                //   >
-                //     {'Load more quizzes'}
-                //   </Button>
-                // </Stack>
                 <ScrollObserver
                   onIntersect={() => {
                     fetchNextPage();

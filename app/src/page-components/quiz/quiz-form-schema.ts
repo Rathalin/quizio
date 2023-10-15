@@ -21,8 +21,16 @@ export const quizOverviewFormSchema = z.object({
     .max(constraints.quiz.description.maxLength)
     .optional(),
   image: z.object({
-    id: z.string().optional(),
-    file: z.any().nullable(),
+    data: z.object({
+      id: z.string().optional(),
+      file: z.any().nullable(),
+    }),
+    preview: z
+      .object({
+        url: z.string(),
+        name: z.string(),
+      })
+      .optional(),
   }),
 });
 export type QuizOverviewForm = z.infer<typeof quizOverviewFormSchema>;
@@ -37,8 +45,16 @@ export const quizQuestionsFormSchema = z.object({
       z.object({
         id: z.string().optional(),
         questionImage: z.object({
-          id: z.string().optional(),
-          file: z.any().nullable(),
+          data: z.object({
+            id: z.string().optional(),
+            file: z.any().nullable(),
+          }),
+          preview: z
+            .object({
+              url: z.string(),
+              name: z.string(),
+            })
+            .optional(),
         }),
         title: z
           .string()
@@ -79,8 +95,16 @@ export const quizQuestionsFormSchema = z.object({
           .max(constraints.quiz.question.explanation.maxLength)
           .optional(),
         explanationImage: z.object({
-          id: z.string().optional(),
-          file: z.any().nullable(),
+          data: z.object({
+            id: z.string().optional(),
+            file: z.any().nullable(),
+          }),
+          preview: z
+            .object({
+              url: z.string(),
+              name: z.string(),
+            })
+            .optional(),
         }),
       })
     )

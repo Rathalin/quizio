@@ -134,15 +134,21 @@ export default function QuizCreatePage() {
   useRedirectOnUnauthenticated(status);
 
   async function handleFinishQuizClick() {
-    const { title, description, image } = overviewFormData;
+    const {
+      title,
+      description,
+      image: { data: imageData },
+    } = overviewFormData;
     const { questions } = questionsFormData;
     try {
       // Upload image
       let imageId: string | null = null;
-      if (image.file != null) {
+
+      if (imageData.file != null) {
         imageId =
-          (await uploadImageMutation.mutateAsync({ file: image.file })).at(0)
-            ?.id ?? '';
+          (await uploadImageMutation.mutateAsync({ file: imageData.file })).at(
+            0
+          )?.id ?? '';
       }
       // Create quiz
       const res = await createQuizMutation.mutateAsync({

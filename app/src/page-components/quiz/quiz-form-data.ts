@@ -12,12 +12,16 @@ export const defaultAnswerFormData: AnswerForm = {
 export const defaultQuestionFormData: QuizQuestionsForm['questions'][number] = {
   title: '',
   questionImage: {
-    file: null,
+    data: {
+      file: null,
+    },
   },
   answers: Array.from({ length: 4 }, () => defaultAnswerFormData),
   explanation: '',
   explanationImage: {
-    file: null,
+    data: {
+      file: null,
+    },
   },
 };
 export const defaultQuestionsFormData: QuizQuestionsForm = {
@@ -28,6 +32,8 @@ export const defaultOverviewFormData: QuizOverviewForm = {
   title: '',
   description: '',
   image: {
-    file: null,
+    data: {
+      file: null,
+    },
   },
 };
