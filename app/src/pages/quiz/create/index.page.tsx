@@ -139,10 +139,11 @@ export default function QuizCreatePage() {
     try {
       // Upload image
       let imageId: string | null = null;
-      if (image.file != null) {
+      if (image.data.file != null) {
         imageId =
-          (await uploadImageMutation.mutateAsync({ file: image.file })).at(0)
-            ?.id ?? '';
+          (await uploadImageMutation.mutateAsync({ file: image.data.file })).at(
+            0
+          )?.id ?? '';
       }
       // Create quiz
       const res = await createQuizMutation.mutateAsync({
@@ -154,10 +155,32 @@ export default function QuizCreatePage() {
       });
       // Create questions
       for (const question of questions) {
+        // Upload question image
+        let questionImageId: string | null = null;
+        if (question.questionImage.data.file != null) {
+          questionImageId =
+            (
+              await uploadImageMutation.mutateAsync({
+                file: question.questionImage.data.file,
+              })
+            ).at(0)?.id ?? '';
+        }
+        // Upload explanation image
+        let explanationImageId: string | null = null;
+        if (question.explanationImage.data.file != null) {
+          explanationImageId =
+            (
+              await uploadImageMutation.mutateAsync({
+                file: question.explanationImage.data.file,
+              })
+            ).at(0)?.id ?? '';
+        }
         const questionData = await createQuestionMutation.mutateAsync({
           title: question.title.trim(),
           quiz: res.createQuiz?.data?.id,
           explanation: question.explanation?.trim(),
+          questionImage: questionImageId,
+          explanationImage: explanationImageId,
         });
         // Create answers
         for (const answer of question.answers) {

@@ -1,15 +1,24 @@
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Stack, Typography, useTheme } from '@mui/material';
+import Image from 'next/image';
+import { useImageDimensions } from './useImageDimensions';
+import { getBackendImageUrl } from '@/utilities/getImageUrl';
+
+const correctEmojies = ['😀', '😁', '😃', '😄', '😆', '😊', '😎'];
+const incorrectEmojies = ['😐', '😶', '😮', '😯', '🫤', '🫥', '😮‍💨'];
 
 type ExplanationProps = {
   correct: boolean;
   text?: string;
+  imageUrl: string | null;
 };
 
-const correctEmojies = ['😀', '😁', '😃', '😄', '😆', '😊', '😎'];
-const incorrectEmojies = ['😐', '😶', '😮', '😯', '😲', '🫤'];
-
-export default function Explanation({ correct, text }: ExplanationProps) {
+export default function Explanation({
+  correct,
+  text,
+  imageUrl,
+}: ExplanationProps) {
   const theme = useTheme();
+  const { width, height } = useImageDimensions();
 
   const trimmedText = text?.trim();
 
@@ -20,6 +29,22 @@ export default function Explanation({ correct, text }: ExplanationProps) {
 
   return (
     <>
+      {imageUrl != null && (
+        <Stack sx={{ marginBottom: 4 }}>
+          <Image
+            src={getBackendImageUrl(imageUrl)}
+            alt={`Explanation image`}
+            width={width}
+            height={height}
+            style={{
+              objectFit: 'cover',
+              borderRadius: '4px',
+              boxShadow: theme.shadows[4],
+            }}
+            unoptimized
+          />
+        </Stack>
+      )}
       <Typography variant="h3">
         <Box
           component="span"

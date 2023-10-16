@@ -42,12 +42,18 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  QueryClient,
+  dehydrate,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import request from 'graphql-request';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   QuizOverviewForm,
   QuizQuestionsForm,
@@ -55,6 +61,8 @@ import {
 import LoadingCircle from '@/components/LoadingCircle';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
 import QuestionsForm from '@/page-components/quiz/create/QuestionsForm';
+import { authOptions } from '@/pages/api/auth/[...nextauth].page';
+import { getServerSession } from 'next-auth';
 
 export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
   ctx
@@ -66,28 +74,44 @@ export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
     };
   }
 
-  // const session = await getServerSession(ctx.req, ctx.res, authOptions);
-  // const queryClient = new QueryClient();
-  // await queryClient.prefetchQuery({
-  //   queryKey: ['quiz', uuid],
-  //   queryFn: () =>
-  //     request(
-  //       process.env.NEXT_PUBLIC_GRAPHQL_URL,
-  //       getMyQuizzesByUuidGQL,
-  //       {
-  //         uuid,
-  //         ownerId: session?.user?.id?.toString() ?? '',
-  //       },
-  //       {
-  //         Authorization: `Bearer ${session?.user.acessToken}`,
-  //       }
-  //     ),
-  // });
+  const session = await getServerSession(ctx.req, ctx.res, authOptions);
+  const queryClient = new QueryClient();
+
+  async function fetchMyQuizzedByUuid(uuid: string) {
+    return request(
+      process.env.NEXT_PUBLIC_GRAPHQL_URL,
+      getMyQuizzesByUuidGQL,
+      {
+        uuid,
+        ownerId: session?.user?.id?.toString() ?? '',
+      },
+      {
+        Authorization: `Bearer ${session?.user.acessToken}`,
+      }
+    );
+  }
+
+  await queryClient.prefetchQuery({
+    queryKey: ['quiz', uuid],
+    queryFn: () => fetchMyQuizzedByUuid(uuid),
+  });
+
+  if (
+    (
+      queryClient.getQueryData(['quiz', uuid]) as Awaited<
+        ReturnType<typeof fetchMyQuizzedByUuid>
+      >
+    )?.quizzes?.data?.length === 0
+  ) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {
       uuid,
-      // dehydratedState: dehydrate(queryClient),
+      dehydratedState: dehydrate(queryClient),
     },
   };
 };
@@ -122,7 +146,6 @@ export default function QuizCreatePage({
   const [questionsFormData, setQuestionsFormData] = useState<QuizQuestionsForm>(
     defaultQuestionsFormData
   );
-  const [removeImage, setRemoveImage] = useState(false);
 
   const ownerId = session?.user?.id?.toString();
   const quizQuery = useQuery({
@@ -141,16 +164,6 @@ export default function QuizCreatePage({
     enabled: ownerId != null,
   });
   const quiz = quizQuery.data?.quizzes?.data?.at(0);
-  const quizImage = quiz?.attributes?.image?.data;
-  const previewImage = useMemo(() => {
-    if (removeImage) return undefined;
-    return quizImage?.attributes?.url != null
-      ? {
-          url: getBackendImageUrl(quizImage?.attributes?.url),
-          name: quizImage?.attributes?.name ?? '',
-        }
-      : undefined;
-  }, [quizImage?.attributes?.name, quizImage?.attributes?.url, removeImage]);
 
   useEffect(() => {
     if (quiz != null) {
@@ -158,7 +171,18 @@ export default function QuizCreatePage({
         title: quiz.attributes?.title ?? '',
         description: quiz.attributes?.description ?? '',
         image: {
-          file: null,
+          data: {
+            file: null,
+          },
+          preview:
+            quiz?.attributes?.image?.data?.attributes?.url != null
+              ? {
+                  url: getBackendImageUrl(
+                    quiz?.attributes?.image?.data?.attributes?.url
+                  ),
+                  name: quiz?.attributes?.image?.data?.attributes?.name ?? '',
+                }
+              : undefined,
         },
       });
       setQuestionsFormData({
@@ -166,6 +190,24 @@ export default function QuizCreatePage({
           quiz?.attributes?.questions?.data.map((question) => ({
             id: question.id ?? '',
             title: question.attributes?.title ?? '',
+            questionImage: {
+              data: {
+                file: null,
+              },
+              preview:
+                question.attributes?.questionImage?.data?.attributes?.url !=
+                null
+                  ? {
+                      url: getBackendImageUrl(
+                        question.attributes?.questionImage?.data?.attributes
+                          ?.url
+                      ),
+                      name:
+                        question.attributes?.questionImage?.data?.attributes
+                          ?.name ?? '',
+                    }
+                  : undefined,
+            },
             answers:
               question.attributes?.answers?.data.map((answer) => ({
                 id: answer.id ?? '',
@@ -173,6 +215,24 @@ export default function QuizCreatePage({
                 isCorrect: answer.attributes?.correct ?? false,
               })) ?? [],
             explanation: question.attributes?.explanation ?? '',
+            explanationImage: {
+              data: {
+                file: null,
+              },
+              preview:
+                question.attributes?.explanationImage?.data?.attributes?.url !=
+                null
+                  ? {
+                      url: getBackendImageUrl(
+                        question.attributes?.explanationImage?.data?.attributes
+                          ?.url
+                      ),
+                      name:
+                        question.attributes?.explanationImage?.data?.attributes
+                          ?.name ?? '',
+                    }
+                  : undefined,
+            },
           })) ?? [],
       });
     }
@@ -342,16 +402,19 @@ export default function QuizCreatePage({
     try {
       let imageId = quiz?.attributes?.image?.data?.id ?? null;
       // Delete image
-      if (imageId != null && (image.file != null || removeImage)) {
+      if (
+        imageId != null &&
+        (image.data.file != null || image.preview == null)
+      ) {
         await deleteImageMutation.mutateAsync({
           id: imageId,
         });
         imageId = null;
       }
       // Upload image
-      if (image.file != null) {
+      if (image.data.file != null) {
         const uploadImageResponse = await uploadImageMutation.mutateAsync({
-          file: image.file,
+          file: image.data.file,
         });
         imageId = uploadImageResponse.at(0)?.id?.toString() ?? '';
       }
@@ -368,8 +431,55 @@ export default function QuizCreatePage({
         },
       });
 
-      for (const question of questions) {
+      for (
+        let questionIndex = 0;
+        questionIndex < questions.length;
+        questionIndex++
+      ) {
+        const question = questions.at(questionIndex)!;
         let questionId: string;
+        let questionImageId =
+          quiz?.attributes?.questions?.data?.at(questionIndex)?.attributes
+            ?.questionImage?.data?.id ?? null;
+        // Delete question image
+        if (
+          questionImageId != null &&
+          (question.questionImage.data.file != null ||
+            question.questionImage.preview == null)
+        ) {
+          await deleteImageMutation.mutateAsync({
+            id: questionImageId,
+          });
+          questionImageId = null;
+        }
+        // Upload question image
+        if (question.questionImage.data.file != null) {
+          const uploadImageResponse = await uploadImageMutation.mutateAsync({
+            file: question.questionImage.data.file,
+          });
+          questionImageId = uploadImageResponse.at(0)?.id?.toString() ?? '';
+        }
+        let explanationImageId =
+          quiz?.attributes?.questions?.data?.at(questionIndex)?.attributes
+            ?.explanationImage?.data?.id ?? null;
+        // Delete explanation image
+        if (
+          explanationImageId != null &&
+          (question.explanationImage.data.file != null ||
+            question.explanationImage.preview == null)
+        ) {
+          await deleteImageMutation.mutateAsync({
+            id: explanationImageId,
+          });
+          explanationImageId = null;
+        }
+        // Upload question image
+        if (question.explanationImage.data.file != null) {
+          const uploadImageResponse = await uploadImageMutation.mutateAsync({
+            file: question.explanationImage.data.file,
+          });
+          explanationImageId = uploadImageResponse.at(0)?.id?.toString() ?? '';
+        }
         if (question.id == null) {
           // Create new question
           const res = await createQuestionMutation.mutateAsync({
@@ -386,6 +496,8 @@ export default function QuizCreatePage({
             data: {
               title: question.title.trim() ?? '',
               explanation: question.explanation?.trim() ?? '',
+              questionImage: questionImageId,
+              explanationImage: explanationImageId,
             },
           });
           questionId = question.id;
@@ -417,7 +529,7 @@ export default function QuizCreatePage({
       for (const originalQuestion of quiz?.attributes?.questions?.data ?? []) {
         for (const originalAnswer of originalQuestion.attributes?.answers
           ?.data ?? []) {
-          // Delete unused question
+          // Delete unused answer
           if (
             !questions.some((question) =>
               question.answers.some((answer) => answer.id === originalAnswer.id)
@@ -433,6 +545,18 @@ export default function QuizCreatePage({
         if (
           !questions.some((question) => question.id === originalQuestion.id)
         ) {
+          // Delete unused question image
+          if (originalQuestion.attributes?.questionImage?.data?.id != null) {
+            await deleteImageMutation.mutateAsync({
+              id: originalQuestion.attributes?.questionImage?.data?.id,
+            });
+          }
+          // Delete unused explanation image
+          if (originalQuestion.attributes?.explanationImage?.data?.id != null) {
+            await deleteImageMutation.mutateAsync({
+              id: originalQuestion.attributes?.explanationImage?.data?.id,
+            });
+          }
           await deleteQuestionMutation.mutateAsync({
             id: originalQuestion.id ?? '',
           });
@@ -592,8 +716,6 @@ export default function QuizCreatePage({
                   backLabel={backLabel}
                   nextLabel={nextLabel}
                   editMode={true}
-                  previewImage={previewImage}
-                  onRemoveImage={() => setRemoveImage(true)}
                 />
               )}
               {steps[activeStep].title === 'Questions' && (

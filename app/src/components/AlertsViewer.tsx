@@ -3,6 +3,7 @@ import { Enum_Alert_Imagesize } from '@/graphql/generated/graphql';
 import { useColorMode } from '@/page-components/theme.context';
 import { useDismissedAlertIds } from '@/persistence/dismissed-alert-ids';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
+import { seconds } from '@/utilities/time';
 import { Alert, Collapse, Grid, Stack } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
@@ -16,7 +17,7 @@ export default function AlertsViewer() {
   const { data } = useQuery({
     queryKey: ['alerts'],
     queryFn: () => request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getAlertsGQL),
-    staleTime: 1000 * 30,
+    staleTime: seconds(30),
   });
 
   const alerts = data?.alerts?.data ?? [];
@@ -50,8 +51,7 @@ export default function AlertsViewer() {
                 item
                 xs={12}
                 sm={12}
-                md={9}
-                lg={10}
+                md={8}
                 sx={{
                   '& a': {
                     textDecoration: 'underline',
@@ -60,7 +60,7 @@ export default function AlertsViewer() {
               >
                 <ReactMarkdown>{alert.attributes?.content ?? ''}</ReactMarkdown>
               </Grid>
-              <Grid item xs={12} sm={12} md={3} lg={2}>
+              <Grid item xs={12} sm={12} md={4}>
                 <Stack
                   justifyContent="center"
                   alignItems="center"
@@ -85,7 +85,7 @@ export default function AlertsViewer() {
                       style={{
                         objectFit: 'cover',
                         filter: mode === 'light' ? 'opacity(0.8)' : 'none',
-                        borderRadius: 2,
+                        borderRadius: 4,
                       }}
                       unoptimized
                     />

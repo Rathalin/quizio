@@ -8,7 +8,6 @@ import {
   Stack,
 } from '@mui/material';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
-import { useIsMobile } from '@/custom-hooks/useIsMobile';
 import { constraints } from '@/content-type-utilities/content-type-constraints';
 import { QuizOverviewForm, quizOverviewFormSchema } from '../quiz-form-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -19,12 +18,8 @@ import { storageKeys } from '@/persistence/storage-keys';
 import { DevTool } from '@hookform/devtools';
 import Image from 'next/image';
 import { isBrowser } from '@/utilities/isBrowser';
-import ClearIcon from '@mui/icons-material/Clear';
-
-const imageInput = {
-  width: 300,
-  height: 200,
-} as const;
+import { ClearImageInputIcon } from './ClearImageInputIcon';
+import { useImageInputDimensions } from './useImageInputDimensions';
 
 type OverviewFormProps = {
   defaultData: QuizOverviewForm;
@@ -32,11 +27,6 @@ type OverviewFormProps = {
   backLabel: string | null;
   nextLabel: string | null;
   editMode: boolean;
-  previewImage?: {
-    url: string;
-    name: string;
-  };
-  onRemoveImage?: () => void;
 };
 
 export default function OverviewForm({
@@ -45,10 +35,8 @@ export default function OverviewForm({
   backLabel,
   nextLabel,
   editMode,
-  previewImage,
-  onRemoveImage,
 }: OverviewFormProps) {
-  const isMobile = useIsMobile();
+  const { width: imageWidth, height: imageHeight } = useImageInputDimensions();
   const methods = useForm<QuizOverviewForm>({
     defaultValues: defaultData,
     //@ts-ignore
@@ -101,22 +89,20 @@ export default function OverviewForm({
     reset(defaultData);
   }, [defaultData, editMode, reset]);
 
-  const imageFile = watch('image.file') as File | null;
+  const imageFile = watch('image.data.file') as File | null;
+  const previewImage = watch('image.preview');
   const imageUrl = useMemo(() => {
     if (imageFile != null) {
       return URL.createObjectURL(imageFile);
     }
     return previewImage?.url ?? null;
-  }, [imageFile, previewImage?.url]);
+  }, [imageFile, previewImage]);
   const imageName = useMemo(() => {
     if (imageFile != null) {
       return imageFile?.name?.split('\\').pop()?.split('/').pop();
     }
     return previewImage?.name;
   }, [imageFile, previewImage?.name]);
-
-  const imageWidth = isMobile ? imageInput.width * 0.8 : imageInput.width;
-  const imageHeight = isMobile ? imageInput.height * 0.8 : imageInput.height;
 
   function handleFormSubmit(data: QuizOverviewForm) {
     onSubmit(data);
@@ -171,7 +157,7 @@ export default function OverviewForm({
               <Stack direction="column" alignItems="start" gap={1}>
                 <Stack alignItems="center" gap={1}>
                   <Controller
-                    name="image.file"
+                    name="image.data.file"
                     render={({ field }) => (
                       <Box>
                         <input
@@ -183,7 +169,7 @@ export default function OverviewForm({
                           value={undefined}
                           onChange={(e) => {
                             setValue(
-                              'image.file',
+                              'image.data.file',
                               e.target.files != null ? e.target.files[0] : null
                             );
                           }}
@@ -221,7 +207,7 @@ export default function OverviewForm({
                                 </Box>
                               </Stack>
                             ) : (
-                              <Box>Upload Image</Box>
+                              <Box>{'Upload Image'}</Box>
                             )}
                           </Button>
                         </label>
@@ -232,15 +218,14 @@ export default function OverviewForm({
                   <Button
                     variant="outlined"
                     color="error"
-                    startIcon={<ClearIcon />}
+                    startIcon={<ClearImageInputIcon />}
                     onClick={() => {
-                      setValue('image.file', null);
-                      if (onRemoveImage != null) {
-                        onRemoveImage();
-                      }
+                      setValue('image.data.file', null);
+                      setValue('image.preview', undefined);
                     }}
+                    disabled={imageUrl == null}
                   >
-                    Remove
+                    {'Remove'}
                   </Button>
                 </Stack>
               </Stack>

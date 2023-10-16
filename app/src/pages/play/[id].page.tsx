@@ -246,6 +246,10 @@ export default function PlayIdPage({
                       answeredProgress={answeredProgress}
                       selectedAnswerId={answerState?.selectedAnswerId ?? null}
                       onAnswer={setAnswerOfCurrentQuestion}
+                      imageUrl={
+                        question.attributes?.questionImage?.data?.attributes
+                          ?.url ?? null
+                      }
                     />
                     {questionAnswered && (
                       <Box sx={{ paddingInline: 6 }}>
@@ -253,6 +257,10 @@ export default function PlayIdPage({
                         <Explanation
                           correct={questionAnsweredCorrectly ?? false}
                           text={question.attributes?.explanation ?? ''}
+                          imageUrl={
+                            question.attributes?.explanationImage?.data
+                              ?.attributes?.url ?? null
+                          }
                         />
                       </Box>
                     )}

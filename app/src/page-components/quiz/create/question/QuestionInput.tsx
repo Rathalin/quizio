@@ -4,6 +4,7 @@ import {
   AccordionSummary,
   Box,
   Button,
+  Divider,
   FormHelperText,
   InputAdornment,
   Stack,
@@ -26,9 +27,13 @@ import {
 import { constraints } from '@/content-type-utilities/content-type-constraints';
 import { ZodFieldErrors } from '../../../../../types/hook-form-zod';
 import { FormErrorIcon } from '../../FormErrorIcon';
-import HelpIcon from '@mui/icons-material/Help';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
+import InfoIcon from '@mui/icons-material/Info';
+import { ClearImageInputIcon } from '../ClearImageInputIcon';
+import { useImageInputDimensions } from '../useImageInputDimensions';
+import { useMemo } from 'react';
+import Image from 'next/image';
 
 type QuestionInputProps = {
   deletable: boolean;
@@ -45,11 +50,13 @@ export default function QuestionInput({
 }: QuestionInputProps) {
   const theme = useTheme();
   const index = useQuestionIndex();
+  const { width: imageWidth, height: imageHeight } = useImageInputDimensions();
   const {
     control,
     getValues,
     formState: { errors: formErrors },
     watch,
+    setValue,
   } = useFormContext<QuizQuestionsForm>();
   const name = `questions.${index}` as const;
   const { fields, append, remove } = useFieldArray<QuizQuestionsForm>({
@@ -70,6 +77,40 @@ export default function QuestionInput({
         };
       }
     )?.oneCorrectAnswer?.message?.toString() ?? '';
+
+  const questionImageFile = watch(
+    `${name}.questionImage.data.file`
+  ) as File | null;
+  const questionPreviewImage = watch(`${name}.questionImage.preview`);
+  const questionImageUrl = useMemo(() => {
+    if (questionImageFile != null) {
+      return URL.createObjectURL(questionImageFile);
+    }
+    return questionPreviewImage?.url ?? null;
+  }, [questionImageFile, questionPreviewImage]);
+  const questionImageName = useMemo(() => {
+    if (questionImageFile != null) {
+      return questionImageFile?.name?.split('\\').pop()?.split('/').pop();
+    }
+    return questionPreviewImage?.name;
+  }, [questionImageFile, questionPreviewImage?.name]);
+
+  const explanationImageFile = watch(
+    `${name}.explanationImage.data.file`
+  ) as File | null;
+  const explanationPreviewImage = watch(`${name}.explanationImage.preview`);
+  const explanationImageUrl = useMemo(() => {
+    if (explanationImageFile != null) {
+      return URL.createObjectURL(explanationImageFile);
+    }
+    return explanationPreviewImage?.url ?? null;
+  }, [explanationImageFile, explanationPreviewImage]);
+  const explanationImageName = useMemo(() => {
+    if (explanationImageFile != null) {
+      return explanationImageFile?.name?.split('\\').pop()?.split('/').pop();
+    }
+    return explanationPreviewImage?.name;
+  }, [explanationImageFile, explanationPreviewImage?.name]);
 
   return (
     <Accordion
@@ -103,13 +144,13 @@ export default function QuestionInput({
                 {`Question ${index + 1}`}
               </Typography>
               <Tooltip title="Some inputs require your attention." arrow>
-                <Box
+                <Stack
                   sx={{
                     visibility: questionErrors != null ? 'visible' : 'hidden',
                   }}
                 >
                   <FormErrorIcon />
-                </Box>
+                </Stack>
               </Tooltip>
             </Stack>
             <Typography
@@ -123,6 +164,84 @@ export default function QuestionInput({
         </Stack>
       </AccordionSummary>
       <AccordionDetails>
+        <Stack
+          display="inline-flex"
+          alignItems="center"
+          gap={1}
+          sx={{ marginBottom: 4 }}
+        >
+          <Controller
+            name={`${name}.questionImage.data.file`}
+            render={({ field }) => (
+              <Box>
+                <input
+                  {...field}
+                  id={`${name}.questionImage.data.file`}
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  value={undefined}
+                  onChange={(e) => {
+                    setValue(
+                      `${name}.questionImage.data.file`,
+                      e.target.files != null ? e.target.files[0] : null
+                    );
+                  }}
+                />
+                <label
+                  htmlFor={`${name}.questionImage.data.file`}
+                  style={{
+                    display: 'flex',
+                  }}
+                >
+                  <Button
+                    variant="outlined"
+                    component="span"
+                    sx={{
+                      padding: 2,
+                      width: imageWidth,
+                      minHeight: imageHeight,
+                    }}
+                  >
+                    {questionImageUrl != null ? (
+                      <Stack alignItems="center">
+                        <Image
+                          src={questionImageUrl}
+                          width={imageWidth - 34}
+                          height={imageHeight - 64}
+                          alt={`${name}.questionImage.data.file input`}
+                          style={{
+                            borderRadius: 2,
+                            objectFit: 'cover',
+                          }}
+                          unoptimized
+                        />
+                        <Box sx={{ overflowWrap: 'anywhere' }}>
+                          {questionImageName}
+                        </Box>
+                      </Stack>
+                    ) : (
+                      <Box>{'Upload question image'}</Box>
+                    )}
+                  </Button>
+                </label>
+              </Box>
+            )}
+            control={control}
+          />
+          <Button
+            variant="outlined"
+            color="error"
+            startIcon={<ClearImageInputIcon />}
+            onClick={() => {
+              setValue(`${name}.questionImage.data.file`, null);
+              setValue(`${name}.questionImage.preview`, undefined);
+            }}
+            disabled={questionImageUrl == null}
+          >
+            {'Remove'}
+          </Button>
+        </Stack>
         <Box
           sx={{
             marginBottom: 4,
@@ -190,12 +309,12 @@ export default function QuestionInput({
                   onClick={() => append(defaultAnswerFormData)}
                   disabled={fields.length >= maxAnswers}
                 >
-                  Answer
+                  {'Answer'}
                 </Button>
               </Box>
             </Tooltip>
           </Box>
-
+          <Divider sx={{ marginBlock: 4 }} />
           <Box sx={{ marginTop: 4 }}>
             <Controller
               name={`${name}.explanation`}
@@ -215,7 +334,7 @@ export default function QuestionInput({
                           title="Explain the correct answer or give some context. This input is optional."
                           arrow
                         >
-                          <HelpIcon />
+                          <InfoIcon />
                         </Tooltip>
                       </InputAdornment>
                     ),
@@ -226,6 +345,84 @@ export default function QuestionInput({
               control={control}
             />
           </Box>
+          <Stack
+            display="inline-flex"
+            alignItems="center"
+            gap={1}
+            sx={{ marginBottom: 4 }}
+          >
+            <Controller
+              name={`${name}.explanationImage.data.file`}
+              render={({ field }) => (
+                <Box>
+                  <input
+                    {...field}
+                    id={`${name}.explanationImage.data.file`}
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    value={undefined}
+                    onChange={(e) => {
+                      setValue(
+                        `${name}.explanationImage.data.file`,
+                        e.target.files != null ? e.target.files[0] : null
+                      );
+                    }}
+                  />
+                  <label
+                    htmlFor={`${name}.explanationImage.data.file`}
+                    style={{
+                      display: 'flex',
+                    }}
+                  >
+                    <Button
+                      variant="outlined"
+                      component="span"
+                      sx={{
+                        padding: 2,
+                        width: imageWidth,
+                        minHeight: imageHeight,
+                      }}
+                    >
+                      {explanationImageUrl != null ? (
+                        <Stack alignItems="center">
+                          <Image
+                            src={explanationImageUrl}
+                            width={imageWidth - 34}
+                            height={imageHeight - 64}
+                            alt={`${name}.explanationImage.data.file input`}
+                            style={{
+                              borderRadius: 2,
+                              objectFit: 'cover',
+                            }}
+                            unoptimized
+                          />
+                          <Box sx={{ overflowWrap: 'anywhere' }}>
+                            {explanationImageName}
+                          </Box>
+                        </Stack>
+                      ) : (
+                        <Box>{'Upload explanation image'}</Box>
+                      )}
+                    </Button>
+                  </label>
+                </Box>
+              )}
+              control={control}
+            />
+            <Button
+              variant="outlined"
+              color="error"
+              startIcon={<ClearImageInputIcon />}
+              onClick={() => {
+                setValue(`${name}.explanationImage.data.file`, null);
+                setValue(`${name}.explanationImage.preview`, undefined);
+              }}
+              disabled={explanationImageUrl == null}
+            >
+              {'Remove'}
+            </Button>
+          </Stack>
         </Box>
       </AccordionDetails>
     </Accordion>
