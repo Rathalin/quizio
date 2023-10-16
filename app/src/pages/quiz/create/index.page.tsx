@@ -134,19 +134,14 @@ export default function QuizCreatePage() {
   useRedirectOnUnauthenticated(status);
 
   async function handleFinishQuizClick() {
-    const {
-      title,
-      description,
-      image: { data: imageData },
-    } = overviewFormData;
+    const { title, description, image } = overviewFormData;
     const { questions } = questionsFormData;
     try {
       // Upload image
       let imageId: string | null = null;
-
-      if (imageData.file != null) {
+      if (image.data.file != null) {
         imageId =
-          (await uploadImageMutation.mutateAsync({ file: imageData.file })).at(
+          (await uploadImageMutation.mutateAsync({ file: image.data.file })).at(
             0
           )?.id ?? '';
       }
@@ -160,10 +155,32 @@ export default function QuizCreatePage() {
       });
       // Create questions
       for (const question of questions) {
+        // Upload question image
+        let questionImageId: string | null = null;
+        if (question.questionImage.data.file != null) {
+          questionImageId =
+            (
+              await uploadImageMutation.mutateAsync({
+                file: question.questionImage.data.file,
+              })
+            ).at(0)?.id ?? '';
+        }
+        // Upload explanation image
+        let explanationImageId: string | null = null;
+        if (question.explanationImage.data.file != null) {
+          explanationImageId =
+            (
+              await uploadImageMutation.mutateAsync({
+                file: question.explanationImage.data.file,
+              })
+            ).at(0)?.id ?? '';
+        }
         const questionData = await createQuestionMutation.mutateAsync({
           title: question.title.trim(),
           quiz: res.createQuiz?.data?.id,
           explanation: question.explanation?.trim(),
+          questionImage: questionImageId,
+          explanationImage: explanationImageId,
         });
         // Create answers
         for (const answer of question.answers) {
