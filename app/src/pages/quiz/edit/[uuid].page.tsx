@@ -529,7 +529,7 @@ export default function QuizCreatePage({
       for (const originalQuestion of quiz?.attributes?.questions?.data ?? []) {
         for (const originalAnswer of originalQuestion.attributes?.answers
           ?.data ?? []) {
-          // Delete unused question
+          // Delete unused answer
           if (
             !questions.some((question) =>
               question.answers.some((answer) => answer.id === originalAnswer.id)
@@ -545,6 +545,18 @@ export default function QuizCreatePage({
         if (
           !questions.some((question) => question.id === originalQuestion.id)
         ) {
+          // Delete unused question image
+          if (originalQuestion.attributes?.questionImage?.data?.id != null) {
+            await deleteImageMutation.mutateAsync({
+              id: originalQuestion.attributes?.questionImage?.data?.id,
+            });
+          }
+          // Delete unused explanation image
+          if (originalQuestion.attributes?.explanationImage?.data?.id != null) {
+            await deleteImageMutation.mutateAsync({
+              id: originalQuestion.attributes?.explanationImage?.data?.id,
+            });
+          }
           await deleteQuestionMutation.mutateAsync({
             id: originalQuestion.id ?? '',
           });
