@@ -57,7 +57,7 @@ export default function QuestionsForm({
     getValues,
     reset,
     watch,
-    formState: { isValid },
+    formState: { isValid, errors },
   } = methods;
   const { fields, append, remove } = useFieldArray({
     name: 'questions',
@@ -91,6 +91,13 @@ export default function QuestionsForm({
   useEffect(() => {
     if (editMode) return;
     const subscription = watch((value) => {
+      // Don't store question and explanation images
+      for (const question of value.questions ?? []) {
+        if (question != null) {
+          // delete question.questionImage;
+          // delete question.explanationImage;
+        }
+      }
       setStorageItem(value as QuizQuestionsForm);
     });
     return () => subscription.unsubscribe();
@@ -164,8 +171,14 @@ export default function QuestionsForm({
                   <Typography color="error">
                     This form still contains errors!
                   </Typography>
+                  <Typography color="error">
+                    {JSON.stringify(errors)}
+                  </Typography>
                 </Stack>
               )}
+              <Typography color="error">
+                {JSON.stringify(watch(`questions.0`))}
+              </Typography>
               <Stack
                 direction="row"
                 justifyContent="space-between"
