@@ -431,9 +431,16 @@ export default function QuizCreatePage({
         },
       });
 
-      for (const question of questions) {
+      for (
+        let questionIndex = 0;
+        questionIndex < questions.length;
+        questionIndex++
+      ) {
+        const question = questions.at(questionIndex)!;
         let questionId: string;
-        let questionImageId = question.questionImage.data.id ?? null;
+        let questionImageId =
+          quiz?.attributes?.questions?.data?.at(questionIndex)?.attributes
+            ?.questionImage?.data?.id ?? null;
         // Delete question image
         if (
           questionImageId != null &&
@@ -452,7 +459,9 @@ export default function QuizCreatePage({
           });
           questionImageId = uploadImageResponse.at(0)?.id?.toString() ?? '';
         }
-        let explanationImageId = question.explanationImage.data.id ?? null;
+        let explanationImageId =
+          quiz?.attributes?.questions?.data?.at(questionIndex)?.attributes
+            ?.explanationImage?.data?.id ?? null;
         // Delete explanation image
         if (
           explanationImageId != null &&
