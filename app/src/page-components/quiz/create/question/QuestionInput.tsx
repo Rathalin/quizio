@@ -31,7 +31,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
 import InfoIcon from '@mui/icons-material/Info';
 import { ClearImageInputIcon } from '../ClearImageInputIcon';
-import { useImageInputDimensions } from '../useImageInputDimensions';
+import { useGameImageInputDimensions } from '../useImageInputDimensions';
 import { useMemo } from 'react';
 import Image from 'next/image';
 
@@ -50,7 +50,8 @@ export default function QuestionInput({
 }: QuestionInputProps) {
   const theme = useTheme();
   const index = useQuestionIndex();
-  const { width: imageWidth, height: imageHeight } = useImageInputDimensions();
+  const { width: imageWidth, height: imageHeight } =
+    useGameImageInputDimensions();
   const {
     control,
     getValues,
@@ -198,8 +199,8 @@ export default function QuestionInput({
                     variant="outlined"
                     component="span"
                     sx={{
-                      padding: 2,
-                      width: imageWidth,
+                      paddingTop: 2,
+                      minWidth: imageWidth,
                       minHeight: imageHeight,
                     }}
                   >
@@ -207,8 +208,8 @@ export default function QuestionInput({
                       <Stack alignItems="center">
                         <Image
                           src={questionImageUrl}
-                          width={imageWidth - 34}
-                          height={imageHeight - 64}
+                          width={imageWidth}
+                          height={imageHeight}
                           alt={`${name}.questionImage.data.file input`}
                           style={{
                             borderRadius: 2,
@@ -344,8 +345,8 @@ export default function QuestionInput({
                       variant="outlined"
                       component="span"
                       sx={{
-                        padding: 2,
-                        width: imageWidth,
+                        paddingTop: 2,
+                        minWidth: imageWidth,
                         minHeight: imageHeight,
                       }}
                     >
@@ -353,8 +354,8 @@ export default function QuestionInput({
                         <Stack alignItems="center">
                           <Image
                             src={explanationImageUrl}
-                            width={imageWidth - 34}
-                            height={imageHeight - 64}
+                            width={imageWidth}
+                            height={imageHeight}
                             alt={`${name}.explanationImage.data.file input`}
                             style={{
                               borderRadius: 2,

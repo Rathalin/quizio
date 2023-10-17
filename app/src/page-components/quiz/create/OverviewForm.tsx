@@ -19,7 +19,7 @@ import { DevTool } from '@hookform/devtools';
 import Image from 'next/image';
 import { isBrowser } from '@/utilities/isBrowser';
 import { ClearImageInputIcon } from './ClearImageInputIcon';
-import { useImageInputDimensions } from './useImageInputDimensions';
+import { useOverviewImageInputDimensions } from './useImageInputDimensions';
 
 type OverviewFormProps = {
   defaultData: QuizOverviewForm;
@@ -36,7 +36,8 @@ export default function OverviewForm({
   nextLabel,
   editMode,
 }: OverviewFormProps) {
-  const { width: imageWidth, height: imageHeight } = useImageInputDimensions();
+  const { width: imageWidth, height: imageHeight } =
+    useOverviewImageInputDimensions();
   const methods = useForm<QuizOverviewForm>({
     defaultValues: defaultData,
     //@ts-ignore
@@ -196,8 +197,8 @@ export default function OverviewForm({
                             variant="outlined"
                             component="span"
                             sx={{
-                              padding: 2,
-                              width: imageWidth,
+                              paddingTop: 2,
+                              minWidth: imageWidth,
                               minHeight: imageHeight,
                             }}
                           >
@@ -205,8 +206,8 @@ export default function OverviewForm({
                               <Stack alignItems="center">
                                 <Image
                                   src={imageUrl}
-                                  width={imageWidth - 34}
-                                  height={imageHeight - 64}
+                                  width={imageWidth}
+                                  height={imageHeight}
                                   alt="Selected image from input"
                                   style={{
                                     borderRadius: 2,
