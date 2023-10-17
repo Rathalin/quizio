@@ -49,6 +49,7 @@ export default function OverviewForm({
     reset,
     watch,
     handleSubmit,
+    getValues,
   } = methods;
 
   const getStorageItem = useCallback((): QuizOverviewForm | null => {
@@ -73,17 +74,28 @@ export default function OverviewForm({
 
   useEffect(() => {
     if (editMode) return;
-    reset(getStorageItem() as QuizOverviewForm);
-  }, [editMode, getStorageItem, reset]);
+    // Keep image from form data
+    const image = getValues('image');
+    const storageData = getStorageItem();
+    if (storageData != null && image != null) {
+      storageData.image = image;
+    }
+    reset(storageData as QuizOverviewForm);
+  }, [editMode, getStorageItem, getValues, reset]);
+
   useEffect(() => {
     if (editMode) return;
     const subscription = watch((value) => {
+      const valueToStore = structuredClone(value);
       // Don't store image
-      delete value.image;
-      setStorageItem(value as QuizOverviewForm);
+      if (valueToStore.image?.data?.file != null) {
+        valueToStore.image.data.file = null;
+      }
+      setStorageItem(valueToStore as QuizOverviewForm);
     });
     return () => subscription.unsubscribe();
-  }, [editMode, setStorageItem, watch]);
+  }, [editMode, getValues, setStorageItem, watch]);
+
   useEffect(() => {
     if (!editMode) return;
     reset(defaultData);
@@ -162,7 +174,7 @@ export default function OverviewForm({
                       <Box>
                         <input
                           {...field}
-                          id="quiz-image"
+                          id="image.data.file"
                           type="file"
                           accept="image/*"
                           style={{ display: 'none' }}
@@ -175,7 +187,7 @@ export default function OverviewForm({
                           }}
                         />
                         <label
-                          htmlFor="quiz-image"
+                          htmlFor="image.data.file"
                           style={{
                             display: 'flex',
                           }}
@@ -195,7 +207,7 @@ export default function OverviewForm({
                                   src={imageUrl}
                                   width={imageWidth - 34}
                                   height={imageHeight - 64}
-                                  alt="quiz-image"
+                                  alt="Selected image from input"
                                   style={{
                                     borderRadius: 2,
                                     objectFit: 'cover',

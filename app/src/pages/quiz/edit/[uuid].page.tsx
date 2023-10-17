@@ -578,7 +578,12 @@ export default function QuizCreatePage({
 
   async function onDeleteDialogConfirm() {
     const { questions } = questionsFormData;
-    for (const question of questions) {
+    for (
+      let questionIndex = 0;
+      questionIndex < questions.length;
+      questionIndex++
+    ) {
+      const question = questions.at(questionIndex)!;
       for (const answer of question.answers) {
         // Delete answer
         if (answer.id != null) {
@@ -593,12 +598,24 @@ export default function QuizCreatePage({
           id: question.id,
         });
       }
-    }
-    // Delete image
-    if (quiz?.attributes?.image?.data?.id != null) {
-      await deleteImageMutation.mutateAsync({
-        id: quiz?.attributes?.image?.data?.id,
-      });
+      // Delete question image
+      const questionImageId =
+        quiz?.attributes?.questions?.data.at(questionIndex)?.attributes
+          ?.questionImage?.data?.id;
+      if (questionImageId != null) {
+        await deleteImageMutation.mutateAsync({
+          id: questionImageId,
+        });
+      }
+      // Delete explanation image
+      const explanationImageId =
+        quiz?.attributes?.questions?.data.at(questionIndex)?.attributes
+          ?.explanationImage?.data?.id;
+      if (explanationImageId != null) {
+        await deleteImageMutation.mutateAsync({
+          id: explanationImageId,
+        });
+      }
     }
 
     // Delete quiz
@@ -606,6 +623,13 @@ export default function QuizCreatePage({
       await deleteQuizMutation.mutateAsync({
         id: quiz.id,
       });
+
+      // Delete image
+      if (quiz?.attributes?.image?.data?.id != null) {
+        await deleteImageMutation.mutateAsync({
+          id: quiz?.attributes?.image?.data?.id,
+        });
+      }
     }
 
     queryClient.invalidateQueries(['allPublishedQuizzes']);

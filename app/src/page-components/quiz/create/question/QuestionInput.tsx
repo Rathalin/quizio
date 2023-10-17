@@ -315,42 +315,7 @@ export default function QuestionInput({
             </Tooltip>
           </Box>
           <Divider sx={{ marginBlock: 4 }} />
-          <Box sx={{ marginTop: 4 }}>
-            <Controller
-              name={`${name}.explanation`}
-              render={({ field }) => (
-                <QuizioTextField
-                  id={`${name}.explanation`}
-                  label="Explanation"
-                  fullWidth
-                  multiline
-                  inputProps={{
-                    maxLength: constraints.quiz.question.explanation.maxLength,
-                  }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Tooltip
-                          title="Explain the correct answer or give some context. This input is optional."
-                          arrow
-                        >
-                          <InfoIcon />
-                        </Tooltip>
-                      </InputAdornment>
-                    ),
-                  }}
-                  {...field}
-                />
-              )}
-              control={control}
-            />
-          </Box>
-          <Stack
-            display="inline-flex"
-            alignItems="center"
-            gap={1}
-            sx={{ marginBottom: 4 }}
-          >
+          <Stack display="inline-flex" alignItems="center" gap={1}>
             <Controller
               name={`${name}.explanationImage.data.file`}
               render={({ field }) => (
@@ -423,6 +388,36 @@ export default function QuestionInput({
               {'Remove'}
             </Button>
           </Stack>
+          <Box sx={{ marginTop: 4 }}>
+            <Controller
+              name={`${name}.explanation`}
+              render={({ field }) => (
+                <QuizioTextField
+                  id={`${name}.explanation`}
+                  label="Explanation"
+                  fullWidth
+                  multiline
+                  inputProps={{
+                    maxLength: constraints.quiz.question.explanation.maxLength,
+                  }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Tooltip
+                          title="Explain the correct answer or give some context. This input is optional."
+                          arrow
+                        >
+                          <InfoIcon />
+                        </Tooltip>
+                      </InputAdornment>
+                    ),
+                  }}
+                  {...field}
+                />
+              )}
+              control={control}
+            />
+          </Box>
         </Box>
       </AccordionDetails>
     </Accordion>

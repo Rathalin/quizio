@@ -1,5 +1,4 @@
 {
-  "i18n-ally.localesPaths": [
-    "app"
-  ]
+  "i18n-ally.localesPaths": ["app"],
+  "discord.enabled": true
 }

@@ -27,6 +27,7 @@ import { DevTool } from '@hookform/devtools';
 import { isBrowser } from '@/utilities/isBrowser';
 import { FormErrorIcon } from '../FormErrorIcon';
 import AddIcon from '@mui/icons-material/Add';
+import { raise } from '@/utilities/errorHandling';
 
 type QuestionsFormProps = {
   defaultData: QuizQuestionsForm;
@@ -86,15 +87,52 @@ export default function QuestionsForm({
 
   useEffect(() => {
     if (editMode) return;
-    reset(getStorageItem() as QuizQuestionsForm);
-  }, [editMode, getStorageItem, reset]);
+    // Keep image from form data
+    const questions = getValues('questions');
+    const storageData = getStorageItem();
+    if (storageData != null) {
+      for (
+        let questionIndex = 0;
+        questionIndex < questions.length;
+        questionIndex++
+      ) {
+        const storageQuestion =
+          storageData.questions.at(questionIndex) ??
+          raise(`No question at index ${questionIndex} in storage data`);
+        const questionImage = questions.at(questionIndex)?.questionImage;
+        if (questionImage != null && storageQuestion.questionImage != null) {
+          storageQuestion.questionImage = questionImage;
+        }
+        const explanationImage = questions.at(questionIndex)?.explanationImage;
+        if (
+          explanationImage != null &&
+          storageQuestion.explanationImage != null
+        ) {
+          storageQuestion.explanationImage = explanationImage;
+        }
+      }
+    }
+    reset(storageData as QuizQuestionsForm);
+  }, [editMode, getStorageItem, getValues, reset]);
+
   useEffect(() => {
     if (editMode) return;
     const subscription = watch((value) => {
-      setStorageItem(value as QuizQuestionsForm);
+      const valueToStore = structuredClone(value);
+      // Don't store question and explanation images
+      for (const question of valueToStore.questions ?? []) {
+        if (question?.questionImage?.data?.file != null) {
+          question.questionImage.data.file = null;
+        }
+        if (question?.explanationImage?.data?.file != null) {
+          question.explanationImage.data.file = null;
+        }
+      }
+      setStorageItem(valueToStore as QuizQuestionsForm);
     });
     return () => subscription.unsubscribe();
-  }, [watch, setStorageItem, editMode]);
+  }, [watch, setStorageItem, editMode, getValues]);
+
   useEffect(() => {
     if (!editMode) return;
     reset(defaultData);
