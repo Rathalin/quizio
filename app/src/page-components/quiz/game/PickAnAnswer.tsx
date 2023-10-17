@@ -7,7 +7,6 @@ import {
   ListItemIcon,
   Stack,
   Grid,
-  useTheme,
   Box,
 } from '@mui/material';
 import AnsweredProgress from './AnsweredProgress';
@@ -38,7 +37,6 @@ export default function PickAnAnswer({
   selectedAnswerId,
   imageUrl,
 }: PickAnAnswerProps) {
-  const theme = useTheme();
   const { width, height } = useImageDimensions();
   const answered = selectedAnswerId != null;
 
@@ -55,7 +53,6 @@ export default function PickAnAnswer({
               style={{
                 objectFit: 'cover',
                 borderRadius: '4px',
-                boxShadow: theme.shadows[4],
               }}
               unoptimized
             />

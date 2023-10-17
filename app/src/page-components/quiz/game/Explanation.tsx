@@ -39,7 +39,6 @@ export default function Explanation({
             style={{
               objectFit: 'cover',
               borderRadius: '4px',
-              boxShadow: theme.shadows[4],
             }}
             unoptimized
           />
