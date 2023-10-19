@@ -8,6 +8,7 @@ import PickAnAnswerPlaceholder from '@/page-components/quiz/game/PickAnAnswerPla
 import QuizNotFound from '@/page-components/quiz/game/QuizNotFound';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
 import { isBrowser } from '@/utilities/isBrowser';
+import { timeout } from '@/utilities/timeout';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import {
   Box,
@@ -32,7 +33,7 @@ import request from 'graphql-request';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 export type AnsweredState = {
   correctAnswerId: string;
@@ -69,6 +70,7 @@ export default function PlayIdPage({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const theme = useTheme();
   const router = useRouter();
+  const topAnchor = useRef<HTMLDivElement>(null);
   const quizQuery = useQuery({
     queryKey: ['quiz', gameId],
     queryFn: () =>
@@ -159,8 +161,10 @@ export default function PlayIdPage({
     );
   }
 
-  function nextQuestion() {
+  async function onNextQuestionClick() {
     setQuestionIndex((index) => index + 1);
+    await timeout(0);
+    topAnchor?.current?.scrollIntoView({ behavior: 'smooth' });
   }
 
   const resultScore = useMemo(() => {
@@ -230,6 +234,7 @@ export default function PlayIdPage({
                 border: `3px solid ${borderColor}`,
               }}
             >
+              <div ref={topAnchor} />
               {!gameDone && (
                 <>
                   <CardContent sx={{ padding: 0 }}>
@@ -279,7 +284,7 @@ export default function PlayIdPage({
                     <Button
                       variant="contained"
                       disabled={answerState?.selectedAnswerId == null}
-                      onClick={nextQuestion}
+                      onClick={onNextQuestionClick}
                     >
                       {questionIndex + 1 < questions.length
                         ? 'Next Question'
