@@ -20,12 +20,12 @@ export default function FilterBar({ quizzesCount }: FilterBarProps) {
         color={theme.palette.primary.main}
         index={quizzesCount}
         sx={{ width: '2.4rem', height: '2.4rem' }}
-      ></IndexAvatar>
+      />
       <SearchInput />
       <SortCreatedButton option="createdAt">Created at</SortCreatedButton>
       <SortCreatedButton option="playCount">Played</SortCreatedButton>
       {session.status === 'authenticated' && (
-        <FilterButton filter={'my-quizzes'}>Only my quizzes</FilterButton>
+        <FilterButton filter={'my-quizzes'}>My quizzes only</FilterButton>
       )}
     </Stack>
   );
