@@ -2,6 +2,7 @@ import { Box, Stack, Typography, useTheme } from '@mui/material';
 import Image from 'next/image';
 import { useImageDimensions } from './useImageDimensions';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
+import { imageStyle } from './imageStyle';
 
 const correctEmojies = ['😀', '😁', '😃', '😄', '😆', '😊', '😎'];
 const incorrectEmojies = ['😐', '😶', '😮', '😯', '🫤', '🫥', '😮‍💨'];
@@ -37,8 +38,7 @@ export default function Explanation({
             width={width}
             height={height}
             style={{
-              objectFit: 'cover',
-              borderRadius: '4px',
+              ...imageStyle,
             }}
             unoptimized
           />

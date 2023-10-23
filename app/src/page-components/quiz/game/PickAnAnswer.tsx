@@ -17,6 +17,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import Image from 'next/image';
 import { useImageDimensions } from './useImageDimensions';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
+import { imageStyle } from './imageStyle';
 
 type PickAnAnswerProps = {
   index: number;
@@ -51,8 +52,7 @@ export default function PickAnAnswer({
               width={width}
               height={height}
               style={{
-                objectFit: 'cover',
-                borderRadius: '4px',
+                ...imageStyle,
               }}
               unoptimized
             />
