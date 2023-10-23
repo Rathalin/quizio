@@ -85,7 +85,10 @@ export default function QuizzesOverview() {
         });
   }, [quizzes, searchText]);
 
-  const quizzesCount = data?.pages[0]?.quizzes?.meta?.pagination?.total ?? 0;
+  const quizzesCount =
+    searchText.trim().length > 0
+      ? searchedQuizzes.length
+      : data?.pages[0]?.quizzes?.meta?.pagination?.total ?? 0;
 
   return (
     <Box>
