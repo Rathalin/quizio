@@ -71,6 +71,7 @@ export default function PlayIdPage({
   const theme = useTheme();
   const router = useRouter();
   const topAnchor = useRef<HTMLDivElement>(null);
+  const resultAnchor = useRef<HTMLDivElement>(null);
   const quizQuery = useQuery({
     queryKey: ['quiz', gameId],
     queryFn: () =>
@@ -148,7 +149,7 @@ export default function PlayIdPage({
     }
   }, [gameDone, playCountIncreased, increasePlayCountMutation]);
 
-  function setAnswerOfCurrentQuestion(selectedAnswerId: string) {
+  async function setAnswerOfCurrentQuestion(selectedAnswerId: string) {
     setAnswerwedProgress((progress) =>
       progress.map((answeredState, i) =>
         i === questionIndex
@@ -159,6 +160,8 @@ export default function PlayIdPage({
           : answeredState
       )
     );
+    await timeout(0);
+    resultAnchor?.current?.scrollIntoView({ behavior: 'smooth' });
   }
 
   async function onNextQuestionClick() {
@@ -226,6 +229,7 @@ export default function PlayIdPage({
               )}
             />
           </Head>
+          <div ref={topAnchor} />
           {questions.length === 0 ? (
             <QuizNotFound />
           ) : (
@@ -234,7 +238,6 @@ export default function PlayIdPage({
                 border: `3px solid ${borderColor}`,
               }}
             >
-              <div ref={topAnchor} />
               {!gameDone && (
                 <>
                   <CardContent sx={{ padding: 0 }}>
@@ -256,6 +259,7 @@ export default function PlayIdPage({
                           ?.url ?? null
                       }
                     />
+                    <div ref={resultAnchor} />
                     {questionAnswered && (
                       <Box sx={{ paddingInline: 6 }}>
                         <Divider sx={{ marginBlock: 4 }} />
