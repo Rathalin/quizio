@@ -112,7 +112,6 @@ export default function QuizOverview({
               objectFit: 'cover',
               width: '100%',
               minHeight: '180px',
-              filter: mode === 'light' ? 'opacity(0.8)' : 'none',
             }}
             unoptimized
           ></Image>
