@@ -4,6 +4,7 @@ import SearchInput from './SearchInput';
 import SortCreatedButton from './SortButton';
 import FilterButton from './FilterButton';
 import { useSession } from 'next-auth/react';
+import { useSearch } from '../search.context';
 
 type FilterBarProps = {
   quizzesCount: number;
@@ -12,20 +13,25 @@ type FilterBarProps = {
 export default function FilterBar({ quizzesCount }: FilterBarProps) {
   const theme = useTheme();
   const session = useSession();
+  const { searchText } = useSearch();
 
   return (
     <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
       <IndexAvatar
-        variant="rounded"
+        variant={searchText.trim().length === 0 ? 'rounded' : 'circular'}
         color={theme.palette.primary.main}
         index={quizzesCount}
-        sx={{ width: '2.4rem', height: '2.4rem' }}
-      ></IndexAvatar>
+        sx={{
+          width: '2.4rem',
+          height: '2.4rem',
+          transition: 'border-radius 0.2s ease-in-out',
+        }}
+      />
       <SearchInput />
       <SortCreatedButton option="createdAt">Created at</SortCreatedButton>
       <SortCreatedButton option="playCount">Played</SortCreatedButton>
       {session.status === 'authenticated' && (
-        <FilterButton filter={'my-quizzes'}>Only my quizzes</FilterButton>
+        <FilterButton filter={'my-quizzes'}>My quizzes only</FilterButton>
       )}
     </Stack>
   );

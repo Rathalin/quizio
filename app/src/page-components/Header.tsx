@@ -2,12 +2,17 @@ import LogoButton from '@/components/buttons/LogoButton';
 import { AppBar, Container, Grid, Toolbar } from '@mui/material';
 import AccountMenu from './dashboard/AccountMenu';
 import { ThemeSwitch } from '@/components/buttons/ThemeSwitch';
+import { useColorMode } from './theme.context';
 
 export default function Header() {
+  const { mode } = useColorMode();
   return (
     <AppBar
       position="sticky"
-      sx={{ backdropFilter: 'blur(6px)', backgroundColor: 'transparent' }}
+      sx={{
+        backdropFilter: 'blur(6px)',
+        backgroundColor: mode === 'light' ? '#0000001a' : 'transparent',
+      }}
     >
       <Container maxWidth="lg">
         <Toolbar disableGutters>
