@@ -1,8 +1,6 @@
 import { Box, Stack, Typography, useTheme } from '@mui/material';
-import Image from 'next/image';
-import { useImageDimensions } from './useImageDimensions';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
-import { imageStyle } from './imageStyle';
+import { GameImage } from './GameImage';
 
 const correctEmojies = ['😀', '😁', '😃', '😄', '😆', '😊', '😎'];
 const incorrectEmojies = ['😐', '😶', '😮', '😯', '🫤', '🫥', '😮‍💨'];
@@ -19,7 +17,6 @@ export default function Explanation({
   imageUrl,
 }: ExplanationProps) {
   const theme = useTheme();
-  const { width, height } = useImageDimensions();
 
   const trimmedText = text?.trim();
 
@@ -32,15 +29,9 @@ export default function Explanation({
     <>
       {imageUrl != null && (
         <Stack sx={{ marginBottom: 4 }}>
-          <Image
+          <GameImage
             src={getBackendImageUrl(imageUrl)}
-            alt={`Explanation image`}
-            width={width}
-            height={height}
-            style={{
-              ...imageStyle,
-            }}
-            unoptimized
+            alt="Explanation image"
           />
         </Stack>
       )}

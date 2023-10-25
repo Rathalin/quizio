@@ -14,10 +14,8 @@ import { AnsweredState } from '@/pages/play/[id].page';
 import IndexAvatar from './IndexAvatar';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
-import Image from 'next/image';
-import { useImageDimensions } from './useImageDimensions';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
-import { imageStyle } from './imageStyle';
+import { GameImage } from './GameImage';
 
 type PickAnAnswerProps = {
   index: number;
@@ -38,7 +36,6 @@ export default function PickAnAnswer({
   selectedAnswerId,
   imageUrl,
 }: PickAnAnswerProps) {
-  const { width, height } = useImageDimensions();
   const answered = selectedAnswerId != null;
 
   return (
@@ -46,15 +43,9 @@ export default function PickAnAnswer({
       <Box sx={{ paddingTop: 6, paddingInline: 6 }}>
         {imageUrl != null && (
           <Stack sx={{ paddingBottom: 4 }}>
-            <Image
+            <GameImage
               src={getBackendImageUrl(imageUrl)}
-              alt={`Question image`}
-              width={width}
-              height={height}
-              style={{
-                ...imageStyle,
-              }}
-              unoptimized
+              alt="Question image"
             />
           </Stack>
         )}
