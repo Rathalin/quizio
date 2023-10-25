@@ -161,13 +161,19 @@ export default function PlayIdPage({
       )
     );
     await timeout(0);
-    resultAnchor?.current?.scrollIntoView({ behavior: 'smooth' });
+    resultAnchor?.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'end',
+    });
   }
 
   async function onNextQuestionClick() {
     setQuestionIndex((index) => index + 1);
     await timeout(0);
-    topAnchor?.current?.scrollIntoView({ behavior: 'smooth' });
+    topAnchor?.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
   }
 
   const resultScore = useMemo(() => {
@@ -259,7 +265,6 @@ export default function PlayIdPage({
                           ?.url ?? null
                       }
                     />
-                    <div ref={resultAnchor} />
                     {questionAnswered && (
                       <Box sx={{ paddingInline: 6 }}>
                         <Divider sx={{ marginBlock: 4 }} />
@@ -295,6 +300,7 @@ export default function PlayIdPage({
                         : 'Finish quiz'}
                     </Button>
                   </CardActions>
+                  <div ref={resultAnchor} />
                 </>
               )}
               {gameDone && (
