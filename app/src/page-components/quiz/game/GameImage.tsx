@@ -1,7 +1,6 @@
 import { Backdrop, Stack, Typography } from '@mui/material';
 import Image from 'next/image';
 import { useState } from 'react';
-import { imageStyle } from './imageStyle';
 import { useImageDimensions } from './useImageDimensions';
 import { useColorMode } from '@/page-components/theme.context';
 
@@ -23,7 +22,9 @@ export function GameImage({ src, alt }: GameImageProps) {
         width={width}
         height={height}
         style={{
-          ...imageStyle,
+          objectFit: 'cover',
+          borderRadius: '4px',
+          filter: `drop-shadow(3px 3px 8px #7d7d7d)`,
           cursor: 'pointer',
         }}
         onClick={() => setOpen(true)}
