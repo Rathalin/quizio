@@ -33,6 +33,14 @@ export const getUserProfileDataByIdGQL = graphql(`
           username
           uuid
           email
+          profileImage {
+            data {
+              id
+              attributes {
+                url
+              }
+            }
+          }
           role {
             data {
               attributes {

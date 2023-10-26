@@ -3,11 +3,13 @@ import HomeButton from '@/components/buttons/HomeButton';
 import UserProfile from '@/components/users/UserProfile';
 import UserProfilePlaceholder from '@/components/users/UserProfilePlaceholder';
 import { getUserProfileDataByIdGQL, getUsersByUuidGQL } from '@/graphql/users';
+import { getBackendImageUrl } from '@/utilities/getImageUrl';
 import { Box, Card, CardActions, CardContent, Stack } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import request from 'graphql-request';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { signOut } from 'next-auth/react';
+import { useMemo } from 'react';
 
 export const getServerSideProps: GetServerSideProps<{
   userId: string | null;
@@ -71,13 +73,13 @@ export default function UserIdPage({
   });
 
   const user = data?.usersPermissionsUser?.data;
-  const createdAt = user?.attributes?.createdAt ?? '';
-  const username = user?.attributes?.username ?? '';
-  const quizCount = user?.attributes?.quizzes?.data?.length ?? 0;
-  const quizViewsTotal =
-    user?.attributes?.quizzes?.data
-      .map((quiz) => quiz.attributes?.playCount ?? 0)
-      .reduce(sum, 0) ?? 0;
+  const imageUrl = useMemo(() => {
+    const url = user?.attributes?.profileImage?.data?.attributes?.url;
+    if (url != null) {
+      return getBackendImageUrl(url);
+    }
+    return null;
+  }, [user?.attributes?.profileImage?.data?.attributes?.url]);
 
   function sum(sum: number, n: number) {
     return sum + n;
@@ -90,10 +92,15 @@ export default function UserIdPage({
           {isLoading && <UserProfilePlaceholder />}
           {isSuccess && (
             <UserProfile
-              username={username}
-              createdAt={createdAt}
-              quizCount={quizCount}
-              quizViewsTotal={quizViewsTotal}
+              username={user?.attributes?.username ?? ''}
+              createdAt={user?.attributes?.createdAt ?? ''}
+              quizCount={user?.attributes?.quizzes?.data?.length ?? 0}
+              quizViewsTotal={
+                user?.attributes?.quizzes?.data
+                  .map((quiz) => quiz.attributes?.playCount ?? 0)
+                  .reduce(sum, 0) ?? 0
+              }
+              imageUrl={imageUrl}
             />
           )}
           {isError && <GenericLoadingErrorMessage />}
