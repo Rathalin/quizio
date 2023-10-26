@@ -39,16 +39,28 @@ export function GameImage({ src, alt }: GameImageProps) {
           cursor: 'pointer',
         }}
       >
-        <Stack alignItems="center" justifyContent="center" gap={2}>
+        <Stack
+          alignItems="center"
+          justifyContent="center"
+          gap={2}
+          sx={{
+            padding: {
+              xs: 2,
+              sm: 4,
+            },
+            height: '100%',
+            width: '100%',
+          }}
+        >
           <Image
             src={src}
             alt={alt}
             width={600}
             height={400}
             style={{
-              aspectRatio: 'auto 3 / 2',
               height: '90%',
-              width: '90%',
+              width: '100%',
+              aspectRatio: 'auto 3 / 2',
               objectFit: 'contain',
             }}
             unoptimized
