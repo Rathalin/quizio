@@ -1,31 +1,24 @@
-import { Box, Stack } from '@mui/material';
-import PlaceholderBox from '../placeholders/PlaceholderBox';
+import { Stack } from '@mui/material';
 import PlaceholderTypography from '../placeholders/PlaceholderTypography';
+import PlaceholderBox from '../placeholders/PlaceholderBox';
+import { profileImageDimensions } from './ProfileAvatar';
 
 export default function UserProfilePlaceholder() {
+  const { width, height } = profileImageDimensions;
   return (
-    <Stack
-      direction="row"
-      justifyContent="space-between"
-      flexWrap="wrap"
-      gap={4}
-    >
+    <>
+      <Stack direction="row" sx={{ marginBottom: 2 }}>
+        <PlaceholderBox minWidth={`${width}px`} minHeight={`${height}px`} />
+      </Stack>
       <Stack alignItems="start" gap={1}>
         <PlaceholderTypography
           variant="h1"
           text="Excepteur dolore."
-          sx={{ marginTop: 0, marginBottom: 2 }}
+          sx={{ marginBlock: 0 }}
         />
         <PlaceholderTypography text="Excepteur dolore nostrud." />
         <PlaceholderTypography text="Qui non sint duis quis tempor voluptate nisi dolore nostrud." />
       </Stack>
-
-      <Stack alignItems="center" gap={1}>
-        <PlaceholderBox>
-          <Box sx={{ minHeight: '6rem', minWidth: '6rem' }}></Box>
-        </PlaceholderBox>
-        <PlaceholderTypography text="Aliqua in culpa sunt amet dolor." />
-      </Stack>
-    </Stack>
+    </>
   );
 }

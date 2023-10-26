@@ -75,6 +75,13 @@
       "relation": "oneToMany",
       "target": "api::quiz.quiz",
       "mappedBy": "owner"
+    },
+    "profileImage": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }

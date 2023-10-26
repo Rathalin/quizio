@@ -1,11 +1,13 @@
-import { Typography, Stack, Avatar, useTheme, Divider } from '@mui/material';
+import { Typography, Stack, Divider, Box } from '@mui/material';
 import { useMemo } from 'react';
+import { ProfileAvatar } from './ProfileAvatar';
 
 type UserProfileProps = {
   username: string;
   createdAt: Date;
   quizCount: number;
   quizViewsTotal: number;
+  imageUrl: string | null;
 };
 
 export default function UserProfile({
@@ -13,11 +15,8 @@ export default function UserProfile({
   createdAt,
   quizCount,
   quizViewsTotal,
+  imageUrl,
 }: UserProfileProps) {
-  const theme = useTheme();
-
-  const initials = username?.trim().charAt(0).toUpperCase() ?? '';
-
   const dateFormat = useMemo(
     () => new Intl.DateTimeFormat('en-GB', { dateStyle: 'short' }),
     []
@@ -25,38 +24,18 @@ export default function UserProfile({
 
   return (
     <>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        flexWrap="wrap"
-        gap={4}
-      >
-        <Stack spacing={1} alignItems="start">
-          <Typography variant="h1" sx={{ marginTop: 0 }}>
-            {username}
-          </Typography>
-          <Typography>{`Joined on ${dateFormat.format(
-            new Date(createdAt)
-          )}`}</Typography>
-          <Divider />
-          <Typography>{`Created ${quizCount} quizzes which have been played a total of ${quizViewsTotal} times.`}</Typography>
-        </Stack>
-        <Stack alignItems="center" spacing={1}>
-          <Avatar
-            variant="rounded"
-            sx={{
-              backgroundColor: theme.palette.primary.dark,
-              fontWeight: 'bold',
-              width: '6rem',
-              height: '6rem',
-              fontSize: '2rem',
-              color: theme.palette.primary.contrastText,
-            }}
-          >
-            {initials}
-          </Avatar>
-          <Typography>Profile image comming soon.</Typography>
-        </Stack>
+      <Box sx={{ marginBottom: 4 }}>
+        <ProfileAvatar imageUrl={imageUrl} username={username} />
+      </Box>
+      <Stack spacing={1} alignItems="start">
+        <Typography variant="h1" sx={{ marginTop: 0 }}>
+          {username}
+        </Typography>
+        <Typography>{`Joined on ${dateFormat.format(
+          new Date(createdAt)
+        )}`}</Typography>
+        <Divider />
+        <Typography>{`Created ${quizCount} quizzes which have been played a total of ${quizViewsTotal} times.`}</Typography>
       </Stack>
     </>
   );

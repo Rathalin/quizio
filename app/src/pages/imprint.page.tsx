@@ -6,7 +6,7 @@ export default function ImprintPage() {
     <Box>
       <Typography variant="h1">{'Imprint'}</Typography>
       <Typography variant="h5" component="p">
-        {'Daniel Flockert, BSc.'}
+        {'Daniel Flockert, MSc.'}
       </Typography>
       <Typography>{'1120, Vienna'}</Typography>
       <Typography>{'Austria'}</Typography>
