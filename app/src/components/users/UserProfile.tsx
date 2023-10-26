@@ -1,6 +1,6 @@
 import { Typography, Stack, Divider, Box } from '@mui/material';
 import { useMemo } from 'react';
-import { AvatarImage } from './AvatarImage';
+import { ProfileAvatar } from './ProfileAvatar';
 
 type UserProfileProps = {
   username: string;
@@ -25,7 +25,7 @@ export default function UserProfile({
   return (
     <>
       <Box sx={{ marginBottom: 4 }}>
-        <AvatarImage imageUrl={imageUrl} username={username} />
+        <ProfileAvatar imageUrl={imageUrl} username={username} />
       </Box>
       <Stack spacing={1} alignItems="start">
         <Typography variant="h1" sx={{ marginTop: 0 }}>

@@ -1,7 +1,7 @@
 import { Avatar, useTheme } from '@mui/material';
 import Image from 'next/image';
 
-const profileImageDimensions = {
+export const profileImageDimensions = {
   width: 240,
   height: 240,
 };
@@ -11,7 +11,7 @@ type AvatarImageProps = {
   username: string;
 };
 
-export function AvatarImage({ imageUrl, username }: AvatarImageProps) {
+export function ProfileAvatar({ imageUrl, username }: AvatarImageProps) {
   const theme = useTheme();
   const { width, height } = profileImageDimensions;
   const initials = username?.trim().charAt(0).toUpperCase() ?? '';
