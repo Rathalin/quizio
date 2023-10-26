@@ -81,10 +81,6 @@ export default function UserIdPage({
     return null;
   }, [user?.attributes?.profileImage?.data?.attributes?.url]);
 
-  function sum(sum: number, n: number) {
-    return sum + n;
-  }
-
   return (
     <Box sx={{ marginTop: 4 }}>
       <Card elevation={2}>
@@ -98,7 +94,7 @@ export default function UserIdPage({
               quizViewsTotal={
                 user?.attributes?.quizzes?.data
                   .map((quiz) => quiz.attributes?.playCount ?? 0)
-                  .reduce(sum, 0) ?? 0
+                  .reduce((sum, n) => sum + n, 0) ?? 0
               }
               imageUrl={imageUrl}
             />
