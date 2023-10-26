@@ -169,11 +169,13 @@ export default function PlayIdPage({
 
   async function onNextQuestionClick() {
     setQuestionIndex((index) => index + 1);
-    await timeout(0);
-    topAnchor?.current?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    });
+    if (!isLastQuestion) {
+      await timeout(0);
+      topAnchor?.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
   }
 
   const resultScore = useMemo(() => {
@@ -194,6 +196,7 @@ export default function PlayIdPage({
     lines.push(`${window.location.origin}${router.asPath}`);
     return lines.join('\n');
   }, [answeredProgress, quiz?.attributes?.title, router.asPath]);
+  const isLastQuestion = questionIndex + 1 === questions.length;
 
   function writeResultToClipboard() {
     if (resultScore != null) {
@@ -295,9 +298,7 @@ export default function PlayIdPage({
                       disabled={answerState?.selectedAnswerId == null}
                       onClick={onNextQuestionClick}
                     >
-                      {questionIndex + 1 < questions.length
-                        ? 'Next Question'
-                        : 'Finish quiz'}
+                      {!isLastQuestion ? 'Next Question' : 'Finish quiz'}
                     </Button>
                   </CardActions>
                   <div ref={resultAnchor} />
