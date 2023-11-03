@@ -28,7 +28,7 @@ import { usePageTransition } from '@/persistence/page-transition.store';
 import LoadingCircle from './LoadingCircle';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
 
-type QuizOverviewProps = {
+type QuizOverviewCardProps = {
   uuid: string;
   title: string;
   description: string;
@@ -42,7 +42,7 @@ type QuizOverviewProps = {
   isMyQuiz: boolean;
 };
 
-export default function QuizOverview({
+export default function QuizOverviewCard({
   uuid,
   title,
   description,
@@ -53,7 +53,7 @@ export default function QuizOverview({
   playCount,
   imageUrl,
   isMyQuiz,
-}: QuizOverviewProps) {
+}: QuizOverviewCardProps) {
   const theme = useTheme();
   const { mode } = useColorMode();
   const isQuestionCountSingular = questionCount === 1;
@@ -137,7 +137,6 @@ export default function QuizOverview({
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            alignItems: 'center',
           }}
         >
           <Box>
