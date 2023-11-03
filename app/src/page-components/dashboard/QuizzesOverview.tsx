@@ -1,4 +1,4 @@
-import QuizOverview from '@/components/QuizOverview';
+import QuizOverviewCard from '@/components/QuizOverviewCard';
 import QuizOverviewPlaceholder from '@/components/QuizOverviewPlaceholder';
 import { getAllPublishedQuizzesGQL } from '@/graphql/quizzes';
 import { Box, Stack, Typography } from '@mui/material';
@@ -113,7 +113,7 @@ export default function QuizzesOverview() {
             >
               {data != null &&
                 searchedQuizzes.map((quiz) => (
-                  <QuizOverview
+                  <QuizOverviewCard
                     key={quiz?.attributes?.uuid}
                     uuid={quiz?.attributes?.uuid ?? ''}
                     title={quiz?.attributes?.title ?? ''}

@@ -13,6 +13,7 @@ export function GameImage({ src, alt }: GameImageProps) {
   const { mode } = useColorMode();
   const { width, height } = useImageDimensions();
   const [open, setOpen] = useState(false);
+  const dropShadowFilter = `drop-shadow(3px 3px 8px #7d7d7d)`;
 
   return (
     <>
@@ -24,8 +25,8 @@ export function GameImage({ src, alt }: GameImageProps) {
         style={{
           objectFit: 'cover',
           borderRadius: '4px',
-          filter: `drop-shadow(3px 3px 8px #7d7d7d)`,
           cursor: 'pointer',
+          filter: dropShadowFilter,
         }}
         onClick={() => setOpen(true)}
         unoptimized
@@ -60,8 +61,9 @@ export function GameImage({ src, alt }: GameImageProps) {
             style={{
               height: '90%',
               width: '100%',
-              aspectRatio: 'auto 3 / 2',
               objectFit: 'contain',
+              aspectRatio: 'auto 3 / 2',
+              filter: dropShadowFilter,
             }}
             unoptimized
           />

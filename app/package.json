@@ -1,6 +1,6 @@
 {
   "name": "quizio-app",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -18,8 +18,8 @@
     "@emotion/styled": "^11.11.0",
     "@graphql-typed-document-node/core": "^3.2.0",
     "@hookform/resolvers": "^3.3.2",
-    "@mui/icons-material": "^5.14.15",
-    "@mui/material": "^5.14.15",
+    "@mui/icons-material": "^5.14.16",
+    "@mui/material": "^5.14.16",
     "@tanstack/react-query": "^4.36.1",
     "@tanstack/react-query-devtools": "^4.36.1",
     "@vercel/analytics": "^1.1.1",
@@ -28,13 +28,13 @@
     "graphql": "^16.8.1",
     "graphql-request": "^6.1.0",
     "next": "^13.5.6",
-    "next-auth": "^4.24.3",
+    "next-auth": "^4.24.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.47.0",
     "react-markdown": "^8.0.7",
     "zod": "^3.22.4",
-    "zustand": "^4.4.4"
+    "zustand": "^4.4.6"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^4.0.1",
@@ -42,8 +42,8 @@
     "@graphql-codegen/introspection": "^4.0.0",
     "@hookform/devtools": "^4.3.1",
     "@total-typescript/ts-reset": "^0.5.1",
-    "@types/node": "^20.8.9",
-    "@types/react": "^18.2.33",
+    "@types/node": "^20.8.10",
+    "@types/react": "^18.2.34",
     "@types/react-dom": "^18.2.14",
     "eslint-config-next": "^13.5.6",
     "eslint-config-prettier": "^8.10.0",
