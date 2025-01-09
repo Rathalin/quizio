@@ -1,32 +1,24 @@
 package main
 
 import (
-	"context"
+	"database/sql"
 	"log"
 	"net/http"
 
-	"github.com/jackc/pgx"
+	_ "github.com/lib/pq"
 	"github.com/rs/cors"
 	"github.com/swaggest/openapi-go/openapi3"
-	"github.com/swaggest/rest/nethttp"
 	"github.com/swaggest/rest/web"
 	"github.com/swaggest/swgui/v5emb"
-	"github.com/swaggest/usecase"
 
-	"quizio/backend/models"
+	"quizio/backend/handlers"
 )
 
-var db *pgx.Conn
+var db *sql.DB
 
 func connectDB() {
 	var err error
-	db, err = pgx.Connect(pgx.ConnConfig{
-		Host:     "localhost",
-		Port:     5432,
-		Database: "quizio",
-		User:     "root",
-		Password: "mysecretpassword",
-	})
+	db, err = sql.Open("postgres", "host=localhost user=root password=mysecretpassword dbname=quizio sslmode=disable")
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v\n", err)
 	}
@@ -40,74 +32,11 @@ func closeDB() {
 	}
 }
 
-func getQuizzes() usecase.Interactor {
-	return usecase.NewInteractor(func(_ context.Context, _ struct{}, output *[]models.Quiz) error {
-		rows, err := db.Query(`
-			SELECT id, uuid, title, description, is_published, play_count 
-			FROM quizzes
-		`)
-		if err != nil {
-			return err
-		}
-		defer rows.Close()
-
-		var quizzes []models.Quiz
-		for rows.Next() {
-			var quiz models.Quiz
-			if err := rows.Scan(&quiz.ID, &quiz.UUID, &quiz.Title, &quiz.Description, &quiz.IsPublished, &quiz.PlayCount); err != nil {
-				return err
-			}
-			quizzes = append(quizzes, quiz)
-		}
-		*output = quizzes
-		return nil
-	})
-}
-
-func getQuizzesUuids() usecase.Interactor {
-	return usecase.NewInteractor(func(_ context.Context, _ struct{}, output *[]string) error {
-		rows, err := db.Query(`
-			SELECT uuid
-			FROM quizzes
-		`)
-		if err != nil {
-			return err
-		}
-		defer rows.Close()
-
-		var uuids []string
-		for rows.Next() {
-			var uuid string
-			if err := rows.Scan(&uuid); err != nil {
-				return err
-			}
-			uuids = append(uuids, uuid)
-		}
-		*output = uuids
-		return nil
-	})
-}
-
-func postQuiz() usecase.Interactor {
-	return usecase.NewInteractor(func(ctx context.Context, input models.Quiz, output *models.Quiz) error {
-		_, err := db.Exec(`
-			INSERT INTO quizzes (id, title, description, is_published, play_count) 
-			VALUES ($1, $2, $3, $4, $5)
-		`,
-			input.ID, input.Title, input.Description, input.IsPublished, input.PlayCount,
-		)
-		if err != nil {
-			return err
-		}
-
-		*output = input
-		return nil
-	})
-}
-
 func main() {
 	connectDB()
 	defer closeDB()
+
+	dbWrapper := &handlers.DBWrapper{DB: db}
 
 	service := web.NewService(openapi3.NewReflector())
 
@@ -116,12 +45,12 @@ func main() {
 	service.OpenAPISchema().SetVersion("v1.0.0")
 
 	service.Use(
-		cors.AllowAll().Handler, // "github.com/rs/cors", 3rd-party CORS middleware can also be configured here.
+		cors.AllowAll().Handler,
 	)
 
-	service.Get("/quizzes", getQuizzes())
-	service.Get("/quizzes/uuids", getQuizzesUuids())
-	service.Post("/quizzes", postQuiz(), nethttp.SuccessStatus(http.StatusCreated))
+	service.Get("/quizzes", dbWrapper.GetQuizzes())
+	service.Get("/quizzes/uuids", dbWrapper.GetQuizzesUuids())
+	service.Post("/quizzes", dbWrapper.PostQuiz())
 
 	service.Docs("/docs", v5emb.New)
 
