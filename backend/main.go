@@ -1,124 +1,126 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 
-	"quizio/backend/handlers"
+	"github.com/jackc/pgx"
+	"github.com/swaggest/rest/nethttp"
+	"github.com/swaggest/rest/web"
+	"github.com/swaggest/swgui/v4emb"
+	"github.com/swaggest/usecase"
+
 	"quizio/backend/models"
-
-	"github.com/gorilla/mux"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
-
-	_ "quizio/backend/docs"
-
-	httpSwagger "github.com/swaggo/http-swagger"
 )
 
-// @title Quizio API
-// @version 1.0
-// @description This is a sample server for Quizio.
-// @host localhost:8080
-// @BasePath /
+var db *pgx.Conn
 
-var db *gorm.DB
-
-func initDd() {
-	// Database connection string
-	dsn := "host=localhost user=root password=mysecretpassword dbname=quizio port=5432 sslmode=disable TimeZone=Europe/Vienna"
-
-	// Connect to the database
+func connectDB() {
 	var err error
-	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err = pgx.Connect(pgx.ConnConfig{
+		Host:     "localhost",
+		Port:     5432,
+		Database: "quizio",
+		User:     "root",
+		Password: "mysecretpassword",
+	})
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		log.Fatalf("Unable to connect to database: %v\n", err)
 	}
 
-	// Auto-migrate the tables
-	err = db.AutoMigrate(&models.Quiz{}, &models.Question{}, &models.Answer{})
-	if err != nil {
-		log.Fatalf("Failed to migrate database: %v", err)
+	log.Println("Connected to PostgreSQL database.")
+}
+
+func closeDB() {
+	if db != nil {
+		db.Close()
 	}
 }
 
-func seedDb() {
-	// Check if the database already has data
-	var count int64
-	db.Model(&models.Quiz{}).Count(&count)
-	if count > 0 {
-		log.Println("Database already seeded")
-		return
-	}
+func getQuizzes() usecase.Interactor {
+	return usecase.NewInteractor(func(_ context.Context, _ struct{}, output *[]models.Quiz) error {
+		rows, err := db.Query(`
+			SELECT id, uuid, title, description, is_published, play_count 
+			FROM quizzes
+		`)
+		if err != nil {
+			return err
+		}
+		defer rows.Close()
 
-	// Create a quiz
-	quiz := models.Quiz{
-		Title:       "Sample Quiz",
-		Description: "This is an example quiz for testing purposes.",
-		IsPublished: new(bool),
-		Questions: []models.Question{
-			{
-				Title:       "What is the capital of France?",
-				Description: "Choose the correct answer",
-				Explanation: "The capital of France is Paris.",
-				Answers: []models.Answer{
-					{Title: "Paris", IsCorrect: true},
-					{Title: "London", IsCorrect: false},
-					{Title: "Berlin", IsCorrect: false},
-					{Title: "Madrid", IsCorrect: false},
-				},
-			},
-			{
-				Title:       "What is 2 + 2?",
-				Description: "Choose the correct answer",
-				Explanation: "2 + 2 equals 4.",
-				Answers: []models.Answer{
-					{Title: "3", IsCorrect: false},
-					{Title: "4", IsCorrect: true},
-					{Title: "5", IsCorrect: false},
-					{Title: "6", IsCorrect: false},
-				},
-			},
-			{
-				Title:       "Which planet is known as the Red Planet?",
-				Description: "Choose the correct answer",
-				Explanation: "Mars is known as the Red Planet.",
-				Answers: []models.Answer{
-					{Title: "Earth", IsCorrect: false},
-					{Title: "Mars", IsCorrect: true},
-					{Title: "Venus", IsCorrect: false},
-					{Title: "Jupiter", IsCorrect: false},
-				},
-			},
-		},
-	}
+		var quizzes []models.Quiz
+		for rows.Next() {
+			var quiz models.Quiz
+			if err := rows.Scan(&quiz.ID, &quiz.UUID, &quiz.Title, &quiz.Description, &quiz.IsPublished, &quiz.PlayCount); err != nil {
+				return err
+			}
+			quizzes = append(quizzes, quiz)
+		}
+		*output = quizzes
+		return nil
+	})
+}
 
-	// Insert the quiz into the database
-	if err := db.Create(&quiz).Error; err != nil {
-		log.Fatalf("Failed to seed database: %v", err)
-	}
+func getQuizzesUuids() usecase.Interactor {
+	return usecase.NewInteractor(func(_ context.Context, _ struct{}, output *[]string) error {
+		rows, err := db.Query(`
+			SELECT uuid
+			FROM quizzes
+		`)
+		if err != nil {
+			return err
+		}
+		defer rows.Close()
 
-	log.Println("Database seeded successfully")
+		var uuids []string
+		for rows.Next() {
+			var uuid string
+			if err := rows.Scan(&uuid); err != nil {
+				return err
+			}
+			uuids = append(uuids, uuid)
+		}
+		*output = uuids
+		return nil
+	})
+}
+
+func postQuiz() usecase.Interactor {
+	return usecase.NewInteractor(func(ctx context.Context, input models.Quiz, output *models.Quiz) error {
+		_, err := db.Exec(`
+			INSERT INTO quizzes (id, title, description, is_published, play_count) 
+			VALUES ($1, $2, $3, $4, $5)
+		`,
+			input.ID, input.Title, input.Description, input.IsPublished, input.PlayCount,
+		)
+		if err != nil {
+			return err
+		}
+
+		*output = input
+		return nil
+	})
 }
 
 func main() {
-	initDd()
-	seedDb()
+	connectDB()
+	defer closeDB()
 
-	// Create a new router
-	r := mux.NewRouter()
+	service := web.DefaultService()
 
-	// Initialize handlers
-	quizHandler := handlers.NewQuizHandler(db)
+	service.OpenAPI.Info.Title = "Quizzes API"
+	service.OpenAPI.Info.WithDescription("This service manages quizzes and their questions.")
+	service.OpenAPI.Info.Version = "v1.0.0"
 
-	// Define routes
-	// r.HandleFunc("/quiz/{uuid}", quizHandler.GetQuizByUUID).Methods("GET")
-	r.HandleFunc("/quizzes", quizHandler.GetAllQuizzes).Methods("GET") // New route for fetching all quizzes
+	service.Get("/quizzes", getQuizzes())
+	service.Get("/quizzes/uuids", getQuizzesUuids())
+	service.Post("/quizzes", postQuiz(), nethttp.SuccessStatus(http.StatusCreated))
 
-	// Swagger endpoint
-	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
+	service.Docs("/docs", v4emb.New)
 
-	// Start the server
-	log.Println("Server running on http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", r))
+	log.Println("Starting service")
+	if err := http.ListenAndServe("localhost:8080", service); err != nil {
+		log.Fatal(err)
+	}
 }

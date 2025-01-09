@@ -1,21 +1,12 @@
 package handlers
 
-import (
-	"encoding/json"
-	"net/http"
+// type QuizHandler struct {
+// 	DB *gorm.DB
+// }
 
-	"quizio/backend/models"
-
-	"gorm.io/gorm"
-)
-
-type QuizHandler struct {
-	DB *gorm.DB
-}
-
-func NewQuizHandler(db *gorm.DB) *QuizHandler {
-	return &QuizHandler{DB: db}
-}
+// func NewQuizHandler(db *gorm.DB) *QuizHandler {
+// 	return &QuizHandler{DB: db}
+// }
 
 // GetAllQuizzes godoc
 // @Summary Get all quizzes
@@ -24,17 +15,17 @@ func NewQuizHandler(db *gorm.DB) *QuizHandler {
 // @Produce json
 // @Success 200 {array} models.Quiz
 // @Router /quizzes [get]
-func (h *QuizHandler) GetAllQuizzes(w http.ResponseWriter, r *http.Request) {
-	var quizzes []models.Quiz
-	result := h.DB.Find(&quizzes)
-	if result.Error != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
+// func (h *QuizHandler) GetAllQuizzes(w http.ResponseWriter, r *http.Request) {
+// 	var quizzes []models.Quiz
+// 	result := h.DB.Find(&quizzes)
+// 	if result.Error != nil {
+// 		http.Error(w, "Internal server error", http.StatusInternalServerError)
+// 		return
+// 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(quizzes)
-}
+// 	w.Header().Set("Content-Type", "application/json")
+// 	json.NewEncoder(w).Encode(quizzes)
+// }
 
 // func (h *QuizHandler) GetQuizByUUID(w http.ResponseWriter, r *http.Request) {
 // 	// Extract UUID from URL
