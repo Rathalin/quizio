@@ -21,6 +21,7 @@ import GradientWord from '@/components/GradientWord';
 import GradientDivider from '@/components/GradientDivider';
 import ScrollObserver from '@/components/ScrollObserver';
 import { seconds } from '@/utilities/time';
+import { useNewQuizzesQuery } from '@/queries/useQuizzesQuery';
 
 export default function QuizzesOverview() {
   const { data: session } = useSession();
@@ -36,9 +37,11 @@ export default function QuizzesOverview() {
     session?.user.username
   );
   const gqlFilters = useMemo(() => composeFilters(), [composeFilters]);
+  const { data: newQuizzes } = useNewQuizzesQuery();
 
   const pageSize = 12;
   const placeholderCount = 6;
+
   const {
     data,
     isSuccess,
@@ -111,6 +114,22 @@ export default function QuizzesOverview() {
                 },
               }}
             >
+              {newQuizzes != null &&
+                newQuizzes.map((q) => (
+                  <QuizOverviewCard
+                    key={q.id}
+                    createdAt={new Date()}
+                    title={q.title}
+                    description={q.description ?? ''}
+                    isMyQuiz
+                    uuid={q.uuid}
+                    playCount={0}
+                    published
+                    questionCount={q.questions?.length ?? 0}
+                    username={'None'}
+                    userUuid="none"
+                  />
+                ))}
               {data != null &&
                 searchedQuizzes.map((quiz) => (
                   <QuizOverviewCard

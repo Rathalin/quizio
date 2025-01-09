@@ -6,9 +6,11 @@ import (
 	"net/http"
 
 	"github.com/jackc/pgx"
+	"github.com/rs/cors"
+	"github.com/swaggest/openapi-go/openapi3"
 	"github.com/swaggest/rest/nethttp"
 	"github.com/swaggest/rest/web"
-	"github.com/swaggest/swgui/v4emb"
+	"github.com/swaggest/swgui/v5emb"
 	"github.com/swaggest/usecase"
 
 	"quizio/backend/models"
@@ -107,17 +109,21 @@ func main() {
 	connectDB()
 	defer closeDB()
 
-	service := web.DefaultService()
+	service := web.NewService(openapi3.NewReflector())
 
-	service.OpenAPI.Info.Title = "Quizzes API"
-	service.OpenAPI.Info.WithDescription("This service manages quizzes and their questions.")
-	service.OpenAPI.Info.Version = "v1.0.0"
+	service.OpenAPISchema().SetTitle("Quizzes API")
+	service.OpenAPISchema().SetDescription("This service manages quizzes and their questions.")
+	service.OpenAPISchema().SetVersion("v1.0.0")
+
+	service.Use(
+		cors.AllowAll().Handler, // "github.com/rs/cors", 3rd-party CORS middleware can also be configured here.
+	)
 
 	service.Get("/quizzes", getQuizzes())
 	service.Get("/quizzes/uuids", getQuizzesUuids())
 	service.Post("/quizzes", postQuiz(), nethttp.SuccessStatus(http.StatusCreated))
 
-	service.Docs("/docs", v4emb.New)
+	service.Docs("/docs", v5emb.New)
 
 	log.Println("Starting service")
 	if err := http.ListenAndServe("localhost:8080", service); err != nil {
