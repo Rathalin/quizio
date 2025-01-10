@@ -81,7 +81,7 @@ export interface components {
     };
     ModelsMeta: {
       page: number;
-      size: number;
+      pageSize: number;
       totalItems: number;
       totalPages: number;
     };
@@ -133,7 +133,7 @@ export interface operations {
     parameters: {
       query?: {
         page?: number;
-        size?: number;
+        pageSize?: number;
       };
       header?: never;
       path?: never;

@@ -12,7 +12,7 @@ import (
 func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 	type request struct {
 		Page     int `query:"page" example:"0"`
-		PageSize int `query:"size" example:"5"`
+		PageSize int `query:"pageSize" example:"5"`
 	}
 
 	type quiz struct {
@@ -87,7 +87,7 @@ func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 		response := reponse{
 			Meta: models.Meta{
 				Page:       input.Page,
-				Size:       input.PageSize,
+				PageSize:   input.PageSize,
 				TotalItems: totalQuizCount,
 				TotalPages: int(math.Ceil(float64(totalQuizCount) / float64(input.PageSize))),
 			},

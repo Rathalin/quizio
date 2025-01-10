@@ -42,33 +42,6 @@ export default function QuizzesOverview() {
     isError,
   } = useQuizzesInfiniteQuery(pageSize);
 
-  // const {
-  //   data,
-  //   isSuccess,
-  //   isLoading,
-  //   fetchNextPage,
-  //   isFetchingNextPage,
-  //   hasNextPage,
-  //   isError,
-  // } = useInfiniteQuery({
-  //   queryKey: ['allPublishedQuizzes', sort, gqlFilters],
-  //   queryFn: ({ pageParam = 1 }) =>
-  //     request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getAllPublishedQuizzesGQL, {
-  //       sortFields: [`${sort.option}:${sort.mode}`],
-  //       filters: gqlFilters,
-  //       page: pageParam,
-  //       pageSize,
-  //     }),
-  //   getNextPageParam: (lastPage, _pages) => {
-  //     const pagination = lastPage.quizzes?.meta?.pagination;
-  //     if (pagination!.page * pagination!.pageSize < pagination!.total) {
-  //       return pagination!.page + 1;
-  //     }
-  //     return undefined;
-  //   },
-  //   staleTime: seconds(20),
-  // });
-
   const quizzes = useMemo(
     () => data?.pages.map((page) => page.quizzes).flat() ?? [],
     [data?.pages]

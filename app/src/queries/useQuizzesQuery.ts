@@ -7,24 +7,24 @@ import {
 import { seconds } from '@/utilities/time';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
-export function useQuizzesQuery(page: number, size: number) {
+export function useQuizzesQuery(page: number, pageSize: number) {
   return useQuery<
     InferFetchResult<typeof fetchQuizzes>,
     InferFetchError<typeof fetchQuizzes>
   >({
     queryKey: ['getQuizzesNew'],
-    queryFn: () => throwOnError(() => fetchQuizzes(page, size)),
+    queryFn: () => throwOnError(() => fetchQuizzes(page, pageSize)),
   });
 }
 
-export function useQuizzesInfiniteQuery(size: number) {
+export function useQuizzesInfiniteQuery(pageSize: number) {
   return useInfiniteQuery<
     InferFetchResult<typeof fetchQuizzes>,
     InferFetchError<typeof fetchQuizzes>
   >({
     queryKey: ['getQuizzesInfinite'],
     queryFn: ({ pageParam = 0 }) =>
-      throwOnError(() => fetchQuizzes(pageParam, size)),
+      throwOnError(() => fetchQuizzes(pageParam, pageSize)),
     getNextPageParam: ({ meta: { page, totalPages } }, _pages) => {
       if (page < totalPages) {
         return page + 1;
@@ -35,12 +35,12 @@ export function useQuizzesInfiniteQuery(size: number) {
   });
 }
 
-function fetchQuizzes(page: number, size: number) {
+function fetchQuizzes(page: number, pageSize: number) {
   return client.GET('/quizzes', {
     params: {
       query: {
         page,
-        size,
+        pageSize,
       },
     },
   });
