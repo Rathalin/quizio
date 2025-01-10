@@ -11,19 +11,22 @@ import (
 
 func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
 	type request struct {
-		UUID string `path:"uuid"`
+		UUID string `path:"uuid" example:"c1508211-6aab-4090-8727-94de0d40c808"`
 	}
 
 	type response struct {
 		Title     string            `json:"title" required:"true"`
+		ImageUrl  *string           `json:"imageUrl,omitempty"`
 		Questions []models.Question `json:"questions" required:"true" nullable:"false"`
 	}
 
 	type row struct {
 		ID       string
 		Title    string
+		ImageUrl *string
 		Question struct {
 			ID                  string
+			UUID                string
 			Title               string
 			Description         *string
 			ImageUrl            *string
@@ -34,6 +37,7 @@ func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
 		}
 		Answer struct {
 			ID          string
+			UUID        string
 			Title       string
 			Description *string
 			ImageUrl    *string
@@ -61,7 +65,9 @@ func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
 			SELECT
 				q.id,
 				q.title,
+				q.image_url,
 				qn.id,
+				qn.uuid,
 				qn.created_at,
 				qn.updated_at,
 				qn.title,
@@ -70,6 +76,7 @@ func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
 				qn.explanation,
 				qn.explanation_image_url,
 				a.id,
+				a.uuid,
 				a.created_at,
 				a.updated_at,
 				a.title,
@@ -99,7 +106,9 @@ func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
 			if err := rows.Scan(
 				&row.ID,
 				&row.Title,
+				&row.ImageUrl,
 				&row.Question.ID,
+				&row.Question.UUID,
 				&row.Question.CreatedAt,
 				&row.Question.UpdatedAt,
 				&row.Question.Title,
@@ -108,6 +117,7 @@ func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
 				&row.Question.Explanation,
 				&row.Question.ExplanationImageUrl,
 				&row.Answer.ID,
+				&row.Answer.UUID,
 				&row.Answer.CreatedAt,
 				&row.Answer.UpdatedAt,
 				&row.Answer.Title,
@@ -121,11 +131,13 @@ func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
 			if lastQuizId != row.ID {
 				lastQuizId = row.ID
 				response.Title = row.Title
+				response.ImageUrl = row.ImageUrl
 			}
 
 			if lastQuestionId != row.Question.ID {
 				lastQuestionId = row.Question.ID
 				response.Questions = append(response.Questions, models.Question{
+					UUID:                row.Question.UUID,
 					CreatedAt:           row.Question.CreatedAt,
 					UpdatedAt:           row.Question.UpdatedAt,
 					Title:               row.Question.Title,
@@ -137,6 +149,7 @@ func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
 			}
 
 			response.Questions[len(response.Questions)-1].Answers = append(response.Questions[len(response.Questions)-1].Answers, models.Answer{
+				UUID:        row.Answer.UUID,
 				CreatedAt:   row.Answer.CreatedAt,
 				UpdatedAt:   row.Question.UpdatedAt,
 				Title:       row.Answer.Title,

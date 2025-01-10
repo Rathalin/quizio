@@ -6,7 +6,6 @@ import PickAnAnswer from '@/page-components/quiz/game/PickAnAnswer';
 import PickAnAnswerPlaceholder from '@/page-components/quiz/game/PickAnAnswerPlaceholder';
 import QuizNotFound from '@/page-components/quiz/game/QuizNotFound';
 import { useQuizQuery } from '@/queries/useQuizQuery';
-import { getBackendImageUrl } from '@/utilities/getImageUrl';
 import { isBrowser } from '@/utilities/isBrowser';
 import { timeout } from '@/utilities/timeout';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
@@ -129,7 +128,7 @@ export default function PlayIdPage({
         //   question.attributes?.answers?.data.find(
         //     (answer) => answer.attributes?.correct
         //   )?.id ?? '0',
-        correctAnswerId: question.answers.find((answer) => answer.isCorrect)
+        correctAnswerId: question.answers.find((answer) => answer.isCorrect)!
           .uuid,
         selectedAnswerId: null,
       }))
@@ -178,7 +177,7 @@ export default function PlayIdPage({
       (answered) => answered.correctAnswerId === answered.selectedAnswerId
     );
     const lines: string[] = [];
-    lines.push(`QUIZIO (${quiz?.attributes?.title ?? ''})`);
+    lines.push(`QUIZIO (${quiz?.title ?? ''})`);
     lines.push(
       `Score: ${answeredStates.filter((correct) => correct).length}/${
         answeredProgress.length
@@ -189,7 +188,7 @@ export default function PlayIdPage({
     );
     lines.push(`${window.location.origin}${router.asPath}`);
     return lines.join('\n');
-  }, [answeredProgress, quiz?.attributes?.title, router.asPath]);
+  }, [answeredProgress, quiz?.title, router.asPath]);
   const isLastQuestion = questionIndex + 1 === questions.length;
 
   function writeResultToClipboard() {
@@ -221,16 +220,13 @@ export default function PlayIdPage({
         <>
           <Head>
             <meta property="og:title" content="Play Quizio" />
-            <meta
-              property="og:description"
-              content={quiz?.attributes?.title ?? ''}
-            />
-            <meta
+            <meta property="og:description" content={quiz?.title ?? ''} />
+            {/* <meta
               property="og:image"
-              content={getBackendImageUrl(
-                quiz?.attributes?.image?.data?.attributes?.url
-              )}
-            />
+              content={
+                quiz?.imageUrl ? getBackendImageUrl(quiz.imageUrl) : undefined
+              }
+            /> */}
           </Head>
           <div ref={topAnchor} />
           {questions.length === 0 ? (
@@ -246,32 +242,24 @@ export default function PlayIdPage({
                   <CardContent sx={{ padding: 0 }}>
                     <PickAnAnswer
                       index={questionIndex + 1}
-                      title={question.attributes?.title ?? ''}
-                      answers={question.attributes!.answers!.data.map(
-                        (answer) => ({
-                          id: answer.id ?? '',
-                          title: answer.attributes?.title ?? '',
-                          correct: answer.attributes?.correct ?? false,
-                        })
-                      )}
+                      title={question.title ?? ''}
+                      answers={question.answers.map((answer) => ({
+                        id: answer.uuid,
+                        title: answer.title,
+                        correct: answer.isCorrect,
+                      }))}
                       answeredProgress={answeredProgress}
                       selectedAnswerId={answerState?.selectedAnswerId ?? null}
                       onAnswer={setAnswerOfCurrentQuestion}
-                      imageUrl={
-                        question.attributes?.questionImage?.data?.attributes
-                          ?.url ?? null
-                      }
+                      imageUrl={question.imageUrl ?? null}
                     />
                     {questionAnswered && (
                       <Box sx={{ paddingInline: 6 }}>
                         <Divider sx={{ marginBlock: 4 }} />
                         <Explanation
                           correct={questionAnsweredCorrectly ?? false}
-                          text={question.attributes?.explanation ?? ''}
-                          imageUrl={
-                            question.attributes?.explanationImage?.data
-                              ?.attributes?.url ?? null
-                          }
+                          text={question.explanation ?? ''}
+                          imageUrl={question.explanationImageUrl ?? null}
                         />
                       </Box>
                     )}
@@ -302,15 +290,15 @@ export default function PlayIdPage({
                 <CardContent>
                   <GameSummary
                     questions={questions.map((question) => ({
-                      id: question.id ?? '',
-                      title: question.attributes?.title ?? '',
+                      id: question.uuid,
+                      title: question.title,
                       answers:
-                        question.attributes?.answers?.data.map((answer) => ({
-                          id: answer.id ?? '',
-                          title: answer.attributes?.title ?? '',
-                          correct: answer.attributes?.correct ?? false,
+                        question.answers.map((answer) => ({
+                          id: answer.uuid,
+                          title: answer.title,
+                          correct: answer.isCorrect,
                         })) ?? [],
-                      explanation: question.attributes?.explanation ?? '',
+                      explanation: question.explanation ?? '',
                     }))}
                     answeredProgress={answeredProgress}
                   />

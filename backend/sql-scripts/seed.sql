@@ -16,18 +16,18 @@ VALUES
     (3, 'quiz_master', 'example_hash3', 'example_salt3', TRUE, FALSE);
 
 -- Insert into quiz
-INSERT INTO quiz(id, title, description_text, is_published, image_url, user_account_id)
+INSERT INTO quiz(id, uuid, title, description_text, is_published, image_url, user_account_id)
 VALUES 
-    (1, 'Science Quiz', 'Test your science knowledge.', TRUE, 'https://example.com/science.jpg', 1),
-    (2, 'History Quiz', 'How well do you know history?', FALSE, 'https://example.com/history.jpg', 2),
-    (3, 'General Knowledge', 'A quiz for everyone!', TRUE, 'https://example.com/general.jpg', 1);
+    (1, 'c1508211-6aab-4090-8727-94de0d40c808', 'Science Quiz', 'Test your science knowledge.', TRUE, NULL, 1),
+    (2, 'ba25a87d-da9f-4a8c-93f3-faeabd1f58c7', 'History Quiz', 'How well do you know history?', FALSE, NULL, 2),
+    (3, 'aa996a5c-df86-4fbe-bbb2-64d86930920d', 'General Knowledge', 'A quiz for everyone!', TRUE, NULL, 1);
 
 -- Insert into question
 INSERT INTO question(id, title, description_text, image_url, explanation, explanation_image_url, quiz_id)
 VALUES 
-    (1, 'What is the chemical symbol for water?', 'A basic science question.', 'https://example.com/question1.jpg', 'H2O is the chemical formula for water.', NULL, 1),
-    (2, 'Who was the first president of the USA?', 'History question.', 'https://example.com/question2.jpg', 'George Washington was the first president.', NULL, 2),
-    (3, 'What is the capital of France?', 'General knowledge.', 'https://example.com/question3.jpg', 'Paris is the capital city of France.', NULL, 3);
+    (1, 'What is the chemical symbol for water?', 'A basic science question.', NULL, 'H2O is the chemical formula for water.', NULL, 1),
+    (2, 'Who was the first president of the USA?', 'History question.', NULL, 'George Washington was the first president.', NULL, 2),
+    (3, 'What is the capital of France?', 'General knowledge.', NULL, 'Paris is the capital city of France.', NULL, 3);
 
 -- Insert into answer
 INSERT INTO answer(id, title, description_text, image_url, is_correct, question_id)
@@ -49,7 +49,7 @@ VALUES
 -- Insert into alert
 INSERT INTO alert(markdown_content, severity, image_url, image_size, is_active)
 VALUES 
-    ('**System Maintenance**: Scheduled maintenance at 10 PM.', 'INFO', 'https://example.com/alert.jpg', 'medium', TRUE),
+    ('**System Maintenance**: Scheduled maintenance at 10 PM.', 'INFO', NULL, 'medium', TRUE),
     ('**High Load Warning**: Some services may be slow.', 'WARNING', NULL, NULL, TRUE);
 
 COMMIT;

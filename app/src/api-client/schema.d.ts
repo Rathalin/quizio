@@ -63,6 +63,7 @@ export interface components {
       quizzes: components['schemas']['HandlersQuiz'][];
     };
     HandlersResponse: {
+      imageUrl?: string;
       questions: components['schemas']['ModelsQuestion'][];
       title: string;
     };
@@ -72,9 +73,10 @@ export interface components {
       description?: string | null;
       imageUrl?: string | null;
       isCorrect: boolean;
-      text: string;
+      title: string;
       /** Format: date-time */
       updated_at: string;
+      uuid: string;
     };
     ModelsQuestion: {
       answers: components['schemas']['ModelsAnswer'][];
@@ -84,9 +86,10 @@ export interface components {
       explanation?: string | null;
       explanationImageUrl?: string | null;
       imageUrl?: string | null;
-      text: string;
+      title: string;
       /** Format: date-time */
       updatedAt: string;
+      uuid: string;
     };
   };
   responses: never;
