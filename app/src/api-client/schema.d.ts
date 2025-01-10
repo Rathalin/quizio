@@ -4,148 +4,138 @@
  */
 
 export interface paths {
-    "/quizzes": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get Quizzes */
-        get: operations["getQuizzes"];
-        put?: never;
-        /** Post Quiz */
-        post: operations["postQuiz"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  '/quiz/{uuid}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/quizzes/uuids": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get Quizzes Uuids */
-        get: operations["getQuizzesUuids"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** DB Wrapper Get Quiz By Uuid */
+    get: operations['backend/handlers.(*DBWrapper).GetQuizByUuid'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/quizzes': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    /** DB Wrapper Get Quizzes */
+    get: operations['backend/handlers.(*DBWrapper).GetQuizzes'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        ModelsAnswer: {
-            /** @description Unique identifier of the answer. */
-            id: string;
-            /** @description Indicates if the answer is correct. */
-            isCorrect?: boolean;
-            /** @description Text of the answer. */
-            text: string;
-        };
-        ModelsQuestion: {
-            /** @description List of answers for the question. */
-            answers?: components["schemas"]["ModelsAnswer"][] | null;
-            /** @description Unique identifier of the question. */
-            id: string;
-            /** @description Text of the question. */
-            text: string;
-        };
-        ModelsQuiz: {
-            /** @description Description of the quiz. */
-            description?: string;
-            /** @description Unique identifier of the quiz. */
-            id: number;
-            /** @description Publication status of the quiz. */
-            isPublished?: boolean;
-            /** @description Number of times the quiz has been played. */
-            playCount?: number;
-            /** @description List of questions in the quiz. */
-            questions?: components["schemas"]["ModelsQuestion"][] | null;
-            /** @description Title of the quiz. */
-            title: string;
-            /** @description UUID */
-            uuid: string;
-        };
+  schemas: {
+    HandlersQuiz: {
+      /** Format: date-time */
+      createdAt: string;
+      description?: string | null;
+      imageUrl?: string | null;
+      isPublished: boolean;
+      questionCount: number;
+      title: string;
+      /** Format: date-time */
+      updatedAt: string;
+      user?: {
+        username?: string;
+        uuid?: string;
+      };
+      uuid: string;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    HandlersReponse: {
+      quizzes: components['schemas']['HandlersQuiz'][];
+    };
+    HandlersResponse: {
+      questions: components['schemas']['ModelsQuestion'][];
+      title: string;
+    };
+    ModelsAnswer: {
+      /** Format: date-time */
+      created_at: string;
+      description?: string | null;
+      imageUrl?: string | null;
+      isCorrect: boolean;
+      text: string;
+      /** Format: date-time */
+      updated_at: string;
+    };
+    ModelsQuestion: {
+      answers: components['schemas']['ModelsAnswer'][];
+      /** Format: date-time */
+      createdAt: string;
+      description?: string | null;
+      explanation?: string | null;
+      explanationImageUrl?: string | null;
+      imageUrl?: string | null;
+      text: string;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    getQuizzes: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ModelsQuiz"][];
-                };
-            };
-        };
+  'backend/handlers.(*DBWrapper).GetQuizByUuid': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        uuid: string;
+      };
+      cookie?: never;
     };
-    postQuiz: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["ModelsQuiz"];
-            };
+        content: {
+          'application/json': components['schemas']['HandlersResponse'];
         };
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ModelsQuiz"];
-                };
-            };
-        };
+      };
     };
-    getQuizzesUuids: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": string[];
-                };
-            };
-        };
+  };
+  'backend/handlers.(*DBWrapper).GetQuizzes': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HandlersReponse'];
+        };
+      };
+    };
+  };
 }

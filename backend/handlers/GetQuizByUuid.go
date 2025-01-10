@@ -15,8 +15,8 @@ func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
 	}
 
 	type response struct {
-		Title     string            `json:"title"`
-		Questions []models.Question `json:"questions"`
+		Title     string            `json:"title" required:"true"`
+		Questions []models.Question `json:"questions" required:"true" nullable:"false"`
 	}
 
 	type row struct {

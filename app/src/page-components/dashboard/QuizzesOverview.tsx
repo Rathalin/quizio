@@ -115,9 +115,9 @@ export default function QuizzesOverview() {
               }}
             >
               {newQuizzes != null &&
-                newQuizzes.map((q) => (
+                newQuizzes.quizzes.map((q) => (
                   <QuizOverviewCard
-                    key={q.id}
+                    key={q.uuid}
                     createdAt={new Date()}
                     title={q.title}
                     description={q.description ?? ''}
@@ -125,7 +125,7 @@ export default function QuizzesOverview() {
                     uuid={q.uuid}
                     playCount={0}
                     published
-                    questionCount={q.questions?.length ?? 0}
+                    questionCount={q.questionCount}
                     username={'None'}
                     userUuid="none"
                   />

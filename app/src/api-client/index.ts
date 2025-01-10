@@ -5,7 +5,6 @@ export const client = createClient<paths>({ baseUrl: 'http://localhost:8080' });
 
 type ApiSchemas = components['schemas'];
 
-export type Quiz = ApiSchemas['ModelsQuiz'];
 export type Question = ApiSchemas['ModelsQuestion'];
 export type Answer = ApiSchemas['ModelsAnswer'];
 
