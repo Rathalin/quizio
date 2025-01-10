@@ -8,4 +8,8 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: mysecretpassword
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./sql-scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
