@@ -22,8 +22,11 @@ export type InferFetchError<
   >
 > = NonNullable<Awaited<ReturnType<TFunc>>['error']>;
 
-// TODO Make generic and infer TDAata as return type
-export async function throwOnError(apiCall: () => Promise<any>): Promise<any> {
+export async function throwOnError<
+  TFunc extends () => Promise<
+    WithResponse<{ data: any; error?: never } | { data?: never; error: any }>
+  >
+>(apiCall: TFunc): Promise<NonNullable<Awaited<ReturnType<TFunc>>['data']>> {
   const { data, error } = await apiCall();
   if (error != null) {
     throw error;
