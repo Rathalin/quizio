@@ -31,7 +31,7 @@ func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 			SELECT q.uuid, q.created_at, q.updated_at, q.title, q.description_text, q.is_published, q.image_url, u.uuid, u.username
 			FROM quiz q
 			JOIN user_account u
-				ON q.user_account_id = q.id
+				ON q.user_account_id = u.id
 		`)
 		if err != nil {
 			return err
