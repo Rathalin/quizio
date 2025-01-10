@@ -2,12 +2,19 @@ package handlers
 
 import (
 	"context"
+	"math"
+	"quizio/backend/models"
 	"time"
 
 	"github.com/swaggest/usecase"
 )
 
 func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
+	type request struct {
+		Page     int `query:"page" example:"0"`
+		PageSize int `query:"size" example:"5"`
+	}
+
 	type quiz struct {
 		UUID          string    `json:"uuid" required:"true"`
 		CreatedAt     time.Time `json:"createdAt" required:"true"`
@@ -25,10 +32,20 @@ func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 	}
 
 	type reponse struct {
-		Quizzes []quiz `json:"quizzes" required:"true" nullable:"false"`
+		Quizzes []quiz      `json:"quizzes" required:"true" nullable:"false"`
+		Meta    models.Meta `json:"meta" required:"true" nullable:"false"`
 	}
 
-	return usecase.NewInteractor(func(_ context.Context, _ struct{}, output *reponse) error {
+	return usecase.NewInteractor(func(_ context.Context, input request, output *reponse) error {
+		totalQuizCount := 0
+		err := dbw.DB.QueryRow(`
+			SELECT COUNT(*)
+			FROM quiz
+		`).Scan(&totalQuizCount)
+		if err != nil {
+			return err
+		}
+
 		rows, err := dbw.DB.Query(`
 			SELECT 
 				q.uuid, 
@@ -58,14 +75,24 @@ func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 				q.is_published, 
 				q.image_url, 
 				u.uuid, 
-				u.username;
-		`)
+				u.username
+			LIMIT $1
+			OFFSET $2
+		`, input.PageSize, input.Page*input.PageSize)
 		if err != nil {
 			return err
 		}
 		defer rows.Close()
 
-		var response reponse
+		response := reponse{
+			Meta: models.Meta{
+				Page:       input.Page,
+				Size:       input.PageSize,
+				TotalItems: totalQuizCount,
+				TotalPages: int(math.Ceil(float64(totalQuizCount) / float64(input.PageSize))),
+			},
+			Quizzes: make([]quiz, 0),
+		}
 		var quizzes []quiz = make([]quiz, 0)
 		for rows.Next() {
 			var q quiz

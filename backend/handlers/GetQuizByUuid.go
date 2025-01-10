@@ -11,7 +11,7 @@ import (
 
 func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
 	type request struct {
-		UUID string `path:"uuid" example:"c1508211-6aab-4090-8727-94de0d40c808"`
+		UUID string `path:"uuid" required:"true" example:"c1508211-6aab-4090-8727-94de0d40c808"`
 	}
 
 	type response struct {
@@ -52,7 +52,7 @@ func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
 		err := dbw.DB.QueryRow(`
 			SELECT COUNT(*)
 			FROM quiz
-			WHERE uuid = $1
+			WHERE uuid = $1 
 		`, input.UUID).Scan(&count)
 		if err != nil {
 			return err

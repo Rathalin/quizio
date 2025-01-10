@@ -60,10 +60,11 @@ export interface components {
       uuid: string;
     };
     HandlersReponse: {
+      meta: components['schemas']['ModelsMeta'];
       quizzes: components['schemas']['HandlersQuiz'][];
     };
     HandlersResponse: {
-      imageUrl?: string;
+      imageUrl?: string | null;
       questions: components['schemas']['ModelsQuestion'][];
       title: string;
     };
@@ -77,6 +78,12 @@ export interface components {
       /** Format: date-time */
       updated_at: string;
       uuid: string;
+    };
+    ModelsMeta: {
+      page: number;
+      size: number;
+      totalItems: number;
+      totalPages: number;
     };
     ModelsQuestion: {
       answers: components['schemas']['ModelsAnswer'][];
@@ -124,7 +131,10 @@ export interface operations {
   };
   'backend/handlers.(*DBWrapper).GetQuizzes': {
     parameters: {
-      query?: never;
+      query?: {
+        page?: number;
+        size?: number;
+      };
       header?: never;
       path?: never;
       cookie?: never;
