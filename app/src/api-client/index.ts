@@ -10,23 +10,19 @@ export type Question = ApiSchemas['ModelsQuestion'];
 export type Answer = ApiSchemas['ModelsAnswer'];
 
 type WithResponse<T> = T & { response: Response };
+type ApiCall = () => Promise<
+  WithResponse<{ data: any; error?: never } | { data?: never; error: any }>
+>;
+export type InferFetchResult<TFunc extends ApiCall> = NonNullable<
+  Awaited<ReturnType<TFunc>>['data']
+>;
+export type InferFetchError<TFunc extends ApiCall> = NonNullable<
+  Awaited<ReturnType<TFunc>>['error']
+>;
 
-export type InferFetchResult<
-  TFunc extends () => Promise<
-    WithResponse<{ data: any; error?: never } | { data?: never; error: any }>
-  >
-> = NonNullable<Awaited<ReturnType<TFunc>>['data']>;
-export type InferFetchError<
-  TFunc extends () => Promise<
-    WithResponse<{ data: any; error?: never } | { data?: never; error: any }>
-  >
-> = NonNullable<Awaited<ReturnType<TFunc>>['error']>;
-
-export async function throwOnError<
-  TFunc extends () => Promise<
-    WithResponse<{ data: any; error?: never } | { data?: never; error: any }>
-  >
->(apiCall: TFunc): Promise<NonNullable<Awaited<ReturnType<TFunc>>['data']>> {
+export async function throwOnError<TFunc extends ApiCall>(
+  apiCall: TFunc
+): Promise<NonNullable<Awaited<ReturnType<TFunc>>['data']>> {
   const { data, error } = await apiCall();
   if (error != null) {
     throw error;
