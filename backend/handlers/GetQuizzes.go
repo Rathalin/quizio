@@ -5,42 +5,50 @@ import (
 	"time"
 
 	"github.com/swaggest/usecase"
-
-	"quizio/backend/models"
 )
 
-type GetQuizzesResponse struct {
-	ID            int       `json:"id" required:"true" description:"Unique identifier of the quiz."`
-	CreatedAt     time.Time `json:"created_at" description:"Timestamp when the quiz was created."`
-	UpdatedAt     time.Time `json:"updated_at" description:"Timestamp when the quiz was last updated."`
-	UUID          string    `json:"uuid" required:"true" description:"UUID"`
-	Title         string    `json:"title" required:"true" description:"Title of the quiz."`
-	Description   string    `json:"description" description:"Description of the quiz."`
-	IsPublished   bool      `json:"isPublished" description:"Publication status of the quiz."`
-	PlayCount     int       `json:"playCount" description:"Number of times the quiz has been played."`
-	QuestionCount int       `json:"questionCount" description:"Number questions of the quiz."`
+type quiz struct {
+	UUID        string    `json:"uuid"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	IsPublished bool      `json:"isPublished"`
+	ImageUrl    string    `json:"imageUrl"`
+	User        struct {
+		UUID     string `json:"uuid"`
+		Username string `json:"username"`
+	} `json:"user"`
+}
+
+type GetQuizzesOverviewResponse struct {
+	Quizzes []quiz `json:"quizzes"`
 }
 
 func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
-	return usecase.NewInteractor(func(_ context.Context, _ struct{}, output *[]models.Quiz) error {
+	return usecase.NewInteractor(func(_ context.Context, _ struct{}, output *GetQuizzesOverviewResponse) error {
 		rows, err := dbw.DB.Query(`
-			SELECT id, uuid, title, description, is_published, play_count 
-			FROM quizzes
+			SELECT q.uuid, q.created_at, q.updated_at, q.title, q.description_text, q.is_published, q.image_url, u.uuid, u.username
+			FROM quiz q
+			JOIN user_account u
+				ON q.user_account_id = q.id
 		`)
 		if err != nil {
 			return err
 		}
 		defer rows.Close()
 
-		var quizzes []models.Quiz
+		var response GetQuizzesOverviewResponse
+		var quizzes []quiz
 		for rows.Next() {
-			var quiz models.Quiz
-			if err := rows.Scan(&quiz.ID, &quiz.UUID, &quiz.Title, &quiz.Description, &quiz.IsPublished, &quiz.PlayCount); err != nil {
+			var q quiz
+			if err := rows.Scan(&q.UUID, &q.CreatedAt, &q.UpdatedAt, &q.Title, &q.Description, &q.IsPublished, &q.ImageUrl, &q.User.UUID, &q.User.Username); err != nil {
 				return err
 			}
-			quizzes = append(quizzes, quiz)
+			quizzes = append(quizzes, q)
 		}
-		*output = quizzes
+		response.Quizzes = quizzes
+		*output = response
 		return nil
 	})
 }

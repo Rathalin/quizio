@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS quiz (
   description_text TEXT,
   is_published BOOLEAN NOT NULL,
   image_url TEXT,
-  user_id BIGINT NOT NULL REFERENCES user_account(id) ON DELETE CASCADE
+  user_account_id BIGINT NOT NULL REFERENCES user_account(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS question (

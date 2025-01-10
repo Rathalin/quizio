@@ -4,9 +4,9 @@ import "time"
 
 type Quiz struct {
 	ID                int                 `json:"id"`
+	UUID              string              `json:"uuid"`
 	CreatedAt         time.Time           `json:"createdAt"`
 	UpdatedAt         time.Time           `json:"updatedAt"`
-	UUID              string              `json:"uuid"`
 	Title             string              `json:"title"`
 	Description       string              `json:"description"`
 	IsPublished       bool                `json:"isPublished"`

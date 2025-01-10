@@ -16,7 +16,7 @@ VALUES
     (3, 'quiz_master', 'example_hash3', 'example_salt3', TRUE, FALSE);
 
 -- Insert into quiz
-INSERT INTO quiz(id, title, description_text, is_published, image_url, user_id)
+INSERT INTO quiz(id, title, description_text, is_published, image_url, user_account_id)
 VALUES 
     (1, 'Science Quiz', 'Test your science knowledge.', TRUE, 'https://example.com/science.jpg', 1),
     (2, 'History Quiz', 'How well do you know history?', FALSE, 'https://example.com/history.jpg', 2),
