@@ -49,6 +49,7 @@ func main() {
 	)
 
 	service.Get("/quizzes", dbWrapper.GetQuizzes())
+	service.Get("/quiz/{uuid}", dbWrapper.GetQuizByUuid())
 	// service.Get("/quizzes/uuids", dbWrapper.GetQuizzesUuids())
 	// service.Post("/quizzes", dbWrapper.PostQuiz())
 
