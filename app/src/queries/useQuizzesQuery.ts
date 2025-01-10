@@ -6,7 +6,7 @@ import {
 } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 
-export function useNewQuizzesQuery() {
+export function useQuizzesQuery() {
   return useQuery<
     InferFetchResult<typeof fetchQuizzes>,
     InferFetchError<typeof fetchQuizzes>

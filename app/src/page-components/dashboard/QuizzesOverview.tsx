@@ -21,7 +21,7 @@ import GradientWord from '@/components/GradientWord';
 import GradientDivider from '@/components/GradientDivider';
 import ScrollObserver from '@/components/ScrollObserver';
 import { seconds } from '@/utilities/time';
-import { useNewQuizzesQuery } from '@/queries/useQuizzesQuery';
+import { useQuizzesQuery } from '@/queries/useQuizzesQuery';
 
 export default function QuizzesOverview() {
   const { data: session } = useSession();
@@ -37,7 +37,7 @@ export default function QuizzesOverview() {
     session?.user.username
   );
   const gqlFilters = useMemo(() => composeFilters(), [composeFilters]);
-  const { data: newQuizzes } = useNewQuizzesQuery();
+  const { data: newQuizzes } = useQuizzesQuery();
 
   const pageSize = 12;
   const placeholderCount = 6;

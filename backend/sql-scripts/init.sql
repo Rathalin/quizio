@@ -4,14 +4,21 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- Drop and recreate the database
-DROP DATABASE IF EXISTS quizio;
-CREATE DATABASE quizio;
+-- DROP DATABASE IF EXISTS quizio;
+-- CREATE DATABASE quizio;
+
+-- Drop tables
+DROP TABLE IF EXISTS alert;
+DROP TABLE IF EXISTS play_protocol_entry;
+DROP TABLE IF EXISTS answer;
+DROP TABLE IF EXISTS question;
+DROP TABLE IF EXISTS quiz;
+DROP TABLE IF EXISTS user_account;
 
 -- Connect to the new database (if running interactively)
 -- \c quizio;
 
 -- Create tables
-
 CREATE TABLE IF NOT EXISTS user_account (
   id BIGSERIAL PRIMARY KEY,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -31,9 +38,8 @@ CREATE TABLE IF NOT EXISTS quiz (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   uuid UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
-  description TEXT,
+  description_text TEXT,
   is_published BOOLEAN NOT NULL,
-  play_count BIGINT NOT NULL DEFAULT 0,
   image_url TEXT,
   user_id BIGINT NOT NULL REFERENCES user_account(id) ON DELETE CASCADE
 );
@@ -43,7 +49,7 @@ CREATE TABLE IF NOT EXISTS question (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   title TEXT NOT NULL, 
-  description TEXT,
+  description_text TEXT,
   image_url TEXT,
   explanation TEXT,
   explanation_image_url TEXT,
@@ -55,13 +61,13 @@ CREATE TABLE IF NOT EXISTS answer (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   title TEXT NOT NULL,
-  description TEXT,
+  description_text TEXT,
   image_url TEXT,
   is_correct BOOLEAN NOT NULL,
   question_id BIGINT NOT NULL REFERENCES question(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS play_count (
+CREATE TABLE IF NOT EXISTS play_protocol_entry (
   id BIGSERIAL PRIMARY KEY,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -82,6 +88,5 @@ CREATE TABLE IF NOT EXISTS alert (
 );
 
 -- Create indexes for uuid columns
-
-CREATE INDEX IF NOT EXISTS idx_user_account_uuid ON user_account(uuid);
-CREATE INDEX IF NOT EXISTS idx_quiz_uuid ON quiz(uuid);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_user_account_uuid ON user_account(uuid);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_quiz_uuid ON quiz(uuid);
