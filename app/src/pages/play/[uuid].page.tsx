@@ -1,11 +1,11 @@
 import GenericLoadingErrorMessage from '@/components/GenericLoadingErrorMessage';
 import HomeButton from '@/components/buttons/HomeButton';
-import { getQuizzesByUuidGQL } from '@/graphql/quizzes';
 import Explanation from '@/page-components/quiz/game/Explanation';
 import GameSummary from '@/page-components/quiz/game/GameSummary';
 import PickAnAnswer from '@/page-components/quiz/game/PickAnAnswer';
 import PickAnAnswerPlaceholder from '@/page-components/quiz/game/PickAnAnswerPlaceholder';
 import QuizNotFound from '@/page-components/quiz/game/QuizNotFound';
+import { useQuizQuery } from '@/queries/useQuizQuery';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
 import { isBrowser } from '@/utilities/isBrowser';
 import { timeout } from '@/utilities/timeout';
@@ -23,13 +23,7 @@ import {
   Typography,
   Stack,
 } from '@mui/material';
-import {
-  QueryClient,
-  dehydrate,
-  useMutation,
-  useQuery,
-} from '@tanstack/react-query';
-import request from 'graphql-request';
+import { QueryClient, dehydrate, useMutation } from '@tanstack/react-query';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -41,46 +35,47 @@ export type AnsweredState = {
 };
 
 export const getServerSideProps: GetServerSideProps<{
-  gameId: string;
+  uuid: string;
 }> = async (ctx) => {
-  const id = ctx.params?.id;
-  if (typeof id !== 'string') {
+  const uuid = ctx.params?.uuid;
+  if (typeof uuid !== 'string') {
     return {
       notFound: true,
     };
   }
 
   const queryClient = new QueryClient();
-  await queryClient.prefetchQuery(['quiz', id], () =>
-    request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getQuizzesByUuidGQL, {
-      uuid: id,
-    })
-  );
+  // await queryClient.prefetchQuery(['quiz', uuid], () =>
+  //   request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getQuizzesByUuidGQL, {
+  //     uuid,
+  //   })
+  // );
 
   return {
     props: {
-      gameId: id,
+      uuid,
       dehydratedState: dehydrate(queryClient),
     },
   };
 };
 
 export default function PlayIdPage({
-  gameId,
+  uuid,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const theme = useTheme();
   const router = useRouter();
   const topAnchor = useRef<HTMLDivElement>(null);
   const resultAnchor = useRef<HTMLDivElement>(null);
-  const quizQuery = useQuery({
-    queryKey: ['quiz', gameId],
-    queryFn: () =>
-      request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getQuizzesByUuidGQL, {
-        uuid: gameId,
-      }),
-    staleTime: Infinity,
-  });
-  const quiz = quizQuery.data?.quizzes?.data[0];
+  // const quizQuery = useQuery({
+  //   queryKey: ['quiz', gameId],
+  //   queryFn: () =>
+  //     request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getQuizzesByUuidGQL, {
+  //       uuid: gameId,
+  //     }),
+  //   staleTime: Infinity,
+  // });
+  const quizQuery = useQuizQuery(uuid);
+  const quiz = quizQuery.data;
   const increasePlayCountMutation = useMutation({
     mutationKey: ['increasePlayCount'],
     mutationFn: async () =>
@@ -89,16 +84,13 @@ export default function PlayIdPage({
         {
           method: 'POST',
           body: JSON.stringify({
-            quizId: quiz?.id ?? '',
+            quizId: quiz?.title ?? '', // TODO
           }),
         }
       ),
   });
   const [playCountIncreased, setPlayCountIncreased] = useState(false);
-  const questions = useMemo(
-    () => quiz?.attributes?.questions?.data ?? [],
-    [quiz]
-  );
+  const questions = useMemo(() => quiz?.questions ?? [], [quiz]);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [answeredProgress, setAnswerwedProgress] = useState<AnsweredState[]>(
     []
@@ -133,10 +125,12 @@ export default function PlayIdPage({
     setQuestionIndex(0);
     setAnswerwedProgress(
       questions.map((question) => ({
-        correctAnswerId:
-          question.attributes?.answers?.data.find(
-            (answer) => answer.attributes?.correct
-          )?.id ?? '0',
+        // correctAnswerId:
+        //   question.attributes?.answers?.data.find(
+        //     (answer) => answer.attributes?.correct
+        //   )?.id ?? '0',
+        correctAnswerId: question.answers.find((answer) => answer.isCorrect)
+          .uuid,
         selectedAnswerId: null,
       }))
     );

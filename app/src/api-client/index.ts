@@ -9,7 +9,9 @@ export type Question = ApiSchemas['ModelsQuestion'];
 export type Answer = ApiSchemas['ModelsAnswer'];
 
 type WithResponse<T> = T & { response: Response };
-type ApiCall = () => Promise<
+type ApiCall = (
+  ...args: any[]
+) => Promise<
   WithResponse<{ data: any; error?: never } | { data?: never; error: any }>
 >;
 export type InferFetchResult<TFunc extends ApiCall> = NonNullable<

@@ -1,4 +1,4 @@
-import { AnsweredState } from '@/pages/play/[id].page';
+import { AnsweredState } from '@/pages/play/[uuid].page';
 import { Stack } from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';

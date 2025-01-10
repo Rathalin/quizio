@@ -48,13 +48,14 @@ export interface components {
       description?: string | null;
       imageUrl?: string | null;
       isPublished: boolean;
+      playCount: number;
       questionCount: number;
       title: string;
       /** Format: date-time */
       updatedAt: string;
-      user?: {
-        username?: string;
-        uuid?: string;
+      user: {
+        username: string;
+        uuid: string;
       };
       uuid: string;
     };

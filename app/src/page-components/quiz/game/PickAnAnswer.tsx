@@ -10,7 +10,7 @@ import {
   Box,
 } from '@mui/material';
 import AnsweredProgress from './AnsweredProgress';
-import { AnsweredState } from '@/pages/play/[id].page';
+import { AnsweredState } from '@/pages/play/[uuid].page';
 import IndexAvatar from './IndexAvatar';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';

@@ -115,21 +115,31 @@ export default function QuizzesOverview() {
               }}
             >
               {newQuizzes != null &&
-                newQuizzes.quizzes.map((q) => (
-                  <QuizOverviewCard
-                    key={q.uuid}
-                    createdAt={new Date()}
-                    title={q.title}
-                    description={q.description ?? ''}
-                    isMyQuiz
-                    uuid={q.uuid}
-                    playCount={0}
-                    published
-                    questionCount={q.questionCount}
-                    username={'None'}
-                    userUuid="none"
-                  />
-                ))}
+                newQuizzes.quizzes.map(
+                  ({
+                    uuid,
+                    createdAt,
+                    title,
+                    description,
+                    playCount,
+                    questionCount,
+                    user,
+                  }) => (
+                    <QuizOverviewCard
+                      key={uuid}
+                      createdAt={new Date(createdAt)}
+                      title={title}
+                      description={description ?? ''}
+                      isMyQuiz
+                      uuid={uuid}
+                      playCount={playCount}
+                      published
+                      questionCount={questionCount}
+                      userUuid={user.uuid}
+                      username={user.username}
+                    />
+                  )
+                )}
               {data != null &&
                 searchedQuizzes.map((quiz) => (
                   <QuizOverviewCard

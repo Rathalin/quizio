@@ -89,7 +89,9 @@ func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
 		defer rows.Close()
 
 		var row row
-		var response response
+		response := response{
+			Questions: make([]models.Question, 0),
+		}
 		lastQuizId := ""
 		lastQuestionId := ""
 

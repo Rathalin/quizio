@@ -3,14 +3,13 @@ package models
 import "time"
 
 type UserAccount struct {
-	// ID              int       `json:"id"`
-	UUID            string    `json:"uuid"`
-	CreatedAt       time.Time `json:"createdAt"`
-	UpdatedAt       time.Time `json:"updatedAt"`
-	Username        string    `json:"username"`
-	PasswordHash    string    `json:"passwordHash"`
-	PasswordSalt    string    `json:"passwordSalt"`
-	IsConfirmed     bool      `json:"isConfirmed"`
-	IsBlocked       bool      `json:"isBlocked"`
-	ProfileImageUrl string    `json:"profileImageUrl"`
+	UUID            string    `json:"uuid" required:"true"`
+	CreatedAt       time.Time `json:"createdAt" required:"true"`
+	UpdatedAt       time.Time `json:"updatedAt" required:"true"`
+	Username        string    `json:"username" required:"true"`
+	PasswordHash    string    `json:"passwordHash" required:"true"`
+	PasswordSalt    string    `json:"passwordSalt" required:"true"`
+	IsConfirmed     bool      `json:"isConfirmed" required:"true"`
+	IsBlocked       bool      `json:"isBlocked" required:"true"`
+	ProfileImageUrl string    `json:"profileImageUrl,omitempty"`
 }

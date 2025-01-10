@@ -3,7 +3,7 @@ package models
 import "time"
 
 type Answer struct {
-	// ID          string    `json:"id"`
+	UUID        string    `json:"uuid" required:"true"`
 	CreatedAt   time.Time `json:"created_at" required:"true"`
 	UpdatedAt   time.Time `json:"updated_at" required:"true"`
 	Title       string    `json:"text" required:"true"`

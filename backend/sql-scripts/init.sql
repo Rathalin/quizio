@@ -21,9 +21,9 @@ DROP TABLE IF EXISTS user_account;
 -- Create tables
 CREATE TABLE IF NOT EXISTS user_account (
   id BIGSERIAL PRIMARY KEY,
+  uuid UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  uuid UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
   username TEXT UNIQUE NOT NULL,
   password_hash TEXT NOT NULL,
   password_salt TEXT NOT NULL,
@@ -34,9 +34,9 @@ CREATE TABLE IF NOT EXISTS user_account (
 
 CREATE TABLE IF NOT EXISTS quiz (
   id BIGSERIAL PRIMARY KEY,
+  uuid UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  uuid UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
   description_text TEXT,
   is_published BOOLEAN NOT NULL,
@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS quiz (
 
 CREATE TABLE IF NOT EXISTS question (
   id BIGSERIAL PRIMARY KEY,
+  uuid UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   title TEXT NOT NULL, 
@@ -58,6 +59,7 @@ CREATE TABLE IF NOT EXISTS question (
 
 CREATE TABLE IF NOT EXISTS answer (
   id BIGSERIAL PRIMARY KEY,
+  uuid UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   title TEXT NOT NULL,
@@ -70,6 +72,7 @@ CREATE TABLE IF NOT EXISTS answer (
 CREATE TABLE IF NOT EXISTS play_protocol_entry (
   id BIGSERIAL PRIMARY KEY,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  uuid UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   played_at TIMESTAMP NOT NULL DEFAULT NOW(),
   quiz_id BIGINT NOT NULL REFERENCES quiz(id) ON DELETE CASCADE,
@@ -78,6 +81,7 @@ CREATE TABLE IF NOT EXISTS play_protocol_entry (
 
 CREATE TABLE IF NOT EXISTS alert (
   id BIGSERIAL PRIMARY KEY,
+  uuid UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   markdown_content TEXT NOT NULL,

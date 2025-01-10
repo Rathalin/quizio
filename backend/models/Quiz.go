@@ -3,14 +3,13 @@ package models
 import "time"
 
 type Quiz struct {
-	// ID                int                 `json:"id"`
-	UUID              string              `json:"uuid"`
-	CreatedAt         time.Time           `json:"createdAt"`
-	UpdatedAt         time.Time           `json:"updatedAt"`
-	Title             string              `json:"title"`
+	UUID              string              `json:"uuid" required:"true"`
+	CreatedAt         time.Time           `json:"createdAt" required:"true"`
+	UpdatedAt         time.Time           `json:"updatedAt" required:"true"`
+	Title             string              `json:"title" required:"true"`
 	Description       *string             `json:"description,omitempty"`
-	IsPublished       bool                `json:"isPublished"`
+	IsPublished       bool                `json:"isPublished" required:"true"`
 	ImageUrl          *string             `json:"imageUrl,omitempty"`
-	Questions         []Question          `json:"questions"`
-	PlayProtocolEntry []PlayProtocolEntry `json:"playProtocolEntry"`
+	Questions         []Question          `json:"questions" required:"true"`
+	PlayProtocolEntry []PlayProtocolEntry `json:"playProtocolEntry" required:"true"`
 }
