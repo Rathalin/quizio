@@ -12,17 +12,17 @@ import (
 var jwtSecret = []byte("your-secret-key") // Replace with a secure secret
 
 func (dbw *DBWrapper) SignIn() usecase.Interactor {
-	type request struct {
+	type signInRequest struct {
 		Username string `json:"username" required:"true"`
 		Password string `json:"password" required:"true"`
 	}
 
-	type response struct {
+	type signInResponse struct {
 		AccessToken  string `json:"accessToken"`
 		RefreshToken string `json:"refreshToken"`
 	}
 
-	return usecase.NewInteractor(func(ctx context.Context, input request, output *response) error {
+	return usecase.NewInteractor(func(ctx context.Context, input signInRequest, output *signInResponse) error {
 		var user struct {
 			ID           int64
 			PasswordHash string
@@ -60,7 +60,7 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 			return err
 		}
 
-		*output = response{
+		*output = signInResponse{
 			AccessToken:  accessToken,
 			RefreshToken: refreshToken,
 		}

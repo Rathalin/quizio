@@ -51,6 +51,10 @@ func main() {
 	service.Get("/quizzes", dbWrapper.GetQuizzes())
 	service.Get("/quiz/{uuid}", dbWrapper.GetQuizByUuid())
 	service.Post("/play-protocol-entry", dbWrapper.PostPlayProtocolEntry())
+	service.Post("/auth/register", dbWrapper.Register())
+	service.Post("/auth/refresh", dbWrapper.RefreshToken())
+	service.Post("/auth/signin", dbWrapper.SignIn())
+	service.Post("/auth/signout", dbWrapper.SignOut())
 
 	service.Docs("/docs", v5emb.New)
 

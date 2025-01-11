@@ -7,14 +7,14 @@ import (
 )
 
 func (dbw *DBWrapper) PostPlayProtocolEntry() usecase.Interactor {
-	type request struct {
+	type postPlayProtocolEntryRequest struct {
 		QuizUuid string  `json:"quizUuid" required:"true"`
 		UserUuid *string `json:"userUuid"`
 	}
 
-	type response struct{}
+	type postPlayProtocolEntryResponse struct{}
 
-	return usecase.NewInteractor(func(ctx context.Context, input request, output *response) error {
+	return usecase.NewInteractor(func(ctx context.Context, input postPlayProtocolEntryRequest, output *postPlayProtocolEntryResponse) error {
 		var quizId string
 		var userId *string
 		println("Input: ", input.QuizUuid, input.UserUuid)
@@ -46,7 +46,7 @@ func (dbw *DBWrapper) PostPlayProtocolEntry() usecase.Interactor {
 			return err
 		}
 
-		response := response{}
+		response := postPlayProtocolEntryResponse{}
 		*output = response
 		return nil
 	})

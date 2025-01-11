@@ -10,11 +10,11 @@ import (
 )
 
 func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
-	type request struct {
+	type getQuizByUuidRequest struct {
 		UUID string `path:"uuid" required:"true" example:"c1508211-6aab-4090-8727-94de0d40c808"`
 	}
 
-	type response struct {
+	type getQuizByUuidResponse struct {
 		Title     string            `json:"title" required:"true"`
 		ImageUrl  *string           `json:"imageUrl,omitempty"`
 		Questions []models.Question `json:"questions" required:"true" nullable:"false"`
@@ -47,7 +47,7 @@ func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
 		}
 	}
 
-	return usecase.NewInteractor(func(_ context.Context, input request, output *response) error {
+	return usecase.NewInteractor(func(_ context.Context, input getQuizByUuidRequest, output *getQuizByUuidResponse) error {
 		count := 0
 		err := dbw.DB.QueryRow(`
 			SELECT COUNT(*)
@@ -96,7 +96,7 @@ func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
 		defer rows.Close()
 
 		var row row
-		response := response{
+		response := getQuizByUuidResponse{
 			Questions: make([]models.Question, 0),
 		}
 		lastQuizId := ""

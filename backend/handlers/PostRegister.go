@@ -10,16 +10,16 @@ import (
 )
 
 func (dbw *DBWrapper) Register() usecase.Interactor {
-	type request struct {
+	type registerRequest struct {
 		Username string `json:"username" required:"true"`
 		Password string `json:"password" required:"true"`
 	}
 
-	type response struct {
+	type registerResponse struct {
 		Message string `json:"message"`
 	}
 
-	return usecase.NewInteractor(func(ctx context.Context, input request, output *response) error {
+	return usecase.NewInteractor(func(ctx context.Context, input registerRequest, output *registerResponse) error {
 		// Validate username and password
 		if len(input.Username) < 3 {
 			return errors.New("username must be at least 3 characters long")
@@ -46,7 +46,7 @@ func (dbw *DBWrapper) Register() usecase.Interactor {
 			return errors.New("username already exists")
 		}
 
-		*output = response{Message: "Registration successful"}
+		*output = registerResponse{Message: "Registration successful"}
 		return nil
 	})
 }

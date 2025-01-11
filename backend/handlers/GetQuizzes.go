@@ -10,7 +10,7 @@ import (
 )
 
 func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
-	type request struct {
+	type getQuizzesRequest struct {
 		Page     int `query:"page" example:"0"`
 		PageSize int `query:"pageSize" example:"5"`
 	}
@@ -31,12 +31,12 @@ func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 		} `json:"user" required:"true"`
 	}
 
-	type reponse struct {
+	type getQuizzesResponse struct {
 		Quizzes []quiz      `json:"quizzes" required:"true" nullable:"false"`
 		Meta    models.Meta `json:"meta" required:"true" nullable:"false"`
 	}
 
-	return usecase.NewInteractor(func(_ context.Context, input request, output *reponse) error {
+	return usecase.NewInteractor(func(_ context.Context, input getQuizzesRequest, output *getQuizzesResponse) error {
 		totalQuizCount := 0
 		err := dbw.DB.QueryRow(`
 			SELECT COUNT(*)
@@ -84,7 +84,7 @@ func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 		}
 		defer rows.Close()
 
-		response := reponse{
+		response := getQuizzesResponse{
 			Meta: models.Meta{
 				Page:       input.Page,
 				PageSize:   input.PageSize,

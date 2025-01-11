@@ -7,15 +7,16 @@ import (
 	"github.com/swaggest/usecase"
 )
 
+// @Summary Refresh Access Token Hallo
 func (dbw *DBWrapper) RefreshToken() usecase.Interactor {
-	type request struct {
+	type refreshTokenRequest struct {
 		RefreshToken string `json:"refreshToken" required:"true"`
 	}
 
-	type response struct {
+	type refreshTokenResponse struct {
 		AccessToken string `json:"accessToken"`
 	}
-	return usecase.NewInteractor(func(ctx context.Context, input request, output *response) error {
+	return usecase.NewInteractor(func(ctx context.Context, input refreshTokenRequest, output *refreshTokenResponse) error {
 		var userID int64
 
 		// Validate refresh token
@@ -34,7 +35,7 @@ func (dbw *DBWrapper) RefreshToken() usecase.Interactor {
 			return err
 		}
 
-		*output = response{AccessToken: accessToken}
+		*output = refreshTokenResponse{AccessToken: accessToken}
 		return nil
 	})
 }
