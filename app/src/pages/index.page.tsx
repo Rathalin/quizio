@@ -1,6 +1,5 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useGqlHealthCheck } from '@/custom-hooks/useGqlHealthCheck';
 import AlertsViewer from '@/components/AlertsViewer';
 import InvalidTokenAlert from '@/page-components/dashboard/InvalidTokenAlert';
 import QuizzesOverview from '@/page-components/dashboard/QuizzesOverview';
@@ -10,7 +9,7 @@ export default function HomePage() {
   const router = useRouter();
 
   const showInvalidTokenAlert = router.query.sessionExpired === 'true';
-  useGqlHealthCheck();
+  // useGqlHealthCheck();
 
   return (
     <>

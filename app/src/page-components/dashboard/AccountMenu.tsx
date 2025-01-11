@@ -37,13 +37,15 @@ export default function AccountMenu() {
     return <SignInButton />;
   }
 
-  const initial = session.user.username.at(0)?.toUpperCase();
+  // const initial = session.username.at(0)?.toUpperCase();
+  console.log(session);
+  const initial = '123';
 
   return (
     <>
       <IconButton onClick={handleClick}>
         <Avatar
-          title={session.user.username}
+          title={'123'} //session.username
           sx={{
             backgroundColor: theme.palette.primary.main,
             color: theme.palette.primary.contrastText,

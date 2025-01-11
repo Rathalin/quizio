@@ -1,7 +1,7 @@
 import { AuthOptions } from 'next-auth';
 import NextAuth from 'next-auth/next';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { StrapiUserReponse } from '../../../../types/strapi.types';
+import { client } from '@/api-client';
 
 export const authOptions: AuthOptions = {
   session: {
@@ -11,49 +11,59 @@ export const authOptions: AuthOptions = {
     CredentialsProvider({
       type: 'credentials',
       credentials: {
-        identifier: { type: 'text' },
+        username: { type: 'text' },
         password: { type: 'password' },
       },
       async authorize(credentials, req) {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/local`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            method: 'POST',
-            body: JSON.stringify({
-              identifier: credentials?.identifier,
-              password: credentials?.password,
-            }),
-          }
+        console.log(
+          'authorize-callback: credentials',
+          credentials?.username,
+          credentials?.password
         );
-        if (response.ok) {
-          return (await response.json()) as any;
+        // Call the SignIn endpoint
+        const { data, error } = await client.POST('/auth/signin', {
+          body: {
+            username: credentials!.username,
+            password: credentials!.password,
+          },
+        });
+
+        if (error != null) {
+          console.log(`authorize-callback: error`, error);
+          return null;
         }
-        return null;
+        console.log('authorize-callback: data', data);
+        return {
+          id: data.user.uuid, // TODO Why do I need this?
+          accessToken: data.accessToken,
+          refreshToken: data.refreshToken,
+          ...data.user,
+        };
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      return { ...token, ...user };
+    async jwt({ token, account }) {
+      console.log('jwt-callback: token', token);
+      console.log('jwt-callback: account', account);
+      return {
+        ...token,
+        ...account,
+      };
     },
-    async session({ session, token, user }) {
-      const responseData = token as StrapiUserReponse;
+    async session({ session, token, ...other }) {
+      console.log('session-callback: session', session);
+      console.log('session-callback: user', other);
       session.user = {
-        id: parseInt(responseData.user.id),
-        username: responseData.user.username,
-        email: responseData.user.email,
-        createdAt: responseData.user.createdAt,
-        acessToken: responseData.jwt,
+        accessToken: token.accessToken,
+        refreshToken: token.refreshToken,
+        ...other,
       };
       return session;
     },
   },
   pages: {
     signIn: '/auth/signin',
-    // error: '/auth/error',
     signOut: '/auth/signout',
   },
 };

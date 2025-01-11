@@ -175,8 +175,9 @@ export interface components {
       username: string;
     };
     HandlersSignInResponse: {
-      accessToken?: string;
-      refreshToken?: string;
+      accessToken: string;
+      refreshToken: string;
+      user: components['schemas']['ModelsUserAccount'];
     };
     HandlersSignOutRequest: {
       refreshToken: string;
@@ -209,6 +210,17 @@ export interface components {
       title: string;
       /** Format: date-time */
       updatedAt: string;
+      uuid: string;
+    };
+    ModelsUserAccount: {
+      /** Format: date-time */
+      createdAt: string;
+      isBlocked: boolean;
+      isConfirmed: boolean;
+      profileImageUrl?: string;
+      /** Format: date-time */
+      updatedAt: string;
+      username: string;
       uuid: string;
     };
   };

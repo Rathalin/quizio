@@ -7,9 +7,7 @@ type UserAccount struct {
 	CreatedAt       time.Time `json:"createdAt" required:"true"`
 	UpdatedAt       time.Time `json:"updatedAt" required:"true"`
 	Username        string    `json:"username" required:"true"`
-	PasswordHash    string    `json:"passwordHash" required:"true"`
-	PasswordSalt    string    `json:"passwordSalt" required:"true"`
 	IsConfirmed     bool      `json:"isConfirmed" required:"true"`
 	IsBlocked       bool      `json:"isBlocked" required:"true"`
-	ProfileImageUrl string    `json:"profileImageUrl,omitempty"`
+	ProfileImageUrl *string   `json:"profileImageUrl,omitempty"`
 }

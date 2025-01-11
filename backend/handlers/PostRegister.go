@@ -39,10 +39,11 @@ func (dbw *DBWrapper) Register() usecase.Interactor {
 
 		// Insert user into the database
 		_, err = dbw.DB.Exec(`
-			INSERT INTO user_account (username, password_hash, password_salt, is_confirmed, is_blocked)
-			VALUES ($1, $2, '', true, false)
+			INSERT INTO user_account (username, password_hash, is_confirmed, is_blocked)
+			VALUES ($1, $2, true, false)
 		`, input.Username, string(hashedPassword))
 		if err != nil {
+			println(err.Error())
 			return errors.New("username already exists")
 		}
 

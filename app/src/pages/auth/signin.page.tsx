@@ -23,7 +23,7 @@ export default function SigninPage() {
     mutationKey: ['signIn'],
     mutationFn: () => {
       return signIn('credentials', {
-        identifier,
+        username: identifier,
         password,
         redirect: false,
       });

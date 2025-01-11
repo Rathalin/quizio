@@ -9,11 +9,11 @@ DELETE FROM quiz;
 DELETE FROM user_account;
 
 -- Insert into user_account
-INSERT INTO user_account(id, username, password_hash, password_salt, is_confirmed, is_blocked)
+INSERT INTO user_account(id, username, password_hash, is_confirmed, is_blocked)
 VALUES 
-    (1, 'Rathalin', 'example_hash1', 'example_salt1', TRUE, FALSE),
-    (2, 'petro_zwackel', 'example_hash2', 'example_salt2', TRUE, TRUE),
-    (3, 'quiz_master', 'example_hash3', 'example_salt3', TRUE, FALSE);
+    (1, 'Rathalin', 'example_hash1', TRUE, FALSE),
+    (2, 'petro_zwackel', 'example_hash2', TRUE, TRUE),
+    (3, 'quiz_master', 'example_hash3', TRUE, FALSE);
 
 -- Insert into quiz
 INSERT INTO quiz(id, uuid, title, description_text, is_published, image_url, user_account_id)

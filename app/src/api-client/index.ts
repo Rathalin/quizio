@@ -7,6 +7,8 @@ type ApiSchemas = components['schemas'];
 
 export type Question = ApiSchemas['ModelsQuestion'];
 export type Answer = ApiSchemas['ModelsAnswer'];
+export type Meta = ApiSchemas['ModelsMeta'];
+export type User = ApiSchemas['ModelsUserAccount'];
 
 type WithResponse<T> = T & { response: Response };
 type ApiCall = (
