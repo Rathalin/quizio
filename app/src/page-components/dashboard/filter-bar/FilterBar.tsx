@@ -28,10 +28,16 @@ export default function FilterBar({ quizzesCount }: FilterBarProps) {
         }}
       />
       <SearchInput />
-      <SortCreatedButton option="createdAt">Created at</SortCreatedButton>
-      <SortCreatedButton option="playCount">Played</SortCreatedButton>
+      <SortCreatedButton option="createdAt" disabled>
+        Created at
+      </SortCreatedButton>
+      <SortCreatedButton option="playCount" disabled>
+        Played
+      </SortCreatedButton>
       {session.status === 'authenticated' && (
-        <FilterButton filter={'my-quizzes'}>My quizzes only</FilterButton>
+        <FilterButton filter={'my-quizzes'} disabled>
+          My quizzes only
+        </FilterButton>
       )}
     </Stack>
   );

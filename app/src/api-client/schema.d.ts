@@ -4,6 +4,23 @@
  */
 
 export interface paths {
+  '/play-protocol-entry': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper Post Play Protocol Entry */
+    post: operations['backend/handlers.(*DBWrapper).PostPlayProtocolEntry'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/quiz/{uuid}': {
     parameters: {
       query?: never;
@@ -63,6 +80,10 @@ export interface components {
       meta: components['schemas']['ModelsMeta'];
       quizzes: components['schemas']['HandlersQuiz'][];
     };
+    HandlersRequestType3: {
+      quizUuid: string;
+      userUuid?: string | null;
+    };
     HandlersResponse: {
       imageUrl?: string | null;
       questions: components['schemas']['ModelsQuestion'][];
@@ -107,6 +128,28 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+  'backend/handlers.(*DBWrapper).PostPlayProtocolEntry': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['HandlersRequestType3'];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
   'backend/handlers.(*DBWrapper).GetQuizByUuid': {
     parameters: {
       query?: never;

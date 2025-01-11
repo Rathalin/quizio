@@ -13,6 +13,7 @@ export function useQuizQuery(uuid: string) {
   >({
     queryKey: ['getQuiz', uuid],
     queryFn: () => throwOnError(() => fetchQuiz(uuid)),
+    staleTime: Infinity,
   });
 }
 

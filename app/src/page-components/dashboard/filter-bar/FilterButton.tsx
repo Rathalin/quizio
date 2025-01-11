@@ -6,9 +6,14 @@ import { PropsWithChildren } from 'react';
 
 type FilterButtonProps = PropsWithChildren<{
   filter: FilterOption;
+  disabled: boolean;
 }>;
 
-export default function FilterButton({ filter, children }: FilterButtonProps) {
+export default function FilterButton({
+  filter,
+  disabled,
+  children,
+}: FilterButtonProps) {
   const { hasFilter, toggleFilter } = useFilter();
 
   return (
@@ -22,6 +27,7 @@ export default function FilterButton({ filter, children }: FilterButtonProps) {
           <CheckBoxOutlineBlankIcon />
         )
       }
+      disabled={disabled}
     >
       {children}
     </Button>

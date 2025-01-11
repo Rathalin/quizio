@@ -22,11 +22,13 @@ import {
   Typography,
   Stack,
 } from '@mui/material';
-import { QueryClient, dehydrate, useMutation } from '@tanstack/react-query';
+import { QueryClient, dehydrate } from '@tanstack/react-query';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { usePlayProtocolEntryMutation } from '../mutations/usePlayProtocolEntryMutation';
+import { useSession } from 'next-auth/react';
 
 export type AnsweredState = {
   correctAnswerId: string;
@@ -63,31 +65,13 @@ export default function PlayIdPage({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const theme = useTheme();
   const router = useRouter();
+  const { data: session } = useSession();
   const topAnchor = useRef<HTMLDivElement>(null);
   const resultAnchor = useRef<HTMLDivElement>(null);
-  // const quizQuery = useQuery({
-  //   queryKey: ['quiz', gameId],
-  //   queryFn: () =>
-  //     request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getQuizzesByUuidGQL, {
-  //       uuid: gameId,
-  //     }),
-  //   staleTime: Infinity,
-  // });
   const quizQuery = useQuizQuery(uuid);
   const quiz = quizQuery.data;
-  const increasePlayCountMutation = useMutation({
-    mutationKey: ['increasePlayCount'],
-    mutationFn: async () =>
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quiz/increase-play-count`,
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            quizId: quiz?.title ?? '', // TODO
-          }),
-        }
-      ),
-  });
+  const { mutate: addPlayProtocolEntry } = usePlayProtocolEntryMutation();
+
   const [playCountIncreased, setPlayCountIncreased] = useState(false);
   const questions = useMemo(() => quiz?.questions ?? [], [quiz]);
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -124,10 +108,6 @@ export default function PlayIdPage({
     setQuestionIndex(0);
     setAnswerwedProgress(
       questions.map((question) => ({
-        // correctAnswerId:
-        //   question.attributes?.answers?.data.find(
-        //     (answer) => answer.attributes?.correct
-        //   )?.id ?? '0',
         correctAnswerId: question.answers.find((answer) => answer.isCorrect)!
           .uuid,
         selectedAnswerId: null,
@@ -137,10 +117,19 @@ export default function PlayIdPage({
 
   useEffect(() => {
     if (gameDone && !playCountIncreased) {
-      increasePlayCountMutation.mutate();
+      addPlayProtocolEntry({
+        quizUuid: uuid,
+        userUuid: null, // TODO Change if new backend supports users
+      });
       setPlayCountIncreased(true);
     }
-  }, [gameDone, playCountIncreased, increasePlayCountMutation]);
+  }, [
+    gameDone,
+    playCountIncreased,
+    addPlayProtocolEntry,
+    uuid,
+    session?.user.id,
+  ]);
 
   async function setAnswerOfCurrentQuestion(selectedAnswerId: string) {
     setAnswerwedProgress((progress) =>
