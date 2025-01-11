@@ -3,12 +3,14 @@ module quizio/backend
 go 1.23.4
 
 require (
+	github.com/golang-jwt/jwt/v4 v4.5.1
 	github.com/lib/pq v1.10.9
 	github.com/rs/cors v1.11.1
 	github.com/swaggest/openapi-go v0.2.54
 	github.com/swaggest/rest v0.2.70
 	github.com/swaggest/swgui v1.8.2
 	github.com/swaggest/usecase v1.3.1
+	golang.org/x/crypto v0.32.0
 )
 
 require (

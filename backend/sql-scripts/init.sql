@@ -32,6 +32,15 @@ CREATE TABLE IF NOT EXISTS user_account (
   profile_image_url TEXT
 );
 
+CREATE TABLE IF NOT EXISTS refresh_token (
+  id BIGSERIAL PRIMARY KEY,
+  user_account_id BIGINT REFERENCES user_account(id) ON DELETE CASCADE,
+  token TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  expires_at TIMESTAMPTZ NOT NULL,
+  UNIQUE (user_account_id, token)
+);
+
 CREATE TABLE IF NOT EXISTS quiz (
   id BIGSERIAL PRIMARY KEY,
   uuid UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
