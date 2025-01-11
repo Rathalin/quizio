@@ -61,8 +61,18 @@ export default function SigninPage() {
   const [isError, setIsError] = useState(false);
 
   return (
-    <Box>
-      <Typography variant="h1">
+    <Box
+      sx={{
+        marginInline: 'auto',
+        maxWidth: '60ch',
+      }}
+    >
+      <Typography
+        variant="h1"
+        sx={{
+          textAlign: 'center',
+        }}
+      >
         <span>Enter your </span>
         <GradientWord>credentials</GradientWord>
         <span>.</span>
@@ -125,7 +135,7 @@ export default function SigninPage() {
           </Button>
         </Box>
       </form>
-      <Alert severity="info" sx={{ marginTop: 4 }}>
+      <Alert severity="info" sx={{ marginTop: 10 }}>
         <Typography>
           <span>
             {
