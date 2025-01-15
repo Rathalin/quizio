@@ -9,11 +9,11 @@ DELETE FROM quiz;
 DELETE FROM user_account;
 
 -- Insert into user_account
-INSERT INTO user_account(id, username, password_hash, is_confirmed, is_blocked)
+INSERT INTO user_account(id, username, uuid, password_hash, is_confirmed, is_blocked)
 VALUES 
-    (1, 'Rathalin', '$2a$10$724cCGe.Vrfr9CSff1PfyO6X4l5K5bPKqTu3DKWwcwXevGerYYUbi', TRUE, FALSE),
-    (2, 'petro_zwackel', '$2a$10$vrXQZ65I7Ts6QzL6qc522uB7gTAFaH2CJQUzf2Ovjf.oGN6Y7UC8u', TRUE, TRUE),
-    (3, 'quiz_master', '$2a$10$eOZNVB2loH/egnYpthe6lOCaCOAe.LFPXs9qaQxBMtltwIRz7EuvK', TRUE, FALSE); -- Password: Asdf.123
+    (1, 'Rathalin', '9dfd2a83-b8be-4c35-90ec-0acda6df26d0', '$2a$10$724cCGe.Vrfr9CSff1PfyO6X4l5K5bPKqTu3DKWwcwXevGerYYUbi', TRUE, FALSE),
+    (2, 'petro_zwackel', '602ab6fe-28a3-4d4e-b039-30c235850abd', '$2a$10$vrXQZ65I7Ts6QzL6qc522uB7gTAFaH2CJQUzf2Ovjf.oGN6Y7UC8u', TRUE, TRUE),
+    (3, 'quiz_master', '32528fc0-c891-40e9-a2ec-337bbe66a59e', '$2a$10$eOZNVB2loH/egnYpthe6lOCaCOAe.LFPXs9qaQxBMtltwIRz7EuvK', TRUE, FALSE); -- Password: Asdf.123
 
 -- Insert into quiz
 INSERT INTO quiz(id, uuid, title, description_text, is_published, image_url, user_account_id)

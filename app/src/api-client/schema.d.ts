@@ -106,6 +106,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/user-profile/{uuid}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** DB Wrapper Get User Profile */
+    get: operations['backend/handlers.(*DBWrapper).GetUserProfile'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -118,6 +135,19 @@ export interface components {
     HandlersGetQuizzesResponse: {
       meta: components['schemas']['ModelsMeta'];
       quizzes: components['schemas']['HandlersQuiz'][];
+    };
+    HandlersGetUserProfileResponse: {
+      quizStats: {
+        totalQuizzesCreated: number;
+        totalQuizzesPlayCount: number;
+      };
+      user: {
+        /** Format: date-time */
+        createdAt: string;
+        profileImageUrl?: string | null;
+        username: string;
+        uuid: string;
+      };
     };
     HandlersPostPlayProtocolEntryRequest: {
       quizUuid: string;
@@ -372,6 +402,28 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['HandlersSignInResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).GetUserProfile': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        uuid: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HandlersGetUserProfileResponse'];
         };
       };
     };

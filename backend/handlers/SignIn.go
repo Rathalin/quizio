@@ -28,12 +28,12 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 	return usecase.NewInteractor(func(ctx context.Context, input signInRequest, output *signInResponse) error {
 		trimmedUsername := strings.TrimSpace(input.Username)
 
-		isNewUsername, err := dbw.isNewUsername(trimmedUsername)
+		usernameExists, err := dbw.usernameExists(trimmedUsername)
 		if err != nil {
 			return err
 		}
 
-		if isNewUsername {
+		if !usernameExists {
 			return status.Wrap(errors.New("username does not exist"), status.NotFound)
 		}
 

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"errors"
 	"quizio/backend/models"
 	"time"
 
@@ -48,17 +49,12 @@ func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
 	}
 
 	return usecase.NewInteractor(func(_ context.Context, input getQuizByUuidRequest, output *getQuizByUuidResponse) error {
-		count := 0
-		err := dbw.DB.QueryRow(`
-			SELECT COUNT(*)
-			FROM quiz
-			WHERE uuid = $1 
-		`, input.UUID).Scan(&count)
+		quizExists, err := dbw.quizExists(input.UUID)
 		if err != nil {
 			return err
 		}
-		if count == 0 {
-			return status.NotFound
+		if !quizExists {
+			return status.Wrap(errors.New("quiz does not exists"), status.NotFound)
 		}
 
 		rows, err := dbw.DB.Query(`

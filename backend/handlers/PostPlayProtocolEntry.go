@@ -17,7 +17,6 @@ func (dbw *DBWrapper) PostPlayProtocolEntry() usecase.Interactor {
 	return usecase.NewInteractor(func(ctx context.Context, input postPlayProtocolEntryRequest, output *postPlayProtocolEntryResponse) error {
 		var quizId string
 		var userId *string
-		println("Input: ", input.QuizUuid, input.UserUuid)
 
 		err := dbw.DB.QueryRow(`
 			SELECT id
@@ -27,6 +26,7 @@ func (dbw *DBWrapper) PostPlayProtocolEntry() usecase.Interactor {
 		if err != nil {
 			return err
 		}
+
 		if input.UserUuid != nil {
 			err = dbw.DB.QueryRow(`
 			SELECT id
@@ -37,7 +37,7 @@ func (dbw *DBWrapper) PostPlayProtocolEntry() usecase.Interactor {
 				return err
 			}
 		}
-		println("IDs", quizId, userId)
+
 		_, err = dbw.DB.Exec(`
 			INSERT INTO play_protocol_entry (quiz_id, user_account_id)
 			VALUES ($1, $2)
