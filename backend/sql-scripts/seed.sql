@@ -11,9 +11,9 @@ DELETE FROM user_account;
 -- Insert into user_account
 INSERT INTO user_account(id, username, password_hash, is_confirmed, is_blocked)
 VALUES 
-    (1, 'Rathalin', 'example_hash1', TRUE, FALSE),
-    (2, 'petro_zwackel', 'example_hash2', TRUE, TRUE),
-    (3, 'quiz_master', 'example_hash3', TRUE, FALSE);
+    (1, 'Rathalin', '$2a$10$724cCGe.Vrfr9CSff1PfyO6X4l5K5bPKqTu3DKWwcwXevGerYYUbi', TRUE, FALSE),
+    (2, 'petro_zwackel', '$2a$10$vrXQZ65I7Ts6QzL6qc522uB7gTAFaH2CJQUzf2Ovjf.oGN6Y7UC8u', TRUE, TRUE),
+    (3, 'quiz_master', '$2a$10$eOZNVB2loH/egnYpthe6lOCaCOAe.LFPXs9qaQxBMtltwIRz7EuvK', TRUE, FALSE); -- Password: Asdf.123
 
 -- Insert into quiz
 INSERT INTO quiz(id, uuid, title, description_text, is_published, image_url, user_account_id)

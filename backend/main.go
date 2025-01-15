@@ -6,11 +6,17 @@ import (
 	"net/http"
 
 	_ "github.com/lib/pq"
+
+	"github.com/go-chi/chi/v5"
+	jwtauth "github.com/go-chi/jwtauth/v5"
 	"github.com/rs/cors"
 	"github.com/swaggest/openapi-go/openapi3"
+	"github.com/swaggest/rest/nethttp"
+	"github.com/swaggest/rest/response"
 	"github.com/swaggest/rest/web"
 	"github.com/swaggest/swgui/v5emb"
 
+	"quizio/backend/auth"
 	"quizio/backend/handlers"
 )
 
@@ -22,7 +28,6 @@ func connectDB() {
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v\n", err)
 	}
-
 	log.Println("Connected to PostgreSQL database.")
 }
 
@@ -38,28 +43,46 @@ func main() {
 
 	dbWrapper := &handlers.DBWrapper{DB: db}
 
-	service := web.NewService(openapi3.NewReflector())
+	response.DefaultErrorResponseContentType = "application/problem+json"
 
-	service.OpenAPISchema().SetTitle("Quizzes API")
-	service.OpenAPISchema().SetDescription("This service manages quizzes and their questions.")
-	service.OpenAPISchema().SetVersion("v1.0.0")
+	r := openapi3.NewReflector()
+	s := web.NewService(r)
 
-	service.Use(
+	s.OpenAPISchema().SetTitle("Quizzes API")
+	s.OpenAPISchema().SetDescription("This service manages quizzes and their questions.")
+	s.OpenAPISchema().SetVersion("v1.0.0")
+	s.OpenAPISchema().SetHTTPBearerTokenSecurity("JWT token", "baerer", "")
+
+	s.Use(
 		cors.AllowAll().Handler,
 	)
 
-	service.Get("/quizzes", dbWrapper.GetQuizzes())
-	service.Get("/quiz/{uuid}", dbWrapper.GetQuizByUuid())
-	service.Post("/play-protocol-entry", dbWrapper.PostPlayProtocolEntry())
-	service.Post("/auth/register", dbWrapper.Register())
-	service.Post("/auth/refresh", dbWrapper.RefreshToken())
-	service.Post("/auth/signin", dbWrapper.SignIn())
-	service.Post("/auth/signout", dbWrapper.SignOut())
+	s.Route("/a", func(r chi.Router) {
+		r.With(
+			nethttp.HTTPBearerSecurityMiddleware(s.OpenAPICollector, "JWT token", "baerer", "format idk"),
+		).Group(func(r chi.Router) {
+			r.Use(
+				jwtauth.Verifier(auth.TokenAuth),
+				jwtauth.Authenticator(auth.TokenAuth),
+			)
+			r.Method(http.MethodPost, "/play-protocol-entry", nethttp.NewHandler((dbWrapper.PostPlayProtocolEntry())))
 
-	service.Docs("/docs", v5emb.New)
+			r.Method(http.MethodPost, "/signout", nethttp.NewHandler(dbWrapper.SignOut()))
+		})
+	})
+
+	s.Group(func(r chi.Router) {
+		r.Method(http.MethodGet, "/quizzes", nethttp.NewHandler(dbWrapper.GetQuizzes()))
+		r.Method(http.MethodGet, "/quiz/{uuid}", nethttp.NewHandler(dbWrapper.GetQuizByUuid()))
+
+		r.Method(http.MethodPost, "/register", nethttp.NewHandler(dbWrapper.Register()))
+		r.Method(http.MethodPost, "/signin", nethttp.NewHandler(dbWrapper.SignIn()))
+	})
+
+	s.Docs("/docs", v5emb.New)
 
 	log.Println("Starting service")
-	if err := http.ListenAndServe("localhost:8080", service); err != nil {
+	if err := http.ListenAndServe("localhost:8080", s); err != nil {
 		log.Fatal(err)
 	}
 }

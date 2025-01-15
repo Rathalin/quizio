@@ -17,18 +17,18 @@ DROP TABLE IF EXISTS refresh_token;
 DROP TABLE IF EXISTS user_account;
 
 -- Drop indexes 
--- DROP INDEX IF EXISTS idx_user_account_uuid
--- DROP INDEX IF EXISTS play_protocol_entry_pkey
--- DROP INDEX IF EXISTS play_protocol_entry_uuid_key
--- DROP INDEX IF EXISTS question_pkey
--- DROP INDEX IF EXISTS question_uuid_key
--- DROP INDEX IF EXISTS quiz_pkey
--- DROP INDEX IF EXISTS quiz_uuid_key
--- DROP INDEX IF EXISTS refresh_token_pkey
--- DROP INDEX IF EXISTS refresh_token_user_account_id_token_key
--- DROP INDEX IF EXISTS user_account_pkey
--- DROP INDEX IF EXISTS user_account_username_key
--- DROP INDEX IF EXISTS user_account_uuid_key
+-- DROP INDEX IF EXISTS idx_user_account_uuid;
+-- DROP INDEX IF EXISTS play_protocol_entry_pkey;
+-- DROP INDEX IF EXISTS play_protocol_entry_uuid_key;
+-- DROP INDEX IF EXISTS question_pkey;
+-- DROP INDEX IF EXISTS question_uuid_key;
+-- DROP INDEX IF EXISTS quiz_pkey;
+-- DROP INDEX IF EXISTS quiz_uuid_key;
+-- DROP INDEX IF EXISTS refresh_token_pkey;
+-- DROP INDEX IF EXISTS refresh_token_user_account_id_token_key;
+-- DROP INDEX IF EXISTS user_account_pkey;
+-- DROP INDEX IF EXISTS user_account_username_key;
+-- DROP INDEX IF EXISTS user_account_uuid_key;
 
 -- Connect to the new database (if running interactively)
 -- \c quizio;

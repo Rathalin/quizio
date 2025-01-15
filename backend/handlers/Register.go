@@ -3,9 +3,12 @@ package handlers
 import (
 	"context"
 	"errors"
+	"fmt"
 	"regexp"
+	"strings"
 
 	"github.com/swaggest/usecase"
+	"github.com/swaggest/usecase/status"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -37,16 +40,28 @@ func (dbw *DBWrapper) Register() usecase.Interactor {
 			return errors.New("failed to hash password")
 		}
 
+		trimmedUsername := strings.TrimSpace(input.Username)
+
+		// Check if username is taken
+		isNew, err := dbw.isNewUsername(trimmedUsername)
+		if err != nil {
+			return err
+		}
+
+		if !isNew {
+			return status.Wrap(errors.New("username already exists"), status.AlreadyExists)
+		}
+
 		// Insert user into the database
 		_, err = dbw.DB.Exec(`
 			INSERT INTO user_account (username, password_hash, is_confirmed, is_blocked)
 			VALUES ($1, $2, true, false)
-		`, input.Username, string(hashedPassword))
+		`, trimmedUsername, string(hashedPassword))
 		if err != nil {
-			println(err.Error())
-			return errors.New("username already exists")
+			return err
 		}
 
+		fmt.Printf("New user: %v - %v", trimmedUsername, input.Password)
 		*output = registerResponse{Message: "Registration successful"}
 		return nil
 	})

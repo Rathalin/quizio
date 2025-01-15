@@ -14,8 +14,9 @@ func (dbw *DBWrapper) RefreshToken() usecase.Interactor {
 	}
 
 	type refreshTokenResponse struct {
-		AccessToken string `json:"accessToken"`
+		AccessToken string `json:"accessToken" required:"true"`
 	}
+
 	return usecase.NewInteractor(func(ctx context.Context, input refreshTokenRequest, output *refreshTokenResponse) error {
 		var userID int64
 

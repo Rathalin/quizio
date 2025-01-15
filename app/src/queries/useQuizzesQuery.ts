@@ -33,7 +33,7 @@ export function useQuizzesInfiniteQuery(pageSize: number) {
   });
 }
 
-function fetchQuizzes(page: number, pageSize: number) {
+async function fetchQuizzes(page: number, pageSize: number) {
   return client.GET('/quizzes', {
     params: {
       query: {

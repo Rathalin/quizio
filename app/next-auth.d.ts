@@ -8,13 +8,15 @@ declare module 'next-auth' {
   //   user: User;
   // }
 
-  export interface User {
-    uuid: ApiUser['uuid'];
-    username: ApiUser['username'];
-    isConfirmed: ApiUser['isConfirmed'];
-    isBlocked: ApiUser['isBlocked'];
-    profileImageUrl?: ApiUser['profileImageUrl'];
-    accessToken: string;
-    refreshToken: string;
+  export interface Session {
+    user: {
+      uuid: ApiUser['uuid'];
+      username: ApiUser['username'];
+      isConfirmed: ApiUser['isConfirmed'];
+      isBlocked: ApiUser['isBlocked'];
+      profileImageUrl?: ApiUser['profileImageUrl'];
+      accessToken: string;
+      refreshToken: string;
+    };
   }
 }

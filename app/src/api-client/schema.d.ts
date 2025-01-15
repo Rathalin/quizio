@@ -4,75 +4,7 @@
  */
 
 export interface paths {
-  '/auth/refresh': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** DB Wrapper Refresh Token */
-    post: operations['backend/handlers.(*DBWrapper).RefreshToken'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/auth/register': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** DB Wrapper Register */
-    post: operations['backend/handlers.(*DBWrapper).Register'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/auth/signin': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** DB Wrapper Sign In */
-    post: operations['backend/handlers.(*DBWrapper).SignIn'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/auth/signout': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** DB Wrapper Sign Out */
-    post: operations['backend/handlers.(*DBWrapper).SignOut'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/play-protocol-entry': {
+  '/a/play-protocol-entry': {
     parameters: {
       query?: never;
       header?: never;
@@ -83,6 +15,23 @@ export interface paths {
     put?: never;
     /** DB Wrapper Post Play Protocol Entry */
     post: operations['backend/handlers.(*DBWrapper).PostPlayProtocolEntry'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/a/signout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper Sign Out */
+    post: operations['backend/handlers.(*DBWrapper).SignOut'];
     delete?: never;
     options?: never;
     head?: never;
@@ -123,6 +72,40 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/register': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper Register */
+    post: operations['backend/handlers.(*DBWrapper).Register'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/signin': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper Sign In */
+    post: operations['backend/handlers.(*DBWrapper).SignIn'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -156,12 +139,6 @@ export interface components {
         uuid: string;
       };
       uuid: string;
-    };
-    HandlersRefreshTokenRequest: {
-      refreshToken: string;
-    };
-    HandlersRefreshTokenResponse: {
-      accessToken?: string;
     };
     HandlersRegisterRequest: {
       password: string;
@@ -217,11 +194,23 @@ export interface components {
       createdAt: string;
       isBlocked: boolean;
       isConfirmed: boolean;
-      profileImageUrl?: string;
+      profileImageUrl?: string | null;
       /** Format: date-time */
       updatedAt: string;
       username: string;
       uuid: string;
+    };
+    RestErrResponse: {
+      /** @description Application-specific error code. */
+      code?: number;
+      /** @description Application context. */
+      context?: {
+        [key: string]: unknown;
+      };
+      /** @description Error message. */
+      error?: string;
+      /** @description Status text. */
+      status?: string;
     };
   };
   responses: never;
@@ -232,7 +221,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-  'backend/handlers.(*DBWrapper).RefreshToken': {
+  'backend/handlers.(*DBWrapper).PostPlayProtocolEntry': {
     parameters: {
       query?: never;
       header?: never;
@@ -241,9 +230,69 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        'application/json': components['schemas']['HandlersRefreshTokenRequest'];
+        'application/json': components['schemas']['HandlersPostPlayProtocolEntryRequest'];
       };
     };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).SignOut': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['HandlersSignOutRequest'];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).GetQuizByUuid': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        uuid: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
     responses: {
       /** @description OK */
       200: {
@@ -251,7 +300,30 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['HandlersRefreshTokenResponse'];
+          'application/json': components['schemas']['HandlersGetQuizByUuidResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).GetQuizzes': {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HandlersGetQuizzesResponse'];
         };
       };
     };
@@ -300,95 +372,6 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['HandlersSignInResponse'];
-        };
-      };
-    };
-  };
-  'backend/handlers.(*DBWrapper).SignOut': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: {
-      content: {
-        'application/json': components['schemas']['HandlersSignOutRequest'];
-      };
-    };
-    responses: {
-      /** @description No Content */
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  'backend/handlers.(*DBWrapper).PostPlayProtocolEntry': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: {
-      content: {
-        'application/json': components['schemas']['HandlersPostPlayProtocolEntryRequest'];
-      };
-    };
-    responses: {
-      /** @description No Content */
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  'backend/handlers.(*DBWrapper).GetQuizByUuid': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        uuid: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['HandlersGetQuizByUuidResponse'];
-        };
-      };
-    };
-  };
-  'backend/handlers.(*DBWrapper).GetQuizzes': {
-    parameters: {
-      query?: {
-        page?: number;
-        pageSize?: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['HandlersGetQuizzesResponse'];
         };
       };
     };

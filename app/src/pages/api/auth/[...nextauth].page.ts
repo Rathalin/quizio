@@ -16,7 +16,7 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials, req) {
         console.log(
-          'authorize-callback: credentials',
+          'authorize credentials',
           credentials?.username,
           credentials?.password
         );
@@ -29,31 +29,28 @@ export const authOptions: AuthOptions = {
         });
 
         if (error != null) {
-          console.log(`authorize-callback: error`, error);
+          console.log(`authorize error`, error);
           return null;
         }
-        console.log('authorize-callback: data', data);
+        console.log('authorize data', data);
         return {
-          id: data.user.uuid, // TODO Why do I need this?
-          accessToken: data.accessToken,
-          refreshToken: data.refreshToken,
-          ...data.user,
+          // id: data.user.uuid, // TODO Why do I need this?
+          // accessToken: data.accessToken,
+          // refreshToken: data.refreshToken,
         };
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, account }) {
-      console.log('jwt-callback: token', token);
-      console.log('jwt-callback: account', account);
+    async jwt(params) {
+      console.log('jwt params', params);
       return {
-        ...token,
-        ...account,
+        ...params,
       };
     },
     async session({ session, token, ...other }) {
-      console.log('session-callback: session', session);
-      console.log('session-callback: user', other);
+      console.log('session session', session);
+      console.log('session user', other);
       session.user = {
         accessToken: token.accessToken,
         refreshToken: token.refreshToken,
