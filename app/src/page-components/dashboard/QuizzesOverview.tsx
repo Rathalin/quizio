@@ -12,7 +12,7 @@ import useStorage from '@/custom-hooks/useStorage';
 import GradientWord from '@/components/GradientWord';
 import GradientDivider from '@/components/GradientDivider';
 import ScrollObserver from '@/components/ScrollObserver';
-import { useQuizzesInfiniteQuery } from '@/queries/useQuizzesQuery';
+import { useQuizzesInfiniteQuery } from '@/data/useQuizzesQuery';
 import { useSession } from 'next-auth/react';
 
 export default function QuizzesOverview() {

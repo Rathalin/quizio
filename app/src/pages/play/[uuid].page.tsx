@@ -5,7 +5,7 @@ import GameSummary from '@/page-components/quiz/game/GameSummary';
 import PickAnAnswer from '@/page-components/quiz/game/PickAnAnswer';
 import PickAnAnswerPlaceholder from '@/page-components/quiz/game/PickAnAnswerPlaceholder';
 import QuizNotFound from '@/page-components/quiz/game/QuizNotFound';
-import { useQuizQuery } from '@/queries/useQuizQuery';
+import { useQuizQuery } from '@/data/useQuizQuery';
 import { isBrowser } from '@/utilities/isBrowser';
 import { timeout } from '@/utilities/timeout';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
@@ -27,7 +27,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { usePlayProtocolEntryMutation } from '../mutations/usePlayProtocolEntryMutation';
+import { usePlayProtocolEntryMutation } from '../../data/usePlayProtocolEntryMutation';
 import { useSession } from 'next-auth/react';
 
 export type AnsweredState = {

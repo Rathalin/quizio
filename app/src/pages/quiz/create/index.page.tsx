@@ -57,7 +57,7 @@ export default function QuizCreatePage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data: session, status } = useSession();
-  const { authHeader } = useAuthHeader();
+  const authHeader = useAuthHeader();
   const [activeStep, setActiveStep] = useState(0);
   const [overviewFormData, setOverviewFormData] = useState<QuizOverviewForm>(
     defaultOverviewFormData
