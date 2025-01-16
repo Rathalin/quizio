@@ -57,6 +57,16 @@ func main() {
 		cors.AllowAll().Handler,
 	)
 
+	// Public routes
+	s.Group(func(r chi.Router) {
+		r.Method(http.MethodPost, "/register", nethttp.NewHandler(dbWrapper.Register()))
+		r.Method(http.MethodPost, "/signin", nethttp.NewHandler(dbWrapper.SignIn()))
+		r.Method(http.MethodGet, "/quizzes", nethttp.NewHandler(dbWrapper.GetQuizzes()))
+		r.Method(http.MethodGet, "/quiz/{uuid}", nethttp.NewHandler(dbWrapper.GetQuizByUuid()))
+		r.Method(http.MethodGet, "/user-profile/{uuid}", nethttp.NewHandler(dbWrapper.GetUserProfile()))
+	})
+
+	// Auth routes
 	s.Route("/a", func(r chi.Router) {
 		r.With(
 			nethttp.HTTPBearerSecurityMiddleware(s.OpenAPICollector, "JWT token", "baerer", "format idk"),
@@ -68,15 +78,6 @@ func main() {
 			r.Method(http.MethodPost, "/signout", nethttp.NewHandler(dbWrapper.SignOut()))
 			r.Method(http.MethodPost, "/play-protocol-entry", nethttp.NewHandler((dbWrapper.PostPlayProtocolEntry())))
 		})
-	})
-
-	s.Group(func(r chi.Router) {
-		r.Method(http.MethodPost, "/register", nethttp.NewHandler(dbWrapper.Register()))
-		r.Method(http.MethodPost, "/signin", nethttp.NewHandler(dbWrapper.SignIn()))
-		r.Method(http.MethodGet, "/quizzes", nethttp.NewHandler(dbWrapper.GetQuizzes()))
-		r.Method(http.MethodGet, "/quiz/{uuid}", nethttp.NewHandler(dbWrapper.GetQuizByUuid()))
-		r.Method(http.MethodGet, "/user-profile/{uuid}", nethttp.NewHandler(dbWrapper.GetUserProfile()))
-
 	})
 
 	s.Docs("/docs", v5emb.New)

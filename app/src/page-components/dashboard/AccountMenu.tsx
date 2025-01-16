@@ -38,8 +38,7 @@ export default function AccountMenu() {
   }
 
   // const initial = session.username.at(0)?.toUpperCase();
-  console.log(session);
-  const initial = '123';
+  const initial = session.user?.name?.at(0)?.toUpperCase() ?? '123';
 
   return (
     <>

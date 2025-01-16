@@ -1,22 +1,16 @@
-import { User as ApiUser } from '@/api-client';
-
-declare module 'next-auth' {
+export declare module 'next-auth' {
   /**
    * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
    */
-  // interface Session {
-  //   user: User;
+  // export interface Session {
+  //   user: {
+  //     uuid: string;
+  //     username: string;
+  //     isConfirmed: boolean;
+  //     isBlocked: boolean;
+  //     profileImageUrl?: string;
+  //     accessToken: string;
+  //     refreshToken: string;
+  //   };
   // }
-
-  export interface Session {
-    user: {
-      uuid: ApiUser['uuid'];
-      username: ApiUser['username'];
-      isConfirmed: ApiUser['isConfirmed'];
-      isBlocked: ApiUser['isBlocked'];
-      profileImageUrl?: ApiUser['profileImageUrl'];
-      accessToken: string;
-      refreshToken: string;
-    };
-  }
 }

@@ -112,7 +112,7 @@ export default function SigninPage() {
             </Box>
             {isError && (
               <Typography sx={{ marginTop: 2 }} variant="body2" color="error">
-                Invalid credentials
+                {`Invalid username or password!`}
               </Typography>
             )}
           </CardContent>

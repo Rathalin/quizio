@@ -19,7 +19,7 @@ func (dbw *DBWrapper) GetUserProfile() usecase.Interactor {
 			UUID            string    `json:"uuid" required:"true"`
 			CreatedAt       time.Time `json:"createdAt" required:"true"`
 			Username        string    `json:"username" required:"true"`
-			ProfileImageUrl *string   `json:"profileImageUrl,omitempty"`
+			ProfileImageUrl *string   `json:"profileImageUrl,omitempty nullable:"false"`
 		} `json:"user" required:"true"`
 		QuizStats struct {
 			TotalQuizzesCreated   int `json:"totalQuizzesCreated" required:"true"`

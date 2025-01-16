@@ -224,7 +224,7 @@ export interface components {
       createdAt: string;
       isBlocked: boolean;
       isConfirmed: boolean;
-      profileImageUrl?: string | null;
+      profileImageUrl?: string;
       /** Format: date-time */
       updatedAt: string;
       username: string;

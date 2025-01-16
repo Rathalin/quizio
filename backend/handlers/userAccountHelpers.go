@@ -39,5 +39,5 @@ func (dbw *DBWrapper) usernameExists(username string) (bool, error) {
 		return false, err
 	}
 
-	return usernameCount == 0, nil
+	return usernameCount > 0, nil
 }
