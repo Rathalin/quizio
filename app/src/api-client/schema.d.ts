@@ -38,6 +38,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/a/quiz/edit/{uuid}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper Edit Quiz */
+    post: operations['backend/handlers.(*DBWrapper).EditQuiz'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/a/signout': {
     parameters: {
       query?: never;
@@ -144,21 +161,56 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
-    HandlersAnswerData: {
-      description?: string;
-      imageUrl?: string;
+    HandlersCreateQuizRequest: {
+      description: string | null;
+      imageUrl: string | null;
+      isPublished: boolean;
+      questions:
+        | components['schemas']['HandlersCreateQuizRequestQuestion'][]
+        | null;
+      title: string;
+    };
+    HandlersCreateQuizRequestAnswer: {
+      description: string | null;
+      imageUrl: string | null;
       isCorrect: boolean;
       title: string;
     };
-    HandlersCreateQuizRequest: {
-      description?: string;
-      imageUrl?: string;
-      isPublished: boolean;
-      questions: components['schemas']['HandlersQuestionData'][] | null;
+    HandlersCreateQuizRequestQuestion: {
+      answers: components['schemas']['HandlersCreateQuizRequestAnswer'][];
+      description: string | null;
+      explanation: string | null;
+      explanationImageUrl: string | null;
+      imageUrl: string | null;
       title: string;
     };
+    HandlersEditQuizRequest: {
+      description: string | null;
+      imageUrl: string | null;
+      isPublished: boolean;
+      questions:
+        | components['schemas']['HandlersEditQuizRequestQuestion'][]
+        | null;
+      title: string;
+    };
+    HandlersEditQuizRequestAnswer: {
+      description: string | null;
+      imageUrl: string | null;
+      isCorrect: boolean;
+      title: string;
+      uuid: string;
+    };
+    HandlersEditQuizRequestQuestion: {
+      answers: components['schemas']['HandlersEditQuizRequestAnswer'][];
+      description: string | null;
+      explanation: string | null;
+      explanationImageUrl: string | null;
+      imageUrl: string | null;
+      title: string;
+      uuid: string;
+    };
     HandlersGetQuizByUuidResponse: {
-      imageUrl?: string;
+      imageUrl: string | null;
       questions: components['schemas']['ModelsQuestion'][];
       title: string;
     };
@@ -174,7 +226,7 @@ export interface components {
       user: {
         /** Format: date-time */
         createdAt: string;
-        profileImageUrl?: string;
+        profileImageUrl: string | null;
         username: string;
         uuid: string;
       };
@@ -183,19 +235,11 @@ export interface components {
       quizUuid: string;
       userUuid?: string | null;
     };
-    HandlersQuestionData: {
-      answers: components['schemas']['HandlersAnswerData'][];
-      description?: string;
-      explanation?: string;
-      explanationImageUrl?: string;
-      imageUrl?: string;
-      title: string;
-    };
     HandlersQuiz: {
       /** Format: date-time */
       createdAt: string;
-      description?: string;
-      imageUrl?: string;
+      description: string | null;
+      imageUrl: string | null;
       isPublished: boolean;
       playCount: number;
       questionCount: number;
@@ -230,8 +274,8 @@ export interface components {
     ModelsAnswer: {
       /** Format: date-time */
       created_at: string;
-      description?: string;
-      imageUrl?: string;
+      description: string | null;
+      imageUrl: string | null;
       isCorrect: boolean;
       title: string;
       /** Format: date-time */
@@ -248,10 +292,10 @@ export interface components {
       answers: components['schemas']['ModelsAnswer'][];
       /** Format: date-time */
       createdAt: string;
-      description?: string;
-      explanation?: string;
-      explanationImageUrl?: string;
-      imageUrl?: string;
+      description: string | null;
+      explanation: string | null;
+      explanationImageUrl: string | null;
+      imageUrl: string | null;
       title: string;
       /** Format: date-time */
       updatedAt: string;
@@ -262,7 +306,7 @@ export interface components {
       createdAt: string;
       isBlocked: boolean;
       isConfirmed: boolean;
-      profileImageUrl?: string;
+      profileImageUrl: string | null;
       /** Format: date-time */
       updatedAt: string;
       username: string;
@@ -340,14 +384,29 @@ export interface operations {
         };
         content?: never;
       };
-      /** @description Unauthorized */
-      401: {
+    };
+  };
+  'backend/handlers.(*DBWrapper).EditQuiz': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        uuid: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['HandlersEditQuizRequest'];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
         headers: {
           [name: string]: unknown;
         };
-        content: {
-          'application/json': components['schemas']['RestErrResponse'];
-        };
+        content?: never;
       };
     };
   };

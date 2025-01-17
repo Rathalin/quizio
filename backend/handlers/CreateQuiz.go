@@ -8,28 +8,28 @@ import (
 )
 
 func (dbw *DBWrapper) CreateQuiz() usecase.Interactor {
-	type answerData struct {
+	type createQuizRequestAnswer struct {
 		Title       string  `json:"title" required:"true"`
 		Description *string `json:"description,omitempty" nullable:"false"`
 		ImageUrl    *string `json:"imageUrl,omitempty" nullable:"false"`
 		IsCorrect   bool    `json:"isCorrect" required:"true"`
 	}
 
-	type questionData struct {
-		Title               string       `json:"title" required:"true"`
-		Description         *string      `json:"description,omitempty" nullable:"false"`
-		ImageUrl            *string      `json:"imageUrl,omitempty" nullable:"false"`
-		Explanation         *string      `json:"explanation,omitempty" nullable:"false"`
-		ExplanationImageUrl *string      `json:"explanationImageUrl,omitempty" nullable:"false"`
-		Answers             []answerData `json:"answers" required:"true" nullable:"false"`
+	type createQuizRequestQuestion struct {
+		Title               string                    `json:"title" required:"true"`
+		Description         *string                   `json:"description,omitempty" nullable:"false"`
+		ImageUrl            *string                   `json:"imageUrl,omitempty" nullable:"false"`
+		Explanation         *string                   `json:"explanation,omitempty" nullable:"false"`
+		ExplanationImageUrl *string                   `json:"explanationImageUrl,omitempty" nullable:"false"`
+		Answers             []createQuizRequestAnswer `json:"answers" required:"true" nullable:"false"`
 	}
 
 	type createQuizRequest struct {
-		Title       string         `json:"title" required:"true"`
-		Description *string        `json:"description,omitempty" nullable:"false"`
-		IsPublished bool           `json:"isPublished" required:"true"`
-		ImageUrl    *string        `json:"imageUrl,omitempty" nullable:"false"`
-		Questions   []questionData `json:"questions" required:"true"`
+		Title       string                      `json:"title" required:"true"`
+		Description *string                     `json:"description,omitempty" nullable:"false"`
+		IsPublished bool                        `json:"isPublished" required:"true"`
+		ImageUrl    *string                     `json:"imageUrl,omitempty" nullable:"false"`
+		Questions   []createQuizRequestQuestion `json:"questions" required:"true"`
 	}
 
 	type createQuizResponse struct{}
