@@ -21,6 +21,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/a/quiz/create': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper Create Quiz */
+    post: operations['backend/handlers.(*DBWrapper).CreateQuiz'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/a/signout': {
     parameters: {
       query?: never;
@@ -127,6 +144,19 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    HandlersAnswerData: {
+      description?: string;
+      imageUrl?: string;
+      isCorrect: boolean;
+      title: string;
+    };
+    HandlersCreateQuizRequest: {
+      description?: string;
+      imageUrl?: string;
+      isPublished: boolean;
+      questions: components['schemas']['HandlersQuestionData'][] | null;
+      title: string;
+    };
     HandlersGetQuizByUuidResponse: {
       imageUrl?: string;
       questions: components['schemas']['ModelsQuestion'][];
@@ -152,6 +182,14 @@ export interface components {
     HandlersPostPlayProtocolEntryRequest: {
       quizUuid: string;
       userUuid?: string | null;
+    };
+    HandlersQuestionData: {
+      answers: components['schemas']['HandlersAnswerData'][];
+      description?: string;
+      explanation?: string;
+      explanationImageUrl?: string;
+      imageUrl?: string;
+      title: string;
     };
     HandlersQuiz: {
       /** Format: date-time */
@@ -261,6 +299,37 @@ export interface operations {
     requestBody?: {
       content: {
         'application/json': components['schemas']['HandlersPostPlayProtocolEntryRequest'];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).CreateQuiz': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['HandlersCreateQuizRequest'];
       };
     };
     responses: {
