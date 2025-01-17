@@ -128,7 +128,7 @@ export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
     HandlersGetQuizByUuidResponse: {
-      imageUrl?: string | null;
+      imageUrl?: string;
       questions: components['schemas']['ModelsQuestion'][];
       title: string;
     };
@@ -144,7 +144,7 @@ export interface components {
       user: {
         /** Format: date-time */
         createdAt: string;
-        profileImageUrl?: string | null;
+        profileImageUrl?: string;
         username: string;
         uuid: string;
       };
@@ -156,8 +156,8 @@ export interface components {
     HandlersQuiz: {
       /** Format: date-time */
       createdAt: string;
-      description?: string | null;
-      imageUrl?: string | null;
+      description?: string;
+      imageUrl?: string;
       isPublished: boolean;
       playCount: number;
       questionCount: number;
@@ -192,8 +192,8 @@ export interface components {
     ModelsAnswer: {
       /** Format: date-time */
       created_at: string;
-      description?: string | null;
-      imageUrl?: string | null;
+      description?: string;
+      imageUrl?: string;
       isCorrect: boolean;
       title: string;
       /** Format: date-time */
@@ -210,10 +210,10 @@ export interface components {
       answers: components['schemas']['ModelsAnswer'][];
       /** Format: date-time */
       createdAt: string;
-      description?: string | null;
-      explanation?: string | null;
-      explanationImageUrl?: string | null;
-      imageUrl?: string | null;
+      description?: string;
+      explanation?: string;
+      explanationImageUrl?: string;
+      imageUrl?: string;
       title: string;
       /** Format: date-time */
       updatedAt: string;
