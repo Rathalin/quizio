@@ -108,7 +108,9 @@ export default function QuizzesOverview() {
                       userUuid={user.uuid}
                       username={user.username}
                       // isMyQuiz={user.uuid === session?.user.uuid}
-                      isMyQuiz // TODO Sessions
+                      isMyQuiz={
+                        user.uuid === '9dfd2a83-b8be-4c35-90ec-0acda6df26d0'
+                      } // TODO Sessions
                     />
                   )
                 )}

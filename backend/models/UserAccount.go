@@ -9,5 +9,5 @@ type UserAccount struct {
 	Username        string    `json:"username" required:"true"`
 	IsConfirmed     bool      `json:"isConfirmed" required:"true"`
 	IsBlocked       bool      `json:"isBlocked" required:"true"`
-	ProfileImageUrl *string   `json:"profileImageUrl,omitempty" nullable:"false"`
+	ProfileImageUrl *string   `json:"profileImageUrl" required:"true" nullable:"true"`
 }

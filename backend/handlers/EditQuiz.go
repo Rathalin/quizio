@@ -3,13 +3,15 @@ package handlers
 import (
 	"context"
 	"fmt"
+	"slices"
 
 	"github.com/swaggest/usecase"
+	"github.com/swaggest/usecase/status"
 )
 
 func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 	type editQuizRequestAnswer struct {
-		UUID        string  `json:"uuid" required:"true"`
+		UUID        *string `json:"uuid" required:"true" nullable:"true"`
 		Title       string  `json:"title" required:"true"`
 		Description *string `json:"description" required:"true" nullable:"true"`
 		ImageUrl    *string `json:"imageUrl" required:"true" nullable:"true"`
@@ -17,7 +19,7 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 	}
 
 	type editQuizRequestQuestion struct {
-		UUID                string                  `json:"uuid" required:"true"`
+		UUID                *string                 `json:"uuid" required:"true" nullable:"true"`
 		Title               string                  `json:"title" required:"true"`
 		Description         *string                 `json:"description" required:"true" nullable:"true"`
 		ImageUrl            *string                 `json:"imageUrl" required:"true" nullable:"true"`
@@ -38,52 +40,88 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 	type editQuizResponse struct{}
 
 	return usecase.NewInteractor(func(ctx context.Context, input editQuizRequest, output *editQuizResponse) error {
+		quizExists, err := dbw.quizExists(input.UUID)
+		if err != nil {
+			return err
+		}
+		if !quizExists {
+			return status.Wrap(fmt.Errorf("quiz with uuid %v does not exist", input.UUID), status.NotFound)
+		}
 		tx, err := dbw.DB.BeginTx(ctx, nil)
 		if err != nil {
 			return err
 		}
-
 		defer tx.Rollback()
 
-		var quizId int64
-
-		err = tx.QueryRowContext(ctx, `
-			INSERT INTO quiz (title, description_text, is_published, image_url, user_account_id)
-			VALUES ($1, $2, $3, $4, $5)
-			RETURNING id
-		`, input.Title, input.Description, input.IsPublished, input.ImageUrl, 1).Scan(&quizId)
+		// Update quiz details
+		_, err = tx.ExecContext(ctx, `
+    UPDATE quiz
+    SET title = $1, description_text = $2, is_published = $3, image_url = $4
+    WHERE uuid = $5
+`, input.Title, input.Description, input.IsPublished, input.ImageUrl, input.UUID)
 		if err != nil {
-			fmt.Println(err)
 			return err
 		}
 
-		for _, question := range input.Questions {
-			var questionId int64
+		// Handle questions
+		existingQuestionUuids := []string{}
+		rows, err := tx.QueryContext(ctx, `
+			SELECT uuid
+			FROM question
+			WHERE quiz_id = $1
+		`, input.UUID)
+		if err != nil {
+			return err
+		}
+		defer rows.Close()
+		for rows.Next() {
+			questionUuid := ""
+			err = rows.Scan(&questionUuid)
+			existingQuestionUuids = append(existingQuestionUuids, questionUuid)
+			if err != nil {
+				return err
+			}
+		}
 
-			err = tx.QueryRowContext(ctx, `
-				INSERT INTO question (title, description_text, image_url, explanation, explanation_image_url, quiz_id)
-				VALUES ($1, $2, $3, $4, $5, $6)
-				RETURNING id
-			`, question.Title, question.Description, question.ImageUrl, question.Explanation, question.ExplanationImageUrl, quizId).Scan(&questionId)
+		remainingQuestionUuids := append(existingQuestionUuids[:0:0], existingQuestionUuids...)
+
+		for _, question := range input.Questions {
+			if question.UUID != nil && slices.Contains(existingQuestionUuids, *question.UUID) {
+				// Update existing question
+				_, err = tx.ExecContext(ctx, `
+            UPDATE question
+            SET title = $1, description_text = $2, image_url = $3, explanation = $4, explanation_image_url = $5
+            WHERE uuid = $6
+        `, question.Title, question.Description, question.ImageUrl, question.Explanation, question.ExplanationImageUrl, *question.UUID)
+				// Delete fron existingUuids slice
+				uuidIndex := slices.Index(remainingQuestionUuids, *question.UUID)
+				remainingQuestionUuids = slices.Delete(remainingQuestionUuids, uuidIndex, uuidIndex)
+			} else {
+				// Insert new question
+				_, err = tx.ExecContext(ctx, `
+            INSERT INTO question (title, description_text, image_url, explanation, explanation_image_url, quiz_id)
+            VALUES ($1, $2, $3, $4, $5, $6)
+        `, question.Title, question.Description, question.ImageUrl, question.Explanation, question.ExplanationImageUrl, input.UUID)
+			}
 			if err != nil {
 				return err
 			}
 
-			for _, answer := range question.Answers {
-				_, err = tx.ExecContext(ctx, `
-					INSERT INTO answer (title, description_text, image_url, is_correct, question_id)
-					VALUES ($1, $2, $3, $4, $5)
-				`, answer.Title, answer.Description, answer.ImageUrl, answer.IsCorrect, questionId)
-				if err != nil {
-					return err
-				}
-			}
-		}
-		err = tx.Commit()
-		if err != nil {
-			return err
 		}
 
+		// Delete removed questions
+		for _, questionUuid := range remainingQuestionUuids {
+			_, err = tx.ExecContext(ctx, `
+            DELETE FROM question WHERE uuid = $1
+        `, questionUuid)
+			if err != nil {
+				return err
+			}
+		}
+
+		if err := tx.Commit(); err != nil {
+			return err
+		}
 		response := editQuizResponse{}
 		*output = response
 		return nil

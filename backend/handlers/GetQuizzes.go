@@ -20,9 +20,9 @@ func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 		CreatedAt     time.Time `json:"createdAt" required:"true"`
 		UpdatedAt     time.Time `json:"updatedAt" required:"true"`
 		Title         string    `json:"title" required:"true"`
-		Description   *string   `json:"description,omitempty" nullable:"false"`
+		Description   *string   `json:"description" required:"true" nullable:"true"`
 		IsPublished   bool      `json:"isPublished" required:"true"`
-		ImageUrl      *string   `json:"imageUrl,omitempty" nullable:"false"`
+		ImageUrl      *string   `json:"imageUrl" required:"true" nullable:"true"`
 		QuestionCount int       `json:"questionCount" required:"true"`
 		PlayCount     int       `json:"playCount" required:"true"`
 		User          struct {

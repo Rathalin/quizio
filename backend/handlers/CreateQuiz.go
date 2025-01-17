@@ -10,25 +10,25 @@ import (
 func (dbw *DBWrapper) CreateQuiz() usecase.Interactor {
 	type createQuizRequestAnswer struct {
 		Title       string  `json:"title" required:"true"`
-		Description *string `json:"description,omitempty" nullable:"false"`
-		ImageUrl    *string `json:"imageUrl,omitempty" nullable:"false"`
+		Description *string `json:"description" required:"true" nullable:"true"`
+		ImageUrl    *string `json:"imageUrl" required:"true" nullable:"true"`
 		IsCorrect   bool    `json:"isCorrect" required:"true"`
 	}
 
 	type createQuizRequestQuestion struct {
 		Title               string                    `json:"title" required:"true"`
-		Description         *string                   `json:"description,omitempty" nullable:"false"`
-		ImageUrl            *string                   `json:"imageUrl,omitempty" nullable:"false"`
-		Explanation         *string                   `json:"explanation,omitempty" nullable:"false"`
-		ExplanationImageUrl *string                   `json:"explanationImageUrl,omitempty" nullable:"false"`
+		Description         *string                   `json:"description" required:"true" nullable:"true"`
+		ImageUrl            *string                   `json:"imageUrl" required:"true" nullable:"true"`
+		Explanation         *string                   `json:"explanation" required:"true" nullable:"true"`
+		ExplanationImageUrl *string                   `json:"explanationImageUrl" required:"true" nullable:"true"`
 		Answers             []createQuizRequestAnswer `json:"answers" required:"true" nullable:"false"`
 	}
 
 	type createQuizRequest struct {
 		Title       string                      `json:"title" required:"true"`
-		Description *string                     `json:"description,omitempty" nullable:"false"`
+		Description *string                     `json:"description" required:"true" nullable:"true"`
 		IsPublished bool                        `json:"isPublished" required:"true"`
-		ImageUrl    *string                     `json:"imageUrl,omitempty" nullable:"false"`
+		ImageUrl    *string                     `json:"imageUrl" required:"true" nullable:"true"`
 		Questions   []createQuizRequestQuestion `json:"questions" required:"true"`
 	}
 

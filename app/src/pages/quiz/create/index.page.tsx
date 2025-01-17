@@ -60,14 +60,20 @@ export default function QuizCreatePage() {
   async function handleFinishQuizClick() {
     createQuiz({
       title: overviewFormData.title,
-      description: overviewFormData.description,
+      description: overviewFormData.description ?? null,
       isPublished: true,
+      imageUrl: null,
       questions: questionsFormData.questions.map((q) => ({
         title: q.title,
-        explanation: q.explanation,
+        description: '',
+        explanation: q.explanation ?? null,
+        explanationImageUrl: null,
+        imageUrl: null,
         answers: q.answers.map((a) => ({
           title: a.title,
+          description: '',
           isCorrect: a.isCorrect,
+          imageUrl: null,
         })),
       })),
     });
