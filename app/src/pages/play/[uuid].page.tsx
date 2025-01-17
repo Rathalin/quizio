@@ -22,7 +22,7 @@ import {
   Typography,
   Stack,
 } from '@mui/material';
-import { QueryClient, dehydrate } from '@tanstack/react-query';
+import { QueryClient, dehydrate, useQueryClient } from '@tanstack/react-query';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -65,6 +65,7 @@ export default function PlayIdPage({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const theme = useTheme();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { data: session } = useSession();
   const topAnchor = useRef<HTMLDivElement>(null);
   const resultAnchor = useRef<HTMLDivElement>(null);
@@ -121,6 +122,7 @@ export default function PlayIdPage({
         quizUuid: uuid,
         userUuid: null, // TODO Change if new backend supports users
       });
+      queryClient.invalidateQueries(['getQuizzesInfinite']);
       setPlayCountIncreased(true);
     }
   }, [
@@ -128,7 +130,8 @@ export default function PlayIdPage({
     playCountIncreased,
     addPlayProtocolEntry,
     uuid,
-    session?.user.id,
+    session.user.id,
+    queryClient,
   ]);
 
   async function setAnswerOfCurrentQuestion(selectedAnswerId: string) {

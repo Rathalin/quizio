@@ -4,6 +4,7 @@ import {
   InferFetchResult,
   throwOnError,
 } from '@/api-client';
+import { seconds } from '@/utilities/time';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 export function useQuizzesQuery(page: number, pageSize: number) {
@@ -30,6 +31,7 @@ export function useQuizzesInfiniteQuery(pageSize: number) {
       }
       return undefined;
     },
+    staleTime: seconds(30),
   });
 }
 

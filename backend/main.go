@@ -77,8 +77,10 @@ func main() {
 			)
 			r.Method(http.MethodPost, "/signout", nethttp.NewHandler(dbWrapper.SignOut()))
 			r.Method(http.MethodPost, "/play-protocol-entry", nethttp.NewHandler((dbWrapper.PostPlayProtocolEntry())))
-			r.Method(http.MethodPost, "/quiz/create", nethttp.NewHandler((dbWrapper.CreateQuiz())))
 		})
+
+		// Temporary no auth check
+		r.Method(http.MethodPost, "/quiz/create", nethttp.NewHandler((dbWrapper.CreateQuiz())))
 	})
 
 	s.Docs("/docs", v5emb.New)

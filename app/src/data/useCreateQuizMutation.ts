@@ -1,34 +1,35 @@
-import { client } from '@/api-client';
+import {
+  client,
+  CreateQuizRequestData,
+  InferFetchError,
+  InferFetchResult,
+  throwOnError,
+} from '@/api-client';
 import {
   AuthorizationHeader,
   useAuthHeader,
 } from '@/custom-hooks/useAuthHeader';
 import { useMutation } from '@tanstack/react-query';
 
-type CreateQuizMutationData = {
-  quizUuid: string;
-  userUuid: string | null;
-};
-
 export function useCreateQuizMutation() {
   const authHeader = useAuthHeader();
-  return useMutation({
+  return useMutation<
+    InferFetchResult<typeof createQuiz>,
+    InferFetchError<typeof createQuiz>,
+    CreateQuizRequestData
+  >({
     mutationKey: ['createQuiz'],
-    mutationFn: ({ quizUuid, userUuid }: CreateQuizMutationData) =>
-      createQuiz(quizUuid, userUuid, authHeader),
+    mutationFn: (data: CreateQuizRequestData) =>
+      throwOnError(() => createQuiz(data, authHeader)),
   });
 }
 
-function createQuiz(
-  quizUuid: string,
-  userUuid: string | null,
+async function createQuiz(
+  data: CreateQuizRequestData,
   authHeader: AuthorizationHeader
 ) {
-  return client.POST('/a/play-protocol-entry', {
-    body: {
-      quizUuid,
-      userUuid,
-    },
+  return client.POST('/a/quiz/create', {
+    body: data,
     headers: authHeader,
   });
 }
