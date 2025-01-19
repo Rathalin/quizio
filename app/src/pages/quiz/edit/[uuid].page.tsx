@@ -20,8 +20,6 @@ import {
   StepLabel,
   Button,
   Stack,
-  Snackbar,
-  Alert,
 } from '@mui/material';
 import { QueryClient, dehydrate, useQueryClient } from '@tanstack/react-query';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
@@ -36,7 +34,8 @@ import { authOptions } from '@/pages/api/auth/[...nextauth].page';
 import { getServerSession } from 'next-auth';
 import { fetchQuiz, useQuizQuery } from '@/data/useQuizQuery';
 import { throwOnError } from '@/api-client';
-import { useEditQuizMutation } from '@/data/useEditQuizMutation';
+import { useUpdateQuizMutation } from '@/data/useUpdateQuizMutation';
+import { useToastStore } from '@/persistence/taost.store';
 
 export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
   ctx
@@ -86,12 +85,13 @@ export default function QuizCreatePage({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const toastStore = useToastStore();
 
   const { data: quiz } = useQuizQuery(uuid);
   const [activeStep, setActiveStep] = useState(0);
-  const [alertType, setAlertType] = useState<'saved' | 'save-error' | null>(
-    null
-  );
+  // const [alertType, setAlertType] = useState<'saved' | 'save-error' | null>(
+  //   null
+  // );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [overviewFormData, setOverviewFormData] = useState<QuizOverviewForm>(
     defaultOverviewFormData
@@ -100,11 +100,11 @@ export default function QuizCreatePage({
     defaultQuestionsFormData
   );
   const {
-    mutate: updateQuiz,
+    mutateAsync: updateQuiz,
     isLoading: isUpdateLoading,
     isSuccess: isUpdateSuccess,
     isError: isUpdateError,
-  } = useEditQuizMutation(uuid);
+  } = useUpdateQuizMutation(uuid);
 
   // const ownerId = session?.user?.id?.toString();
 
@@ -191,81 +191,51 @@ export default function QuizCreatePage({
           })) ?? [],
       });
     }
+  }, [
+    isUpdateError,
+    isUpdateSuccess,
+    queryClient,
+    quiz,
+    router,
+    toastStore,
+    uuid,
+  ]);
 
-    if (isUpdateSuccess) {
+  async function handleSaveClick() {
+    try {
+      await updateQuiz({
+        title: overviewFormData.title,
+        description: overviewFormData.description ?? '',
+        // imageUrl: overviewFormData.image,
+        imageUrl: null,
+        isPublished: true,
+        questions: questionsFormData.questions.map((question) => ({
+          uuid: question.id ?? '',
+          title: question.title,
+          description: '',
+          imageUrl: null,
+          explanation: question.explanation ?? '',
+          explanationImageUrl: null,
+          answers: question.answers.map((answer) => ({
+            uuid: answer.id ?? '',
+            title: answer.title,
+            description: '',
+            isCorrect: answer.isCorrect,
+            imageUrl: null,
+          })),
+        })),
+      });
+
       // Refetch quiz
-      setAlertType('saved');
+      toastStore.addToast('Quiz updated!', 'success');
       queryClient.invalidateQueries(['quiz', uuid]);
       queryClient.removeQueries(['allPublishedQuizzes']);
       queryClient.invalidateQueries(['allPublishedQuizzes']);
       router.push('/');
+    } catch (error) {
+      console.error('Update quiz error', error);
+      toastStore.addToast('Could not update quiz!', 'error');
     }
-
-    if (isUpdateError != null) {
-      setAlertType('save-error');
-    }
-  }, [isUpdateError, isUpdateSuccess, queryClient, quiz, router, uuid]);
-
-  // const uploadImageMutation = useMutation({
-  //   mutationKey: ['uploadImage'],
-  //   mutationFn: async ({
-  //     file,
-  //   }: {
-  //     file: File;
-  //   }): Promise<[UploadFileEntity['attributes'] & { id: number }]> => {
-  //     const formData = new FormData();
-  //     formData.append('files', file);
-  //     const response = await fetch(
-  //       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/upload`,
-  //       {
-  //         method: 'POST',
-  //         body: formData,
-  //         headers: {
-  //           ...authHeader,
-  //         },
-  //       }
-  //     );
-  //     return response.json() as any;
-  //   },
-  // });
-  // const deleteImageMutation = useMutation({
-  //   mutationKey: ['deleteImage'],
-  //   mutationFn: async ({ id }: { id: string }): Promise<void> => {
-  //     await fetch(
-  //       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/upload/files/${id}`,
-  //       {
-  //         method: 'DELETE',
-  //         headers: {
-  //           ...authHeader,
-  //         },
-  //       }
-  //     );
-  //   },
-  // });
-
-  async function handleSaveClick() {
-    updateQuiz({
-      title: overviewFormData.title,
-      description: overviewFormData.description ?? '',
-      // imageUrl: overviewFormData.image,
-      imageUrl: null,
-      isPublished: true,
-      questions: questionsFormData.questions.map((question) => ({
-        uuid: question.id ?? '',
-        title: question.title,
-        description: '',
-        imageUrl: null,
-        explanation: question.explanation ?? '',
-        explanationImageUrl: null,
-        answers: question.answers.map((answer) => ({
-          uuid: answer.id ?? '',
-          title: answer.title,
-          description: '',
-          isCorrect: answer.isCorrect,
-          imageUrl: null,
-        })),
-      })),
-    });
   }
 
   async function onDeleteDialogConfirm() {
@@ -329,13 +299,6 @@ export default function QuizCreatePage({
   const backLabel = steps.at(activeStep)?.backLabel ?? null;
   const nextLabel = steps.at(activeStep)?.nextLabel ?? null;
 
-  function handleCloseAlert(_event: unknown, reason?: string) {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setAlertType(null);
-  }
-
   function handleNext() {
     setActiveStep((prevActiveStep) =>
       Math.min(prevActiveStep + 1, steps.length - 1)
@@ -358,21 +321,6 @@ export default function QuizCreatePage({
           // loading={deleteMutation.isLoading}
         />
       )}
-      <Snackbar
-        open={alertType != null}
-        anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
-        autoHideDuration={5000}
-        onClose={handleCloseAlert}
-      >
-        <Box>
-          {alertType === 'saved' && (
-            <Alert severity="success">Quiz updated</Alert>
-          )}
-          {alertType === 'save-error' && (
-            <Alert severity="error">Could not save your quiz</Alert>
-          )}
-        </Box>
-      </Snackbar>
       <Typography variant="h1">
         <Stack direction="row" alignItems="center" flexWrap="wrap" gap={2}>
           <Box>

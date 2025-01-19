@@ -11,7 +11,7 @@ import {
   Stepper,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -26,6 +26,7 @@ import {
 import { useRouter } from 'next/router';
 import { storageKeys } from '@/persistence/storage-keys';
 import { useCreateQuizMutation } from '@/data/useCreateQuizMutation';
+import { useToastStore } from '@/persistence/taost.store';
 
 const stepTitles = ['Overview', 'Questions', 'Summary'] as const;
 export type StepData = {
@@ -42,6 +43,7 @@ const steps = stepTitles.map((title, index) => ({
 export default function QuizCreatePage() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const toastStore = useToastStore();
   const [activeStep, setActiveStep] = useState(0);
   const [overviewFormData, setOverviewFormData] = useState<QuizOverviewForm>(
     defaultOverviewFormData
@@ -51,47 +53,44 @@ export default function QuizCreatePage() {
   );
 
   const {
-    mutate: createQuiz,
+    mutateAsync: createQuiz,
     isLoading,
     isSuccess,
-    error,
   } = useCreateQuizMutation();
 
   async function handleFinishQuizClick() {
-    createQuiz({
-      title: overviewFormData.title,
-      description: overviewFormData.description ?? null,
-      isPublished: true,
-      imageUrl: null,
-      questions: questionsFormData.questions.map((q) => ({
-        title: q.title,
-        description: '',
-        explanation: q.explanation ?? null,
-        explanationImageUrl: null,
+    try {
+      await createQuiz({
+        title: overviewFormData.title,
+        description: overviewFormData.description ?? null,
+        isPublished: true,
         imageUrl: null,
-        answers: q.answers.map((a) => ({
-          title: a.title,
+        questions: questionsFormData.questions.map((q) => ({
+          title: q.title,
           description: '',
-          isCorrect: a.isCorrect,
+          explanation: q.explanation ?? null,
+          explanationImageUrl: null,
           imageUrl: null,
+          answers: q.answers.map((a) => ({
+            title: a.title,
+            description: '',
+            isCorrect: a.isCorrect,
+            imageUrl: null,
+          })),
         })),
-      })),
-    });
-  }
+      });
 
-  useEffect(() => {
-    if (isSuccess) {
+      toastStore.addToast('Quiz created!', 'success');
       queryClient.invalidateQueries(['allPublishedQuizzes']);
       router.push('/');
       resetQuizLocalStorage();
       setOverviewFormData(defaultOverviewFormData);
       setQuestionsFormData(defaultQuestionsFormData);
-    }
-
-    if (error != null) {
+    } catch (error) {
+      toastStore.addToast('Could not create quiz!', 'error');
       console.error('Failed to create quiz', error);
     }
-  }, [error, isSuccess, queryClient, router]);
+  }
 
   function handleNext() {
     setActiveStep((prevActiveStep) =>

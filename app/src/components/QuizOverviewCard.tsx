@@ -1,11 +1,9 @@
 import {
-  Alert,
   Box,
   Card,
   CardContent,
   Chip,
   IconButton,
-  Snackbar,
   Stack,
   Tooltip,
   Typography,
@@ -20,13 +18,14 @@ import ImageIcon from '@mui/icons-material/Image';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ShareIcon from '@mui/icons-material/Share';
 import LinkButton from './LinkButton';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import LinkIconButton from './LinkIconButton';
 import { useColorMode } from '@/page-components/theme.context';
 import Link from 'next/link';
 import { usePageTransition } from '@/persistence/page-transition.store';
 import LoadingCircle from './LoadingCircle';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
+import { useToastStore } from '@/persistence/taost.store';
 
 type QuizOverviewCardProps = {
   uuid: string;
@@ -57,7 +56,7 @@ export default function QuizOverviewCard({
   const theme = useTheme();
   const { mode } = useColorMode();
   const isQuestionCountSingular = questionCount === 1;
-  const [showCopiedAlert, setShowCopiedAlert] = useState(false);
+  const toastStore = useToastStore();
   const { transitionHref } = usePageTransition();
 
   const dateFormat = useMemo(
@@ -67,34 +66,18 @@ export default function QuizOverviewCard({
 
   const copiedText = useMemo(() => {
     const titleLimit = 30;
-    return title.length > titleLimit
-      ? `${title.slice(0, titleLimit)}...`
-      : title;
+    const shortTitle =
+      title.length > titleLimit ? `${title.slice(0, titleLimit)}...` : title;
+
+    return `Link to "${shortTitle}" copied.`;
   }, [title]);
 
   function handleShareClick() {
     navigator.clipboard.writeText(`${window.location.origin}/play/${uuid}`);
-    setShowCopiedAlert(true);
-  }
-
-  function handleCopiedAlertClose(_event: unknown, reason?: string) {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setShowCopiedAlert(false);
+    toastStore.addToast(copiedText, 'info', 'standard');
   }
   return (
     <>
-      <Snackbar
-        open={showCopiedAlert}
-        anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
-        autoHideDuration={2000}
-        onClose={handleCopiedAlertClose}
-      >
-        <Alert severity="info" onClose={handleCopiedAlertClose}>
-          {copiedText}
-        </Alert>
-      </Snackbar>
       <Card
         elevation={2}
         sx={{

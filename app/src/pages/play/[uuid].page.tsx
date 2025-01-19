@@ -47,11 +47,9 @@ export const getServerSideProps: GetServerSideProps<{
   }
 
   const queryClient = new QueryClient();
-  await queryClient.prefetchQuery(['getQuiz', uuid], async () => {
-    const data = await throwOnError(() => playQuiz(uuid));
-    console.log(data);
-    return data;
-  });
+  await queryClient.prefetchQuery(['getQuiz', uuid], async () =>
+    throwOnError(() => playQuiz(uuid))
+  );
 
   return {
     props: {
@@ -72,7 +70,7 @@ export default function PlayIdPage({
   const resultAnchor = useRef<HTMLDivElement>(null);
   const quizQuery = usePlayQuizQuery(uuid);
   const quiz = quizQuery.data;
-  const { mutate: addPlayProtocolEntry } = usePlayProtocolEntryMutation();
+  const { mutateAsync: addPlayProtocolEntry } = usePlayProtocolEntryMutation();
 
   const [playCountIncreased, setPlayCountIncreased] = useState(false);
   const questions = useMemo(() => quiz?.questions ?? [], [quiz]);
@@ -118,13 +116,22 @@ export default function PlayIdPage({
   }, [questions]);
 
   useEffect(() => {
+    async function increasePlayCountAsync() {
+      try {
+        await addPlayProtocolEntry({
+          quizUuid: uuid,
+          userUuid: null, // TODO Change if new backend supports users
+        });
+
+        queryClient.invalidateQueries(['getQuizzesInfinite']);
+        setPlayCountIncreased(true);
+      } catch (error) {
+        console.error('Could not increase playcount', error);
+      }
+    }
+
     if (gameDone && !playCountIncreased) {
-      addPlayProtocolEntry({
-        quizUuid: uuid,
-        userUuid: null, // TODO Change if new backend supports users
-      });
-      queryClient.invalidateQueries(['getQuizzesInfinite']);
-      setPlayCountIncreased(true);
+      increasePlayCountAsync();
     }
   }, [
     gameDone,

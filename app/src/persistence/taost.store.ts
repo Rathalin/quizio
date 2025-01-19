@@ -5,21 +5,31 @@ export type SnackbarMessage = {
   key: number;
   message: string;
   severity: NonNullable<AlertProps['severity']>;
+  variant: NonNullable<AlertProps['variant']>;
 };
 
 type ToastStore = {
   snackPack: SnackbarMessage[];
-  addToast: (message: string, severity?: AlertProps['severity']) => void;
+  addToast: (
+    message: string,
+    severity: NonNullable<AlertProps['severity']>,
+    variant?: NonNullable<AlertProps['variant']>
+  ) => void;
   removeToast: () => void;
 };
 
 export const useToastStore = create<ToastStore>((set) => ({
   snackPack: [],
-  addToast: (message, severity = 'info') =>
+  addToast: (message, severity, variant = 'standard') =>
     set((state) => ({
       snackPack: [
         ...state.snackPack,
-        { message, key: new Date().getTime(), severity },
+        {
+          message,
+          key: new Date().getTime(),
+          severity,
+          variant,
+        },
       ],
     })),
   removeToast: () =>

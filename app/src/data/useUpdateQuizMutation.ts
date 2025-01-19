@@ -5,7 +5,7 @@ import {
 } from '@/custom-hooks/useAuthHeader';
 import { useMutation } from '@tanstack/react-query';
 
-export function useEditQuizMutation(uuid: string) {
+export function useUpdateQuizMutation(uuid: string) {
   const authHeader = useAuthHeader();
   return useMutation({
     mutationKey: ['editQuiz'],
