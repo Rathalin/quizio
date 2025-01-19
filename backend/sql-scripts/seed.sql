@@ -51,5 +51,13 @@ INSERT INTO alert(markdown_content, severity, image_url, image_size, is_active)
 VALUES 
     ('**System Maintenance**: Scheduled maintenance at 10 PM.', 'INFO', NULL, 'medium', TRUE),
     ('**High Load Warning**: Some services may be slow.', 'WARNING', NULL, NULL, TRUE);
+ 
+SELECT setval(pg_get_serial_sequence('alert', 'id'), MAX(id)) FROM alert;
+SELECT setval(pg_get_serial_sequence('play_protocol_entry', 'id'), MAX(id)) FROM play_protocol_entry;
+SELECT setval(pg_get_serial_sequence('answer', 'id'), MAX(id)) FROM answer;
+SELECT setval(pg_get_serial_sequence('question', 'id'), MAX(id)) FROM question;
+SELECT setval(pg_get_serial_sequence('quiz', 'id'), MAX(id)) FROM quiz;
+SELECT setval(pg_get_serial_sequence('user_account', 'id'), MAX(id)) FROM user_account;
+
 
 COMMIT;

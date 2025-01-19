@@ -28,7 +28,7 @@ func (dbw *DBWrapper) GetUserProfile() usecase.Interactor {
 	}
 
 	return usecase.NewInteractor(func(ctx context.Context, input getUserProfileRequest, output *getUserProfileResponse) error {
-		userExists, err := dbw.userExists(input.UUID)
+		userExists, err := dbw.UserExists(input.UUID)
 		if err != nil {
 			return err
 		}
@@ -36,7 +36,7 @@ func (dbw *DBWrapper) GetUserProfile() usecase.Interactor {
 			return status.Wrap(errors.New("user does not exists"), status.NotFound)
 		}
 
-		userId, err := dbw.getUserId(input.UUID)
+		userId, err := dbw.GetUserId(input.UUID)
 		if err != nil {
 			return err
 		}

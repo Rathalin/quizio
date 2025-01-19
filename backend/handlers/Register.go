@@ -43,7 +43,7 @@ func (dbw *DBWrapper) Register() usecase.Interactor {
 		trimmedUsername := strings.TrimSpace(input.Username)
 
 		// Check if username is taken
-		usernameExists, err := dbw.usernameExists(trimmedUsername)
+		usernameExists, err := dbw.UsernameExists(trimmedUsername)
 		if err != nil {
 			return err
 		}

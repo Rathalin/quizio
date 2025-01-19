@@ -46,3 +46,10 @@ func generateRefreshToken(userID int64) (string, error) {
 
 	return tokenString, nil
 }
+
+func checkNil(value *string) string {
+	if value != nil {
+		return *value
+	}
+	return "nil"
+}

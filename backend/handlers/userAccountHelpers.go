@@ -1,6 +1,6 @@
 package handlers
 
-func (dbw *DBWrapper) userExists(uuid string) (bool, error) {
+func (dbw *DBWrapper) UserExists(uuid string) (bool, error) {
 	userCount := 0
 	err := dbw.DB.QueryRow(`
 		SELECT COUNT(*)
@@ -14,8 +14,8 @@ func (dbw *DBWrapper) userExists(uuid string) (bool, error) {
 	return userCount > 0, nil
 }
 
-func (dbw *DBWrapper) getUserId(uuid string) (string, error) {
-	userId := ""
+func (dbw *DBWrapper) GetUserId(uuid string) (int64, error) {
+	var userId int64
 	err := dbw.DB.QueryRow(`
 		SELECT id
 		FROM user_account
@@ -28,7 +28,7 @@ func (dbw *DBWrapper) getUserId(uuid string) (string, error) {
 	return userId, nil
 }
 
-func (dbw *DBWrapper) usernameExists(username string) (bool, error) {
+func (dbw *DBWrapper) UsernameExists(username string) (bool, error) {
 	usernameCount := 0
 	err := dbw.DB.QueryRow(`
 		SELECT COUNT(*)

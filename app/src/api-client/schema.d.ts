@@ -55,6 +55,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/a/quiz/{uuid}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** DB Wrapper Get Quiz */
+    get: operations['backend/handlers.(*DBWrapper).GetQuiz'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/a/signout': {
     parameters: {
       query?: never;
@@ -72,15 +89,15 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/quiz/{uuid}': {
+  '/play/{uuid}': {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** DB Wrapper Get Quiz By Uuid */
-    get: operations['backend/handlers.(*DBWrapper).GetQuizByUuid'];
+    /** DB Wrapper Play Quiz */
+    get: operations['backend/handlers.(*DBWrapper).PlayQuiz'];
     put?: never;
     post?: never;
     delete?: never;
@@ -198,7 +215,7 @@ export interface components {
       imageUrl: string | null;
       isCorrect: boolean;
       title: string;
-      uuid: string;
+      uuid: string | null;
     };
     HandlersEditQuizRequestQuestion: {
       answers: components['schemas']['HandlersEditQuizRequestAnswer'][];
@@ -207,10 +224,12 @@ export interface components {
       explanationImageUrl: string | null;
       imageUrl: string | null;
       title: string;
-      uuid: string;
+      uuid: string | null;
     };
-    HandlersGetQuizByUuidResponse: {
+    HandlersGetQuizResponse: {
+      description: string;
       imageUrl: string | null;
+      isPublished: boolean;
       questions: components['schemas']['ModelsQuestion'][];
       title: string;
     };
@@ -230,6 +249,11 @@ export interface components {
         username: string;
         uuid: string;
       };
+    };
+    HandlersPlayQuizResponse: {
+      imageUrl: string | null;
+      questions: components['schemas']['ModelsQuestion'][];
+      title: string;
     };
     HandlersPostPlayProtocolEntryRequest: {
       quizUuid: string;
@@ -410,6 +434,28 @@ export interface operations {
       };
     };
   };
+  'backend/handlers.(*DBWrapper).GetQuiz': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        uuid: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HandlersGetQuizResponse'];
+        };
+      };
+    };
+  };
   'backend/handlers.(*DBWrapper).SignOut': {
     parameters: {
       query?: never;
@@ -441,7 +487,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).GetQuizByUuid': {
+  'backend/handlers.(*DBWrapper).PlayQuiz': {
     parameters: {
       query?: never;
       header?: never;
@@ -458,7 +504,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['HandlersGetQuizByUuidResponse'];
+          'application/json': components['schemas']['HandlersPlayQuizResponse'];
         };
       };
     };

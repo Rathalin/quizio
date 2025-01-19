@@ -28,7 +28,7 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 	return usecase.NewInteractor(func(ctx context.Context, input signInRequest, output *signInResponse) error {
 		trimmedUsername := strings.TrimSpace(input.Username)
 
-		usernameExists, err := dbw.usernameExists(trimmedUsername)
+		usernameExists, err := dbw.UsernameExists(trimmedUsername)
 		if err != nil {
 			return err
 		}

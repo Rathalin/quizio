@@ -10,22 +10,26 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
-	type getQuizByUuidRequest struct {
+func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
+	type getQuizRequest struct {
 		UUID string `path:"uuid" required:"true" example:"c1508211-6aab-4090-8727-94de0d40c808"`
 	}
 
-	type getQuizByUuidResponse struct {
-		Title     string            `json:"title" required:"true"`
-		ImageUrl  *string           `json:"imageUrl" required:"true" nullable:"true"`
-		Questions []models.Question `json:"questions" required:"true" nullable:"false"`
+	type getQuizResponse struct {
+		Title       string            `json:"title" required:"true"`
+		Description string            `json:"description" required:"true"`
+		IsPublished bool              `json:"isPublished" required:"true"`
+		ImageUrl    *string           `json:"imageUrl" required:"true" nullable:"true"`
+		Questions   []models.Question `json:"questions" required:"true" nullable:"false"`
 	}
 
 	type row struct {
-		ID       string
-		Title    string
-		ImageUrl *string
-		Question struct {
+		ID          string
+		Title       string
+		Description string
+		IsPublished bool
+		ImageUrl    *string
+		Question    struct {
 			ID                  string
 			UUID                string
 			Title               string
@@ -48,8 +52,8 @@ func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
 		}
 	}
 
-	return usecase.NewInteractor(func(_ context.Context, input getQuizByUuidRequest, output *getQuizByUuidResponse) error {
-		quizExists, err := dbw.quizExists(input.UUID)
+	return usecase.NewInteractor(func(_ context.Context, input getQuizRequest, output *getQuizResponse) error {
+		quizExists, err := dbw.QuizExists(input.UUID)
 		if err != nil {
 			return err
 		}
@@ -61,6 +65,8 @@ func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
 			SELECT
 				q.id,
 				q.title,
+				q.description_text,
+				q.is_published,
 				q.image_url,
 				qn.id,
 				qn.uuid,
@@ -92,7 +98,7 @@ func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
 		defer rows.Close()
 
 		var row row
-		response := getQuizByUuidResponse{
+		response := getQuizResponse{
 			Questions: make([]models.Question, 0),
 		}
 		lastQuizId := ""
@@ -102,6 +108,8 @@ func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
 			if err := rows.Scan(
 				&row.ID,
 				&row.Title,
+				&row.Description,
+				&row.IsPublished,
 				&row.ImageUrl,
 				&row.Question.ID,
 				&row.Question.UUID,
@@ -127,6 +135,8 @@ func (dbw *DBWrapper) GetQuizByUuid() usecase.Interactor {
 			if lastQuizId != row.ID {
 				lastQuizId = row.ID
 				response.Title = row.Title
+				response.Description = row.Description
+				response.IsPublished = row.IsPublished
 				response.ImageUrl = row.ImageUrl
 			}
 

@@ -62,8 +62,9 @@ func main() {
 		r.Method(http.MethodPost, "/register", nethttp.NewHandler(dbWrapper.Register()))
 		r.Method(http.MethodPost, "/signin", nethttp.NewHandler(dbWrapper.SignIn()))
 		r.Method(http.MethodGet, "/quizzes", nethttp.NewHandler(dbWrapper.GetQuizzes()))
-		r.Method(http.MethodGet, "/quiz/{uuid}", nethttp.NewHandler(dbWrapper.GetQuizByUuid()))
+		r.Method(http.MethodGet, "/play/{uuid}", nethttp.NewHandler(dbWrapper.PlayQuiz()))
 		r.Method(http.MethodGet, "/user-profile/{uuid}", nethttp.NewHandler(dbWrapper.GetUserProfile()))
+		r.Method(http.MethodGet, "/debug", nethttp.NewHandler(dbWrapper.Debug()))
 	})
 
 	// Auth routes
@@ -81,6 +82,7 @@ func main() {
 
 		// Temporary no auth check
 		r.Method(http.MethodPost, "/quiz/create", nethttp.NewHandler((dbWrapper.CreateQuiz())))
+		r.Method(http.MethodGet, "/quiz/{uuid}", nethttp.NewHandler(dbWrapper.GetQuiz()))
 		r.Method(http.MethodPost, "/quiz/edit/{uuid}", nethttp.NewHandler((dbWrapper.EditQuiz())))
 	})
 

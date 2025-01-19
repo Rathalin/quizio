@@ -5,7 +5,7 @@ import GameSummary from '@/page-components/quiz/game/GameSummary';
 import PickAnAnswer from '@/page-components/quiz/game/PickAnAnswer';
 import PickAnAnswerPlaceholder from '@/page-components/quiz/game/PickAnAnswerPlaceholder';
 import QuizNotFound from '@/page-components/quiz/game/QuizNotFound';
-import { useQuizQuery } from '@/data/useQuizQuery';
+import { playQuiz, usePlayQuizQuery } from '@/data/usePlayQuizQuery';
 import { isBrowser } from '@/utilities/isBrowser';
 import { timeout } from '@/utilities/timeout';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
@@ -29,6 +29,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePlayProtocolEntryMutation } from '../../data/usePlayProtocolEntryMutation';
 import { useSession } from 'next-auth/react';
+import { throwOnError } from '@/api-client';
 
 export type AnsweredState = {
   correctAnswerId: string;
@@ -46,11 +47,11 @@ export const getServerSideProps: GetServerSideProps<{
   }
 
   const queryClient = new QueryClient();
-  // await queryClient.prefetchQuery(['quiz', uuid], () =>
-  //   request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getQuizzesByUuidGQL, {
-  //     uuid,
-  //   })
-  // );
+  await queryClient.prefetchQuery(['getQuiz', uuid], async () => {
+    const data = await throwOnError(() => playQuiz(uuid));
+    console.log(data);
+    return data;
+  });
 
   return {
     props: {
@@ -69,7 +70,7 @@ export default function PlayIdPage({
   const { data: session } = useSession();
   const topAnchor = useRef<HTMLDivElement>(null);
   const resultAnchor = useRef<HTMLDivElement>(null);
-  const quizQuery = useQuizQuery(uuid);
+  const quizQuery = usePlayQuizQuery(uuid);
   const quiz = quizQuery.data;
   const { mutate: addPlayProtocolEntry } = usePlayProtocolEntryMutation();
 
@@ -130,7 +131,7 @@ export default function PlayIdPage({
     playCountIncreased,
     addPlayProtocolEntry,
     uuid,
-    session.user.id,
+    session?.user?.id,
     queryClient,
   ]);
 

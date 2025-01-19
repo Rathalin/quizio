@@ -10,6 +10,7 @@ export type Answer = ApiSchemas['ModelsAnswer'];
 export type Meta = ApiSchemas['ModelsMeta'];
 export type User = ApiSchemas['ModelsUserAccount'];
 export type CreateQuizRequestData = ApiSchemas['HandlersCreateQuizRequest'];
+export type EditQuizRequestData = ApiSchemas['HandlersEditQuizRequest'];
 
 type WithResponse<T> = T & { response: Response };
 type ApiCall = (

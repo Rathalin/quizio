@@ -1,6 +1,6 @@
 package handlers
 
-func (dbw *DBWrapper) quizExists(uuid string) (bool, error) {
+func (dbw *DBWrapper) QuizExists(uuid string) (bool, error) {
 	quizCount := 0
 	err := dbw.DB.QueryRow(`
 		SELECT COUNT(*)
@@ -12,4 +12,18 @@ func (dbw *DBWrapper) quizExists(uuid string) (bool, error) {
 	}
 
 	return quizCount > 0, nil
+}
+
+func (dbw *DBWrapper) GetQuizId(uuid string) (int64, error) {
+	var quizId int64
+	err := dbw.DB.QueryRow(`
+		SELECT id
+		FROM quiz
+		WHERE uuid = $1
+	`, uuid).Scan(&quizId)
+	if err != nil {
+		return quizId, err
+	}
+
+	return quizId, nil
 }
