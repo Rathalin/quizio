@@ -97,7 +97,7 @@ export default function QuizOverviewCard({
               minHeight: '180px',
             }}
             unoptimized
-          ></Image>
+          />
         ) : (
           <Box
             sx={{

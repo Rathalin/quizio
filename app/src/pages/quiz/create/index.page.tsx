@@ -61,16 +61,41 @@ export default function QuizCreatePage() {
     isSuccess,
   } = useCreateQuizMutation();
 
-  async function handleFinishQuizClick() {
-    let quizImageUrl: string | null = null;
+  async function uploadImage(file: File | null): Promise<string | null> {
+    if (file == null) {
+      return null;
+    }
     try {
       const { url } = await uploadFile({
-        filename: overviewFormData.image.data.file.name,
-        file: await getBase64(overviewFormData.image.data.file),
+        filename: file.name,
+        file: await getBase64(file),
       });
-      quizImageUrl = url;
+      return url;
     } catch (error) {
+      console.error(error);
       toastStore.addToast('Could not upload image!', 'error');
+      return null;
+    }
+  }
+
+  async function handleFinishQuizClick() {
+    // Upload quiz image
+    let imageUrls: {
+      url: string | null;
+      questionUrls: { question: string | null; explanation: string | null }[];
+    } = {
+      url: null,
+      questionUrls: [],
+    };
+    imageUrls.url = await uploadImage(overviewFormData.image.data.file);
+
+    // Upload question images
+
+    for (let question of questionsFormData.questions) {
+      imageUrls.questionUrls.push({
+        question: await uploadImage(question.questionImage.data.file),
+        explanation: await uploadImage(question.explanationImage.data.file),
+      });
     }
 
     try {
@@ -78,20 +103,27 @@ export default function QuizCreatePage() {
         title: overviewFormData.title,
         description: overviewFormData.description ?? null,
         isPublished: true,
-        imageUrl: quizImageUrl,
-        questions: questionsFormData.questions.map((q) => ({
-          title: q.title,
-          description: '',
-          explanation: q.explanation ?? null,
-          explanationImageUrl: null,
-          imageUrl: null,
-          answers: q.answers.map((a) => ({
-            title: a.title,
+        imageUrl: imageUrls.url,
+        questions: questionsFormData.questions
+          .map((q) => ({
+            title: q.title,
             description: '',
-            isCorrect: a.isCorrect,
+            explanation: q.explanation ?? null,
+            explanationImageUrl: null,
             imageUrl: null,
+            answers: q.answers.map((a) => ({
+              title: a.title,
+              description: '',
+              isCorrect: a.isCorrect,
+              imageUrl: null,
+            })),
+          }))
+          .map((q, i) => ({
+            ...q,
+            imageUrl: imageUrls.questionUrls.at(i)?.question ?? null,
+            explanationImageUrl:
+              imageUrls.questionUrls.at(i)?.explanation ?? null,
           })),
-        })),
       });
 
       toastStore.addToast('Quiz created!', 'success');

@@ -438,15 +438,6 @@ export interface operations {
         };
         content?: never;
       };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['RestErrResponse'];
-        };
-      };
     };
   };
   'backend/handlers.(*DBWrapper).CreateQuiz': {

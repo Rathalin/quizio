@@ -22,17 +22,29 @@ func (dbw *DBWrapper) UploadFile() usecase.Interactor {
 	}
 
 	return usecase.NewInteractor(func(ctx context.Context, input uploadFileRequest, output *uploadFileResponse) error {
-
 		// Define the upload directory
 		uploadDir := "./public/uploads/"
 		if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
 			return fmt.Errorf("unable to create upload directory: %w", err)
 		}
 
-		fmt.Printf("Uploaded image %v (%v)", input.Filename, len(input.File))
+		// Generate a unique file name if the file already exists
+		originalFilePath := filepath.Join(uploadDir, input.Filename)
+		filePath := originalFilePath
+		ext := filepath.Ext(input.Filename)
+		name := input.Filename[:len(input.Filename)-len(ext)]
+		counter := 1
+
+		for {
+			if _, err := os.Stat(filePath); os.IsNotExist(err) {
+				break // File does not exist, use this filePath
+			}
+			// File exists, generate a new name
+			filePath = filepath.Join(uploadDir, fmt.Sprintf("%s_%d%s", name, counter, ext))
+			counter++
+		}
 
 		// Save the file
-		filePath := filepath.Join(uploadDir, input.Filename)
 		out, err := os.Create(filePath)
 		if err != nil {
 			return fmt.Errorf("failed to create file: %w", err)
@@ -45,7 +57,9 @@ func (dbw *DBWrapper) UploadFile() usecase.Interactor {
 		}
 
 		// Generate the file URL (adjust this to your server's public URL)
-		fileURL := fmt.Sprintf("/public/uploads/%s", input.Filename)
+		fileURL := fmt.Sprintf("/public/uploads/%s", filepath.Base(filePath))
+
+		fmt.Printf("Uploaded image %v (%v) -> %v\n", input.Filename, len(input.File), fileURL)
 
 		// Populate the response
 		*output = uploadFileResponse{

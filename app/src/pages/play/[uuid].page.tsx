@@ -30,6 +30,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePlayProtocolEntryMutation } from '../../data/usePlayProtocolEntryMutation';
 import { useSession } from 'next-auth/react';
 import { throwOnError } from '@/api-client';
+import { getBackendImageUrl } from '@/utilities/getImageUrl';
 
 export type AnsweredState = {
   correctAnswerId: string;
@@ -221,12 +222,12 @@ export default function PlayIdPage({
           <Head>
             <meta property="og:title" content="Play Quizio" />
             <meta property="og:description" content={quiz?.title ?? ''} />
-            {/* <meta
+            <meta
               property="og:image"
               content={
                 quiz?.imageUrl ? getBackendImageUrl(quiz.imageUrl) : undefined
               }
-            /> */}
+            />
           </Head>
           <div ref={topAnchor} />
           {questions.length === 0 ? (
@@ -240,6 +241,8 @@ export default function PlayIdPage({
               {!gameDone && (
                 <>
                   <CardContent sx={{ padding: 0 }}>
+                    <Box>{question.imageUrl ?? 'nope'}</Box>
+                    <Box>{question.explanationImageUrl ?? 'nope'}</Box>
                     <PickAnAnswer
                       index={questionIndex + 1}
                       title={question.title ?? ''}
@@ -251,7 +254,7 @@ export default function PlayIdPage({
                       answeredProgress={answeredProgress}
                       selectedAnswerId={answerState?.selectedAnswerId ?? null}
                       onAnswer={setAnswerOfCurrentQuestion}
-                      imageUrl={question.imageUrl ?? null}
+                      imageUrl={question.imageUrl}
                     />
                     {questionAnswered && (
                       <Box sx={{ paddingInline: 6 }}>
@@ -259,7 +262,7 @@ export default function PlayIdPage({
                         <Explanation
                           correct={questionAnsweredCorrectly ?? false}
                           text={question.explanation ?? ''}
-                          imageUrl={question.explanationImageUrl ?? null}
+                          imageUrl={question.explanationImageUrl}
                         />
                       </Box>
                     )}
