@@ -86,7 +86,7 @@ func main() {
 		r.Method(http.MethodGet, "/quiz/{uuid}", nethttp.NewHandler(dbWrapper.GetQuiz()))
 		r.Method(http.MethodPost, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.EditQuiz())))
 		r.Method(http.MethodDelete, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.DeleteQuiz())))
-		r.Method(http.MethodPost, "/upload", nethttp.NewHandler((dbWrapper.UploadImage())))
+		r.Method(http.MethodPost, "/upload", nethttp.NewHandler((dbWrapper.UploadFile())))
 	})
 
 	s.Docs("/docs", v5emb.New)

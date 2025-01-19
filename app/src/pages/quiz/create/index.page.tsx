@@ -27,6 +27,8 @@ import { useRouter } from 'next/router';
 import { storageKeys } from '@/persistence/storage-keys';
 import { useCreateQuizMutation } from '@/data/useCreateQuizMutation';
 import { useToastStore } from '@/persistence/taost.store';
+import { useUploadFileMutation } from '@/data/useUploadFileMutation';
+import { getBase64 } from '@/data/getBase64';
 
 const stepTitles = ['Overview', 'Questions', 'Summary'] as const;
 export type StepData = {
@@ -52,6 +54,7 @@ export default function QuizCreatePage() {
     defaultQuestionsFormData
   );
 
+  const { mutateAsync: uploadFile } = useUploadFileMutation();
   const {
     mutateAsync: createQuiz,
     isLoading,
@@ -60,25 +63,35 @@ export default function QuizCreatePage() {
 
   async function handleFinishQuizClick() {
     try {
-      await createQuiz({
-        title: overviewFormData.title,
-        description: overviewFormData.description ?? null,
-        isPublished: true,
-        imageUrl: null,
-        questions: questionsFormData.questions.map((q) => ({
-          title: q.title,
-          description: '',
-          explanation: q.explanation ?? null,
-          explanationImageUrl: null,
-          imageUrl: null,
-          answers: q.answers.map((a) => ({
-            title: a.title,
-            description: '',
-            isCorrect: a.isCorrect,
-            imageUrl: null,
-          })),
-        })),
-      });
+      const base64 = await getBase64(overviewFormData.image.data.file);
+      const bodyData = {
+        filename: overviewFormData.image.data.file.name,
+        file: base64,
+      };
+      console.log(bodyData);
+      await uploadFile(bodyData);
+    } catch (error) {}
+
+    try {
+      // await createQuiz({
+      //   title: overviewFormData.title,
+      //   description: overviewFormData.description ?? null,
+      //   isPublished: true,
+      //   imageUrl: null,
+      //   questions: questionsFormData.questions.map((q) => ({
+      //     title: q.title,
+      //     description: '',
+      //     explanation: q.explanation ?? null,
+      //     explanationImageUrl: null,
+      //     imageUrl: null,
+      //     answers: q.answers.map((a) => ({
+      //       title: a.title,
+      //       description: '',
+      //       isCorrect: a.isCorrect,
+      //       imageUrl: null,
+      //     })),
+      //   })),
+      // });
 
       toastStore.addToast('Quiz created!', 'success');
       queryClient.invalidateQueries(['getQuizzesInfinite']);
