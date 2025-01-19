@@ -23,6 +23,7 @@ import { ColorModeProvider } from '@/page-components/theme.context';
 import { storageKeys } from '@/persistence/storage-keys';
 import useStorage from '@/custom-hooks/useStorage';
 import '@total-typescript/ts-reset';
+import ToastSnackbar from '@/components/ToastSnackbar';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -49,13 +50,16 @@ export default function App(props: MyAppProps) {
     setColorMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
   }, [setColorMode]);
 
-  const [queryClient] = useState(() => new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      }
-    }
-  }));
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: false,
+          },
+        },
+      })
+  );
 
   const router = useRouter();
   const { startTransitioning, stopTransitioning } = usePageTransition();
@@ -115,6 +119,7 @@ export default function App(props: MyAppProps) {
                 </Head>
                 <Layout>
                   <Component {...pageProps} />
+                  <ToastSnackbar />
                   <Analytics />
                 </Layout>
               </ColorModeProvider>

@@ -157,7 +157,6 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 			if err != nil {
 				return err
 			}
-			fmt.Printf("Answer uuids length: %v\n", len(existingAnswerUuids))
 			defer answerRows.Close()
 			for answerRows.Next() {
 				answerUuid := ""
@@ -199,8 +198,6 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 				}
 			}
 
-			fmt.Printf("Answer uuids: %v existing, %v remaining\n", len(existingAnswerUuids), len(remainingAnswerUuids))
-
 			// Delete removed answers
 			for _, answerUuid := range remainingAnswerUuids {
 				fmt.Printf("DELETE answer: %v\n", answerUuid)
@@ -212,8 +209,6 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 				}
 			}
 		}
-
-		fmt.Printf("Question uuids: %v existing, %v remaining\n", len(existingQuestionUuids), len(remainingQuestionUuids))
 
 		// Delete removed questions
 		for _, questionUuid := range remainingQuestionUuids {

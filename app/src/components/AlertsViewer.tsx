@@ -1,6 +1,6 @@
 import { getAlertsGQL } from '@/graphql/alerts';
 import { Enum_Alert_Imagesize } from '@/graphql/generated/graphql';
-import { useDismissedAlertIds } from '@/persistence/dismissed-alert-ids';
+import { useDismissedAlertIds } from '@/persistence/dismissed-alert-ids.store';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
 import { seconds } from '@/utilities/time';
 import { Alert, Collapse, Grid, Stack } from '@mui/material';
