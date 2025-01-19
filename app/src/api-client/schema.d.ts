@@ -74,6 +74,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/a/upload': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper Upload Image */
+    post: operations['backend/handlers.(*DBWrapper).UploadImage'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/debug': {
     parameters: {
       query?: never;
@@ -297,6 +314,14 @@ export interface components {
     HandlersSignOutRequest: {
       refreshToken: string;
     };
+    HandlersUploadImageRequest: {
+      /** Format: base64 */
+      file: string;
+      filename: string;
+    };
+    HandlersUploadImageResponse: {
+      url: string;
+    };
     ModelsAnswer: {
       /** Format: date-time */
       created_at: string;
@@ -505,6 +530,30 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).UploadImage': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['HandlersUploadImageRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HandlersUploadImageResponse'];
         };
       };
     };

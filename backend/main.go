@@ -59,6 +59,7 @@ func main() {
 
 	// Public routes
 	s.Group(func(r chi.Router) {
+		r.Handle("/uploads", http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads"))))
 		r.Method(http.MethodPost, "/register", nethttp.NewHandler(dbWrapper.Register()))
 		r.Method(http.MethodPost, "/signin", nethttp.NewHandler(dbWrapper.SignIn()))
 		r.Method(http.MethodGet, "/quizzes", nethttp.NewHandler(dbWrapper.GetQuizzes()))
@@ -85,6 +86,7 @@ func main() {
 		r.Method(http.MethodGet, "/quiz/{uuid}", nethttp.NewHandler(dbWrapper.GetQuiz()))
 		r.Method(http.MethodPost, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.EditQuiz())))
 		r.Method(http.MethodDelete, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.DeleteQuiz())))
+		r.Method(http.MethodPost, "/upload", nethttp.NewHandler((dbWrapper.UploadImage())))
 	})
 
 	s.Docs("/docs", v5emb.New)
