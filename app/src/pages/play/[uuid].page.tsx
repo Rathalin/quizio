@@ -241,8 +241,6 @@ export default function PlayIdPage({
               {!gameDone && (
                 <>
                   <CardContent sx={{ padding: 0 }}>
-                    <Box>{question.imageUrl ?? 'nope'}</Box>
-                    <Box>{question.explanationImageUrl ?? 'nope'}</Box>
                     <PickAnAnswer
                       index={questionIndex + 1}
                       title={question.title ?? ''}
