@@ -1,4 +1,16 @@
 services:
+  go-backend:
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=postgres-db
+      - DB_USER=root
+      - DB_PASSWORD=mysecretpassword
+    depends_on:
+      - postgres-db
+
   postgres-db:
     image: postgres
     restart: always
@@ -15,10 +27,10 @@ services:
     image: dpage/pgadmin4
     restart: always
     ports:
-      - "8081:80" # pgAdmin will be accessible at http://localhost:8081
+      - "8081:80"
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: daniel@flockert.at
+      PGADMIN_DEFAULT_PASSWORD: mysecretpassword
     depends_on:
       - postgres-db
 
