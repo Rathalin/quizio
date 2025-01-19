@@ -13,10 +13,8 @@ import GradientWord from '@/components/GradientWord';
 import GradientDivider from '@/components/GradientDivider';
 import ScrollObserver from '@/components/ScrollObserver';
 import { useQuizzesInfiniteQuery } from '@/data/useQuizzesQuery';
-import { useSession } from 'next-auth/react';
 
 export default function QuizzesOverview() {
-  const { data: session } = useSession();
   const [searchText, setSearchText] = useState('');
   const [sort, setSort] = useStorage(storageKeys.sort, defaultSort);
   const [filters, setFilters] = useStorage<FilterOption[]>(

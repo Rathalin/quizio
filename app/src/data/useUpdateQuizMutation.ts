@@ -19,7 +19,7 @@ async function editQuiz(
   data: EditQuizRequestData,
   authHeader: AuthorizationHeader
 ) {
-  return client.POST('/a/quiz/edit/{uuid}', {
+  return client.POST('/a/quiz/{uuid}', {
     params: {
       path: {
         uuid,

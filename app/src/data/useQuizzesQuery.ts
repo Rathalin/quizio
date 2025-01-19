@@ -5,17 +5,7 @@ import {
   throwOnError,
 } from '@/api-client';
 import { seconds } from '@/utilities/time';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-
-export function useQuizzesQuery(page: number, pageSize: number) {
-  return useQuery<
-    InferFetchResult<typeof fetchQuizzes>,
-    InferFetchError<typeof fetchQuizzes>
-  >({
-    queryKey: ['getQuizzesNew'],
-    queryFn: () => throwOnError(() => fetchQuizzes(page, pageSize)),
-  });
-}
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 export function useQuizzesInfiniteQuery(pageSize: number) {
   return useInfiniteQuery<

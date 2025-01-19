@@ -81,7 +81,7 @@ export default function QuizCreatePage() {
       });
 
       toastStore.addToast('Quiz created!', 'success');
-      queryClient.invalidateQueries(['allPublishedQuizzes']);
+      queryClient.invalidateQueries(['getQuizzesInfinite']);
       router.push('/');
       resetQuizLocalStorage();
       setOverviewFormData(defaultOverviewFormData);

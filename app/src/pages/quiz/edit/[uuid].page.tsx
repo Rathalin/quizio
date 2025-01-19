@@ -36,6 +36,8 @@ import { fetchQuiz, useQuizQuery } from '@/data/useQuizQuery';
 import { throwOnError } from '@/api-client';
 import { useUpdateQuizMutation } from '@/data/useUpdateQuizMutation';
 import { useToastStore } from '@/persistence/taost.store';
+import { useDeleteQuizMutation } from '@/data/useDeleteQuizMutation';
+import LoadingCircle from '@/components/LoadingCircle';
 
 export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
   ctx
@@ -89,9 +91,6 @@ export default function QuizCreatePage({
 
   const { data: quiz } = useQuizQuery(uuid);
   const [activeStep, setActiveStep] = useState(0);
-  // const [alertType, setAlertType] = useState<'saved' | 'save-error' | null>(
-  //   null
-  // );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [overviewFormData, setOverviewFormData] = useState<QuizOverviewForm>(
     defaultOverviewFormData
@@ -105,6 +104,11 @@ export default function QuizCreatePage({
     isSuccess: isUpdateSuccess,
     isError: isUpdateError,
   } = useUpdateQuizMutation(uuid);
+  const {
+    mutateAsync: deleteQuiz,
+    isLoading: isDeleteLoading,
+    isSuccess: isDeleteSuccess,
+  } = useDeleteQuizMutation(uuid);
 
   // const ownerId = session?.user?.id?.toString();
 
@@ -229,8 +233,8 @@ export default function QuizCreatePage({
       // Refetch quiz
       toastStore.addToast('Quiz updated!', 'success');
       queryClient.invalidateQueries(['quiz', uuid]);
-      queryClient.removeQueries(['allPublishedQuizzes']);
-      queryClient.invalidateQueries(['allPublishedQuizzes']);
+      queryClient.removeQueries(['getQuizzesInfinite']);
+      queryClient.invalidateQueries(['getQuizzesInfinite']);
       router.push('/');
     } catch (error) {
       console.error('Update quiz error', error);
@@ -239,61 +243,16 @@ export default function QuizCreatePage({
   }
 
   async function onDeleteDialogConfirm() {
-    // const { questions } = questionsFormData;
-    // for (
-    //   let questionIndex = 0;
-    //   questionIndex < questions.length;
-    //   questionIndex++
-    // ) {
-    //   const question = questions.at(questionIndex)!;
-    //   for (const answer of question.answers) {
-    //     // Delete answer
-    //     if (answer.id != null) {
-    //       await deleteAnswerMutation.mutateAsync({
-    //         id: answer.id,
-    //       });
-    //     }
-    //   }
-    //   // Delete question
-    //   if (question.id != null) {
-    //     await deleteQuestionMutation.mutateAsync({
-    //       id: question.id,
-    //     });
-    //   }
-    //   // Delete question image
-    //   const questionImageId =
-    //     quiz?.attributes?.questions?.data.at(questionIndex)?.attributes
-    //       ?.questionImage?.data?.id;
-    //   if (questionImageId != null) {
-    //     await deleteImageMutation.mutateAsync({
-    //       id: questionImageId,
-    //     });
-    //   }
-    //   // Delete explanation image
-    //   const explanationImageId =
-    //     quiz?.attributes?.questions?.data.at(questionIndex)?.attributes
-    //       ?.explanationImage?.data?.id;
-    //   if (explanationImageId != null) {
-    //     await deleteImageMutation.mutateAsync({
-    //       id: explanationImageId,
-    //     });
-    //   }
-    // }
-    // // Delete quiz
-    // if (quiz?.id != null) {
-    //   await deleteQuizMutation.mutateAsync({
-    //     id: quiz.id,
-    //   });
-    //   // Delete image
-    //   if (quiz?.attributes?.image?.data?.id != null) {
-    //     await deleteImageMutation.mutateAsync({
-    //       id: quiz?.attributes?.image?.data?.id,
-    //     });
-    //   }
-    // }
-    // queryClient.invalidateQueries(['allPublishedQuizzes']);
-    // await router.push('/');
-    // setDialogOpen(false);
+    try {
+      await deleteQuiz();
+
+      toastStore.addToast('Quiz deleted.', 'success');
+      queryClient.invalidateQueries(['getQuizzesInfinite']);
+      await router.push('/');
+      setDialogOpen(false);
+    } catch (error) {
+      toastStore.addToast('Could not delete quiz!', 'error');
+    }
   }
 
   const backLabel = steps.at(activeStep)?.backLabel ?? null;
@@ -317,8 +276,7 @@ export default function QuizCreatePage({
           setOpen={setDialogOpen}
           quizTitle={quiz.title}
           onConfirm={onDeleteDialogConfirm}
-          loading={false}
-          // loading={deleteMutation.isLoading}
+          loading={isDeleteLoading}
         />
       )}
       <Typography variant="h1">
@@ -337,16 +295,10 @@ export default function QuizCreatePage({
             <Button
               variant="contained"
               color="error"
-              // startIcon={
-              //   deleteMutation.isLoading) ? (
-              //     <LoadingCircle />
-              //   ) : undefined
-              // }
+              startIcon={isDeleteLoading ? <LoadingCircle /> : undefined}
               endIcon={<DeleteIcon />}
               onClick={() => setDialogOpen(true)}
-              // disabled={deleteMutations.some(
-              //   (mutation) => mutation.isLoading || mutation.isSuccess
-              // )}
+              disabled={isDeleteLoading || isDeleteSuccess}
             >
               Delete this quiz
             </Button>

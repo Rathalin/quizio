@@ -83,7 +83,8 @@ func main() {
 		// Temporary no auth check
 		r.Method(http.MethodPost, "/quiz/create", nethttp.NewHandler((dbWrapper.CreateQuiz())))
 		r.Method(http.MethodGet, "/quiz/{uuid}", nethttp.NewHandler(dbWrapper.GetQuiz()))
-		r.Method(http.MethodPost, "/quiz/edit/{uuid}", nethttp.NewHandler((dbWrapper.EditQuiz())))
+		r.Method(http.MethodPost, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.EditQuiz())))
+		r.Method(http.MethodDelete, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.DeleteQuiz())))
 	})
 
 	s.Docs("/docs", v5emb.New)

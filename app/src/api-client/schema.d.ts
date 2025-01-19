@@ -38,23 +38,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/a/quiz/edit/{uuid}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** DB Wrapper Edit Quiz */
-    post: operations['backend/handlers.(*DBWrapper).EditQuiz'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/a/quiz/{uuid}': {
     parameters: {
       query?: never;
@@ -65,8 +48,10 @@ export interface paths {
     /** DB Wrapper Get Quiz */
     get: operations['backend/handlers.(*DBWrapper).GetQuiz'];
     put?: never;
-    post?: never;
-    delete?: never;
+    /** DB Wrapper Edit Quiz */
+    post: operations['backend/handlers.(*DBWrapper).EditQuiz'];
+    /** DB Wrapper Delete Quiz */
+    delete: operations['backend/handlers.(*DBWrapper).DeleteQuiz'];
     options?: never;
     head?: never;
     patch?: never;
@@ -83,6 +68,23 @@ export interface paths {
     put?: never;
     /** DB Wrapper Sign Out */
     post: operations['backend/handlers.(*DBWrapper).SignOut'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/debug': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** DB Wrapper Debug */
+    get: operations['backend/handlers.(*DBWrapper).Debug'];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -410,6 +412,28 @@ export interface operations {
       };
     };
   };
+  'backend/handlers.(*DBWrapper).GetQuiz': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        uuid: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HandlersGetQuizResponse'];
+        };
+      };
+    };
+  };
   'backend/handlers.(*DBWrapper).EditQuiz': {
     parameters: {
       query?: never;
@@ -434,7 +458,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).GetQuiz': {
+  'backend/handlers.(*DBWrapper).DeleteQuiz': {
     parameters: {
       query?: never;
       header?: never;
@@ -445,14 +469,12 @@ export interface operations {
     };
     requestBody?: never;
     responses: {
-      /** @description OK */
-      200: {
+      /** @description No Content */
+      204: {
         headers: {
           [name: string]: unknown;
         };
-        content: {
-          'application/json': components['schemas']['HandlersGetQuizResponse'];
-        };
+        content?: never;
       };
     };
   };
@@ -484,6 +506,24 @@ export interface operations {
         content: {
           'application/json': components['schemas']['RestErrResponse'];
         };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).Debug': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
       };
     };
   };
