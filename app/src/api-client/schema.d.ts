@@ -91,6 +91,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/alerts': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** DB Wrapper Get Alerts */
+    get: operations['backend/handlers.(*DBWrapper).GetAlerts'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/debug': {
     parameters: {
       query?: never;
@@ -245,6 +262,9 @@ export interface components {
       title: string;
       uuid: string | null;
     };
+    HandlersGetAlertsResponse: {
+      alerts: components['schemas']['ModelsAlert'][];
+    };
     HandlersGetQuizResponse: {
       description: string;
       imageUrl: string | null;
@@ -321,6 +341,20 @@ export interface components {
     };
     HandlersUploadFileResponse: {
       url: string;
+    };
+    ModelsAlert: {
+      /** Format: date-time */
+      createdAt: string;
+      /** @enum {string|null} */
+      imageSize: 'small' | 'medium' | 'large' | null;
+      imageUrl: string | null;
+      isActive: boolean;
+      markdownContent: string;
+      /** @enum {string} */
+      severity: 'success' | 'info' | 'warning' | 'error';
+      /** Format: date-time */
+      updatedAt: string;
+      uuid: string;
     };
     ModelsAnswer: {
       /** Format: date-time */
@@ -554,6 +588,26 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['HandlersUploadFileResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).GetAlerts': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HandlersGetAlertsResponse'];
         };
       };
     };

@@ -37,7 +37,7 @@ type QuizOverviewCardProps = {
   questionCount: number;
   playCount: number;
   published: boolean;
-  imageUrl?: string;
+  imageUrl: string | null;
   isMyQuiz: boolean;
 };
 

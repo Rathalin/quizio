@@ -24,7 +24,7 @@ func (dbw *DBWrapper) UploadFile() usecase.Interactor {
 	return usecase.NewInteractor(func(ctx context.Context, input uploadFileRequest, output *uploadFileResponse) error {
 
 		// Define the upload directory
-		uploadDir := "./uploads/"
+		uploadDir := "./public/uploads/"
 		if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
 			return fmt.Errorf("unable to create upload directory: %w", err)
 		}
@@ -45,7 +45,7 @@ func (dbw *DBWrapper) UploadFile() usecase.Interactor {
 		}
 
 		// Generate the file URL (adjust this to your server's public URL)
-		fileURL := fmt.Sprintf("/uploads/%s", input.Filename)
+		fileURL := fmt.Sprintf("/public/uploads/%s", input.Filename)
 
 		// Populate the response
 		*output = uploadFileResponse{

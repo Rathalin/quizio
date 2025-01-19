@@ -263,6 +263,7 @@ export default function QuestionInput({
                 inputProps={{
                   maxLength: constraints.quiz.question.title.maxLength,
                 }}
+                autoComplete="off"
                 {...field}
               />
             )}
@@ -413,6 +414,7 @@ export default function QuestionInput({
                       </InputAdornment>
                     ),
                   }}
+                  autoComplete="off"
                   {...field}
                 />
               )}

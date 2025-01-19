@@ -59,12 +59,13 @@ func main() {
 
 	// Public routes
 	s.Group(func(r chi.Router) {
-		r.Handle("/uploads", http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads"))))
+		r.Handle("/public/*", http.StripPrefix("/public/", http.FileServer(http.Dir("./public"))))
 		r.Method(http.MethodPost, "/register", nethttp.NewHandler(dbWrapper.Register()))
 		r.Method(http.MethodPost, "/signin", nethttp.NewHandler(dbWrapper.SignIn()))
 		r.Method(http.MethodGet, "/quizzes", nethttp.NewHandler(dbWrapper.GetQuizzes()))
 		r.Method(http.MethodGet, "/play/{uuid}", nethttp.NewHandler(dbWrapper.PlayQuiz()))
 		r.Method(http.MethodGet, "/user-profile/{uuid}", nethttp.NewHandler(dbWrapper.GetUserProfile()))
+		r.Method(http.MethodGet, "/alerts", nethttp.NewHandler(dbWrapper.GetAlerts()))
 		r.Method(http.MethodGet, "/debug", nethttp.NewHandler(dbWrapper.Debug()))
 	})
 
@@ -78,15 +79,15 @@ func main() {
 				jwtauth.Authenticator(auth.TokenAuth),
 			)
 			r.Method(http.MethodPost, "/signout", nethttp.NewHandler(dbWrapper.SignOut()))
-			r.Method(http.MethodPost, "/play-protocol-entry", nethttp.NewHandler((dbWrapper.PostPlayProtocolEntry())))
 		})
 
 		// Temporary no auth check
+		r.Method(http.MethodPost, "/upload", nethttp.NewHandler((dbWrapper.UploadFile())))
 		r.Method(http.MethodPost, "/quiz/create", nethttp.NewHandler((dbWrapper.CreateQuiz())))
 		r.Method(http.MethodGet, "/quiz/{uuid}", nethttp.NewHandler(dbWrapper.GetQuiz()))
 		r.Method(http.MethodPost, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.EditQuiz())))
 		r.Method(http.MethodDelete, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.DeleteQuiz())))
-		r.Method(http.MethodPost, "/upload", nethttp.NewHandler((dbWrapper.UploadFile())))
+		r.Method(http.MethodPost, "/play-protocol-entry", nethttp.NewHandler((dbWrapper.PostPlayProtocolEntry())))
 	})
 
 	s.Docs("/docs", v5emb.New)

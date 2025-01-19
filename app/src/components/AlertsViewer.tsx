@@ -1,25 +1,17 @@
-import { getAlertsGQL } from '@/graphql/alerts';
+import { useAlertsQuery } from '@/data/useAlertsQuery';
 import { Enum_Alert_Imagesize } from '@/graphql/generated/graphql';
 import { useDismissedAlertIds } from '@/persistence/dismissed-alert-ids.store';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
-import { seconds } from '@/utilities/time';
 import { Alert, Collapse, Grid, Stack } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
-import request from 'graphql-request';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 
 export default function AlertsViewer() {
   const { dismissedAlertIds, addDismissedAlertId } = useDismissedAlertIds();
 
-  const { data } = useQuery({
-    queryKey: ['alerts'],
-    queryFn: () => request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getAlertsGQL),
-    staleTime: seconds(30),
-    enabled: false, // TODO New backend
-  });
+  const { data } = useAlertsQuery();
 
-  const alerts = data?.alerts?.data ?? [];
+  const alerts = data?.alerts ?? [];
 
   return (
     <Stack
@@ -31,9 +23,9 @@ export default function AlertsViewer() {
       }}
     >
       {alerts.map((alert) => (
-        <Collapse in={!dismissedAlertIds.includes(alert.id!)} key={alert.id}>
+        <Collapse key={alert.uuid} in={!dismissedAlertIds.includes(alert.uuid)}>
           <Alert
-            severity={alert.attributes?.severity}
+            severity={alert.severity}
             variant="standard"
             icon={false}
             sx={{
@@ -42,7 +34,7 @@ export default function AlertsViewer() {
               },
             }}
             onClose={() => {
-              addDismissedAlertId(alert.id!);
+              addDismissedAlertId(alert.uuid);
             }}
           >
             <Grid container spacing={2}>
@@ -57,7 +49,7 @@ export default function AlertsViewer() {
                   },
                 }}
               >
-                <ReactMarkdown>{alert.attributes?.content ?? ''}</ReactMarkdown>
+                <ReactMarkdown>{alert.markdownContent}</ReactMarkdown>
               </Grid>
               <Grid item xs={12} sm={12} md={4}>
                 <Stack
@@ -65,22 +57,12 @@ export default function AlertsViewer() {
                   alignItems="center"
                   sx={{ height: '100%' }}
                 >
-                  {alert.attributes?.image?.data?.attributes?.url != null && (
+                  {alert.imageUrl != null && (
                     <Image
-                      src={getBackendImageUrl(
-                        alert.attributes.image.data.attributes.url
-                      )}
-                      alt={
-                        alert.attributes?.image?.data?.attributes
-                          ?.alternativeText ?? 'alert image'
-                      }
-                      width={
-                        imageSizes[alert.attributes.imageSize ?? 'Medium'].width
-                      }
-                      height={
-                        imageSizes[alert.attributes.imageSize ?? 'Medium']
-                          .height
-                      }
+                      src={getBackendImageUrl(alert.imageUrl)}
+                      alt="alert image"
+                      width={imageSizes[alert.imageSize ?? 'medium'].width}
+                      height={imageSizes[alert.imageSize ?? 'medium'].height}
                       style={{
                         objectFit: 'cover',
                         borderRadius: 4,

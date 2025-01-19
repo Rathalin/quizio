@@ -28,7 +28,6 @@ function uploadFile(
   data: UploadFileRequestData,
   authHeader: AuthorizationHeader
 ) {
-  console.log(data.filename);
   return client.POST('/a/upload', {
     body: data,
     headers: authHeader,

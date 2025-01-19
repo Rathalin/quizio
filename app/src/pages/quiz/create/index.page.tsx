@@ -62,36 +62,37 @@ export default function QuizCreatePage() {
   } = useCreateQuizMutation();
 
   async function handleFinishQuizClick() {
+    let quizImageUrl: string | null = null;
     try {
-      const base64 = await getBase64(overviewFormData.image.data.file);
-      const bodyData = {
+      const { url } = await uploadFile({
         filename: overviewFormData.image.data.file.name,
-        file: base64,
-      };
-      console.log(bodyData);
-      await uploadFile(bodyData);
-    } catch (error) {}
+        file: await getBase64(overviewFormData.image.data.file),
+      });
+      quizImageUrl = url;
+    } catch (error) {
+      toastStore.addToast('Could not upload image!', 'error');
+    }
 
     try {
-      // await createQuiz({
-      //   title: overviewFormData.title,
-      //   description: overviewFormData.description ?? null,
-      //   isPublished: true,
-      //   imageUrl: null,
-      //   questions: questionsFormData.questions.map((q) => ({
-      //     title: q.title,
-      //     description: '',
-      //     explanation: q.explanation ?? null,
-      //     explanationImageUrl: null,
-      //     imageUrl: null,
-      //     answers: q.answers.map((a) => ({
-      //       title: a.title,
-      //       description: '',
-      //       isCorrect: a.isCorrect,
-      //       imageUrl: null,
-      //     })),
-      //   })),
-      // });
+      await createQuiz({
+        title: overviewFormData.title,
+        description: overviewFormData.description ?? null,
+        isPublished: true,
+        imageUrl: quizImageUrl,
+        questions: questionsFormData.questions.map((q) => ({
+          title: q.title,
+          description: '',
+          explanation: q.explanation ?? null,
+          explanationImageUrl: null,
+          imageUrl: null,
+          answers: q.answers.map((a) => ({
+            title: a.title,
+            description: '',
+            isCorrect: a.isCorrect,
+            imageUrl: null,
+          })),
+        })),
+      });
 
       toastStore.addToast('Quiz created!', 'success');
       queryClient.invalidateQueries(['getQuizzesInfinite']);

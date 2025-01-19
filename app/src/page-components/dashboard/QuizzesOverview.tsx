@@ -90,18 +90,19 @@ export default function QuizzesOverview() {
                     createdAt,
                     title,
                     description,
+                    imageUrl,
                     playCount,
                     questionCount,
                     user,
                   }) => (
                     <QuizOverviewCard
                       key={uuid}
-                      createdAt={new Date(createdAt)}
+                      uuid={uuid}
                       title={title}
                       description={description ?? ''}
-                      uuid={uuid}
+                      imageUrl={imageUrl}
+                      createdAt={new Date(createdAt)}
                       playCount={playCount}
-                      published
                       questionCount={questionCount}
                       userUuid={user.uuid}
                       username={user.username}
@@ -109,6 +110,7 @@ export default function QuizzesOverview() {
                       isMyQuiz={
                         user.uuid === '9dfd2a83-b8be-4c35-90ec-0acda6df26d0'
                       } // TODO Sessions
+                      published
                     />
                   )
                 )}
