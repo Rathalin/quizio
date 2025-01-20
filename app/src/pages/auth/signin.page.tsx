@@ -14,11 +14,9 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { FormEvent, useState } from 'react';
 
 export default function SigninPage() {
-  const router = useRouter();
   const toastStore = useToastStore();
 
   const {
@@ -32,15 +30,14 @@ export default function SigninPage() {
       signIn('credentials', {
         username: identifier,
         password,
+        redirect: true,
       }),
   });
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
-      const response = await login();
-      console.log(response);
-      // await router.push('/');
+      await login();
       toastStore.addToast('Login successful.', 'success');
     } catch (error) {
       toastStore.addToast('Invalid username or password!', 'error');

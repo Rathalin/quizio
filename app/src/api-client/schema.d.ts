@@ -21,6 +21,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/a/me': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** DB Wrapper Get My User Profile */
+    get: operations['backend/handlers.(*DBWrapper).GetMyUserProfile'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/a/play-protocol-entry': {
     parameters: {
       query?: never;
@@ -268,6 +285,19 @@ export interface components {
     HandlersGetAlertsResponse: {
       alerts: components['schemas']['ModelsAlert'][];
     };
+    HandlersGetMyUserProfileResponse: {
+      quizStats: {
+        totalQuizzesCreated: number;
+        totalQuizzesPlayCount: number;
+      };
+      user: {
+        /** Format: date-time */
+        createdAt: string;
+        profileImageUrl: string | null;
+        username: string;
+        uuid: string;
+      };
+    };
     HandlersGetQuizResponse: {
       description: string;
       imageUrl: string | null;
@@ -437,6 +467,35 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['HandlersDebugResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).GetMyUserProfile': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HandlersGetMyUserProfileResponse'];
         };
       };
       /** @description Unauthorized */

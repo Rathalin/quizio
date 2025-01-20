@@ -5,7 +5,7 @@
   "rules": {
     "unused-imports/no-unused-imports": "error",
     "no-unused-vars": ["error", { "args": "none", "argsIgnorePattern": "^_" }],
-    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "no-console": ["error", { "allow": ["info", "warn", "error"] }],
     "react/jsx-key": "error"
   }
 }

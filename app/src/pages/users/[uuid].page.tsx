@@ -1,18 +1,19 @@
+import { throwOnError } from '@/api-client';
 import GenericLoadingErrorMessage from '@/components/GenericLoadingErrorMessage';
 import HomeButton from '@/components/buttons/HomeButton';
 import UserProfile from '@/components/users/UserProfile';
 import UserProfilePlaceholder from '@/components/users/UserProfilePlaceholder';
-import { getUserProfileDataByIdGQL, getUsersByUuidGQL } from '@/graphql/users';
+import {
+  fetchUserProfile,
+  useUserProfileQuery,
+} from '@/data/useUserProfileQuery';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
 import { Box, Card, CardActions, CardContent, Stack } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
-import request from 'graphql-request';
+import { dehydrate, QueryClient } from '@tanstack/react-query';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { signOut } from 'next-auth/react';
-import { useMemo } from 'react';
 
 export const getServerSideProps: GetServerSideProps<{
-  userId: string | null;
+  uuid: string;
 }> = async (ctx) => {
   const uuid = ctx.params?.uuid;
   if (typeof uuid != 'string') {
@@ -21,65 +22,25 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
 
-  try {
-    const queryResult = await request(
-      process.env.NEXT_PUBLIC_GRAPHQL_URL,
-      getUsersByUuidGQL,
-      { uuid }
-    );
-    return {
-      props: {
-        userId: queryResult.usersPermissionsUsers?.data?.at(0)?.id ?? null,
-      },
-    };
-  } catch (error) {
-    if (typeof error === 'object' && error != null && 'status' in error) {
-      const status = error.status;
-      if (status === 401) {
-        signOut();
-        return {
-          redirect: {
-            destination: '/?sessionExpired=true',
-            permanent: false,
-          },
-          props: {
-            userId: null,
-          },
-        };
-      }
-    }
-    return {
-      redirect: {
-        destination: '/500',
-        permanent: false,
-      },
-      props: {
-        userId: null,
-      },
-    };
-  }
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ['getUserProfile', uuid],
+    queryFn: () => throwOnError(() => fetchUserProfile(uuid)),
+  });
+
+  return {
+    props: {
+      uuid,
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
 };
 
 export default function UserIdPage({
-  userId,
+  uuid,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const { data, isLoading, isSuccess, isError } = useQuery({
-    queryKey: ['user', userId],
-    queryFn: () =>
-      request(process.env.NEXT_PUBLIC_GRAPHQL_URL, getUserProfileDataByIdGQL, {
-        userId: userId!,
-      }),
-    enabled: userId != null,
-  });
-
-  const user = data?.usersPermissionsUser?.data;
-  const imageUrl = useMemo(() => {
-    const url = user?.attributes?.profileImage?.data?.attributes?.url;
-    if (url != null) {
-      return getBackendImageUrl(url);
-    }
-    return null;
-  }, [user?.attributes?.profileImage?.data?.attributes?.url]);
+  const { data, isLoading, isSuccess, isError } = useUserProfileQuery(uuid);
 
   return (
     <Box sx={{ marginTop: 4 }}>
@@ -88,15 +49,15 @@ export default function UserIdPage({
           {isLoading && <UserProfilePlaceholder />}
           {isSuccess && (
             <UserProfile
-              username={user?.attributes?.username ?? ''}
-              createdAt={user?.attributes?.createdAt ?? ''}
-              quizCount={user?.attributes?.quizzes?.data?.length ?? 0}
-              quizViewsTotal={
-                user?.attributes?.quizzes?.data
-                  .map((quiz) => quiz.attributes?.playCount ?? 0)
-                  .reduce((sum, n) => sum + n, 0) ?? 0
+              username={data.user.username}
+              createdAt={new Date(data.user.createdAt)}
+              quizCount={data.quizStats.totalQuizzesCreated}
+              quizViewsTotal={data.quizStats.totalQuizzesPlayCount}
+              imageUrl={
+                data.user.profileImageUrl != null
+                  ? getBackendImageUrl(data.user.profileImageUrl)
+                  : null
               }
-              imageUrl={imageUrl}
             />
           )}
           {isError && <GenericLoadingErrorMessage />}

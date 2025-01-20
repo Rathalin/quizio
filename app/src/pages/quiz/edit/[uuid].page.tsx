@@ -57,7 +57,7 @@ export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
     queryFn: () =>
       throwOnError(() =>
         fetchQuiz(uuid, {
-          Authorization: `Bearer ${session?.user?.name}`, // TODO session.accessToken
+          Authorization: `Bearer ${session?.user?.accessToken}`,
         })
       ),
   });

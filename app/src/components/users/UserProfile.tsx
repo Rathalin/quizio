@@ -35,7 +35,14 @@ export default function UserProfile({
           new Date(createdAt)
         )}`}</Typography>
         <Divider />
-        <Typography>{`Created ${quizCount} quizzes which have been played a total of ${quizViewsTotal} times.`}</Typography>
+        {/* TODO Fix this mess with translations */}
+        <Typography>{`Created ${quizCount} quiz${
+          quizCount === 1 ? '' : 'zes'
+        } which ${
+          quizCount === 1 ? 'has' : 'have'
+        } been played a total of ${quizViewsTotal} time${
+          quizViewsTotal === 1 ? '' : 's'
+        }.`}</Typography>
       </Stack>
     </>
   );
