@@ -40,12 +40,17 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 	type editQuizResponse struct{}
 
 	return usecase.NewInteractor(func(ctx context.Context, input editQuizRequest, output *editQuizResponse) error {
-		quizExists, err := dbw.QuizExists(input.UUID)
+		userId, err := getUserIdFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		quizExists, err := dbw.QuizExistsForUser(input.UUID, userId)
 		if err != nil {
 			return err
 		}
 		if !quizExists {
-			return status.Wrap(fmt.Errorf("quiz with uuid %v does not exist", input.UUID), status.NotFound)
+			return status.Wrap(fmt.Errorf("quiz with uuid %v does not exist for this user", input.UUID), status.NotFound)
 		}
 
 		quizId, err := dbw.GetQuizId(input.UUID)

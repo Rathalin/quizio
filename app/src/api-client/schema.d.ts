@@ -4,6 +4,23 @@
  */
 
 export interface paths {
+  '/a/debug': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** DB Wrapper Debug */
+    get: operations['backend/handlers.(*DBWrapper).Debug'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/a/play-protocol-entry': {
     parameters: {
       query?: never;
@@ -100,23 +117,6 @@ export interface paths {
     };
     /** DB Wrapper Get Alerts */
     get: operations['backend/handlers.(*DBWrapper).GetAlerts'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/debug': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** DB Wrapper Debug */
-    get: operations['backend/handlers.(*DBWrapper).Debug'];
     put?: never;
     post?: never;
     delete?: never;
@@ -236,6 +236,9 @@ export interface components {
       explanationImageUrl: string | null;
       imageUrl: string | null;
       title: string;
+    };
+    HandlersDebugResponse: {
+      userId: number;
     };
     HandlersEditQuizRequest: {
       description: string | null;
@@ -418,6 +421,35 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+  'backend/handlers.(*DBWrapper).Debug': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HandlersDebugResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
+    };
+  };
   'backend/handlers.(*DBWrapper).PostPlayProtocolEntry': {
     parameters: {
       query?: never;
@@ -437,6 +469,15 @@ export interface operations {
           [name: string]: unknown;
         };
         content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
       };
     };
   };
@@ -460,6 +501,15 @@ export interface operations {
         };
         content?: never;
       };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
     };
   };
   'backend/handlers.(*DBWrapper).GetQuiz': {
@@ -480,6 +530,15 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['HandlersGetQuizResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
         };
       };
     };
@@ -506,6 +565,15 @@ export interface operations {
         };
         content?: never;
       };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
     };
   };
   'backend/handlers.(*DBWrapper).DeleteQuiz': {
@@ -525,6 +593,15 @@ export interface operations {
           [name: string]: unknown;
         };
         content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
       };
     };
   };
@@ -581,6 +658,15 @@ export interface operations {
           'application/json': components['schemas']['HandlersUploadFileResponse'];
         };
       };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
     };
   };
   'backend/handlers.(*DBWrapper).GetAlerts': {
@@ -600,24 +686,6 @@ export interface operations {
         content: {
           'application/json': components['schemas']['HandlersGetAlertsResponse'];
         };
-      };
-    };
-  };
-  'backend/handlers.(*DBWrapper).Debug': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description No Content */
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
       };
     };
   };

@@ -35,6 +35,11 @@ func (dbw *DBWrapper) CreateQuiz() usecase.Interactor {
 	type createQuizResponse struct{}
 
 	return usecase.NewInteractor(func(ctx context.Context, input createQuizRequest, output *createQuizResponse) error {
+		userId, err := getUserIdFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
 		tx, err := dbw.DB.BeginTx(ctx, nil)
 		if err != nil {
 			return err
@@ -48,7 +53,7 @@ func (dbw *DBWrapper) CreateQuiz() usecase.Interactor {
 			INSERT INTO quiz (title, description_text, is_published, image_url, user_account_id)
 			VALUES ($1, $2, $3, $4, $5)
 			RETURNING id
-		`, input.Title, input.Description, input.IsPublished, input.ImageUrl, 1).Scan(&quizId)
+		`, input.Title, input.Description, input.IsPublished, input.ImageUrl, userId).Scan(&quizId)
 		if err != nil {
 			fmt.Println(err)
 			return err

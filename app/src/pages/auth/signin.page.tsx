@@ -1,6 +1,7 @@
 import GradientWord from '@/components/GradientWord';
 import LoadingCircle from '@/components/LoadingCircle';
 import HomeButton from '@/components/buttons/HomeButton';
+import { useToastStore } from '@/persistence/taost.store';
 import {
   Alert,
   Box,
@@ -18,8 +19,14 @@ import { FormEvent, useState } from 'react';
 
 export default function SigninPage() {
   const router = useRouter();
+  const toastStore = useToastStore();
 
-  const { mutate: login } = useMutation({
+  const {
+    mutateAsync: login,
+    isError,
+    isLoading,
+    isSuccess,
+  } = useMutation({
     mutationKey: ['signIn'],
     mutationFn: () => {
       return signIn('credentials', {
@@ -28,37 +35,21 @@ export default function SigninPage() {
         redirect: false,
       });
     },
-    onMutate: () => {
-      setIsLoading(true);
-      setIsSuccess(false);
-      setIsError(false);
-    },
-    onSuccess: (res) => {
-      if (res?.ok) {
-        setIsSuccess(true);
-        router.push('/');
-      } else {
-        setIsLoading(false);
-        setIsError(true);
-      }
-    },
-    onError: () => {
-      setIsLoading(false);
-      setIsError(true);
-      setIsSuccess(false);
-    },
   });
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    login();
+    try {
+      await login();
+      toastStore.addToast('Login successful.', 'success');
+      router.push('/');
+    } catch (error) {
+      toastStore.addToast('Invalid username or password!', 'error');
+    }
   }
 
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isError, setIsError] = useState(false);
 
   return (
     <Box

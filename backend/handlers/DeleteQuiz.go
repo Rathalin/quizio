@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"context"
-	"errors"
+	"fmt"
 
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
@@ -16,12 +16,17 @@ func (dbw *DBWrapper) DeleteQuiz() usecase.Interactor {
 	type deleteQuizResponse struct{}
 
 	return usecase.NewInteractor(func(ctx context.Context, input deleteQuizRequest, output *deleteQuizResponse) error {
-		quizExists, err := dbw.QuizExists(input.UUID)
+		userId, err := getUserIdFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		quizExists, err := dbw.QuizExistsForUser(input.UUID, userId)
 		if err != nil {
 			return err
 		}
 		if !quizExists {
-			return status.Wrap(errors.New("quiz does not exist"), status.NotFound)
+			return status.Wrap(fmt.Errorf("quiz with uuid %v does not exist for this user", input.UUID), status.NotFound)
 		}
 
 		_, err = dbw.DB.ExecContext(ctx, `

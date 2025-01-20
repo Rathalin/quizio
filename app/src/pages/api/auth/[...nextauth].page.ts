@@ -9,6 +9,7 @@ export const authOptions: AuthOptions = {
   },
   providers: [
     CredentialsProvider({
+      id: 'app-login',
       type: 'credentials',
       credentials: {
         username: { type: 'text' },
@@ -33,19 +34,6 @@ export const authOptions: AuthOptions = {
           return null;
         }
         console.log(`Signed in as ${data.user.username}`);
-        // console.log('authorize data', data);
-        // const returnData = {
-        //   // TODO Fix types
-        //   uuid: data.user.uuid,
-        //   username: data.user.username,
-        //   isConfirmed: data.user.isConfirmed,
-        //   isBlocked: data.user.isBlocked,
-        //   profileImageUrl: data.user.profileImageUrl,
-        //   accessToken: data.accessToken,
-        //   refreshToken: data.refreshToken,
-        // } satisfies Session['user'] as any;
-        // console.log(returnData);
-        // return returnData;
         return {
           id: data.user.uuid,
           name: data.user.username,
@@ -55,18 +43,18 @@ export const authOptions: AuthOptions = {
     }),
   ],
   callbacks: {
-    async session({ session, token, user }) {
-      console.log('session(session)', session);
-      return session;
-    },
-    async jwt({ token, account }) {
-      if (account != null) {
-        console.log('jwt(account)', account);
-        token.accessToken = account.accessToken;
-        token.refreshToken = account.refreshToken;
-      }
-      return token;
-    },
+    // async session({ session, token, user }) {
+    //   console.log('session(token)', token);
+    //   return session;
+    // },
+    // async jwt({ token, account }) {
+    //   if (account != null) {
+    //     console.log('jwt(account)', account);
+    //     token.accessToken = account.accessToken;
+    //     token.refreshToken = account.refreshToken;
+    //   }
+    //   return token;
+    // },
   },
   pages: {
     signIn: '/auth/signin',

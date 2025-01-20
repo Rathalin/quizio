@@ -12,21 +12,18 @@ func (dbw *DBWrapper) Debug() usecase.Interactor {
 	}
 
 	type debugResponse struct {
+		UserID int64 `json:"userId" required:"true"`
 	}
 
 	return usecase.NewInteractor(func(ctx context.Context, input debugRequest, output *debugResponse) error {
-		quizId := new(int64)
-		*quizId = 1
-		quizCount := 0
-		dbw.DB.QueryRowContext(ctx, `
-			SELECT COUNT(*)
-			FROM quiz
-			WHERE id = $1
-		`, quizId).Scan(&quizCount)
+		userID, err := getUserIdFromContext(ctx)
+		if err != nil {
+			return err
+		}
 
-		fmt.Printf("quizId: %v, Found count: %v", *quizId, quizCount)
+		fmt.Printf("userId: %v\n", userID)
 
-		response := debugResponse{}
+		response := debugResponse{UserID: userID}
 		*output = response
 		return nil
 	})

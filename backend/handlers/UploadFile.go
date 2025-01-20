@@ -22,8 +22,19 @@ func (dbw *DBWrapper) UploadFile() usecase.Interactor {
 	}
 
 	return usecase.NewInteractor(func(ctx context.Context, input uploadFileRequest, output *uploadFileResponse) error {
+		userId, err := getUserIdFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		userUuid, err := dbw.GetUserUuid(userId)
+		if err != nil {
+			return err
+		}
+
 		// Define the upload directory
-		uploadDir := "./public/uploads/"
+		pathDir := fmt.Sprintf("/public/uploads/%v/", userUuid)
+		uploadDir := fmt.Sprintf(".%v", pathDir)
 		if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
 			return fmt.Errorf("unable to create upload directory: %w", err)
 		}
@@ -57,7 +68,7 @@ func (dbw *DBWrapper) UploadFile() usecase.Interactor {
 		}
 
 		// Generate the file URL (adjust this to your server's public URL)
-		fileURL := fmt.Sprintf("/public/uploads/%s", filepath.Base(filePath))
+		fileURL := fmt.Sprintf("%s%s", pathDir, filepath.Base(filePath))
 
 		fmt.Printf("Uploaded image %v (%v) -> %v\n", input.Filename, len(input.File), fileURL)
 

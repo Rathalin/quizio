@@ -14,6 +14,20 @@ func (dbw *DBWrapper) QuizExists(uuid string) (bool, error) {
 	return quizCount > 0, nil
 }
 
+func (dbw *DBWrapper) QuizExistsForUser(uuid string, userId int64) (bool, error) {
+	quizCount := 0
+	err := dbw.DB.QueryRow(`
+		SELECT COUNT(*)
+		FROM quiz
+		WHERE uuid = $1 AND user_account_id = $2
+	`, uuid, userId).Scan(&quizCount)
+	if err != nil {
+		return false, err
+	}
+
+	return quizCount > 0, nil
+}
+
 func (dbw *DBWrapper) GetQuizId(uuid string) (int64, error) {
 	var quizId int64
 	err := dbw.DB.QueryRow(`
