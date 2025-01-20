@@ -8,7 +8,7 @@ export declare module 'next-auth' {
       username: string;
       isConfirmed: boolean;
       isBlocked: boolean;
-      profileImageUrl?: string;
+      profileImageUrl: string | null;
       accessToken: string;
       refreshToken: string;
     };

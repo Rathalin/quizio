@@ -12,6 +12,7 @@ export type User = ApiSchemas['ModelsUserAccount'];
 export type CreateQuizRequestData = ApiSchemas['HandlersCreateQuizRequest'];
 export type EditQuizRequestData = ApiSchemas['HandlersEditQuizRequest'];
 export type UploadFileRequestData = ApiSchemas['HandlersUploadFileRequest'];
+export type SignInResponse = ApiSchemas['HandlersSignInResponse'];
 
 type WithResponse<T> = T & { response: Response };
 type ApiCall = (

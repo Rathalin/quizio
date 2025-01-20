@@ -1,7 +1,7 @@
 import { Session, AuthOptions } from 'next-auth';
 import NextAuth from 'next-auth/next';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { client } from '@/api-client';
+import { client, SignInResponse } from '@/api-client';
 
 export const authOptions: AuthOptions = {
   session: {
@@ -9,7 +9,6 @@ export const authOptions: AuthOptions = {
   },
   providers: [
     CredentialsProvider({
-      id: 'app-login',
       type: 'credentials',
       credentials: {
         username: { type: 'text' },
@@ -38,23 +37,25 @@ export const authOptions: AuthOptions = {
           id: data.user.uuid,
           name: data.user.username,
           image: data.user.profileImageUrl,
+          accessToken: data.accessToken,
+          refreshToken: data.refreshToken,
         };
       },
     }),
   ],
   callbacks: {
-    // async session({ session, token, user }) {
-    //   console.log('session(token)', token);
-    //   return session;
-    // },
-    // async jwt({ token, account }) {
-    //   if (account != null) {
-    //     console.log('jwt(account)', account);
-    //     token.accessToken = account.accessToken;
-    //     token.refreshToken = account.refreshToken;
-    //   }
-    //   return token;
-    // },
+    async session({ session, token }) {
+      const data = token as SignInResponse;
+      session.user = {
+        ...data.user,
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+      };
+      return session;
+    },
+    async jwt({ token, user }) {
+      return { ...token, ...user };
+    },
   },
   pages: {
     signIn: '/auth/signin',

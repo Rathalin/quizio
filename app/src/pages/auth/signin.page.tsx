@@ -28,21 +28,20 @@ export default function SigninPage() {
     isSuccess,
   } = useMutation({
     mutationKey: ['signIn'],
-    mutationFn: () => {
-      return signIn('credentials', {
+    mutationFn: () =>
+      signIn('credentials', {
         username: identifier,
         password,
-        redirect: false,
-      });
-    },
+      }),
   });
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
-      await login();
+      const response = await login();
+      console.log(response);
+      // await router.push('/');
       toastStore.addToast('Login successful.', 'success');
-      router.push('/');
     } catch (error) {
       toastStore.addToast('Invalid username or password!', 'error');
     }
