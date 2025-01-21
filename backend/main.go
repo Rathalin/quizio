@@ -66,6 +66,7 @@ func main() {
 		r.Method(http.MethodGet, "/play/{uuid}", nethttp.NewHandler(dbWrapper.PlayQuiz()))
 		r.Method(http.MethodGet, "/user-profile/{uuid}", nethttp.NewHandler(dbWrapper.GetUserProfile()))
 		r.Method(http.MethodGet, "/alerts", nethttp.NewHandler(dbWrapper.GetAlerts()))
+		r.Method(http.MethodPost, "/refresh-token", nethttp.NewHandler(dbWrapper.RefreshToken()))
 	})
 
 	// Auth routes
@@ -85,6 +86,7 @@ func main() {
 			r.Method(http.MethodDelete, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.DeleteQuiz())))
 			r.Method(http.MethodPost, "/play-protocol-entry", nethttp.NewHandler((dbWrapper.PostPlayProtocolEntry())))
 			r.Method(http.MethodGet, "/me", nethttp.NewHandler(dbWrapper.GetMyUserProfile()))
+			r.Method(http.MethodPost, "/change-password", nethttp.NewHandler(dbWrapper.ChangePassword()))
 
 			r.Method(http.MethodGet, "/debug", nethttp.NewHandler(dbWrapper.Debug()))
 		})

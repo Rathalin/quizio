@@ -28,7 +28,6 @@ async function createQuiz(
   data: CreateQuizRequestData,
   authHeader: AuthorizationHeader
 ) {
-  console.log('AUTH HEADER', authHeader);
   return client.POST('/a/quiz/create', {
     body: data,
     headers: authHeader,

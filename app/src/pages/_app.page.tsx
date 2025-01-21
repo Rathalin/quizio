@@ -9,6 +9,7 @@ import { usePageTransition } from '@/persistence/page-transition.store';
 import {
   DehydratedState,
   Hydrate,
+  QueryCache,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
@@ -58,6 +59,16 @@ export default function App(props: MyAppProps) {
             retry: false,
           },
         },
+        queryCache: new QueryCache({
+          onError: (error) => {
+            if (
+              typeof error === 'string' &&
+              error.includes('token is expired')
+            ) {
+              router.reload();
+            }
+          },
+        }),
       })
   );
 

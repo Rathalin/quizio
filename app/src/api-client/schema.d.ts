@@ -4,6 +4,23 @@
  */
 
 export interface paths {
+  '/a/change-password': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper Change Password */
+    post: operations['backend/handlers.(*DBWrapper).ChangePassword'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/a/debug': {
     parameters: {
       query?: never;
@@ -176,6 +193,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/refresh-token': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper Refresh Token */
+    post: operations['backend/handlers.(*DBWrapper).RefreshToken'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/register': {
     parameters: {
       query?: never;
@@ -231,6 +265,13 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    HandlersChangePasswordRequest: {
+      currentPassword: string;
+      newPassword: string;
+    };
+    HandlersChangePasswordResponse: {
+      message?: string;
+    };
     HandlersCreateQuizRequest: {
       description: string | null;
       imageUrl: string | null;
@@ -348,6 +389,12 @@ export interface components {
       };
       uuid: string;
     };
+    HandlersRefreshTokenRequest: {
+      refreshToken: string;
+    };
+    HandlersRefreshTokenResponse: {
+      accessToken: string;
+    };
     HandlersRegisterRequest: {
       password: string;
       username: string;
@@ -451,6 +498,39 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+  'backend/handlers.(*DBWrapper).ChangePassword': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['HandlersChangePasswordRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HandlersChangePasswordResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
+    };
+  };
   'backend/handlers.(*DBWrapper).Debug': {
     parameters: {
       query?: never;
@@ -789,6 +869,30 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['HandlersGetQuizzesResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).RefreshToken': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['HandlersRefreshTokenRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HandlersRefreshTokenResponse'];
         };
       };
     };

@@ -13,6 +13,7 @@ export type CreateQuizRequestData = ApiSchemas['HandlersCreateQuizRequest'];
 export type EditQuizRequestData = ApiSchemas['HandlersEditQuizRequest'];
 export type UploadFileRequestData = ApiSchemas['HandlersUploadFileRequest'];
 export type SignInResponse = ApiSchemas['HandlersSignInResponse'];
+export type ChangePasswordReqest = ApiSchemas['HandlersChangePasswordRequest'];
 
 type WithResponse<T> = T & { response: Response };
 type ApiCall = (

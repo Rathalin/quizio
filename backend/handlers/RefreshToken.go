@@ -7,7 +7,6 @@ import (
 	"github.com/swaggest/usecase"
 )
 
-// @Summary Refresh Access Token Hallo
 func (dbw *DBWrapper) RefreshToken() usecase.Interactor {
 	type refreshTokenRequest struct {
 		RefreshToken string `json:"refreshToken" required:"true"`

@@ -1,6 +1,4 @@
-import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import { useRedirectOnUnauthenticated } from '@/custom-hooks/useRedirectOnUnauthenticated';
-import { changePasswordGQL } from '@/graphql/changePassword';
 import {
   Alert,
   Button,
@@ -10,8 +8,6 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { useMutation } from '@tanstack/react-query';
-import request from 'graphql-request';
 import { useSession } from 'next-auth/react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -19,7 +15,7 @@ import { z } from 'zod';
 
 import QuizioPasswordField from '@/components/inputs/QuizioPasswordField';
 import { ZodFieldErrors } from '../../../../types/hook-form-zod';
-import { useHandleGqlUnauthorized } from '@/custom-hooks/useHandleGqlUnauthorized';
+import { useChangePasswordMutation } from '@/data/useChangePasswordMutation';
 
 const passwordMinLength = 6;
 const passwordMaxLength = 30;
@@ -53,35 +49,31 @@ const defaultValues: ChangePaswordForm = {
 
 export default function ChangePasswordPage() {
   const { status } = useSession();
-  const { authHeader } = useAuthHeader();
 
   const { control, handleSubmit, formState, reset } =
     useForm<ChangePaswordForm>({
       defaultValues,
-      //@ts-ignore
       resolver: zodResolver(schema),
     });
   const errors = formState.errors as ZodFieldErrors<ChangePaswordForm>;
 
-  const changePasswordMutation = useMutation({
-    mutationKey: ['changePassword'],
-    mutationFn: (changePasswordData: ChangePaswordForm) =>
-      request(
-        process.env.NEXT_PUBLIC_GRAPHQL_URL,
-        changePasswordGQL,
-        changePasswordData,
-        authHeader
-      ),
-    onSuccess: () => {
-      reset(defaultValues);
-    },
-  });
+  const {
+    mutateAsync: changePassword,
+    isError,
+    isSuccess,
+    reset: resetChangePassword,
+  } = useChangePasswordMutation();
 
-  useHandleGqlUnauthorized([changePasswordMutation.error]);
   useRedirectOnUnauthenticated(status);
 
-  function onSubmit(data: ChangePaswordForm) {
-    changePasswordMutation.mutate(data);
+  async function onSubmit(data: ChangePaswordForm) {
+    try {
+      await changePassword({
+        currentPassword: data.currentPassword,
+        newPassword: data.password,
+      });
+      reset(defaultValues);
+    } catch (error) {}
   }
 
   return (
@@ -92,7 +84,7 @@ export default function ChangePasswordPage() {
         </Typography>
         <form
           onSubmit={(e) => {
-            changePasswordMutation.reset();
+            resetChangePassword();
             handleSubmit(onSubmit)(e);
           }}
         >
@@ -154,12 +146,12 @@ export default function ChangePasswordPage() {
               {errors.global?.passwordDifferent?.message}
             </FormHelperText>
           </Stack>
-          {changePasswordMutation.isError && (
+          {isError && (
             <Alert severity="error" sx={{ marginBottom: 2 }}>
               Incorrect password
             </Alert>
           )}
-          {changePasswordMutation.isSuccess && (
+          {isSuccess && (
             <Alert severity="success" sx={{ marginBottom: 2 }}>
               Password changed successfully
             </Alert>

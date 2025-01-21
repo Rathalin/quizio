@@ -9,7 +9,6 @@ export default function HomePage() {
   const router = useRouter();
 
   const showInvalidTokenAlert = router.query.sessionExpired === 'true';
-  // useGqlHealthCheck();
 
   return (
     <>
