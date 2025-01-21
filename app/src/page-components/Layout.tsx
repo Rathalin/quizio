@@ -1,4 +1,4 @@
-import { Container, Box, useTheme } from '@mui/material';
+import { Container, Box } from '@mui/material';
 import { PropsWithChildren } from 'react';
 import Header from './Header';
 import Footer from './footer/Footer';
@@ -28,3 +28,4 @@ export default function Layout({ children }: LayoutProps) {
     </Box>
   );
 }
+  
