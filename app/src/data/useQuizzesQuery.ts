@@ -15,9 +15,11 @@ export function useQuizzesInfiniteQuery(
     InferFetchResult<typeof fetchQuizzes>,
     InferFetchError<typeof fetchQuizzes>
   >({
-    queryKey: ['getQuizzesInfinite', query],
+    queryKey: ['getQuizzesInfinite', query.sort, query.sortDirection],
     queryFn: ({ pageParam }) =>
-      throwOnError(() => fetchQuizzes({ ...query, page: pageParam as number })),
+      throwOnError(() =>
+        fetchQuizzes({ ...query, page: (pageParam as number) ?? 0 })
+      ),
     getNextPageParam: ({ meta: { page, totalPages } }, _pages) => {
       if (page < totalPages) {
         return page + 1;
@@ -29,7 +31,7 @@ export function useQuizzesInfiniteQuery(
   });
 }
 
-async function fetchQuizzes(query: GetQuizzesRequestQuery) {
+export async function fetchQuizzes(query: GetQuizzesRequestQuery) {
   return client.GET('/quizzes', {
     params: {
       query,

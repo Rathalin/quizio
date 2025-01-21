@@ -1,40 +1,11 @@
-import { PaletteMode, createTheme, responsiveFontSizes } from '@mui/material';
+import { createTheme, responsiveFontSizes } from '@mui/material';
 
 export const theme = responsiveFontSizes(
   createTheme({
+    cssVariables: {
+      colorSchemeSelector: 'class',
+    },
     colorSchemes: {
-      light: {
-        palette: {
-          text: {
-            primary: '#000000',
-            secondary: '#181818',
-          },
-          primary: {
-            main: '#cc9200',
-          },
-          secondary: {
-            main: '#68baec',
-          },
-          loading: {
-            main: '#009376',
-          },
-          placeholder: {
-            main: '#d5d5d5',
-          },
-          background: {
-            default: '#e2e2e2',
-            paper: '#f9f9f9',
-          },
-          accent: {
-            primary: {
-              main: '#c97900',
-            },
-            secondary: {
-              main: '#0097d7',
-            },
-          },
-        },
-      },
       dark: {
         palette: {
           text: {
@@ -63,6 +34,38 @@ export const theme = responsiveFontSizes(
             },
             secondary: {
               main: '#2cc0ff',
+            },
+          },
+        },
+      },
+      light: {
+        palette: {
+          text: {
+            primary: '#000000',
+            secondary: '#181818',
+          },
+          primary: {
+            main: '#cc9200',
+          },
+          secondary: {
+            main: '#68baec',
+          },
+          loading: {
+            main: '#009376',
+          },
+          placeholder: {
+            main: '#d5d5d5',
+          },
+          background: {
+            default: '#e2e2e2',
+            paper: '#f9f9f9',
+          },
+          accent: {
+            primary: {
+              main: '#c97900',
+            },
+            secondary: {
+              main: '#0097d7',
             },
           },
         },

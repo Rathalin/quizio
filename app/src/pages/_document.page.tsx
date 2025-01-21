@@ -11,6 +11,7 @@ import createEmotionServer from '@emotion/server/create-instance';
 import { AppType } from 'next/app';
 import { MyAppProps } from '@/pages/_app.page';
 import createEmotionCache from '@/createEmotionCache';
+import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
 
 import type { JSX } from 'react';
 
@@ -29,6 +30,7 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
         {emotionStyleTags}
       </Head>
       <body>
+        <InitColorSchemeScript attribute="class" />
         <Main />
         <NextScript />
       </body>
@@ -86,7 +88,6 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
     <style
       data-emotion={`${style.key} ${style.ids.join(' ')}`}
       key={style.key}
-      // eslint-disable-next-line react/no-danger
       dangerouslySetInnerHTML={{ __html: style.css }}
     />
   ));
