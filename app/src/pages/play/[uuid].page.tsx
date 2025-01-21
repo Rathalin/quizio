@@ -47,9 +47,10 @@ export const getServerSideProps: GetServerSideProps<{
   }
 
   const queryClient = new QueryClient();
-  await queryClient.prefetchQuery(['getQuiz', uuid], async () =>
-    throwOnError(() => playQuiz(uuid))
-  );
+  await queryClient.prefetchQuery({
+    queryKey: ['getQuiz', uuid],
+    queryFn: async () => throwOnError(() => playQuiz(uuid)),
+  });
 
   return {
     props: {
@@ -122,7 +123,7 @@ export default function PlayIdPage({
           userUuid: null, // TODO Change if new backend supports users
         });
 
-        queryClient.invalidateQueries(['getQuizzesInfinite']);
+        queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
         setPlayCountIncreased(true);
       } catch (error) {
         console.error('Could not increase playcount', error);
@@ -206,7 +207,7 @@ export default function PlayIdPage({
         },
       }}
     >
-      {quizQuery.isLoading && <PickAnAnswerPlaceholder />}
+      {quizQuery.isPending && <PickAnAnswerPlaceholder />}
       {quizQuery.isError && <GenericLoadingErrorMessage />}
       {quizQuery.isSuccess && (
         <>

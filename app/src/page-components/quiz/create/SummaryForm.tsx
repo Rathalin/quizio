@@ -26,7 +26,7 @@ type SummaryFormProps = {
   onBack: () => void;
   editMode: boolean;
   onSubmit: () => void;
-  isLoading: boolean;
+  isPending: boolean;
   isDisabled: boolean;
 };
 
@@ -37,7 +37,7 @@ export default function SummaryForm({
   onBack,
   editMode,
   onSubmit,
-  isLoading,
+  isPending,
   isDisabled,
 }: SummaryFormProps) {
   const theme = useTheme();
@@ -113,7 +113,7 @@ export default function SummaryForm({
           <Button
             variant="contained"
             onClick={onSubmit}
-            startIcon={isLoading ? <LoadingCircle /> : undefined}
+            startIcon={isPending ? <LoadingCircle /> : undefined}
             endIcon={<PublishIcon />}
             disabled={isDisabled}
           >
@@ -124,7 +124,7 @@ export default function SummaryForm({
             variant="contained"
             color="primary"
             onClick={onSubmit}
-            startIcon={isLoading ? <LoadingCircle /> : null}
+            startIcon={isPending ? <LoadingCircle /> : null}
             endIcon={<PublishIcon />}
             disabled={isDisabled}
           >

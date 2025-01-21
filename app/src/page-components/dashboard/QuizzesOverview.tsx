@@ -31,7 +31,7 @@ export default function QuizzesOverview() {
   const {
     data,
     isSuccess,
-    isLoading,
+    isPending,
     fetchNextPage,
     isFetchingNextPage,
     hasNextPage,
@@ -110,7 +110,7 @@ export default function QuizzesOverview() {
                   />
                 )
               )}
-            {(isLoading || isFetchingNextPage) &&
+            {(isPending || isFetchingNextPage) &&
               Array.from({ length: placeholderCount }).map((_, index) => (
                 <QuizOverviewPlaceholder key={index} />
               ))}

@@ -100,13 +100,13 @@ export default function QuizCreatePage({
   );
   const {
     mutateAsync: updateQuiz,
-    isLoading: isUpdateLoading,
+    isPending: isUpdateLoading,
     isSuccess: isUpdateSuccess,
     isError: isUpdateError,
   } = useUpdateQuizMutation(uuid);
   const {
     mutateAsync: deleteQuiz,
-    isLoading: isDeleteLoading,
+    isPending: isDeleteLoading,
     isSuccess: isDeleteSuccess,
   } = useDeleteQuizMutation(uuid);
 
@@ -232,9 +232,9 @@ export default function QuizCreatePage({
 
       // Refetch quiz
       toastStore.addToast('Quiz updated!', 'success');
-      queryClient.invalidateQueries(['quiz', uuid]);
-      queryClient.removeQueries(['getQuizzesInfinite']);
-      queryClient.invalidateQueries(['getQuizzesInfinite']);
+      queryClient.invalidateQueries({ queryKey: ['quiz', uuid] });
+      queryClient.removeQueries({ queryKey: ['getQuizzesInfinite'] });
+      queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
       router.push('/');
     } catch (error) {
       console.error('Update quiz error', error);
@@ -247,7 +247,7 @@ export default function QuizCreatePage({
       await deleteQuiz();
 
       toastStore.addToast('Quiz deleted.', 'success');
-      queryClient.invalidateQueries(['getQuizzesInfinite']);
+      queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
       await router.push('/');
       setDialogOpen(false);
     } catch (error) {
@@ -358,7 +358,7 @@ export default function QuizCreatePage({
                   onBack={() => handleBack()}
                   editMode={true}
                   onSubmit={handleSaveClick}
-                  isLoading={isUpdateLoading}
+                  isPending={isUpdateLoading}
                   isDisabled={isUpdateLoading || isUpdateError}
                 />
               )}

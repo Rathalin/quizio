@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 
 export default function MePage() {
-  const { data, isLoading, isError, isSuccess } = useMyUserProfileQuery();
+  const { data, isPending, isError, isSuccess } = useMyUserProfileQuery();
 
   return (
     <Box sx={{ marginTop: 4 }}>
@@ -23,7 +23,7 @@ export default function MePage() {
           <Typography variant="h1" sx={{ marginTop: 0 }}>
             Your profile
           </Typography>
-          {isLoading && <MyProfilePlaceholder />}
+          {isPending && <MyProfilePlaceholder />}
           {isSuccess && (
             <>
               <Box sx={{ marginBottom: 4 }}>

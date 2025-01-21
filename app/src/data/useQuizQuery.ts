@@ -12,10 +12,6 @@ import { useQuery } from '@tanstack/react-query';
 
 export function useQuizQuery(uuid: string) {
   const authHeader = useAuthHeader();
-  // const { data: session } = useSession();
-  // const userId = useMemo(() => {
-  //   session?.user.uuid;
-  // }, [session?.user.uuid]);
 
   return useQuery<
     InferFetchResult<typeof fetchQuiz>,
@@ -23,7 +19,6 @@ export function useQuizQuery(uuid: string) {
   >({
     queryKey: ['getQuiz', uuid],
     queryFn: () => throwOnError(() => fetchQuiz(uuid, authHeader)),
-    // enabled: userId != null,
   });
 }
 

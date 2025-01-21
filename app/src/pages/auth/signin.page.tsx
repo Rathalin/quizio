@@ -39,7 +39,7 @@ export default function SigninPage({
 
   const {
     mutateAsync: login,
-    isLoading,
+    isPending,
     isSuccess,
   } = useMutation({
     mutationKey: ['signIn'],
@@ -139,8 +139,8 @@ export default function SigninPage({
             variant="contained"
             color="primary"
             type="submit"
-            startIcon={isLoading ? <LoadingCircle /> : undefined}
-            disabled={isLoading || (isSuccess && errorStatus == null)}
+            startIcon={isPending ? <LoadingCircle /> : undefined}
+            disabled={isPending || (isSuccess && errorStatus == null)}
           >
             Login
           </Button>

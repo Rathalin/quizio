@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePageTransition } from '@/persistence/page-transition.store';
 import {
   DehydratedState,
-  Hydrate,
+  HydrationBoundary,
   QueryCache,
   QueryClient,
   QueryClientProvider,
@@ -61,10 +61,7 @@ export default function App(props: MyAppProps) {
         },
         queryCache: new QueryCache({
           onError: (error) => {
-            if (
-              typeof error === 'string' &&
-              error.includes('token is expired')
-            ) {
+            if (error.message.includes('token is expired')) {
               router.reload();
             }
           },
@@ -101,7 +98,7 @@ export default function App(props: MyAppProps) {
   return (
     <SessionProvider session={pageProps.session}>
       <QueryClientProvider client={queryClient}>
-        <Hydrate state={pageProps.dehydratedState}>
+        <HydrationBoundary state={pageProps.dehydratedState}>
           <CacheProvider value={emotionCache}>
             <ThemeProvider theme={theme}>
               <ColorModeProvider
@@ -137,7 +134,7 @@ export default function App(props: MyAppProps) {
             </ThemeProvider>
             <ReactQueryDevtools initialIsOpen={false} />
           </CacheProvider>
-        </Hydrate>
+        </HydrationBoundary>
       </QueryClientProvider>
     </SessionProvider>
   );

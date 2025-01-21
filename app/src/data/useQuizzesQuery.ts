@@ -16,14 +16,15 @@ export function useQuizzesInfiniteQuery(
     InferFetchError<typeof fetchQuizzes>
   >({
     queryKey: ['getQuizzesInfinite', query],
-    queryFn: ({ pageParam = 0 }) =>
-      throwOnError(() => fetchQuizzes({ ...query, page: pageParam })),
+    queryFn: ({ pageParam }) =>
+      throwOnError(() => fetchQuizzes({ ...query, page: pageParam as number })),
     getNextPageParam: ({ meta: { page, totalPages } }, _pages) => {
       if (page < totalPages) {
         return page + 1;
       }
       return undefined;
     },
+    initialPageParam: 0,
     staleTime: seconds(30),
   });
 }

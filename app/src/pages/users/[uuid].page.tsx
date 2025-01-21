@@ -40,13 +40,13 @@ export const getServerSideProps: GetServerSideProps<{
 export default function UserIdPage({
   uuid,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const { data, isLoading, isSuccess, isError } = useUserProfileQuery(uuid);
+  const { data, isPending, isSuccess, isError } = useUserProfileQuery(uuid);
 
   return (
     <Box sx={{ marginTop: 4 }}>
       <Card elevation={2}>
         <CardContent sx={{ padding: 4 }}>
-          {isLoading && <UserProfilePlaceholder />}
+          {isPending && <UserProfilePlaceholder />}
           {isSuccess && (
             <UserProfile
               username={data.user.username}

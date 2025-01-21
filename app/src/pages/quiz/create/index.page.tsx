@@ -57,7 +57,7 @@ export default function QuizCreatePage() {
   const { mutateAsync: uploadFile } = useUploadFileMutation();
   const {
     mutateAsync: createQuiz,
-    isLoading,
+    isPending,
     isSuccess,
   } = useCreateQuizMutation();
 
@@ -127,7 +127,7 @@ export default function QuizCreatePage() {
       });
 
       toastStore.addToast('Quiz created!', 'success');
-      queryClient.invalidateQueries(['getQuizzesInfinite']);
+      queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
       router.push('/');
       resetQuizLocalStorage();
       setOverviewFormData(defaultOverviewFormData);
@@ -213,8 +213,8 @@ export default function QuizCreatePage() {
               backLabel={backLabel}
               onBack={() => handleBack()}
               onSubmit={() => handleFinishQuizClick()}
-              isLoading={isLoading}
-              isDisabled={isLoading || isSuccess}
+              isPending={isPending}
+              isDisabled={isPending || isSuccess}
               editMode={false}
             />
           )}
