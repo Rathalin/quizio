@@ -12,6 +12,8 @@ import { AppType } from 'next/app';
 import { MyAppProps } from '@/pages/_app.page';
 import createEmotionCache from '@/createEmotionCache';
 
+import type { JSX } from 'react';
+
 interface MyDocumentProps extends DocumentProps {
   emotionStyleTags: JSX.Element[];
 }

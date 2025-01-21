@@ -5,7 +5,7 @@ type ScrollObserverProps = {
 };
 
 export default function ScrollObserver({ onIntersect }: ScrollObserverProps) {
-  const observer = useRef<IntersectionObserver | null>();
+  const observer = useRef<IntersectionObserver | null>(null);
 
   const lastElementRef = useCallback(
     (node: HTMLDivElement | null) => {
