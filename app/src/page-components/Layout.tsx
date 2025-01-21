@@ -1,4 +1,4 @@
-import { Container, Box } from '@mui/material';
+import { Container, Box, useTheme } from '@mui/material';
 import { PropsWithChildren } from 'react';
 import Header from './Header';
 import Footer from './footer/Footer';
@@ -12,6 +12,8 @@ export default function Layout({ children }: LayoutProps) {
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
+        backgroundColor: 'background.default',
+        color: 'text.primary'
       }}
     >
       <Header />

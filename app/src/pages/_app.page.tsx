@@ -1,10 +1,13 @@
 import '@/styles/globals.css';
-import { CssBaseline, PaletteMode, ThemeProvider } from '@mui/material';
+import {
+  CssBaseline,
+  ThemeProvider,
+} from '@mui/material';
 import type { AppProps } from 'next/app';
 import Layout from '../page-components/Layout';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { usePageTransition } from '@/persistence/page-transition.store';
 import {
   DehydratedState,
@@ -19,16 +22,13 @@ import { Session } from 'next-auth';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import createEmotionCache from '@/createEmotionCache';
 import { Analytics } from '@vercel/analytics/react';
-import { createThemeWithMode } from '@/theme';
-import { ColorModeProvider } from '@/page-components/theme.context';
-import { storageKeys } from '@/persistence/storage-keys';
-import useStorage from '@/custom-hooks/useStorage';
+import {  theme } from '@/theme';
 import '@total-typescript/ts-reset';
 import ToastSnackbar from '@/components/ToastSnackbar';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
-
+ 
 export interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
   pageProps: {
@@ -37,19 +37,8 @@ export interface MyAppProps extends AppProps {
   };
 }
 
-const defaultColorMode: PaletteMode = 'dark';
-
 export default function App(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
-
-  const [colorMode, setColorMode] = useStorage<PaletteMode>(
-    storageKeys.theme,
-    defaultColorMode
-  );
-  const theme = useMemo(() => createThemeWithMode(colorMode), [colorMode]);
-  const toggleColorMode = useCallback(() => {
-    setColorMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  }, [setColorMode]);
 
   const [queryClient] = useState(
     () =>
@@ -71,10 +60,6 @@ export default function App(props: MyAppProps) {
 
   const router = useRouter();
   const { startTransitioning, stopTransitioning } = usePageTransition();
-
-  useEffect(() => {
-    document.body.setAttribute('data-theme', colorMode);
-  }, [colorMode]);
 
   useEffect(() => {
     function handleRouteChange(url: any, { shallow }: { shallow: boolean }) {
@@ -100,37 +85,32 @@ export default function App(props: MyAppProps) {
       <QueryClientProvider client={queryClient}>
         <HydrationBoundary state={pageProps.dehydratedState}>
           <CacheProvider value={emotionCache}>
-            <ThemeProvider theme={theme}>
-              <ColorModeProvider
-                mode={colorMode}
-                toggleColorMode={toggleColorMode}
-              >
-                <CssBaseline />
-                <Head>
-                  <title>Quizio</title>
-                  <link
-                    rel="dns-prefetch"
-                    href={process.env.NEXT_PUBLIC_BACKEND_URL}
-                  />
-                  <link
-                    rel="dns-prefetch"
-                    href={process.env.NEXT_PUBLIC_GRAPHQL_URL}
-                  />
-                  <link
-                    rel="preconnect"
-                    href={process.env.NEXT_PUBLIC_BACKEND_URL}
-                  />
-                  <link
-                    rel="preconnect"
-                    href={process.env.NEXT_PUBLIC_GRAPHQL_URL}
-                  />
-                </Head>
-                <Layout>
-                  <Component {...pageProps} />
-                  <ToastSnackbar />
-                  <Analytics />
-                </Layout>
-              </ColorModeProvider>
+            <ThemeProvider theme={theme} defaultMode="dark">
+              <CssBaseline />
+              <Head>
+                <title>Quizio</title>
+                <link
+                  rel="dns-prefetch"
+                  href={process.env.NEXT_PUBLIC_BACKEND_URL}
+                />
+                <link
+                  rel="dns-prefetch"
+                  href={process.env.NEXT_PUBLIC_GRAPHQL_URL}
+                />
+                <link
+                  rel="preconnect"
+                  href={process.env.NEXT_PUBLIC_BACKEND_URL}
+                />
+                <link
+                  rel="preconnect"
+                  href={process.env.NEXT_PUBLIC_GRAPHQL_URL}
+                />
+              </Head>
+              <Layout>
+                <Component {...pageProps} />
+                <ToastSnackbar />
+                <Analytics />
+              </Layout>
             </ThemeProvider>
             <ReactQueryDevtools initialIsOpen={false} />
           </CacheProvider>
