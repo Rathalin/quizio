@@ -2,17 +2,22 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"math"
 	"quizio/backend/models"
+	"strings"
 	"time"
 
 	"github.com/swaggest/usecase"
 )
 
 func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
+
 	type getQuizzesRequest struct {
-		Page     int `query:"page" example:"0"`
-		PageSize int `query:"pageSize" example:"5"`
+		Page          int    `query:"page" required:"true" example:"0"`
+		PageSize      int    `query:"pageSize" required:"true" example:"5"`
+		Sort          string `query:"sort" required:"true" enum:"createdAt,playCount" example:"createdAt"`
+		SortDirection string `query:"sortDirection" required:"true" enum:"asc,desc" example:"desc"`
 	}
 
 	type quiz struct {
@@ -36,7 +41,7 @@ func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 		Meta    models.Meta `json:"meta" required:"true" nullable:"false"`
 	}
 
-	return usecase.NewInteractor(func(_ context.Context, input getQuizzesRequest, output *getQuizzesResponse) error {
+	return usecase.NewInteractor(func(ctx context.Context, input getQuizzesRequest, output *getQuizzesResponse) error {
 		totalQuizCount := 0
 		err := dbw.DB.QueryRow(`
 			SELECT COUNT(*)
@@ -45,8 +50,12 @@ func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 		if err != nil {
 			return err
 		}
+		sort := "q.created_at"
+		if input.Sort == "playCount" {
+			sort = "play_count"
+		}
 
-		rows, err := dbw.DB.Query(`
+		rows, err := dbw.DB.Query(fmt.Sprintf(`
 			SELECT 
 				q.uuid, 
 				q.created_at, 
@@ -76,9 +85,10 @@ func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 				q.image_url, 
 				u.uuid, 
 				u.username
+			ORDER BY %s %s
 			LIMIT $1
 			OFFSET $2
-		`, input.PageSize, input.Page*input.PageSize)
+		`, sort, strings.ToUpper(input.SortDirection)), input.PageSize, input.Page*input.PageSize)
 		if err != nil {
 			return err
 		}

@@ -5,7 +5,6 @@ import { useMemo, useState } from 'react';
 import { SortProvider, defaultSort } from './sort.context';
 import FilterBar from './filter-bar/FilterBar';
 import { SearchProvider } from './search.context';
-import { FilterOption, FilterProvider } from './filter.context';
 import GenericLoadingErrorMessage from '@/components/GenericLoadingErrorMessage';
 import { storageKeys } from '@/persistence/storage-keys';
 import useStorage from '@/custom-hooks/useStorage';
@@ -13,24 +12,22 @@ import GradientWord from '@/components/GradientWord';
 import GradientDivider from '@/components/GradientDivider';
 import ScrollObserver from '@/components/ScrollObserver';
 import { useQuizzesInfiniteQuery } from '@/data/useQuizzesQuery';
+import { GetQuizzesRequestQuery } from '@/api-client';
 
 export default function QuizzesOverview() {
   const [searchText, setSearchText] = useState('');
   const [sort, setSort] = useStorage(storageKeys.sort, defaultSort);
-  const [filters, setFilters] = useStorage<FilterOption[]>(
-    storageKeys.filters,
-    []
-  );
-  // const composeFilters = useComposeFilters(
-  //   filters,
-  //   { published: { eq: true } },
-  //   session?.user.username
-  // );
-  // const gqlFilters = useMemo(() => composeFilters(), [composeFilters]);
 
-  const pageSize = 12;
   const placeholderCount = 6;
 
+  const quizzesQueryParams = useMemo<Omit<GetQuizzesRequestQuery, 'page'>>(
+    () => ({
+      pageSize: 12,
+      sort: sort.option,
+      sortDirection: sort.mode,
+    }),
+    [sort.mode, sort.option]
+  );
   const {
     data,
     isSuccess,
@@ -39,7 +36,7 @@ export default function QuizzesOverview() {
     isFetchingNextPage,
     hasNextPage,
     isError,
-  } = useQuizzesInfiniteQuery(pageSize);
+  } = useQuizzesInfiniteQuery(quizzesQueryParams);
 
   const quizzes = useMemo(
     () => data?.pages.map((page) => page.quizzes).flat() ?? [],
@@ -66,86 +63,84 @@ export default function QuizzesOverview() {
     <Box>
       <SearchProvider searchText={searchText} setSearchText={setSearchText}>
         <SortProvider sort={sort} setSort={setSort}>
-          <FilterProvider filters={filters} setFilters={setFilters}>
-            <Box sx={{ marginBottom: 4 }}>
-              <FilterBar quizzesCount={quizzesCount} />
-            </Box>
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                columnGap: {
-                  xs: 6,
-                },
-                rowGap: {
-                  xs: 8,
-                  md: 6,
-                },
-              }}
-            >
-              {data != null &&
-                searchedQuizzes.map(
-                  ({
-                    uuid,
-                    createdAt,
-                    title,
-                    description,
-                    imageUrl,
-                    playCount,
-                    questionCount,
-                    user,
-                  }) => (
-                    <QuizOverviewCard
-                      key={uuid}
-                      uuid={uuid}
-                      title={title}
-                      description={description ?? ''}
-                      imageUrl={imageUrl}
-                      createdAt={new Date(createdAt)}
-                      playCount={playCount}
-                      questionCount={questionCount}
-                      userUuid={user.uuid}
-                      username={user.username}
-                      // isMyQuiz={user.uuid === session?.user.uuid}
-                      isMyQuiz={
-                        user.uuid === '9dfd2a83-b8be-4c35-90ec-0acda6df26d0'
-                      } // TODO Sessions
-                      published
-                    />
-                  )
-                )}
-              {(isLoading || isFetchingNextPage) &&
-                Array.from({ length: placeholderCount }).map((_, index) => (
-                  <QuizOverviewPlaceholder key={index} />
-                ))}
-            </Box>
-            {isSuccess && searchedQuizzes.length === 0 && (
-              <Typography>
-                {'No quizzes found. Try changing your search criteria.'}
-              </Typography>
-            )}
-            {isError && <GenericLoadingErrorMessage />}
-            <Box sx={{ marginTop: 8 }}>
-              {hasNextPage && !isFetchingNextPage ? (
-                <ScrollObserver
-                  onIntersect={() => {
-                    fetchNextPage();
-                  }}
-                />
-              ) : (
-                <Stack gap={2}>
-                  <GradientDivider />
-                  <Stack direction="row" justifyContent="center">
-                    <Typography>
-                      <span>{'No more '}</span>
-                      <GradientWord>{'quizzes'}</GradientWord>
-                      <span>{' to load.'}</span>
-                    </Typography>
-                  </Stack>
-                </Stack>
+          <Box sx={{ marginBottom: 4 }}>
+            <FilterBar quizzesCount={quizzesCount} />
+          </Box>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              columnGap: {
+                xs: 6,
+              },
+              rowGap: {
+                xs: 8,
+                md: 6,
+              },
+            }}
+          >
+            {data != null &&
+              searchedQuizzes.map(
+                ({
+                  uuid,
+                  createdAt,
+                  title,
+                  description,
+                  imageUrl,
+                  playCount,
+                  questionCount,
+                  user,
+                }) => (
+                  <QuizOverviewCard
+                    key={uuid}
+                    uuid={uuid}
+                    title={title}
+                    description={description ?? ''}
+                    imageUrl={imageUrl}
+                    createdAt={new Date(createdAt)}
+                    playCount={playCount}
+                    questionCount={questionCount}
+                    userUuid={user.uuid}
+                    username={user.username}
+                    // isMyQuiz={user.uuid === session?.user.uuid}
+                    isMyQuiz={
+                      user.uuid === '9dfd2a83-b8be-4c35-90ec-0acda6df26d0'
+                    } // TODO Sessions
+                    published
+                  />
+                )
               )}
-            </Box>
-          </FilterProvider>
+            {(isLoading || isFetchingNextPage) &&
+              Array.from({ length: placeholderCount }).map((_, index) => (
+                <QuizOverviewPlaceholder key={index} />
+              ))}
+          </Box>
+          {isSuccess && searchedQuizzes.length === 0 && (
+            <Typography>
+              {'No quizzes found. Try changing your search criteria.'}
+            </Typography>
+          )}
+          {isError && <GenericLoadingErrorMessage />}
+          <Box sx={{ marginTop: 8 }}>
+            {hasNextPage && !isFetchingNextPage ? (
+              <ScrollObserver
+                onIntersect={() => {
+                  fetchNextPage();
+                }}
+              />
+            ) : (
+              <Stack gap={2}>
+                <GradientDivider />
+                <Stack direction="row" justifyContent="center">
+                  <Typography>
+                    <span>{'No more '}</span>
+                    <GradientWord>{'quizzes'}</GradientWord>
+                    <span>{' to load.'}</span>
+                  </Typography>
+                </Stack>
+              </Stack>
+            )}
+          </Box>
         </SortProvider>
       </SearchProvider>
     </Box>

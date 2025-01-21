@@ -852,9 +852,11 @@ export interface operations {
   };
   'backend/handlers.(*DBWrapper).GetQuizzes': {
     parameters: {
-      query?: {
-        page?: number;
-        pageSize?: number;
+      query: {
+        page: number;
+        pageSize: number;
+        sort: 'createdAt' | 'playCount';
+        sortDirection: 'asc' | 'desc';
       };
       header?: never;
       path?: never;

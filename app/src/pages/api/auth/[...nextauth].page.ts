@@ -45,7 +45,6 @@ export const authOptions: AuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user }) {
-      console.log('jwt callback');
       if (user) {
         // Initial sign-in
         token = {
@@ -57,11 +56,7 @@ export const authOptions: AuthOptions = {
         const decoded = jwtDecode<DecodedToken>(token.accessToken as string);
         const isExpired = Date.now() >= decoded.exp * 1000;
         if (isExpired) {
-          console.info(
-            'Access token',
-            token.accessToken,
-            ' expired. Refreshing token...'
-          );
+          console.info('Access token expired. Refreshing token...');
           try {
             const { data, error } = await client.POST('/refresh-token', {
               body: { refreshToken: token.refreshToken as string },

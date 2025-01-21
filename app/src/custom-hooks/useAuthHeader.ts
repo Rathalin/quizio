@@ -5,15 +5,17 @@ export type AuthorizationHeader = {
   Authorization: `Bearer ${string}`;
 };
 
-export function useAuthHeader(): AuthorizationHeader {
+export function useAuthHeader(): AuthorizationHeader | undefined {
   const { data: session } = useSession();
 
-  const authHeader = useMemo(
-    () => ({
-      Authorization: `Bearer ${session?.user.accessToken ?? ''}` as const,
-    }),
-    [session?.user.accessToken]
-  );
+  const authHeader = useMemo(() => {
+    if (session == null) {
+      return undefined;
+    }
+    return {
+      Authorization: `Bearer ${session.user.accessToken}` as const,
+    };
+  }, [session]);
 
   return authHeader;
 }

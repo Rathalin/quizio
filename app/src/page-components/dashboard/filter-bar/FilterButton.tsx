@@ -6,28 +6,26 @@ import { PropsWithChildren } from 'react';
 
 type FilterButtonProps = PropsWithChildren<{
   filter: FilterOption;
-  disabled: boolean;
 }>;
 
-export default function FilterButton({
-  filter,
-  disabled,
-  children,
-}: FilterButtonProps) {
-  const { hasFilter, toggleFilter } = useFilter();
+export default function FilterButton({ filter, children }: FilterButtonProps) {
+  const { filter: contextFilter, setFilter: setContextFilter } = useFilter();
 
   return (
     <Button
       variant="outlined"
-      onClick={() => toggleFilter(filter)}
+      onClick={() =>
+        setContextFilter((currentFilter) =>
+          currentFilter == 'none' ? filter : 'none'
+        )
+      }
       startIcon={
-        hasFilter(filter) ? (
+        contextFilter === filter ? (
           <CheckBoxOutlinedIcon />
         ) : (
           <CheckBoxOutlineBlankIcon />
         )
       }
-      disabled={disabled}
     >
       {children}
     </Button>

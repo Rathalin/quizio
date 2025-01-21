@@ -1,10 +1,11 @@
 import createClient from 'openapi-fetch';
-import { paths, components } from './schema';
+import { paths, components, operations } from './schema';
 
 export const client = createClient<paths>({ baseUrl: 'http://localhost:8080' });
 
 type ApiSchemas = components['schemas'];
 
+export type Quiz = ApiSchemas['HandlersGetQuizzesResponse']['quizzes'][number];
 export type Question = ApiSchemas['ModelsQuestion'];
 export type Answer = ApiSchemas['ModelsAnswer'];
 export type Meta = ApiSchemas['ModelsMeta'];
@@ -14,6 +15,8 @@ export type EditQuizRequestData = ApiSchemas['HandlersEditQuizRequest'];
 export type UploadFileRequestData = ApiSchemas['HandlersUploadFileRequest'];
 export type SignInResponse = ApiSchemas['HandlersSignInResponse'];
 export type ChangePasswordReqest = ApiSchemas['HandlersChangePasswordRequest'];
+export type GetQuizzesRequestQuery =
+  operations['backend/handlers.(*DBWrapper).GetQuizzes']['parameters']['query'];
 
 type WithResponse<T> = T & { response: Response };
 type ApiCall = (

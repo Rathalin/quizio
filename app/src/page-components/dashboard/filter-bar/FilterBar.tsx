@@ -1,9 +1,7 @@
 import { Stack, useTheme } from '@mui/material';
 import IndexAvatar from '../../quiz/game/IndexAvatar';
 import SearchInput from './SearchInput';
-import SortCreatedButton from './SortButton';
-import FilterButton from './FilterButton';
-import { useSession } from 'next-auth/react';
+import SortButton from './SortButton';
 import { useSearch } from '../search.context';
 
 type FilterBarProps = {
@@ -12,7 +10,6 @@ type FilterBarProps = {
 
 export default function FilterBar({ quizzesCount }: FilterBarProps) {
   const theme = useTheme();
-  const session = useSession();
   const { searchText } = useSearch();
 
   return (
@@ -28,17 +25,11 @@ export default function FilterBar({ quizzesCount }: FilterBarProps) {
         }}
       />
       <SearchInput />
-      <SortCreatedButton option="createdAt" disabled>
-        Created at
-      </SortCreatedButton>
-      <SortCreatedButton option="playCount" disabled>
-        Played
-      </SortCreatedButton>
-      {session.status === 'authenticated' && (
-        <FilterButton filter={'my-quizzes'} disabled>
-          My quizzes only
-        </FilterButton>
-      )}
+      <SortButton option="createdAt">Created at</SortButton>
+      <SortButton option="playCount">Played</SortButton>
+      {/* {session.status === 'authenticated' && (
+        <FilterButton filter="myQuizzes">Created by me</FilterButton>
+      )} */}
     </Stack>
   );
 }

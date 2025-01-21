@@ -6,14 +6,9 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
 type SortButtonProps = PropsWithChildren<{
   option: SortOption;
-  disabled: boolean;
 }>;
 
-export default function SortButton({
-  option,
-  disabled,
-  children,
-}: SortButtonProps) {
+export default function SortButton({ option, children }: SortButtonProps) {
   const { sortOption, sortMode, setSortOption, setSortMode, toggleSortMode } =
     useSort();
 
@@ -37,12 +32,7 @@ export default function SortButton({
   }
 
   return (
-    <Button
-      variant="outlined"
-      endIcon={icon}
-      onClick={handleClick}
-      disabled={disabled}
-    >
+    <Button variant="outlined" endIcon={icon} onClick={handleClick}>
       {children}
     </Button>
   );

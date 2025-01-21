@@ -1,4 +1,4 @@
-import { QuizEntity } from '@/graphql/generated/graphql';
+import { Quiz } from '@/api-client';
 import {
   Dispatch,
   PropsWithChildren,
@@ -79,7 +79,7 @@ export function useSort() {
   };
 }
 
-export function sortQuiz(quizzes: QuizEntity[], sort: Sort) {
+export function sortQuiz(quizzes: Quiz[], sort: Sort) {
   switch (sort.option) {
     case 'createdAt':
       return [...quizzes].sort(
@@ -90,14 +90,10 @@ export function sortQuiz(quizzes: QuizEntity[], sort: Sort) {
   }
 }
 
-function sortByCreatedAtAsc(q1: QuizEntity, q2: QuizEntity) {
-  return (
-    Date.parse(q1.attributes?.createdAt) - Date.parse(q2.attributes?.createdAt)
-  );
+function sortByCreatedAtAsc(q1: Quiz, q2: Quiz) {
+  return Date.parse(q1.createdAt) - Date.parse(q2.createdAt);
 }
 
-function sortByCreatedAtDesc(q1: QuizEntity, q2: QuizEntity) {
-  return (
-    Date.parse(q2.attributes?.createdAt) - Date.parse(q1.attributes?.createdAt)
-  );
+function sortByCreatedAtDesc(q1: Quiz, q2: Quiz) {
+  return Date.parse(q2.createdAt) - Date.parse(q1.createdAt);
 }

@@ -19,7 +19,7 @@ func generateJWT(userID int64) (string, error) {
 	// Create claims with user ID and expiry time
 	claims := map[string]interface{}{
 		"userId": userID,
-		"exp":    time.Now().Add(1 * time.Minute).Unix(), // 30-minute expiry
+		"exp":    time.Now().Add(30 * time.Minute).Unix(), // 30-minute expiry
 		"type":   "access",
 	}
 
