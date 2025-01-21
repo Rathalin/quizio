@@ -12,16 +12,33 @@ import {
   Typography,
 } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { FormEvent, useState } from 'react';
 
-export default function SigninPage() {
+export const getServerSideProps: GetServerSideProps<{
+  callbackUrl: string | null;
+}> = async (ctx) => {
+  const callbackUrl =
+    typeof ctx.query?.callbackUrl === 'string' ? ctx.query.callbackUrl : null;
+
+  return {
+    props: {
+      callbackUrl,
+    },
+  };
+};
+
+export default function SigninPage({
+  callbackUrl,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const router = useRouter();
   const toastStore = useToastStore();
 
   const {
     mutateAsync: login,
-    isError,
     isLoading,
     isSuccess,
   } = useMutation({
@@ -30,17 +47,24 @@ export default function SigninPage() {
       signIn('credentials', {
         username: identifier,
         password,
-        redirect: true,
+        redirect: false,
       }),
   });
+
+  const [errorStatus, setErrorStatus] = useState<number | null>(null);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
-      await login();
-      toastStore.addToast('Login successful.', 'success');
+      const res = await login();
+      if (res?.ok === true) {
+        toastStore.addToast('Login successful.', 'success');
+        router.push(callbackUrl ?? '/');
+      } else {
+        setErrorStatus(res?.status ?? null);
+      }
     } catch (error) {
-      toastStore.addToast('Invalid username or password!', 'error');
+      toastStore.addToast('An error ooccured!', 'error');
     }
   }
 
@@ -97,7 +121,7 @@ export default function SigninPage() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </Box>
-            {isError && (
+            {errorStatus === 401 && (
               <Typography sx={{ marginTop: 2 }} variant="body2" color="error">
                 {`Invalid username or password!`}
               </Typography>
@@ -116,7 +140,7 @@ export default function SigninPage() {
             color="primary"
             type="submit"
             startIcon={isLoading ? <LoadingCircle /> : undefined}
-            disabled={isLoading || isSuccess}
+            disabled={isLoading || (isSuccess && errorStatus == null)}
           >
             Login
           </Button>

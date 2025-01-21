@@ -15,10 +15,12 @@ import {
 } from '@mui/material';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useState, type MouseEvent } from 'react';
 
 export default function AccountMenu() {
   const theme = useTheme();
+  const router = useRouter();
   const { data: session, status } = useSession();
   const isAuthenticated = status === 'authenticated';
 
@@ -33,11 +35,14 @@ export default function AccountMenu() {
     setAnchorEl(null);
   }
 
+  if (router.pathname === '/auth/signin' && !isAuthenticated) {
+    return null;
+  }
+
   if (!isAuthenticated || session == null) {
     return <SignInButton />;
   }
 
-  // const initial = session.username.at(0)?.toUpperCase();
   const initial = session.user?.username?.at(0)?.toUpperCase() ?? '';
 
   return (
