@@ -28,7 +28,6 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePlayProtocolEntryMutation } from '../../data/usePlayProtocolEntryMutation';
-import { useSession } from 'next-auth/react';
 import { throwOnError } from '@/api-client';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
 
@@ -66,7 +65,6 @@ export default function PlayIdPage({
   const theme = useTheme();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { data: session } = useSession();
   const topAnchor = useRef<HTMLDivElement>(null);
   const resultAnchor = useRef<HTMLDivElement>(null);
   const quizQuery = usePlayQuizQuery(uuid);
@@ -134,14 +132,7 @@ export default function PlayIdPage({
     if (gameDone && !playCountIncreased) {
       increasePlayCountAsync();
     }
-  }, [
-    gameDone,
-    playCountIncreased,
-    addPlayProtocolEntry,
-    uuid,
-    session?.user?.id,
-    queryClient,
-  ]);
+  }, [gameDone, playCountIncreased, addPlayProtocolEntry, uuid, queryClient]);
 
   async function setAnswerOfCurrentQuestion(selectedAnswerId: string) {
     setAnswerwedProgress((progress) =>

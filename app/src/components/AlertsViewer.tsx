@@ -1,5 +1,4 @@
 import { useAlertsQuery } from '@/data/useAlertsQuery';
-import { Enum_Alert_Imagesize } from '@/graphql/generated/graphql';
 import { useDismissedAlertIds } from '@/persistence/dismissed-alert-ids.store';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
 import { Alert, Collapse, Grid, Stack } from '@mui/material';
@@ -80,7 +79,7 @@ export default function AlertsViewer() {
   );
 }
 
-type ImageSize = `${Enum_Alert_Imagesize}`;
+type ImageSize = 'small' | 'medium' | 'large';
 
 const imageAspectRatio = 16 / 9;
 const imageSizes = {

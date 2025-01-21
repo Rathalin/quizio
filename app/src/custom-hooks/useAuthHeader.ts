@@ -1,9 +1,11 @@
 import { useSession } from 'next-auth/react';
 import { useMemo } from 'react';
 
-export type AuthorizationHeader = {
-  Authorization: `Bearer ${string}`;
-};
+export type AuthorizationHeader =
+  | {
+      Authorization: `Bearer ${string}`;
+    }
+  | undefined;
 
 export function useAuthHeader(): AuthorizationHeader | undefined {
   const { data: session } = useSession();
