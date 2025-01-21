@@ -4,7 +4,7 @@
   "ignorePatterns": ["temp.js", "**/generated/*"],
   "rules": {
     "unused-imports/no-unused-imports": "error",
-    "no-unused-vars": ["error", { "args": "none", "argsIgnorePattern": "^_" }],
+    "no-unused-vars": ["error", { "args": "none", "argsIgnorePattern": "^_", "caughtErrors": "none" }],
     "no-console": ["error", { "allow": ["info", "warn", "error"] }],
     "react/jsx-key": "error"
   }
