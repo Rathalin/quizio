@@ -30,6 +30,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePlayProtocolEntryMutation } from '../../data/usePlayProtocolEntryMutation';
 import { throwOnError } from '@/api-client';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
+import { useSession } from 'next-auth/react';
 
 export type AnsweredState = {
   correctAnswerId: string;
@@ -65,6 +66,7 @@ export default function PlayIdPage({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const theme = useTheme();
   const router = useRouter();
+const {data: session} = useSession()
   const queryClient = useQueryClient();
   const topAnchor = useRef<HTMLDivElement>(null);
   const resultAnchor = useRef<HTMLDivElement>(null);
@@ -120,7 +122,7 @@ export default function PlayIdPage({
       try {
         await addPlayProtocolEntry({
           quizUuid: uuid,
-          userUuid: null, // TODO Change if new backend supports users
+          userUuid: session?.user.uuid ?? null,
         });
 
         queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });

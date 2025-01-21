@@ -13,8 +13,10 @@ import GradientDivider from '@/components/GradientDivider';
 import ScrollObserver from '@/components/ScrollObserver';
 import { useQuizzesInfiniteQuery } from '@/data/useQuizzesQuery';
 import { GetQuizzesRequestQuery } from '@/api-client';
+import { useSession } from 'next-auth/react';
 
 export default function QuizzesOverview() {
+  const { data: session } = useSession()
   const [searchText, setSearchText] = useState('');
   const [sort, setSort] = useStorage(storageKeys.sort, defaultSort);
 
@@ -102,10 +104,7 @@ export default function QuizzesOverview() {
                     questionCount={questionCount}
                     userUuid={user.uuid}
                     username={user.username}
-                    // isMyQuiz={user.uuid === session?.user.uuid}
-                    isMyQuiz={
-                      user.uuid === '9dfd2a83-b8be-4c35-90ec-0acda6df26d0'
-                    } // TODO Sessions
+                    isMyQuiz={user.uuid === session?.user.uuid} 
                     published
                   />
                 )
