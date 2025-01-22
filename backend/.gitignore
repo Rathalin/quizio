@@ -1,1 +1,5 @@
 /public/uploads
+
+.env.local
+.env.dev
+.env.prod

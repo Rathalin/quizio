@@ -5,6 +5,7 @@ go 1.23.4
 require (
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-chi/jwtauth/v5 v5.3.2
+	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.9
 	github.com/rs/cors v1.11.1
 	github.com/swaggest/openapi-go v0.2.54

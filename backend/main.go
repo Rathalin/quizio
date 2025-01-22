@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
 
@@ -17,31 +16,18 @@ import (
 	"github.com/swaggest/swgui/v5emb"
 
 	"quizio/backend/auth"
+	"quizio/backend/db"
+	"quizio/backend/env"
 	"quizio/backend/handlers"
 )
 
-var db *sql.DB
-
-func connectDB() {
-	var err error
-	db, err = sql.Open("postgres", "host=localhost user=root password=mysecretpassword dbname=quizio sslmode=disable")
-	if err != nil {
-		log.Fatalf("Unable to connect to database: %v\n", err)
-	}
-	log.Println("Connected to PostgreSQL database.")
-}
-
-func closeDB() {
-	if db != nil {
-		db.Close()
-	}
-}
-
 func main() {
-	connectDB()
-	defer closeDB()
+	env.InitiEnvironmentVariables()
 
-	dbWrapper := &handlers.DBWrapper{DB: db}
+	db.ConnectDB()
+	defer db.CloseDB()
+
+	dbWrapper := &handlers.DBWrapper{DB: db.DB}
 
 	response.DefaultErrorResponseContentType = "application/problem+json"
 
