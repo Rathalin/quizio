@@ -1,5 +1,7 @@
 /public/uploads
 
+./main
+
 .env.local
 .env.development
 .env.production
