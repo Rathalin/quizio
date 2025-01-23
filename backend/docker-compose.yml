@@ -2,12 +2,12 @@ services:
   go-backend:
     build:
       context: .
+      args:
+        GO_ENV: ${GO_ENV:-local}
     ports:
       - "8080:8080"
-    environment:
-      - DB_HOST=postgres-db
-      - DB_USER=root
-      - DB_PASSWORD=mysecretpassword
+    env_file:
+      - .env.${GO_ENV:-local}
     depends_on:
       - postgres-db
 
@@ -16,23 +16,23 @@ services:
     restart: always
     ports:
       - "5432:5432"
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: mysecretpassword
+    env_file:
+      - .env.${GO_ENV:-local}
     volumes:
       - ./sql-scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - db_data:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
+      - uploads:/app/public/uploads
 
   pgadmin:
     image: dpage/pgadmin4
     restart: always
     ports:
       - "8081:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: daniel@flockert.at
-      PGADMIN_DEFAULT_PASSWORD: mysecretpassword
+    env_file:
+      - .env.${GO_ENV:-local}
     depends_on:
       - postgres-db
 
 volumes:
-  db_data:
+  db:
+  uploads:

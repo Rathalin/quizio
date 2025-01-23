@@ -9,16 +9,17 @@ import (
 )
 
 type EnvVars struct {
-	DBName     string
-	DBHost     string
-	DBUser     string
-	DBPassword string
-	JWTSecret  string
+	PostgresDb       string
+	PostgresHost     string
+	PostgresUser     string
+	PostgresPassword string
+	JwtSecret        string
 }
 
 var Vars *EnvVars
 
 func InitiEnvironmentVariables() {
+
 	env := os.Getenv("GO_ENV")
 	if env == "" {
 		env = "local"
@@ -33,32 +34,33 @@ func InitiEnvironmentVariables() {
 
 	// Access environment variables
 	Vars = &EnvVars{
-		DBName:     os.Getenv("POSTGRES_DB"),
-		DBHost:     os.Getenv("POSTGRES_HOST"),
-		DBUser:     os.Getenv("POSTGRES_USER"),
-		DBPassword: os.Getenv("POSTGRES_PW"),
-		JWTSecret:  os.Getenv("JWT_SECRET"),
+		PostgresDb:       os.Getenv("POSTGRES_DB"),
+		PostgresHost:     os.Getenv("POSTGRES_HOST"),
+		PostgresUser:     os.Getenv("POSTGRES_USER"),
+		PostgresPassword: os.Getenv("POSTGRES_PASSWORD"),
+		JwtSecret:        os.Getenv("JWT_SECRET"),
 	}
 
-	if Vars.DBName == "" {
+	if Vars.PostgresDb == "" {
 		log.Fatal("Environment variable POSTGRES_DB is not set\n")
 	}
-	if Vars.DBHost == "" {
+	if Vars.PostgresHost == "" {
 		log.Fatal("Environment variable POSTGRES_HOST is not set\n")
 	}
-	if Vars.DBUser == "" {
+	if Vars.PostgresUser == "" {
 		log.Fatal("Environment variable POSTGRES_USER is not set\n")
 	}
-	if Vars.DBPassword == "" {
+	if Vars.PostgresPassword == "" {
 		log.Fatal("Environment variable POSTGRES_PW is not set\n")
 	}
-	if Vars.JWTSecret == "" {
+	if Vars.JwtSecret == "" {
 		log.Fatal("Environment variable JWT_SECRET is not set\n")
 	}
 
-	fmt.Printf("Database: %s\n", Vars.DBName)
-	fmt.Printf("Host: %s\n", Vars.DBHost)
-	fmt.Printf("User: %s\n", Vars.DBUser)
-	fmt.Printf("Password: %s\n", "(hidden)")
-	fmt.Printf("JWT Secret: %s\n", Vars.JWTSecret)
+	log.Printf("Database: %s\n", Vars.PostgresDb)
+	log.Printf("Host: %s\n", Vars.PostgresHost)
+	log.Printf("User: %s\n", Vars.PostgresUser)
+	log.Printf("Password: %s\n", "(hidden)")
+	log.Printf("JWT Secret: %s\n", "(hidden)")
+	log.Printf("\n")
 }
