@@ -8,6 +8,8 @@ services:
       - "8080:8080"
     env_file:
       - .env.${GO_ENV:-local}
+    volumes:
+      - uploads:/app/public/uploads
     depends_on:
       - postgres-db
 
@@ -21,7 +23,6 @@ services:
     volumes:
       - ./sql-scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
       - db:/var/lib/postgresql/data
-      - uploads:/app/public/uploads
 
   pgadmin:
     image: dpage/pgadmin4

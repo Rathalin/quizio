@@ -65,6 +65,7 @@ func main() {
 				jwtauth.Authenticator(auth.TokenAuth),
 			)
 			r.Method(http.MethodPost, "/upload", nethttp.NewHandler((dbWrapper.UploadFile())))
+			r.Method(http.MethodDelete, "/upload", nethttp.NewHandler((dbWrapper.DeleteFile())))
 			r.Method(http.MethodPost, "/signout", nethttp.NewHandler(dbWrapper.SignOut()))
 			r.Method(http.MethodPost, "/quiz/create", nethttp.NewHandler((dbWrapper.CreateQuiz())))
 			r.Method(http.MethodGet, "/quiz/{uuid}", nethttp.NewHandler(dbWrapper.GetQuiz()))

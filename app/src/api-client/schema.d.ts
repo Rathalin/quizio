@@ -136,7 +136,8 @@ export interface paths {
     put?: never;
     /** DB Wrapper Upload File */
     post: operations['backend/handlers.(*DBWrapper).UploadFile'];
-    delete?: never;
+    /** DB Wrapper Delete File */
+    delete: operations['backend/handlers.(*DBWrapper).DeleteFile'];
     options?: never;
     head?: never;
     patch?: never;
@@ -297,6 +298,9 @@ export interface components {
     };
     HandlersDebugResponse: {
       userId: number;
+    };
+    HandlersDeleteFileResponse: {
+      message: string;
     };
     HandlersEditQuizRequest: {
       description: string | null;
@@ -795,6 +799,37 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['HandlersUploadFileResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).DeleteFile': {
+    parameters: {
+      query: {
+        filename: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HandlersDeleteFileResponse'];
         };
       };
       /** @description Unauthorized */

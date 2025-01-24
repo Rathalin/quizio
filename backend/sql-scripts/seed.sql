@@ -49,8 +49,8 @@ VALUES
 -- Insert into alert
 INSERT INTO alert(markdown_content, severity, image_url, image_size, is_active)
 VALUES 
-    ('**System Maintenance**: Scheduled maintenance at 10 PM.', 'info', NULL, 'medium', TRUE),
-    ('**High Load Warning**: Some services may be slow.', 'warning', NULL, NULL, TRUE);
+    ('**System Maintenance**: Scheduled maintenance at 10 PM.', 'info', NULL, 'medium', FALSE),
+    ('**High Load Warning**: Some services may be slow.', 'warning', NULL, NULL, FALSE);
  
 SELECT setval(pg_get_serial_sequence('alert', 'id'), MAX(id)) FROM alert;
 SELECT setval(pg_get_serial_sequence('play_protocol_entry', 'id'), MAX(id)) FROM play_protocol_entry;

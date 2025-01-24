@@ -38,6 +38,7 @@ import { useUpdateQuizMutation } from '@/data/useUpdateQuizMutation';
 import { useToastStore } from '@/persistence/taost.store';
 import { useDeleteQuizMutation } from '@/data/useDeleteQuizMutation';
 import LoadingCircle from '@/components/LoadingCircle';
+import { getBackendImageUrl } from '@/utilities/getImageUrl';
 
 export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
   ctx
@@ -121,15 +122,13 @@ export default function QuizCreatePage({
           data: {
             file: null,
           },
-          // preview:
-          //   quiz?.attributes?.image?.data?.attributes?.url != null
-          //     ? {
-          //         url: getBackendImageUrl(
-          //           quiz?.attributes?.image?.data?.attributes?.url
-          //         ),
-          //         name: quiz?.attributes?.image?.data?.attributes?.name ?? '',
-          //       }
-          //     : undefined,
+          preview:
+            quiz.imageUrl != null
+              ? {
+                  url: getBackendImageUrl(quiz.imageUrl),
+                  name: '',
+                }
+              : undefined,
         },
       });
       setQuestionsFormData({
@@ -141,26 +140,14 @@ export default function QuizCreatePage({
               data: {
                 file: null,
               },
-              preview: undefined,
+              preview:
+                question.imageUrl != null
+                  ? {
+                      url: getBackendImageUrl(question.imageUrl),
+                      name: '',
+                    }
+                  : undefined,
             },
-            // questionImage: {
-            //   data: {
-            //     file: null,
-            //   },
-            //   preview:
-            //     question.attributes?.questionImage?.data?.attributes?.url !=
-            //     null
-            //       ? {
-            //           url: getBackendImageUrl(
-            //             question.attributes?.questionImage?.data?.attributes
-            //               ?.url
-            //           ),
-            //           name:
-            //             question.attributes?.questionImage?.data?.attributes
-            //               ?.name ?? '',
-            //         }
-            //       : undefined,
-            // },
             answers:
               question.answers.map((answer) => ({
                 id: answer.uuid,
@@ -172,26 +159,14 @@ export default function QuizCreatePage({
               data: {
                 file: null,
               },
-              preview: undefined,
+              preview:
+                question.explanationImageUrl != null
+                  ? {
+                      url: getBackendImageUrl(question.explanationImageUrl),
+                      name: '',
+                    }
+                  : undefined,
             },
-            // explanationImage: {
-            //   data: {
-            //     file: null,
-            //   },
-            //   preview:
-            //     question.attributes?.explanationImage?.data?.attributes?.url !=
-            //     null
-            //       ? {
-            //           url: getBackendImageUrl(
-            //             question.attributes?.explanationImage?.data?.attributes
-            //               ?.url
-            //           ),
-            //           name:
-            //             question.attributes?.explanationImage?.data?.attributes
-            //               ?.name ?? '',
-            //         }
-            //       : undefined,
-            // },
           })) ?? [],
       });
     }
@@ -207,7 +182,7 @@ export default function QuizCreatePage({
 
   async function handleSaveClick() {
     try {
-      await updateQuiz({
+      await await updateQuiz({
         title: overviewFormData.title,
         description: overviewFormData.description ?? '',
         // imageUrl: overviewFormData.image,

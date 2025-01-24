@@ -39,16 +39,16 @@ export default function App(props: MyAppProps) {
   const [queryClient] = useState(
     () =>
       new QueryClient({
-        defaultOptions: {
-          queries: {
-            retry: false,
-          },
-        },
         queryCache: new QueryCache({
           onError: (error) => {
-            if (error.message.includes('token is expired')) {
-              router.reload();
-            }
+            if (
+              typeof error === 'object' &&
+              'error' in error &&
+              typeof error.error === 'string'
+            )
+              if (error.error.includes('token is expired')) {
+                router.reload();
+              }
           },
         }),
       })
