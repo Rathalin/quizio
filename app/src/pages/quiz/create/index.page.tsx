@@ -1,28 +1,13 @@
 import GradientWord from '@/components/GradientWord';
 import OverviewForm from '@/page-components/quiz/create/OverviewForm';
 import SummaryForm from '@/page-components/quiz/create/SummaryForm';
-import {
-  Box,
-  Card,
-  CardContent,
-  Grid,
-  Step,
-  StepLabel,
-  Stepper,
-  Typography,
-} from '@mui/material';
+import { Box, Card, CardContent, Grid, Step, StepLabel, Stepper, Typography } from '@mui/material';
 import { useState } from 'react';
 
 import { useQueryClient } from '@tanstack/react-query';
-import {
-  QuizOverviewForm,
-  QuizQuestionsForm,
-} from '@/page-components/quiz/quiz-form-schema';
+import { QuizOverviewForm, QuizQuestionsForm } from '@/page-components/quiz/quiz-form-schema';
 import QuestionsForm from '@/page-components/quiz/create/QuestionsForm';
-import {
-  defaultOverviewFormData,
-  defaultQuestionsFormData,
-} from '@/page-components/quiz/quiz-form-data';
+import { defaultOverviewFormData, defaultQuestionsFormData } from '@/page-components/quiz/quiz-form-data';
 import { useRouter } from 'next/router';
 import { storageKeys } from '@/persistence/storage-keys';
 import { useCreateQuizMutation } from '@/data/useCreateQuizMutation';
@@ -47,19 +32,11 @@ export default function QuizCreatePage() {
   const queryClient = useQueryClient();
   const toastStore = useToastStore();
   const [activeStep, setActiveStep] = useState(0);
-  const [overviewFormData, setOverviewFormData] = useState<QuizOverviewForm>(
-    defaultOverviewFormData
-  );
-  const [questionsFormData, setQuestionsFormData] = useState<QuizQuestionsForm>(
-    defaultQuestionsFormData
-  );
+  const [overviewFormData, setOverviewFormData] = useState<QuizOverviewForm>(defaultOverviewFormData);
+  const [questionsFormData, setQuestionsFormData] = useState<QuizQuestionsForm>(defaultQuestionsFormData);
 
   const { mutateAsync: uploadFile } = useUploadFileMutation();
-  const {
-    mutateAsync: createQuiz,
-    isPending,
-    isSuccess,
-  } = useCreateQuizMutation();
+  const { mutateAsync: createQuiz, isPending, isSuccess } = useCreateQuizMutation();
 
   async function uploadImage(file: File | null): Promise<string | null> {
     if (file == null) {
@@ -121,14 +98,13 @@ export default function QuizCreatePage() {
           .map((q, i) => ({
             ...q,
             imageUrl: imageUrls.questionUrls.at(i)?.question ?? null,
-            explanationImageUrl:
-              imageUrls.questionUrls.at(i)?.explanation ?? null,
+            explanationImageUrl: imageUrls.questionUrls.at(i)?.explanation ?? null,
           })),
       });
 
       toastStore.addToast('Quiz created!', 'success');
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
-      router.push('/');
+      await router.push('/');
       resetQuizLocalStorage();
       setOverviewFormData(defaultOverviewFormData);
       setQuestionsFormData(defaultQuestionsFormData);
@@ -139,9 +115,7 @@ export default function QuizCreatePage() {
   }
 
   function handleNext() {
-    setActiveStep((prevActiveStep) =>
-      Math.min(prevActiveStep + 1, steps.length - 1)
-    );
+    setActiveStep((prevActiveStep) => Math.min(prevActiveStep + 1, steps.length - 1));
   }
 
   function handleBack() {

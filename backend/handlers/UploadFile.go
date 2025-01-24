@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -71,7 +72,7 @@ func (dbw *DBWrapper) UploadFile() usecase.Interactor {
 		// Generate the file URL (adjust this to your server's public URL)
 		fileURL := fmt.Sprintf("%s%s", pathDir, filepath.Base(filePath))
 
-		fmt.Printf("Uploaded image %v (%v) -> %v\n", input.Filename, len(input.File), fileURL)
+		log.Printf("Uploaded image %v for user %v -> %v\n", input.Filename, userUuid, fileURL)
 
 		// Populate the response
 		*output = uploadFileResponse{

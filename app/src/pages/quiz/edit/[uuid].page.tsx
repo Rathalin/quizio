@@ -81,19 +81,22 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
   const {
     mutateAsync: uploadFile,
     isPending: isUploadFilePending,
-    isError: isUploadFileError,
+    isSuccess: isUploadFileSuccess,
   } = useUploadFileMutation();
   const {
     mutateAsync: deleteFile,
     isPending: isDeleteFilePending,
-    isError: isDeleteFileError,
+    isSuccess: isDeleteFileSuccess,
   } = useDeleteFileMutation();
-  const { mutateAsync: updateQuiz, isPending: isUpdatePending, isError: isUpdateError } = useUpdateQuizMutation(uuid);
+  const {
+    mutateAsync: updateQuiz,
+    isPending: isUpdatePending,
+    isSuccess: isUpdateSuccess,
+  } = useUpdateQuizMutation(uuid);
   const {
     mutateAsync: deleteQuiz,
     isPending: isDeletePending,
     isSuccess: isDeleteSuccess,
-    isError: isDeleteError,
   } = useDeleteQuizMutation(uuid);
 
   const isPending = useMemo(
@@ -103,10 +106,12 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
       ),
     [isDeleteFilePending, isDeletePending, isUpdatePending, isUploadFilePending],
   );
-  const isError = useMemo(
+  const isSuccess = useMemo(
     () =>
-      [isUploadFileError, isDeleteFileError, isUpdateError, isDeleteError].some((isMutationError) => isMutationError),
-    [isDeleteFileError, isDeleteError, isUpdateError, isUploadFileError],
+      [isUploadFileSuccess, isDeleteFileSuccess, isUpdateSuccess, isDeleteSuccess].some(
+        (isMutationSuccess) => isMutationSuccess,
+      ),
+    [isDeleteFileSuccess, isDeleteSuccess, isUpdateSuccess, isUploadFileSuccess],
   );
 
   useEffect(() => {
@@ -262,10 +267,9 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
 
       // Refetch quiz
       toastStore.addToast('Quiz updated!', 'success');
-      queryClient.invalidateQueries({ queryKey: ['quiz', uuid] });
-      queryClient.removeQueries({ queryKey: ['getQuizzesInfinite'] });
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
-      router.push('/');
+      await router.push('/');
+      queryClient.invalidateQueries({ queryKey: ['quiz', uuid] });
     } catch (error) {
       console.error('Update quiz error', error);
       toastStore.addToast('Could not update quiz!', 'error');
@@ -278,8 +282,8 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
 
       toastStore.addToast('Quiz deleted.', 'success');
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
-      await router.push('/');
       setDialogOpen(false);
+      await router.push('/');
     } catch (error) {
       toastStore.addToast('Could not delete quiz!', 'error');
     }
@@ -382,7 +386,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
                   editMode={true}
                   onSubmit={handleSaveClick}
                   isPending={isPending}
-                  isDisabled={isPending || isError}
+                  isDisabled={isPending || isSuccess}
                 />
               )}
             </>

@@ -58,7 +58,6 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 			return logAndReturnError(err.Error())
 		}
 
-		fmt.Printf("Begin transaction\n")
 		tx, err := dbw.DB.BeginTx(ctx, nil)
 		if err != nil {
 			return logAndReturnError(err.Error())
@@ -66,7 +65,6 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 		defer tx.Rollback()
 
 		// Update quiz details
-		fmt.Printf("UPDATE quiz: %v, %v, %v, %v\n", input.Title, checkNil(input.Description), input.IsPublished, checkNil(input.ImageUrl))
 		_, err = tx.ExecContext(ctx, `
 			UPDATE quiz
 			SET title = $1, description_text = $2, is_published = $3, image_url = $4
@@ -102,9 +100,6 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 			var questionId int64
 			if questionInput.UUID != nil && slices.Contains(existingQuestionUuids, *questionInput.UUID) {
 				// Update existing question
-				fmt.Printf("UPDATE question %v: %v, %v, %v, %v, %v\n",
-					*questionInput.UUID, questionInput.Title, checkNil(questionInput.Description), checkNil(questionInput.ImageUrl), checkNil(questionInput.Explanation), checkNil(questionInput.ExplanationImageUrl),
-				)
 				err = tx.QueryRowContext(ctx, `
 					UPDATE question
 					SET title = $1, description_text = $2, image_url = $3, explanation = $4, explanation_image_url = $5
@@ -128,13 +123,6 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 
 			} else {
 				// Insert new question
-				fmt.Printf("INSERT question: %v, %v, %v, %v, %v\n",
-					questionInput.Title,
-					checkNil(questionInput.Description),
-					checkNil(questionInput.ImageUrl),
-					checkNil(questionInput.Explanation),
-					checkNil(questionInput.ExplanationImageUrl),
-				)
 				err = tx.QueryRowContext(ctx, `
 						INSERT INTO question (title, description_text, image_url, explanation, explanation_image_url, quiz_id)
 						VALUES ($1, $2, $3, $4, $5, $6)
@@ -177,7 +165,6 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 			for _, answerInput := range questionInput.Answers {
 				if answerInput.UUID != nil && slices.Contains(existingAnswerUuids, *answerInput.UUID) {
 					// Update existing answer
-					fmt.Printf("UPDATE answer %v: %v, %v, %v, %v\n", *answerInput.UUID, answerInput.Title, checkNil(answerInput.Description), checkNil(answerInput.ImageUrl), answerInput.IsCorrect)
 					_, err = tx.ExecContext(ctx, `
 							UPDATE answer
 							SET title = $1, description_text = $2, image_url = $3, is_correct = $4
@@ -192,7 +179,6 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 					remainingAnswerUuids = slices.Delete(remainingAnswerUuids, uuidIndex, uuidIndex+1)
 				} else {
 					// Insert new answer
-					fmt.Printf("INSERT answer: %v, %v, %v, %v\n", answerInput.Title, checkNil(answerInput.Description), checkNil(answerInput.ImageUrl), answerInput.IsCorrect)
 					_, err = tx.ExecContext(ctx, `
 							INSERT INTO answer (title, description_text, image_url, is_correct, question_id)
 							VALUES ($1, $2, $3, $4, $5)
@@ -205,7 +191,6 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 
 			// Delete removed answers
 			for _, answerUuid := range remainingAnswerUuids {
-				fmt.Printf("DELETE answer: %v\n", answerUuid)
 				_, err = tx.ExecContext(ctx, `
 						DELETE FROM answer WHERE uuid = $1
 				`, answerUuid)
@@ -217,7 +202,6 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 
 		// Delete removed questions
 		for _, questionUuid := range remainingQuestionUuids {
-			fmt.Printf("DELETE question: %v\n", questionUuid)
 			_, err = tx.ExecContext(ctx, `
 					DELETE FROM question WHERE uuid = $1
 			`, questionUuid)
@@ -229,7 +213,6 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 		if err := tx.Commit(); err != nil {
 			return logAndReturnError(err.Error())
 		}
-		fmt.Printf("End of transaction\n")
 
 		*output = updateQuizResponse{}
 		return nil

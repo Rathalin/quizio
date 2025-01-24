@@ -21,10 +21,7 @@ export default function ToastSnackbar() {
     }
   }, [snackPack, messageInfo, open, removeToast]);
 
-  function handleClose(
-    _event: SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) {
+  function handleClose(_event: SyntheticEvent | Event, reason?: SnackbarCloseReason) {
     if (reason === 'clickaway') {
       return;
     }
@@ -44,12 +41,7 @@ export default function ToastSnackbar() {
       TransitionProps={{ onExited: handleExited }}
       action={
         <>
-          <IconButton
-            aria-label="close"
-            color="inherit"
-            sx={{ p: 0.5 }}
-            onClick={handleClose}
-          >
+          <IconButton aria-label="close" color="inherit" sx={{ p: 0.5 }} onClick={handleClose}>
             <CloseIcon />
           </IconButton>
         </>

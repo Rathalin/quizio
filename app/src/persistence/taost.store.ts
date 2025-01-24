@@ -13,14 +13,14 @@ type ToastStore = {
   addToast: (
     message: string,
     severity: NonNullable<AlertProps['severity']>,
-    variant?: NonNullable<AlertProps['variant']>
+    variant?: NonNullable<AlertProps['variant']>,
   ) => void;
   removeToast: () => void;
 };
 
 export const useToastStore = create<ToastStore>((set) => ({
   snackPack: [],
-  addToast: (message, severity, variant = 'standard') =>
+  addToast: (message, severity, variant = 'filled') =>
     set((state) => ({
       snackPack: [
         ...state.snackPack,

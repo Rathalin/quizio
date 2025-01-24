@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -43,7 +44,7 @@ func (dbw *DBWrapper) DeleteFile() usecase.Interactor {
 			return fmt.Errorf("failed to delete file: %w", err)
 		}
 
-		fmt.Printf("Deleted file %v for user %v\n", input.Filename, userUuid)
+		log.Printf("Deleted file %v for user %v\n", input.Filename, userUuid)
 
 		*output = deleteFileResponse{
 			Message: fmt.Sprintf("File %v successfully deleted.", input.Filename),

@@ -30,9 +30,6 @@ DROP TABLE IF EXISTS user_account;
 -- DROP INDEX IF EXISTS user_account_username_key;
 -- DROP INDEX IF EXISTS user_account_uuid_key;
 
--- Connect to the new database (if running interactively)
--- \c quizio;
-
 -- Create tables
 CREATE TABLE IF NOT EXISTS user_account (
   id BIGSERIAL PRIMARY KEY,
@@ -117,3 +114,44 @@ CREATE TABLE IF NOT EXISTS alert (
 -- Create indexes for uuid columns
 CREATE UNIQUE INDEX IF NOT EXISTS idx_user_account_uuid ON user_account(uuid);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_quiz_uuid ON quiz(uuid);
+
+
+-- Create triggers to auto-update the updated_at column
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER set_updated_at_alert
+BEFORE UPDATE ON alert
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER set_updated_at_play_protocol_entry
+BEFORE UPDATE ON play_protocol_entry
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER set_updated_at_answer
+BEFORE UPDATE ON answer
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER set_updated_at_question
+BEFORE UPDATE ON question
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER set_updated_at_quiz
+BEFORE UPDATE ON quiz
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER set_updated_at_user_account
+BEFORE UPDATE ON user_account
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
