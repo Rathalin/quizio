@@ -2,49 +2,32 @@ import GradientWord from '@/components/GradientWord';
 
 import OverviewForm from '@/page-components/quiz/create/OverviewForm';
 import SummaryForm from '@/page-components/quiz/create/SummaryForm';
-import {
-  defaultOverviewFormData,
-  defaultQuestionsFormData,
-} from '@/page-components/quiz/quiz-form-data';
+import { defaultOverviewFormData, defaultQuestionsFormData } from '@/page-components/quiz/quiz-form-data';
 import DeleteQuizDialog from '@/page-components/quiz/edit/DeleteQuizDialog';
 import OverviewFormPlaceholder from '@/page-components/quiz/edit/OverviewFormPlaceholder';
 import DeleteIcon from '@mui/icons-material/Delete';
-import {
-  Box,
-  Typography,
-  Grid,
-  Card,
-  CardContent,
-  Stepper,
-  Step,
-  StepLabel,
-  Button,
-  Stack,
-} from '@mui/material';
+import { Box, Typography, Grid, Card, CardContent, Stepper, Step, StepLabel, Button, Stack } from '@mui/material';
 import { QueryClient, dehydrate, useQueryClient } from '@tanstack/react-query';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  QuizOverviewForm,
-  QuizQuestionsForm,
-} from '@/page-components/quiz/quiz-form-schema';
+import { QuizOverviewForm, QuizQuestionsForm } from '@/page-components/quiz/quiz-form-schema';
 import QuestionsForm from '@/page-components/quiz/create/QuestionsForm';
 import { authOptions } from '@/pages/api/auth/[...nextauth].page';
 import { getServerSession } from 'next-auth';
 import { fetchQuiz, useQuizQuery } from '@/data/useQuizQuery';
-import { throwOnError } from '@/api-client';
+import { EditQuizRequest, throwOnError } from '@/api-client';
 import { useUpdateQuizMutation } from '@/data/useUpdateQuizMutation';
 import { useToastStore } from '@/persistence/taost.store';
 import { useDeleteQuizMutation } from '@/data/useDeleteQuizMutation';
 import LoadingCircle from '@/components/LoadingCircle';
-import { getBackendImageUrl } from '@/utilities/getImageUrl';
+import { getImageName, getImageUrl } from '@/utilities/getImageUrl';
 import { useUploadFileMutation } from '@/data/useUploadFileMutation';
 import { useDeleteFileMutation } from '@/data/useDeleteFileMutation';
+import { raise } from '@/utilities/errorHandling';
+import { getBase64 } from '@/data/getBase64';
 
-export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
-  ctx
-) => {
+export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (ctx) => {
   const uuid = ctx.params?.uuid;
   if (typeof uuid !== 'string') {
     return {
@@ -61,7 +44,7 @@ export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
       throwOnError(() =>
         fetchQuiz(uuid, {
           Authorization: `Bearer ${session?.user?.accessToken}`,
-        })
+        }),
       ),
   });
 
@@ -85,9 +68,7 @@ const steps = stepTitles.map((title, index) => ({
   nextLabel: stepTitles[index + 1],
 }));
 
-export default function QuizCreatePage({
-  uuid,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const toastStore = useToastStore();
@@ -95,12 +76,8 @@ export default function QuizCreatePage({
   const { data: quiz } = useQuizQuery(uuid);
   const [activeStep, setActiveStep] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [overviewFormData, setOverviewFormData] = useState<QuizOverviewForm>(
-    defaultOverviewFormData
-  );
-  const [questionsFormData, setQuestionsFormData] = useState<QuizQuestionsForm>(
-    defaultQuestionsFormData
-  );
+  const [overviewFormData, setOverviewFormData] = useState<QuizOverviewForm>(defaultOverviewFormData);
+  const [questionsFormData, setQuestionsFormData] = useState<QuizQuestionsForm>(defaultQuestionsFormData);
   const {
     mutateAsync: uploadFile,
     isPending: isUploadFilePending,
@@ -111,11 +88,7 @@ export default function QuizCreatePage({
     isPending: isDeleteFilePending,
     isError: isDeleteFileError,
   } = useDeleteFileMutation();
-  const {
-    mutateAsync: updateQuiz,
-    isPending: isUpdatePending,
-    isError: isUpdateError,
-  } = useUpdateQuizMutation(uuid);
+  const { mutateAsync: updateQuiz, isPending: isUpdatePending, isError: isUpdateError } = useUpdateQuizMutation(uuid);
   const {
     mutateAsync: deleteQuiz,
     isPending: isDeletePending,
@@ -125,20 +98,15 @@ export default function QuizCreatePage({
 
   const isPending = useMemo(
     () =>
-      [
-        isUploadFilePending,
-        isDeleteFilePending,
-        isUpdatePending,
-        isDeletePending,
-      ].some((isMutationPending) => isMutationPending),
-    [isDeleteFilePending, isDeletePending, isUpdatePending, isUploadFilePending]
+      [isUploadFilePending, isDeleteFilePending, isUpdatePending, isDeletePending].some(
+        (isMutationPending) => isMutationPending,
+      ),
+    [isDeleteFilePending, isDeletePending, isUpdatePending, isUploadFilePending],
   );
   const isError = useMemo(
     () =>
-      [isUploadFileError, isDeleteFileError, isUpdateError, isDeleteError].some(
-        (isMutationError) => isMutationError
-      ),
-    [isDeleteFileError, isDeleteError, isUpdateError, isUploadFileError]
+      [isUploadFileError, isDeleteFileError, isUpdateError, isDeleteError].some((isMutationError) => isMutationError),
+    [isDeleteFileError, isDeleteError, isUpdateError, isUploadFileError],
   );
 
   useEffect(() => {
@@ -153,7 +121,7 @@ export default function QuizCreatePage({
           preview:
             quiz.imageUrl != null
               ? {
-                  url: getBackendImageUrl(quiz.imageUrl),
+                  url: getImageUrl(quiz.imageUrl),
                   name: '',
                 }
               : undefined,
@@ -171,7 +139,7 @@ export default function QuizCreatePage({
               preview:
                 question.imageUrl != null
                   ? {
-                      url: getBackendImageUrl(question.imageUrl),
+                      url: getImageUrl(question.imageUrl),
                       name: '',
                     }
                   : undefined,
@@ -190,7 +158,7 @@ export default function QuizCreatePage({
               preview:
                 question.explanationImageUrl != null
                   ? {
-                      url: getBackendImageUrl(question.explanationImageUrl),
+                      url: getImageUrl(question.explanationImageUrl),
                       name: '',
                     }
                   : undefined,
@@ -201,20 +169,85 @@ export default function QuizCreatePage({
   }, [quiz]);
 
   async function handleSaveClick() {
+    if (quiz == null) {
+      raise('Cannot save quiz, because quiz was null.');
+    }
     try {
-      await updateQuiz({
-        title: overviewFormData.title,
-        description: overviewFormData.description ?? '',
-        // imageUrl: overviewFormData.image,
-        imageUrl: null,
+      const { title, description, image } = overviewFormData;
+      const { questions } = questionsFormData;
+
+      let imageUrl = quiz.imageUrl;
+      // Delete image
+      if (imageUrl != null && (image.data.file != null || image.preview == null)) {
+        await deleteFile({ filename: getImageName(imageUrl) });
+        imageUrl = null;
+      }
+      // Upload image
+      if (image.data.file != null) {
+        const { url } = await uploadFile({
+          file: await getBase64(image.data.file),
+          filename: image.data.file.name,
+        });
+        imageUrl = url;
+      }
+
+      const requestData: EditQuizRequest = {
+        title,
+        description: description ?? '',
+        imageUrl,
         isPublished: true,
-        questions: questionsFormData.questions.map((question) => ({
+        questions: [],
+      };
+
+      for (let questionIndex = 0; questionIndex < questions.length; questionIndex++) {
+        const question = questions[questionIndex];
+        // Delete question image
+        let questionImageUrl = quiz.questions.at(questionIndex)?.imageUrl;
+        if (
+          questionImageUrl != null &&
+          (question.questionImage.data.file != null || question.questionImage.preview == null)
+        ) {
+          await deleteFile({
+            filename: getImageName(questionImageUrl),
+          });
+          questionImageUrl = null;
+        }
+        // Upload question image
+        if (question.questionImage.data.file != null) {
+          const { url } = await uploadFile({
+            file: await getBase64(question.questionImage.data.file),
+            filename: question.questionImage.data.file.name,
+          });
+          questionImageUrl = url;
+        }
+        // Delete question explanation image
+        let questionExplanationImageUrl = quiz.questions.at(questionIndex)?.explanationImageUrl;
+        if (
+          questionExplanationImageUrl != null &&
+          (question.explanationImage.data.file != null || question.explanationImage.preview == null)
+        ) {
+          await deleteFile({
+            filename: getImageName(questionExplanationImageUrl),
+          });
+          questionExplanationImageUrl = null;
+        }
+        // Upload question explanation image
+        if (question.explanationImage.data.file != null) {
+          const { url } = await uploadFile({
+            file: await getBase64(question.explanationImage.data.file),
+            filename: question.explanationImage.data.file.name,
+          });
+          questionExplanationImageUrl = url;
+        }
+
+        // Update question data
+        requestData.questions.push({
           uuid: question.id ?? '',
           title: question.title,
           description: '',
-          imageUrl: null,
+          imageUrl: questionImageUrl ?? null,
           explanation: question.explanation ?? '',
-          explanationImageUrl: null,
+          explanationImageUrl: questionExplanationImageUrl ?? null,
           answers: question.answers.map((answer) => ({
             uuid: answer.id ?? '',
             title: answer.title,
@@ -222,8 +255,10 @@ export default function QuizCreatePage({
             isCorrect: answer.isCorrect,
             imageUrl: null,
           })),
-        })),
-      });
+        });
+      }
+
+      await updateQuiz(requestData);
 
       // Refetch quiz
       toastStore.addToast('Quiz updated!', 'success');
@@ -254,9 +289,7 @@ export default function QuizCreatePage({
   const nextLabel = steps.at(activeStep)?.nextLabel ?? null;
 
   function handleNext() {
-    setActiveStep((prevActiveStep) =>
-      Math.min(prevActiveStep + 1, steps.length - 1)
-    );
+    setActiveStep((prevActiveStep) => Math.min(prevActiveStep + 1, steps.length - 1));
   }
 
   function handleBack() {
@@ -281,12 +314,7 @@ export default function QuizCreatePage({
             <GradientWord>quiz</GradientWord>
             <span>.</span>
           </Box>
-          <Stack
-            direction="row"
-            gap={2}
-            flexWrap="wrap"
-            sx={{ marginLeft: 'auto' }}
-          >
+          <Stack direction="row" gap={2} flexWrap="wrap" sx={{ marginLeft: 'auto' }}>
             <Button
               variant="contained"
               color="error"

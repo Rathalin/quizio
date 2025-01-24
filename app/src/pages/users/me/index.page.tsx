@@ -3,7 +3,7 @@ import HomeButton from '@/components/buttons/HomeButton';
 import UserProfile from '@/components/users/UserProfile';
 import { useMyUserProfileQuery } from '@/data/useMyUserProfileQuery';
 import MyProfilePlaceholder from '@/page-components/user/me/MyProfilePlaceholder';
-import { getBackendImageUrl } from '@/utilities/getImageUrl';
+import { getImageUrl } from '@/utilities/getImageUrl';
 import {
   Box,
   Card,
@@ -34,7 +34,7 @@ export default function MePage() {
                   quizViewsTotal={data.quizStats.totalQuizzesPlayCount}
                   imageUrl={
                     data.user.profileImageUrl != null
-                      ? getBackendImageUrl(data.user.profileImageUrl)
+                      ? getImageUrl(data.user.profileImageUrl)
                       : null
                   }
                 />

@@ -21,7 +21,11 @@ export default function DeleteQuestionButton({
         <IconButton
           color="error"
           disabled={disabled}
-          onClick={() => onDelete()}
+          onClick={(e) => {
+            e.stopPropagation();
+            console.log('stopPropagation');
+            onDelete();
+          }}
         >
           <DeleteIcon />
         </IconButton>

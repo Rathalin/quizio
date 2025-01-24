@@ -277,9 +277,7 @@ export interface components {
       description: string | null;
       imageUrl: string | null;
       isPublished: boolean;
-      questions:
-        | components['schemas']['HandlersCreateQuizRequestQuestion'][]
-        | null;
+      questions: components['schemas']['HandlersCreateQuizRequestQuestion'][] | null;
       title: string;
     };
     HandlersCreateQuizRequestAnswer: {
@@ -306,9 +304,7 @@ export interface components {
       description: string | null;
       imageUrl: string | null;
       isPublished: boolean;
-      questions:
-        | components['schemas']['HandlersEditQuizRequestQuestion'][]
-        | null;
+      questions: components['schemas']['HandlersEditQuizRequestQuestion'][];
       title: string;
     };
     HandlersEditQuizRequestAnswer: {

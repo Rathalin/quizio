@@ -7,7 +7,7 @@ import {
   fetchUserProfile,
   useUserProfileQuery,
 } from '@/data/useUserProfileQuery';
-import { getBackendImageUrl } from '@/utilities/getImageUrl';
+import { getImageUrl } from '@/utilities/getImageUrl';
 import { Box, Card, CardActions, CardContent, Stack } from '@mui/material';
 import { dehydrate, QueryClient } from '@tanstack/react-query';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
@@ -55,7 +55,7 @@ export default function UserIdPage({
               quizViewsTotal={data.quizStats.totalQuizzesPlayCount}
               imageUrl={
                 data.user.profileImageUrl != null
-                  ? getBackendImageUrl(data.user.profileImageUrl)
+                  ? getImageUrl(data.user.profileImageUrl)
                   : null
               }
             />

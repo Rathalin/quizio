@@ -1,5 +1,5 @@
 import { Box, Stack, Typography, useTheme } from '@mui/material';
-import { getBackendImageUrl } from '@/utilities/getImageUrl';
+import { getImageUrl } from '@/utilities/getImageUrl';
 import { GameImage } from './GameImage';
 
 const correctEmojies = ['😀', '😁', '😃', '😄', '😆', '😊', '😎'];
@@ -29,10 +29,7 @@ export default function Explanation({
     <>
       {imageUrl != null && (
         <Stack sx={{ marginBottom: 4 }}>
-          <GameImage
-            src={getBackendImageUrl(imageUrl)}
-            alt="Explanation image"
-          />
+          <GameImage src={getImageUrl(imageUrl)} alt="Explanation image" />
         </Stack>
       )}
       <Typography variant="h3">

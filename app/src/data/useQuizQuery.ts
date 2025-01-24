@@ -19,6 +19,7 @@ export function useQuizQuery(uuid: string) {
   >({
     queryKey: ['getQuiz', uuid],
     queryFn: () => throwOnError(() => fetchQuiz(uuid, authHeader)),
+    enabled: authHeader != null,
   });
 }
 

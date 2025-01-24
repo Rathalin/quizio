@@ -59,6 +59,7 @@ export default function AnswerInput({
             helperText={answerErrors?.title?.message?.toString() ?? ''}
             required
             inputProps={{ maxLength: constraints.quiz.answer.title.maxLength }}
+            autoComplete="off"
             {...field}
           />
         )}

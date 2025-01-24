@@ -118,9 +118,13 @@ export default function QuestionInput({
       elevation={4}
       expanded={expanded}
       onChange={() => onExpand()}
-      TransitionProps={{ unmountOnExit: true }}
+      slotProps={{
+        transition: {
+          unmountOnExit: true,
+        },
+      }}
     >
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />} component="div">
         <Stack
           direction="row"
           alignItems="center"

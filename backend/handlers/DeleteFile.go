@@ -11,7 +11,7 @@ import (
 
 func (dbw *DBWrapper) DeleteFile() usecase.Interactor {
 	type deleteFileRequest struct {
-		Filename string `querya:"filename" required:"true"`
+		Filename string `query:"filename" required:"true"`
 	}
 
 	type deleteFileResponse struct {
@@ -45,7 +45,6 @@ func (dbw *DBWrapper) DeleteFile() usecase.Interactor {
 
 		fmt.Printf("Deleted file %v for user %v\n", input.Filename, userUuid)
 
-		// Populate the response
 		*output = deleteFileResponse{
 			Message: fmt.Sprintf("File %v successfully deleted.", input.Filename),
 		}

@@ -29,7 +29,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePlayProtocolEntryMutation } from '../../data/usePlayProtocolEntryMutation';
 import { throwOnError } from '@/api-client';
-import { getBackendImageUrl } from '@/utilities/getImageUrl';
+import { getImageUrl } from '@/utilities/getImageUrl';
 import { useSession } from 'next-auth/react';
 
 export type AnsweredState = {
@@ -66,7 +66,7 @@ export default function PlayIdPage({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const theme = useTheme();
   const router = useRouter();
-const {data: session} = useSession()
+  const { data: session } = useSession();
   const queryClient = useQueryClient();
   const topAnchor = useRef<HTMLDivElement>(null);
   const resultAnchor = useRef<HTMLDivElement>(null);
@@ -218,9 +218,7 @@ const {data: session} = useSession()
             <meta property="og:description" content={quiz?.title ?? ''} />
             <meta
               property="og:image"
-              content={
-                quiz?.imageUrl ? getBackendImageUrl(quiz.imageUrl) : undefined
-              }
+              content={quiz?.imageUrl ? getImageUrl(quiz.imageUrl) : undefined}
             />
           </Head>
           <div ref={topAnchor} />

@@ -34,7 +34,7 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 		Description *string                   `json:"description" required:"true" nullable:"true"`
 		IsPublished bool                      `json:"isPublished" required:"true"`
 		ImageUrl    *string                   `json:"imageUrl" required:"true" nullable:"true"`
-		Questions   []editQuizRequestQuestion `json:"questions" required:"true"`
+		Questions   []editQuizRequestQuestion `json:"questions" required:"true" nullable:"false"`
 	}
 
 	type editQuizResponse struct{}

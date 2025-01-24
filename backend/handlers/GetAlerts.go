@@ -29,7 +29,8 @@ func (dbw *DBWrapper) GetAlerts() usecase.Interactor {
 		defer rows.Close()
 		for rows.Next() {
 			alert := models.Alert{}
-			rows.Scan(&alert.UUID,
+			rows.Scan(
+				&alert.UUID,
 				&alert.CreatedAt,
 				&alert.UpdatedAt,
 				&alert.MarkdownContent,

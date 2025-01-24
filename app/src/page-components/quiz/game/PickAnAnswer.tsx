@@ -14,7 +14,7 @@ import { AnsweredState } from '@/pages/play/[uuid].page';
 import IndexAvatar from './IndexAvatar';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
-import { getBackendImageUrl } from '@/utilities/getImageUrl';
+import { getImageUrl } from '@/utilities/getImageUrl';
 import { GameImage } from './GameImage';
 
 type PickAnAnswerProps = {
@@ -43,10 +43,7 @@ export default function PickAnAnswer({
       <Box sx={{ paddingTop: 6, paddingInline: 6 }}>
         {imageUrl != null && (
           <Stack sx={{ paddingBottom: 4 }}>
-            <GameImage
-              src={getBackendImageUrl(imageUrl)}
-              alt="Question image"
-            />
+            <GameImage src={getImageUrl(imageUrl)} alt="Question image" />
           </Stack>
         )}
         <Grid

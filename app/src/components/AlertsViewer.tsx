@@ -1,6 +1,6 @@
 import { useAlertsQuery } from '@/data/useAlertsQuery';
 import { useDismissedAlertIds } from '@/persistence/dismissed-alert-ids.store';
-import { getBackendImageUrl } from '@/utilities/getImageUrl';
+import { getImageUrl } from '@/utilities/getImageUrl';
 import { Alert, Collapse, Grid, Stack } from '@mui/material';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
@@ -58,7 +58,7 @@ export default function AlertsViewer() {
                 >
                   {alert.imageUrl != null && (
                     <Image
-                      src={getBackendImageUrl(alert.imageUrl)}
+                      src={getImageUrl(alert.imageUrl)}
                       alt="alert image"
                       width={imageSizes[alert.imageSize ?? 'medium'].width}
                       height={imageSizes[alert.imageSize ?? 'medium'].height}

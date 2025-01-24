@@ -51,7 +51,8 @@ func (dbw *DBWrapper) UploadFile() usecase.Interactor {
 				break // File does not exist, use this filePath
 			}
 			// File exists, generate a new name
-			filePath = filepath.Join(uploadDir, fmt.Sprintf("%s_%d%s", name, counter, ext))
+			name = fmt.Sprintf("%s_%d%s", name, counter, ext)
+			filePath = filepath.Join(uploadDir, name)
 			counter++
 		}
 
