@@ -9,8 +9,8 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
-	type editQuizRequestAnswer struct {
+func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
+	type updateQuizRequestAnswer struct {
 		UUID        *string `json:"uuid" required:"true" nullable:"true"`
 		Title       string  `json:"title" required:"true"`
 		Description *string `json:"description" required:"true" nullable:"true"`
@@ -18,28 +18,28 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 		IsCorrect   bool    `json:"isCorrect" required:"true"`
 	}
 
-	type editQuizRequestQuestion struct {
-		UUID                *string                 `json:"uuid" required:"true" nullable:"true"`
-		Title               string                  `json:"title" required:"true"`
-		Description         *string                 `json:"description" required:"true" nullable:"true"`
-		ImageUrl            *string                 `json:"imageUrl" required:"true" nullable:"true"`
-		Explanation         *string                 `json:"explanation" required:"true" nullable:"true"`
-		ExplanationImageUrl *string                 `json:"explanationImageUrl" required:"true" nullable:"true"`
-		Answers             []editQuizRequestAnswer `json:"answers" required:"true" nullable:"false"`
+	type updateQuizRequestQuestion struct {
+		UUID                *string                   `json:"uuid" required:"true" nullable:"true"`
+		Title               string                    `json:"title" required:"true"`
+		Description         *string                   `json:"description" required:"true" nullable:"true"`
+		ImageUrl            *string                   `json:"imageUrl" required:"true" nullable:"true"`
+		Explanation         *string                   `json:"explanation" required:"true" nullable:"true"`
+		ExplanationImageUrl *string                   `json:"explanationImageUrl" required:"true" nullable:"true"`
+		Answers             []updateQuizRequestAnswer `json:"answers" required:"true" nullable:"false"`
 	}
 
-	type editQuizRequest struct {
-		UUID        string                    `path:"uuid" required:"true"`
-		Title       string                    `json:"title" required:"true"`
-		Description *string                   `json:"description" required:"true" nullable:"true"`
-		IsPublished bool                      `json:"isPublished" required:"true"`
-		ImageUrl    *string                   `json:"imageUrl" required:"true" nullable:"true"`
-		Questions   []editQuizRequestQuestion `json:"questions" required:"true" nullable:"false"`
+	type updateQuizRequest struct {
+		UUID        string                      `path:"uuid" required:"true"`
+		Title       string                      `json:"title" required:"true"`
+		Description *string                     `json:"description" required:"true" nullable:"true"`
+		IsPublished bool                        `json:"isPublished" required:"true"`
+		ImageUrl    *string                     `json:"imageUrl" required:"true" nullable:"true"`
+		Questions   []updateQuizRequestQuestion `json:"questions" required:"true" nullable:"false"`
 	}
 
-	type editQuizResponse struct{}
+	type updateQuizResponse struct{}
 
-	return usecase.NewInteractor(func(ctx context.Context, input editQuizRequest, output *editQuizResponse) error {
+	return usecase.NewInteractor(func(ctx context.Context, input updateQuizRequest, output *updateQuizResponse) error {
 		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
 			return logAndReturnError(err.Error())
@@ -231,7 +231,7 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 		}
 		fmt.Printf("End of transaction\n")
 
-		*output = editQuizResponse{}
+		*output = updateQuizResponse{}
 		return nil
 	})
 }

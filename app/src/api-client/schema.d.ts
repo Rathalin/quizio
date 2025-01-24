@@ -99,8 +99,8 @@ export interface paths {
     /** DB Wrapper Get Quiz */
     get: operations['backend/handlers.(*DBWrapper).GetQuiz'];
     put?: never;
-    /** DB Wrapper Edit Quiz */
-    post: operations['backend/handlers.(*DBWrapper).EditQuiz'];
+    /** DB Wrapper Update Quiz */
+    post: operations['backend/handlers.(*DBWrapper).UpdateQuiz'];
     /** DB Wrapper Delete Quiz */
     delete: operations['backend/handlers.(*DBWrapper).DeleteQuiz'];
     options?: never;
@@ -300,29 +300,6 @@ export interface components {
     HandlersDeleteFileResponse: {
       message: string;
     };
-    HandlersEditQuizRequest: {
-      description: string | null;
-      imageUrl: string | null;
-      isPublished: boolean;
-      questions: components['schemas']['HandlersEditQuizRequestQuestion'][];
-      title: string;
-    };
-    HandlersEditQuizRequestAnswer: {
-      description: string | null;
-      imageUrl: string | null;
-      isCorrect: boolean;
-      title: string;
-      uuid: string | null;
-    };
-    HandlersEditQuizRequestQuestion: {
-      answers: components['schemas']['HandlersEditQuizRequestAnswer'][];
-      description: string | null;
-      explanation: string | null;
-      explanationImageUrl: string | null;
-      imageUrl: string | null;
-      title: string;
-      uuid: string | null;
-    };
     HandlersGetAlertsResponse: {
       alerts: components['schemas']['ModelsAlert'][];
     };
@@ -413,6 +390,29 @@ export interface components {
     };
     HandlersSignOutRequest: {
       refreshToken: string;
+    };
+    HandlersUpdateQuizRequest: {
+      description: string | null;
+      imageUrl: string | null;
+      isPublished: boolean;
+      questions: components['schemas']['HandlersUpdateQuizRequestQuestion'][];
+      title: string;
+    };
+    HandlersUpdateQuizRequestAnswer: {
+      description: string | null;
+      imageUrl: string | null;
+      isCorrect: boolean;
+      title: string;
+      uuid: string | null;
+    };
+    HandlersUpdateQuizRequestQuestion: {
+      answers: components['schemas']['HandlersUpdateQuizRequestAnswer'][];
+      description: string | null;
+      explanation: string | null;
+      explanationImageUrl: string | null;
+      imageUrl: string | null;
+      title: string;
+      uuid: string | null;
     };
     HandlersUploadFileRequest: {
       /** Format: base64 */
@@ -682,7 +682,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).EditQuiz': {
+  'backend/handlers.(*DBWrapper).UpdateQuiz': {
     parameters: {
       query?: never;
       header?: never;
@@ -693,7 +693,7 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        'application/json': components['schemas']['HandlersEditQuizRequest'];
+        'application/json': components['schemas']['HandlersUpdateQuizRequest'];
       };
     };
     responses: {

@@ -16,7 +16,7 @@ import QuestionsForm from '@/page-components/quiz/create/QuestionsForm';
 import { authOptions } from '@/pages/api/auth/[...nextauth].page';
 import { getServerSession } from 'next-auth';
 import { fetchQuiz, useQuizQuery } from '@/data/useQuizQuery';
-import { EditQuizRequest, throwOnError } from '@/api-client';
+import { throwOnError, UpdateQuizRequest } from '@/api-client';
 import { useUpdateQuizMutation } from '@/data/useUpdateQuizMutation';
 import { useToastStore } from '@/persistence/taost.store';
 import { useDeleteQuizMutation } from '@/data/useDeleteQuizMutation';
@@ -191,7 +191,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
         imageUrl = url;
       }
 
-      const requestData: EditQuizRequest = {
+      const requestData: UpdateQuizRequest = {
         title,
         description: description ?? '',
         imageUrl,

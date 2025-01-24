@@ -69,7 +69,7 @@ func main() {
 			r.Method(http.MethodPost, "/signout", nethttp.NewHandler(dbWrapper.SignOut()))
 			r.Method(http.MethodPost, "/quiz/create", nethttp.NewHandler((dbWrapper.CreateQuiz())))
 			r.Method(http.MethodGet, "/quiz/{uuid}", nethttp.NewHandler(dbWrapper.GetQuiz()))
-			r.Method(http.MethodPost, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.EditQuiz())))
+			r.Method(http.MethodPost, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.UpdateQuiz())))
 			r.Method(http.MethodDelete, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.DeleteQuiz())))
 			r.Method(http.MethodPost, "/play-protocol-entry", nethttp.NewHandler((dbWrapper.PostPlayProtocolEntry())))
 			r.Method(http.MethodGet, "/me", nethttp.NewHandler(dbWrapper.GetMyUserProfile()))
