@@ -50,30 +50,30 @@ func (dbw *DBWrapper) CreateQuiz() usecase.Interactor {
 
 		err = tx.QueryRowContext(ctx, `
 			INSERT INTO quiz (title, description_text, is_published, image_url, user_account_id)
-			VALUES ($1, $2, $3, $4, $5)
+			VALUES ($1, $2, $3, $4, $5, $6)
 			RETURNING id
 		`, input.Title, input.Description, input.IsPublished, input.ImageUrl, userId).Scan(&quizId)
 		if err != nil {
 			return logAndReturnError(err.Error())
 		}
 
-		for _, question := range input.Questions {
+		for questionIndex, question := range input.Questions {
 			var questionId int64
 
 			err = tx.QueryRowContext(ctx, `
-				INSERT INTO question (title, description_text, image_url, explanation, explanation_image_url, quiz_id)
-				VALUES ($1, $2, $3, $4, $5, $6)
+				INSERT INTO question (order_index, title, description_text, image_url, explanation, explanation_image_url, quiz_id)
+				VALUES ($1, $2, $3, $4, $5, $6, $7)
 				RETURNING id
-			`, question.Title, question.Description, question.ImageUrl, question.Explanation, question.ExplanationImageUrl, quizId).Scan(&questionId)
+			`, questionIndex, question.Title, question.Description, question.ImageUrl, question.Explanation, question.ExplanationImageUrl, quizId).Scan(&questionId)
 			if err != nil {
 				return logAndReturnError(err.Error())
 			}
 
-			for _, answer := range question.Answers {
+			for answerIndex, answer := range question.Answers {
 				_, err = tx.ExecContext(ctx, `
-					INSERT INTO answer (title, description_text, image_url, is_correct, question_id)
-					VALUES ($1, $2, $3, $4, $5)
-				`, answer.Title, answer.Description, answer.ImageUrl, answer.IsCorrect, questionId)
+					INSERT INTO answer (order_index, title, description_text, image_url, is_correct, question_id)
+					VALUES ($1, $2, $3, $4, $5, $6)
+				`, answerIndex, answer.Title, answer.Description, answer.ImageUrl, answer.IsCorrect, questionId)
 				if err != nil {
 					return logAndReturnError(err.Error())
 				}

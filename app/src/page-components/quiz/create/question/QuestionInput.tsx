@@ -19,11 +19,7 @@ import { useQuestionIndex } from './QuestionIndexContext';
 import { AnswerIndexContext } from './answer/AnswerIndexContext';
 import QuizioTextField from '@/components/inputs/QuizioTextField';
 import { defaultAnswerFormData } from '../../quiz-form-data';
-import {
-  QuizQuestionsForm,
-  maxAnswers,
-  minAnswers,
-} from '../../quiz-form-schema';
+import { QuizQuestionsForm, maxAnswers, minAnswers } from '../../quiz-form-schema';
 import { constraints } from '@/content-type-utilities/content-type-constraints';
 import { ZodFieldErrors } from '../../../../../types/hook-form-zod';
 import { FormErrorIcon } from '../../FormErrorIcon';
@@ -42,16 +38,10 @@ type QuestionInputProps = {
   onExpand: () => void;
 };
 
-export default function QuestionInput({
-  deletable,
-  onDelete,
-  expanded,
-  onExpand,
-}: QuestionInputProps) {
+export default function QuestionInput({ deletable, onDelete, expanded, onExpand }: QuestionInputProps) {
   const theme = useTheme();
   const index = useQuestionIndex();
-  const { width: imageWidth, height: imageHeight } =
-    useGameImageInputDimensions();
+  const { width: imageWidth, height: imageHeight } = useGameImageInputDimensions();
   const {
     control,
     getValues,
@@ -79,9 +69,7 @@ export default function QuestionInput({
       }
     )?.oneCorrectAnswer?.message?.toString() ?? '';
 
-  const questionImageFile = watch(
-    `${name}.questionImage.data.file`
-  ) as File | null;
+  const questionImageFile = watch(`${name}.questionImage.data.file`) as File | null;
   const questionPreviewImage = watch(`${name}.questionImage.preview`);
   const questionImageUrl = useMemo(() => {
     if (questionImageFile != null) {
@@ -96,9 +84,7 @@ export default function QuestionInput({
     return questionPreviewImage?.name;
   }, [questionImageFile, questionPreviewImage?.name]);
 
-  const explanationImageFile = watch(
-    `${name}.explanationImage.data.file`
-  ) as File | null;
+  const explanationImageFile = watch(`${name}.explanationImage.data.file`) as File | null;
   const explanationPreviewImage = watch(`${name}.explanationImage.preview`);
   const explanationImageUrl = useMemo(() => {
     if (explanationImageFile != null) {
@@ -125,21 +111,9 @@ export default function QuestionInput({
       }}
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />} component="div">
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-          sx={{ flex: 1 }}
-        >
+        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ flex: 1 }}>
           <Stack gap={0}>
-            <Stack
-              direction="row"
-              alignItems="center"
-              columnGap={3}
-              rowGap={1}
-              flexWrap="wrap"
-              sx={{ flex: 1 }}
-            >
+            <Stack direction="row" alignItems="center" columnGap={3} rowGap={1} flexWrap="wrap" sx={{ flex: 1 }}>
               <Typography
                 variant="h5"
                 sx={{
@@ -158,10 +132,7 @@ export default function QuestionInput({
                 </Stack>
               </Tooltip>
             </Stack>
-            <Typography
-              variant="body2"
-              sx={{ color: theme.palette.text.disabled }}
-            >
+            <Typography variant="body2" sx={{ color: theme.palette.text.disabled }}>
               {watch(`${name}.title`)}
             </Typography>
           </Stack>
@@ -169,12 +140,7 @@ export default function QuestionInput({
         </Stack>
       </AccordionSummary>
       <AccordionDetails>
-        <Stack
-          display="inline-flex"
-          alignItems="center"
-          gap={1}
-          sx={{ marginBottom: 4 }}
-        >
+        <Stack display="inline-flex" alignItems="center" gap={1} sx={{ marginBottom: 4 }}>
           <Controller
             name={`${name}.questionImage.data.file`}
             render={({ field }) => (
@@ -187,10 +153,7 @@ export default function QuestionInput({
                   style={{ display: 'none' }}
                   value={undefined}
                   onChange={(e) => {
-                    setValue(
-                      `${name}.questionImage.data.file`,
-                      e.target.files != null ? e.target.files[0] : null
-                    );
+                    setValue(`${name}.questionImage.data.file`, e.target.files != null ? e.target.files[0] : null);
                   }}
                 />
                 <label
@@ -221,9 +184,7 @@ export default function QuestionInput({
                           }}
                           unoptimized
                         />
-                        <Box sx={{ overflowWrap: 'anywhere' }}>
-                          {questionImageName}
-                        </Box>
+                        <Box sx={{ overflowWrap: 'anywhere' }}>{questionImageName}</Box>
                       </Stack>
                     ) : (
                       <Box>{'Upload question image'}</Box>
@@ -285,7 +246,7 @@ export default function QuestionInput({
             }}
           >
             {fields.map((field, index) => (
-              <AnswerIndexContext.Provider key={field.id} value={index}>
+              <AnswerIndexContext.Provider key={field.uuid} value={index}>
                 <AnswerInput
                   onDelete={() => remove(index)}
                   minAnswers={minAnswers}
@@ -300,14 +261,7 @@ export default function QuestionInput({
           </FormHelperText>
 
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Tooltip
-              title={
-                fields.length >= maxAnswers
-                  ? `You can only add ${maxAnswers} answers.`
-                  : null
-              }
-              arrow
-            >
+            <Tooltip title={fields.length >= maxAnswers ? `You can only add ${maxAnswers} answers.` : null} arrow>
               <Box>
                 <Button
                   variant="outlined"
@@ -334,10 +288,7 @@ export default function QuestionInput({
                     style={{ display: 'none' }}
                     value={undefined}
                     onChange={(e) => {
-                      setValue(
-                        `${name}.explanationImage.data.file`,
-                        e.target.files != null ? e.target.files[0] : null
-                      );
+                      setValue(`${name}.explanationImage.data.file`, e.target.files != null ? e.target.files[0] : null);
                     }}
                   />
                   <label
@@ -368,9 +319,7 @@ export default function QuestionInput({
                             }}
                             unoptimized
                           />
-                          <Box sx={{ overflowWrap: 'anywhere' }}>
-                            {explanationImageName}
-                          </Box>
+                          <Box sx={{ overflowWrap: 'anywhere' }}>{explanationImageName}</Box>
                         </Stack>
                       ) : (
                         <Box>{'Upload explanation image'}</Box>
@@ -409,10 +358,7 @@ export default function QuestionInput({
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Tooltip
-                          title="Explain the correct answer or give some context. This input is optional."
-                          arrow
-                        >
+                        <Tooltip title="Explain the correct answer or give some context. This input is optional." arrow>
                           <InfoIcon />
                         </Tooltip>
                       </InputAdornment>

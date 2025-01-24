@@ -247,14 +247,14 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
 
         // Update question data
         requestData.questions.push({
-          uuid: question.id ?? '',
+          uuid: question.uuid ?? '',
           title: question.title,
           description: '',
           imageUrl: questionImageUrl ?? null,
           explanation: question.explanation ?? '',
           explanationImageUrl: questionExplanationImageUrl ?? null,
           answers: question.answers.map((answer) => ({
-            uuid: answer.id ?? '',
+            uuid: answer.uuid ?? '',
             title: answer.title,
             description: '',
             isCorrect: answer.isCorrect,

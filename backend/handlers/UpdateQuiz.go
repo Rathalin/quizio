@@ -96,16 +96,17 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 
 		remainingQuestionUuids := append(existingQuestionUuids[:0:0], existingQuestionUuids...)
 
-		for _, questionInput := range input.Questions {
+		for questionIndex, questionInput := range input.Questions {
 			var questionId int64
 			if questionInput.UUID != nil && slices.Contains(existingQuestionUuids, *questionInput.UUID) {
 				// Update existing question
 				err = tx.QueryRowContext(ctx, `
 					UPDATE question
-					SET title = $1, description_text = $2, image_url = $3, explanation = $4, explanation_image_url = $5
+					SET order_index = $1, title = $2, description_text = $3, image_url = $4, explanation = $5, explanation_image_url = $6
 					WHERE uuid = $6
 					RETURNING id
 				`,
+					questionIndex,
 					questionInput.Title,
 					questionInput.Description,
 					questionInput.ImageUrl,
@@ -124,10 +125,11 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 			} else {
 				// Insert new question
 				err = tx.QueryRowContext(ctx, `
-						INSERT INTO question (title, description_text, image_url, explanation, explanation_image_url, quiz_id)
-						VALUES ($1, $2, $3, $4, $5, $6)
+						INSERT INTO question (order_index, title, description_text, image_url, explanation, explanation_image_url, quiz_id)
+						VALUES ($1, $2, $3, $4, $5, $6, $7)
 						RETURNING id
 				`,
+					questionIndex,
 					questionInput.Title,
 					questionInput.Description,
 					questionInput.ImageUrl,
@@ -162,14 +164,14 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 
 			remainingAnswerUuids := append(existingAnswerUuids[:0:0], existingAnswerUuids...)
 
-			for _, answerInput := range questionInput.Answers {
+			for answerIndex, answerInput := range questionInput.Answers {
 				if answerInput.UUID != nil && slices.Contains(existingAnswerUuids, *answerInput.UUID) {
 					// Update existing answer
 					_, err = tx.ExecContext(ctx, `
 							UPDATE answer
-							SET title = $1, description_text = $2, image_url = $3, is_correct = $4
+							SET order_index = $1, title = $2, description_text = $3, image_url = $4, is_correct = $5
 							WHERE uuid = $5
-					`, answerInput.Title, answerInput.Description, answerInput.ImageUrl, answerInput.IsCorrect, answerInput.UUID)
+					`, answerIndex, answerInput.Title, answerInput.Description, answerInput.ImageUrl, answerInput.IsCorrect, answerInput.UUID)
 					if err != nil {
 						return logAndReturnError(err.Error())
 					}
@@ -180,9 +182,9 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 				} else {
 					// Insert new answer
 					_, err = tx.ExecContext(ctx, `
-							INSERT INTO answer (title, description_text, image_url, is_correct, question_id)
-							VALUES ($1, $2, $3, $4, $5)
-					`, answerInput.Title, answerInput.Description, answerInput.ImageUrl, answerInput.IsCorrect, questionId)
+							INSERT INTO answer (order_index, title, description_text, image_url, is_correct, question_id)
+							VALUES ($1, $2, $3, $4, $5, $6)
+					`, answerIndex, answerInput.Title, answerInput.Description, answerInput.ImageUrl, answerInput.IsCorrect, questionId)
 					if err != nil {
 						return logAndReturnError(err.Error())
 					}

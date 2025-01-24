@@ -22,6 +22,7 @@ func (dbw *DBWrapper) GetAlerts() usecase.Interactor {
 			SELECT uuid, created_at, updated_at, markdown_content, severity, image_url, image_size, is_active
 			FROM alert
 			WHERE is_active
+			ORDER BY order_index ASC
 		`)
 		if err != nil {
 			return logAndReturnError(err.Error())

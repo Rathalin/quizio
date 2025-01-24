@@ -1,24 +1,10 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Stack,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Card, CardActions, CardContent, Stack, Tooltip, Typography } from '@mui/material';
 import QuestionInput from './question/QuestionInput';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { QuestionIndexContext } from './question/QuestionIndexContext';
 import { defaultQuestionFormData } from '../quiz-form-data';
 import { useCallback, useEffect, useState } from 'react';
-import {
-  minQuestions,
-  maxQuestions,
-  QuizQuestionsForm,
-  quizQuestionsFormSchema,
-} from '../quiz-form-schema';
+import { minQuestions, maxQuestions, QuizQuestionsForm, quizQuestionsFormSchema } from '../quiz-form-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import BackButton from './BackButton';
 import NextButton from './NextButton';
@@ -68,9 +54,7 @@ export default function QuestionsForm({
   const getStorageItem = useCallback((): QuizQuestionsForm | null => {
     if (!isBrowser()) return null;
     try {
-      return JSON.parse(
-        localStorage.getItem(storageKeys.quizQuestionsDraft) ?? ''
-      ) as QuizQuestionsForm | null;
+      return JSON.parse(localStorage.getItem(storageKeys.quizQuestionsDraft) ?? '') as QuizQuestionsForm | null;
     } catch (error) {
       return null;
     }
@@ -78,10 +62,7 @@ export default function QuestionsForm({
 
   const setStorageItem = useCallback((value: QuizQuestionsForm) => {
     if (isBrowser()) {
-      localStorage.setItem(
-        storageKeys.quizQuestionsDraft,
-        JSON.stringify(value)
-      );
+      localStorage.setItem(storageKeys.quizQuestionsDraft, JSON.stringify(value));
     }
   }, []);
 
@@ -91,23 +72,15 @@ export default function QuestionsForm({
     const questions = getValues('questions');
     const storageData = getStorageItem();
     if (storageData != null) {
-      for (
-        let questionIndex = 0;
-        questionIndex < questions.length;
-        questionIndex++
-      ) {
+      for (let questionIndex = 0; questionIndex < questions.length; questionIndex++) {
         const storageQuestion =
-          storageData.questions.at(questionIndex) ??
-          raise(`No question at index ${questionIndex} in storage data`);
+          storageData.questions.at(questionIndex) ?? raise(`No question at index ${questionIndex} in storage data`);
         const questionImage = questions.at(questionIndex)?.questionImage;
         if (questionImage != null && storageQuestion.questionImage != null) {
           storageQuestion.questionImage = questionImage;
         }
         const explanationImage = questions.at(questionIndex)?.explanationImage;
-        if (
-          explanationImage != null &&
-          storageQuestion.explanationImage != null
-        ) {
+        if (explanationImage != null && storageQuestion.explanationImage != null) {
           storageQuestion.explanationImage = explanationImage;
         }
       }
@@ -149,14 +122,12 @@ export default function QuestionsForm({
           <CardContent>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
               {fields.map((field, index) => (
-                <QuestionIndexContext.Provider key={field.id} value={index}>
+                <QuestionIndexContext.Provider key={field.uuid} value={index}>
                   <QuestionInput
                     onDelete={() => remove(index)}
                     deletable={fields.length > minQuestions}
-                    expanded={expanded === field.id}
-                    onExpand={() =>
-                      setExpanded(expanded === field.id ? null : field.id)
-                    }
+                    expanded={expanded === field.uuid}
+                    onExpand={() => setExpanded(expanded === field.uuid ? null : field.uuid)}
                   />
                 </QuestionIndexContext.Provider>
               ))}
@@ -169,11 +140,7 @@ export default function QuestionsForm({
               }}
             >
               <Tooltip
-                title={
-                  fields.length >= maxQuestions
-                    ? `You can only add ${maxQuestions} questions.`
-                    : null
-                }
+                title={fields.length >= maxQuestions ? `You can only add ${maxQuestions} questions.` : null}
                 arrow
               >
                 <Box>
@@ -192,26 +159,13 @@ export default function QuestionsForm({
           <CardActions sx={{ padding: 2 }}>
             <Stack gap={2} sx={{ flex: 1 }}>
               {!isValid && (
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="end"
-                  gap={1}
-                >
+                <Stack direction="row" alignItems="center" justifyContent="end" gap={1}>
                   <FormErrorIcon />
-                  <Typography color="error">
-                    This form still contains errors!
-                  </Typography>
+                  <Typography color="error">This form still contains errors!</Typography>
                 </Stack>
               )}
-              <Stack
-                direction="row"
-                justifyContent="space-between"
-                flexWrap="wrap"
-              >
-                <BackButton onClick={() => onBack(getValues())}>
-                  {backLabel}
-                </BackButton>
+              <Stack direction="row" justifyContent="space-between" flexWrap="wrap">
+                <BackButton onClick={() => onBack(getValues())}>{backLabel}</BackButton>
                 <NextButton>{nextLabel}</NextButton>
               </Stack>
             </Stack>

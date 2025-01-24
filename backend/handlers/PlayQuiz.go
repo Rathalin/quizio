@@ -27,23 +27,25 @@ func (dbw *DBWrapper) PlayQuiz() usecase.Interactor {
 		Question struct {
 			ID                  string
 			UUID                string
+			CreatedAt           time.Time
+			UpdatedAt           time.Time
+			OrderIndex          int
 			Title               string
 			Description         *string
 			ImageUrl            *string
 			Explanation         *string
 			ExplanationImageUrl *string
-			CreatedAt           time.Time
-			UpdatedAt           time.Time
 		}
 		Answer struct {
 			ID          string
 			UUID        string
+			CreatedAt   time.Time
+			UpdatedAt   time.Time
+			OrderIndex  int
 			Title       string
 			Description *string
 			ImageUrl    *string
 			IsCorrect   bool
-			CreatedAt   time.Time
-			UpdatedAt   time.Time
 		}
 	}
 
@@ -65,6 +67,7 @@ func (dbw *DBWrapper) PlayQuiz() usecase.Interactor {
 				qn.uuid,
 				qn.created_at,
 				qn.updated_at,
+				qn.order_index,
 				qn.title,
 				qn.description_text,
 				qn.image_url,
@@ -74,6 +77,7 @@ func (dbw *DBWrapper) PlayQuiz() usecase.Interactor {
 				a.uuid,
 				a.created_at,
 				a.updated_at,
+				a.order_index,
 				a.title,
 				a.description_text,
 				a.image_url,
@@ -84,6 +88,7 @@ func (dbw *DBWrapper) PlayQuiz() usecase.Interactor {
 			JOIN answer a
 				ON qn.id = a.question_id
 			WHERE q.uuid = $1
+			ORDER BY qn.order_index ASC, a.order_index ASC
 		`, input.UUID)
 		if err != nil {
 			return logAndReturnError(err.Error())
@@ -106,6 +111,7 @@ func (dbw *DBWrapper) PlayQuiz() usecase.Interactor {
 				&row.Question.UUID,
 				&row.Question.CreatedAt,
 				&row.Question.UpdatedAt,
+				&row.Question.OrderIndex,
 				&row.Question.Title,
 				&row.Question.Description,
 				&row.Question.ImageUrl,
@@ -115,6 +121,7 @@ func (dbw *DBWrapper) PlayQuiz() usecase.Interactor {
 				&row.Answer.UUID,
 				&row.Answer.CreatedAt,
 				&row.Answer.UpdatedAt,
+				&row.Answer.OrderIndex,
 				&row.Answer.Title,
 				&row.Answer.Description,
 				&row.Answer.ImageUrl,

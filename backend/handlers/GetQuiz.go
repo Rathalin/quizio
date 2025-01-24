@@ -32,23 +32,25 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 		Question    struct {
 			ID                  string
 			UUID                string
+			CreatedAt           time.Time
+			UpdatedAt           time.Time
+			OrderIndex          int
 			Title               string
 			Description         *string
 			ImageUrl            *string
 			Explanation         *string
 			ExplanationImageUrl *string
-			CreatedAt           time.Time
-			UpdatedAt           time.Time
 		}
 		Answer struct {
 			ID          string
 			UUID        string
+			CreatedAt   time.Time
+			UpdatedAt   time.Time
+			OrderIndex  int
 			Title       string
 			Description *string
 			ImageUrl    *string
 			IsCorrect   bool
-			CreatedAt   time.Time
-			UpdatedAt   time.Time
 		}
 	}
 
@@ -77,6 +79,7 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 				qn.uuid,
 				qn.created_at,
 				qn.updated_at,
+				qn.order_index,
 				qn.title,
 				qn.description_text,
 				qn.image_url,
@@ -86,6 +89,7 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 				a.uuid,
 				a.created_at,
 				a.updated_at,
+				a.order_index,
 				a.title,
 				a.description_text,
 				a.image_url,
@@ -96,6 +100,7 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 			JOIN answer a
 				ON qn.id = a.question_id
 			WHERE q.uuid = $1
+			ORDER BY qn.order_index ASC, a.order_index ASC
 		`, input.UUID)
 		if err != nil {
 			return logAndReturnError(err.Error())
@@ -120,6 +125,7 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 				&row.Question.UUID,
 				&row.Question.CreatedAt,
 				&row.Question.UpdatedAt,
+				&row.Question.OrderIndex,
 				&row.Question.Title,
 				&row.Question.Description,
 				&row.Question.ImageUrl,
@@ -129,6 +135,7 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 				&row.Answer.UUID,
 				&row.Answer.CreatedAt,
 				&row.Answer.UpdatedAt,
+				&row.Answer.OrderIndex,
 				&row.Answer.Title,
 				&row.Answer.Description,
 				&row.Answer.ImageUrl,
@@ -162,7 +169,7 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 			response.Questions[len(response.Questions)-1].Answers = append(response.Questions[len(response.Questions)-1].Answers, models.Answer{
 				UUID:        row.Answer.UUID,
 				CreatedAt:   row.Answer.CreatedAt,
-				UpdatedAt:   row.Question.UpdatedAt,
+				UpdatedAt:   row.Answer.UpdatedAt,
 				Title:       row.Answer.Title,
 				Description: row.Answer.Description,
 				ImageUrl:    row.Answer.ImageUrl,
