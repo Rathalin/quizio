@@ -2,8 +2,6 @@ package handlers
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"quizio/backend/models"
 	"strings"
 	"time"
@@ -30,11 +28,11 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 
 		usernameExists, err := dbw.UsernameExists(trimmedUsername)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		if !usernameExists {
-			return status.Wrap(errors.New("username does not exist"), status.NotFound)
+			return status.Wrap(logAndReturnError("username does not exist"), status.NotFound)
 		}
 
 		response := signInResponse{}
@@ -60,27 +58,25 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 			&response.User.ProfileImageUrl,
 		)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		// Validate password
 		err = bcrypt.CompareHashAndPassword([]byte(row.PasswordHash), []byte(input.Password))
 		if err != nil {
-			return errors.New("invalid username or password")
+			return logAndReturnError("invalid username or password")
 		}
 
 		// Generate access token
 		accessToken, err := generateJWT(row.ID)
 		if err != nil {
-			fmt.Println(err.Error())
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		// Generate refresh token
 		refreshToken, err := generateRefreshToken(row.ID)
 		if err != nil {
-			fmt.Println(err.Error())
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		_, err = dbw.DB.Exec(`
@@ -88,8 +84,7 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 			VALUES ($1, $2, $3)
 		`, row.ID, refreshToken, time.Now().Add(7*24*time.Hour)) // 7 days expiry
 		if err != nil {
-			println(err.Error())
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		response.AccessToken = accessToken

@@ -21,12 +21,12 @@ func (dbw *DBWrapper) DeleteFile() usecase.Interactor {
 	return usecase.NewInteractor(func(ctx context.Context, input deleteFileRequest, output *deleteFileResponse) error {
 		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		userUuid, err := dbw.GetUserUuid(userId)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		// Define the directory for the user's files

@@ -42,26 +42,26 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 	return usecase.NewInteractor(func(ctx context.Context, input editQuizRequest, output *editQuizResponse) error {
 		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		quizExists, err := dbw.QuizExistsForUser(input.UUID, userId)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 		if !quizExists {
-			return status.Wrap(fmt.Errorf("quiz with uuid %v does not exist for this user", input.UUID), status.NotFound)
+			return status.Wrap(logAndReturnError(fmt.Sprintf("quiz with uuid %v does not exist for this user", input.UUID)), status.NotFound)
 		}
 
 		quizId, err := dbw.GetQuizId(input.UUID)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		fmt.Printf("Begin transaction\n")
 		tx, err := dbw.DB.BeginTx(ctx, nil)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 		defer tx.Rollback()
 
@@ -73,7 +73,7 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 			WHERE uuid = $5
 		`, input.Title, input.Description, input.IsPublished, input.ImageUrl, input.UUID)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		// Handle questions
@@ -84,7 +84,7 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 			WHERE quiz_id = $1
 		`, quizId)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 		defer rows.Close()
 		for rows.Next() {
@@ -92,7 +92,7 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 			err = rows.Scan(&questionUuid)
 			existingQuestionUuids = append(existingQuestionUuids, questionUuid)
 			if err != nil {
-				return err
+				return logAndReturnError(err.Error())
 			}
 		}
 
@@ -119,7 +119,7 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 					questionInput.UUID,
 				).Scan(&questionId)
 				if err != nil {
-					return err
+					return logAndReturnError(err.Error())
 				}
 
 				// Remove from remainingQuestionUuids
@@ -148,7 +148,7 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 					quizId,
 				).Scan(&questionId)
 				if err != nil {
-					return err
+					return logAndReturnError(err.Error())
 				}
 			}
 
@@ -160,7 +160,7 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 					WHERE question_id = $1
 			`, questionId)
 			if err != nil {
-				return err
+				return logAndReturnError(err.Error())
 			}
 			defer answerRows.Close()
 			for answerRows.Next() {
@@ -168,7 +168,7 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 				err = answerRows.Scan(&answerUuid)
 				existingAnswerUuids = append(existingAnswerUuids, answerUuid)
 				if err != nil {
-					return err
+					return logAndReturnError(err.Error())
 				}
 			}
 
@@ -184,7 +184,7 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 							WHERE uuid = $5
 					`, answerInput.Title, answerInput.Description, answerInput.ImageUrl, answerInput.IsCorrect, answerInput.UUID)
 					if err != nil {
-						return err
+						return logAndReturnError(err.Error())
 					}
 
 					// Remove from remainingAnswerUuids
@@ -198,7 +198,7 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 							VALUES ($1, $2, $3, $4, $5)
 					`, answerInput.Title, answerInput.Description, answerInput.ImageUrl, answerInput.IsCorrect, questionId)
 					if err != nil {
-						return err
+						return logAndReturnError(err.Error())
 					}
 				}
 			}
@@ -210,7 +210,7 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 						DELETE FROM answer WHERE uuid = $1
 				`, answerUuid)
 				if err != nil {
-					return err
+					return logAndReturnError(err.Error())
 				}
 			}
 		}
@@ -222,12 +222,12 @@ func (dbw *DBWrapper) EditQuiz() usecase.Interactor {
 					DELETE FROM question WHERE uuid = $1
 			`, questionUuid)
 			if err != nil {
-				return err
+				return logAndReturnError(err.Error())
 			}
 		}
 
 		if err := tx.Commit(); err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 		fmt.Printf("End of transaction\n")
 

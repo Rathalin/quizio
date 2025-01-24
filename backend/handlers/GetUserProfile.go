@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"github.com/swaggest/usecase"
@@ -30,15 +29,15 @@ func (dbw *DBWrapper) GetUserProfile() usecase.Interactor {
 	return usecase.NewInteractor(func(ctx context.Context, input getUserProfileRequest, output *getUserProfileResponse) error {
 		userExists, err := dbw.UserExists(input.UUID)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 		if !userExists {
-			return status.Wrap(errors.New("user does not exists"), status.NotFound)
+			return status.Wrap(logAndReturnError("user does not exists"), status.NotFound)
 		}
 
 		userId, err := dbw.GetUserId(input.UUID)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		response := getUserProfileResponse{}
@@ -49,7 +48,7 @@ func (dbw *DBWrapper) GetUserProfile() usecase.Interactor {
 			WHERE id = $1
 		`, userId).Scan(&response.User.UUID, &response.User.CreatedAt, &response.User.Username, &response.User.ProfileImageUrl)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		err = dbw.DB.QueryRow(`
@@ -58,7 +57,7 @@ func (dbw *DBWrapper) GetUserProfile() usecase.Interactor {
 			WHERE user_account_id = $1
 		`, userId).Scan(&response.QuizStats.TotalQuizzesCreated)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		err = dbw.DB.QueryRow(`
@@ -67,7 +66,7 @@ func (dbw *DBWrapper) GetUserProfile() usecase.Interactor {
 			WHERE user_account_id = $1
 		`, userId).Scan(&response.QuizStats.TotalQuizzesPlayCount)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		*output = response

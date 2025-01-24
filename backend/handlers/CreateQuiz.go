@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/swaggest/usecase"
 )
@@ -37,12 +36,12 @@ func (dbw *DBWrapper) CreateQuiz() usecase.Interactor {
 	return usecase.NewInteractor(func(ctx context.Context, input createQuizRequest, output *createQuizResponse) error {
 		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		tx, err := dbw.DB.BeginTx(ctx, nil)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		defer tx.Rollback()
@@ -55,8 +54,7 @@ func (dbw *DBWrapper) CreateQuiz() usecase.Interactor {
 			RETURNING id
 		`, input.Title, input.Description, input.IsPublished, input.ImageUrl, userId).Scan(&quizId)
 		if err != nil {
-			fmt.Println(err)
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		for _, question := range input.Questions {
@@ -68,7 +66,7 @@ func (dbw *DBWrapper) CreateQuiz() usecase.Interactor {
 				RETURNING id
 			`, question.Title, question.Description, question.ImageUrl, question.Explanation, question.ExplanationImageUrl, quizId).Scan(&questionId)
 			if err != nil {
-				return err
+				return logAndReturnError(err.Error())
 			}
 
 			for _, answer := range question.Answers {
@@ -77,13 +75,13 @@ func (dbw *DBWrapper) CreateQuiz() usecase.Interactor {
 					VALUES ($1, $2, $3, $4, $5)
 				`, answer.Title, answer.Description, answer.ImageUrl, answer.IsCorrect, questionId)
 				if err != nil {
-					return err
+					return logAndReturnError(err.Error())
 				}
 			}
 		}
 		err = tx.Commit()
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		response := createQuizResponse{}

@@ -26,7 +26,7 @@ func (dbw *DBWrapper) GetMyUserProfile() usecase.Interactor {
 	return usecase.NewInteractor(func(ctx context.Context, input getMyUserProfileRequest, output *getMyUserProfileResponse) error {
 		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		response := getMyUserProfileResponse{}
@@ -37,7 +37,7 @@ func (dbw *DBWrapper) GetMyUserProfile() usecase.Interactor {
 			WHERE id = $1
 		`, userId).Scan(&response.User.UUID, &response.User.CreatedAt, &response.User.Username, &response.User.ProfileImageUrl)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		err = dbw.DB.QueryRow(`
@@ -46,7 +46,7 @@ func (dbw *DBWrapper) GetMyUserProfile() usecase.Interactor {
 			WHERE user_account_id = $1
 		`, userId).Scan(&response.QuizStats.TotalQuizzesCreated)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		err = dbw.DB.QueryRow(`
@@ -55,7 +55,7 @@ func (dbw *DBWrapper) GetMyUserProfile() usecase.Interactor {
 			WHERE user_account_id = $1
 		`, userId).Scan(&response.QuizStats.TotalQuizzesPlayCount)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		*output = response

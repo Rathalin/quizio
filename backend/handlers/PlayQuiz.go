@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"errors"
 	"quizio/backend/models"
 	"time"
 
@@ -51,10 +50,10 @@ func (dbw *DBWrapper) PlayQuiz() usecase.Interactor {
 	return usecase.NewInteractor(func(_ context.Context, input playQuizRequest, output *playQuizResponse) error {
 		quizExists, err := dbw.QuizExists(input.UUID)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 		if !quizExists {
-			return status.Wrap(errors.New("quiz does not exists"), status.NotFound)
+			return status.Wrap(logAndReturnError("quiz does not exists"), status.NotFound)
 		}
 
 		rows, err := dbw.DB.Query(`
@@ -87,7 +86,7 @@ func (dbw *DBWrapper) PlayQuiz() usecase.Interactor {
 			WHERE q.uuid = $1
 		`, input.UUID)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 		defer rows.Close()
 
@@ -121,7 +120,7 @@ func (dbw *DBWrapper) PlayQuiz() usecase.Interactor {
 				&row.Answer.ImageUrl,
 				&row.Answer.IsCorrect,
 			); err != nil {
-				return err
+				return logAndReturnError(err.Error())
 			}
 
 			if lastQuizId != row.ID {

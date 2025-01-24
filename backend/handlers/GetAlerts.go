@@ -24,7 +24,7 @@ func (dbw *DBWrapper) GetAlerts() usecase.Interactor {
 			WHERE is_active
 		`)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 		defer rows.Close()
 		for rows.Next() {

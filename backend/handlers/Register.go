@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -25,19 +24,19 @@ func (dbw *DBWrapper) Register() usecase.Interactor {
 	return usecase.NewInteractor(func(ctx context.Context, input registerRequest, output *registerResponse) error {
 		// Validate username and password
 		if len(input.Username) < 3 {
-			return errors.New("username must be at least 3 characters long")
+			return logAndReturnError("username must be at least 3 characters long")
 		}
 		if len(input.Password) < 8 {
-			return errors.New("password must be at least 8 characters long")
+			return logAndReturnError("password must be at least 8 characters long")
 		}
 		if !isValidPassword(input.Password) {
-			return errors.New("password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character")
+			return logAndReturnError("password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character")
 		}
 
 		// Hash the password
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 		if err != nil {
-			return errors.New("failed to hash password")
+			return logAndReturnError(err.Error())
 		}
 
 		trimmedUsername := strings.TrimSpace(input.Username)
@@ -45,11 +44,11 @@ func (dbw *DBWrapper) Register() usecase.Interactor {
 		// Check if username is taken
 		usernameExists, err := dbw.UsernameExists(trimmedUsername)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		if usernameExists {
-			return status.Wrap(errors.New("username already exists"), status.AlreadyExists)
+			return status.Wrap(logAndReturnError("username already exists"), status.AlreadyExists)
 		}
 
 		// Insert user into the database
@@ -58,7 +57,7 @@ func (dbw *DBWrapper) Register() usecase.Interactor {
 			VALUES ($1, $2, true, false)
 		`, trimmedUsername, string(hashedPassword))
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		fmt.Printf("New user: %v - %v", trimmedUsername, input.Password)

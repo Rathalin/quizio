@@ -55,15 +55,15 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 	return usecase.NewInteractor(func(ctx context.Context, input getQuizRequest, output *getQuizResponse) error {
 		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		quizExists, err := dbw.QuizExistsForUser(input.UUID, userId)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 		if !quizExists {
-			return status.Wrap(fmt.Errorf("quiz wtih uuid %v does not exists for this user", input.UUID), status.NotFound)
+			return status.Wrap(logAndReturnError(fmt.Sprintf("quiz wtih uuid %v does not exists for this user", input.UUID)), status.NotFound)
 		}
 
 		rows, err := dbw.DB.Query(`
@@ -98,7 +98,7 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 			WHERE q.uuid = $1
 		`, input.UUID)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 		defer rows.Close()
 
@@ -134,7 +134,7 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 				&row.Answer.ImageUrl,
 				&row.Answer.IsCorrect,
 			); err != nil {
-				return err
+				return logAndReturnError(err.Error())
 			}
 
 			if lastQuizId != row.ID {

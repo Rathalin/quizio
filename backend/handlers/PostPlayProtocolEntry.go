@@ -24,7 +24,7 @@ func (dbw *DBWrapper) PostPlayProtocolEntry() usecase.Interactor {
 			WHERE uuid = $1
 		`, input.QuizUuid).Scan(&quizId)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		if input.UserUuid != nil {
@@ -34,7 +34,7 @@ func (dbw *DBWrapper) PostPlayProtocolEntry() usecase.Interactor {
 			WHERE uuid = $1
 		`, input.UserUuid).Scan(&userId)
 			if err != nil {
-				return err
+				return logAndReturnError(err.Error())
 			}
 		}
 
@@ -43,7 +43,7 @@ func (dbw *DBWrapper) PostPlayProtocolEntry() usecase.Interactor {
 			VALUES ($1, $2)
 		`, quizId, userId)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		response := postPlayProtocolEntryResponse{}

@@ -32,7 +32,7 @@ func (dbw *DBWrapper) RefreshToken() usecase.Interactor {
 		// Generate new access token
 		accessToken, err := generateJWT(userID)
 		if err != nil {
-			return err
+			return logAndReturnError(err.Error())
 		}
 
 		*output = refreshTokenResponse{AccessToken: accessToken}
