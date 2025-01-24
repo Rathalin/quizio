@@ -54,7 +54,7 @@ export default function ToastSnackbar() {
           </IconButton>
         </>
       }
-      anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
+      anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
     >
       <Alert
         onClose={handleClose}
