@@ -16,26 +16,25 @@ import {
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { SessionProvider } from 'next-auth/react';
 import { Session } from 'next-auth';
-import { CacheProvider, EmotionCache } from '@emotion/react';
-import createEmotionCache from '@/createEmotionCache';
 import { Analytics } from '@vercel/analytics/react';
 import { theme } from '@/theme';
 import '@total-typescript/ts-reset';
 import ToastSnackbar from '@/components/ToastSnackbar';
-
-// Client-side cache, shared for the whole session of the user in the browser.
-const clientSideEmotionCache = createEmotionCache();
+import {
+  AppCacheProvider,
+  DocumentHeadTags,
+  DocumentHeadTagsProps,
+} from '@mui/material-nextjs/v15-pagesRouter';
 
 export interface MyAppProps extends AppProps {
-  emotionCache?: EmotionCache;
   pageProps: {
     session?: Session;
     dehydratedState?: DehydratedState;
   };
 }
 
-export default function App(props: MyAppProps) {
-  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+export default function App(props: MyAppProps & DocumentHeadTagsProps) {
+  const { Component, pageProps } = props;
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -80,10 +79,11 @@ export default function App(props: MyAppProps) {
     <SessionProvider session={pageProps.session}>
       <QueryClientProvider client={queryClient}>
         <HydrationBoundary state={pageProps.dehydratedState}>
-          <CacheProvider value={emotionCache}>
-            <ThemeProvider theme={theme} defaultMode="dark">
-              <CssBaseline />
+          <ThemeProvider theme={theme} defaultMode="dark">
+            <CssBaseline />
+            <AppCacheProvider {...props}>
               <Head>
+                <DocumentHeadTags {...props} />
                 <title>Quizio</title>
                 <link
                   rel="dns-prefetch"
@@ -102,14 +102,14 @@ export default function App(props: MyAppProps) {
                   href={process.env.NEXT_PUBLIC_GRAPHQL_URL}
                 />
               </Head>
-              <Layout>
-                <Component {...pageProps} />
-                <ToastSnackbar />
-                <Analytics />
-              </Layout>
-            </ThemeProvider>
-            <ReactQueryDevtools initialIsOpen={false} />
-          </CacheProvider>
+            </AppCacheProvider>
+            <Layout>
+              <Component {...pageProps} />
+              <ToastSnackbar />
+              <Analytics />
+            </Layout>
+          </ThemeProvider>
+          <ReactQueryDevtools initialIsOpen={false} />
         </HydrationBoundary>
       </QueryClientProvider>
     </SessionProvider>

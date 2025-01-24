@@ -13,7 +13,7 @@ export default function Layout({ children }: LayoutProps) {
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: 'background.default',
-        color: 'text.primary'
+        color: 'text.primary',
       }}
     >
       <Header />
@@ -28,4 +28,3 @@ export default function Layout({ children }: LayoutProps) {
     </Box>
   );
 }
-  

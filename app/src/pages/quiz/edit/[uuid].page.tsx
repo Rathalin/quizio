@@ -24,7 +24,7 @@ import {
 import { QueryClient, dehydrate, useQueryClient } from '@tanstack/react-query';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   QuizOverviewForm,
   QuizQuestionsForm,
@@ -39,6 +39,8 @@ import { useToastStore } from '@/persistence/taost.store';
 import { useDeleteQuizMutation } from '@/data/useDeleteQuizMutation';
 import LoadingCircle from '@/components/LoadingCircle';
 import { getBackendImageUrl } from '@/utilities/getImageUrl';
+import { useUploadFileMutation } from '@/data/useUploadFileMutation';
+import { useDeleteFileMutation } from '@/data/useDeleteFileMutation';
 
 export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (
   ctx
@@ -100,18 +102,44 @@ export default function QuizCreatePage({
     defaultQuestionsFormData
   );
   const {
+    mutateAsync: uploadFile,
+    isPending: isUploadFilePending,
+    isError: isUploadFileError,
+  } = useUploadFileMutation();
+  const {
+    mutateAsync: deleteFile,
+    isPending: isDeleteFilePending,
+    isError: isDeleteFileError,
+  } = useDeleteFileMutation();
+  const {
     mutateAsync: updateQuiz,
-    isPending: isUpdateLoading,
-    isSuccess: isUpdateSuccess,
+    isPending: isUpdatePending,
     isError: isUpdateError,
   } = useUpdateQuizMutation(uuid);
   const {
     mutateAsync: deleteQuiz,
-    isPending: isDeleteLoading,
+    isPending: isDeletePending,
     isSuccess: isDeleteSuccess,
+    isError: isDeleteError,
   } = useDeleteQuizMutation(uuid);
 
-  // const ownerId = session?.user?.id?.toString();
+  const isPending = useMemo(
+    () =>
+      [
+        isUploadFilePending,
+        isDeleteFilePending,
+        isUpdatePending,
+        isDeletePending,
+      ].some((isMutationPending) => isMutationPending),
+    [isDeleteFilePending, isDeletePending, isUpdatePending, isUploadFilePending]
+  );
+  const isError = useMemo(
+    () =>
+      [isUploadFileError, isDeleteFileError, isUpdateError, isDeleteError].some(
+        (isMutationError) => isMutationError
+      ),
+    [isDeleteFileError, isDeleteError, isUpdateError, isUploadFileError]
+  );
 
   useEffect(() => {
     if (quiz != null) {
@@ -170,19 +198,11 @@ export default function QuizCreatePage({
           })) ?? [],
       });
     }
-  }, [
-    isUpdateError,
-    isUpdateSuccess,
-    queryClient,
-    quiz,
-    router,
-    toastStore,
-    uuid,
-  ]);
+  }, [quiz]);
 
   async function handleSaveClick() {
     try {
-      await await updateQuiz({
+      await updateQuiz({
         title: overviewFormData.title,
         description: overviewFormData.description ?? '',
         // imageUrl: overviewFormData.image,
@@ -251,7 +271,7 @@ export default function QuizCreatePage({
           setOpen={setDialogOpen}
           quizTitle={quiz.title}
           onConfirm={onDeleteDialogConfirm}
-          loading={isDeleteLoading}
+          loading={isDeletePending}
         />
       )}
       <Typography variant="h1">
@@ -270,10 +290,10 @@ export default function QuizCreatePage({
             <Button
               variant="contained"
               color="error"
-              startIcon={isDeleteLoading ? <LoadingCircle /> : undefined}
+              startIcon={isDeletePending ? <LoadingCircle /> : undefined}
               endIcon={<DeleteIcon />}
               onClick={() => setDialogOpen(true)}
-              disabled={isDeleteLoading || isDeleteSuccess}
+              disabled={isDeletePending || isDeleteSuccess}
             >
               Delete this quiz
             </Button>
@@ -333,8 +353,8 @@ export default function QuizCreatePage({
                   onBack={() => handleBack()}
                   editMode={true}
                   onSubmit={handleSaveClick}
-                  isPending={isUpdateLoading}
-                  isDisabled={isUpdateLoading || isUpdateError}
+                  isPending={isPending}
+                  isDisabled={isPending || isError}
                 />
               )}
             </>
