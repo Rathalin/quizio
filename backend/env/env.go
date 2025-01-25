@@ -33,7 +33,7 @@ func InitiEnvironmentVariables() {
 		}
 		log.Printf("Loaded environment variables from %s", envFile)
 	} else {
-		log.Printf("No .env file found for %s environment, relying on system environment variables", env)
+		log.Printf("No .env.%s file found, relying on system environment variables", env)
 	}
 
 	// Access environment variables
