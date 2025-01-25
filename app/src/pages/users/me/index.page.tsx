@@ -1,13 +1,10 @@
 import GenericLoadingErrorMessage from '@/components/GenericLoadingErrorMessage';
-import HomeButton from '@/components/buttons/HomeButton';
 import UserProfile from '@/components/users/UserProfile';
 import { useMyUserProfileQuery } from '@/data/useMyUserProfileQuery';
 import MyProfilePlaceholder from '@/page-components/user/me/MyProfilePlaceholder';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 export default function MePage() {
@@ -34,11 +31,6 @@ export default function MePage() {
           )}
           {isError && <GenericLoadingErrorMessage />}
         </CardContent>
-        <CardActions sx={{ padding: 4 }}>
-          <Stack direction="column" justifyContent="space-between" gap={2} sx={{ marginTop: 4 }}>
-            <HomeButton />
-          </Stack>
-        </CardActions>
       </Card>
     </Box>
   );

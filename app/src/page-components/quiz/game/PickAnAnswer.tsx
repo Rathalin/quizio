@@ -38,7 +38,7 @@ export default function PickAnAnswer({
 
   return (
     <>
-      <Box sx={{ paddingTop: 6, paddingInline: 6 }}>
+      <Box sx={{ paddingTop: 2, paddingInline: 6 }}>
         {imageUrl != null && (
           <Stack sx={{ paddingBottom: 4 }}>
             <GameImage src={prefixWithBackendUrl(imageUrl)} alt="Question image" />

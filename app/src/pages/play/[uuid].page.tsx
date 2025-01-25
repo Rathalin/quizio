@@ -16,7 +16,6 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePlayProtocolEntryMutation } from '../../data/usePlayProtocolEntryMutation';
 import { throwOnError } from '@/api-client';
-import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import { useSession } from 'next-auth/react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -29,6 +28,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 
 export type AnsweredState = {
   correctAnswerId: string;
@@ -144,13 +144,11 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
 
   async function onNextQuestionClick() {
     setQuestionIndex((index) => index + 1);
-    if (!isLastQuestion) {
-      await timeout(0);
-      topAnchor?.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
-    }
+    await timeout(0);
+    topAnchor?.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
   }
 
   const resultScore = useMemo(() => {
@@ -182,24 +180,17 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
   }
 
   return (
-    <Box
-      sx={{
-        marginTop: {
-          xs: 0,
-          lg: 6,
-        },
-      }}
-    >
+    <Box>
       {quizQuery.isPending && <PickAnAnswerPlaceholder />}
       {quizQuery.isError && <GenericLoadingErrorMessage />}
-      {quizQuery.isSuccess && (
+      {quizQuery.isSuccess && quiz != null && (
         <>
           <Head>
             <meta property="og:title" content="Play Quizio" />
-            <meta property="og:description" content={quiz?.title ?? ''} />
-            <meta property="og:image" content={quiz?.imageUrl ? prefixWithBackendUrl(quiz.imageUrl) : undefined} />
+            <meta property="og:description" content={quiz.title} />
+            <meta property="og:image" content={quiz.imageUrl ? prefixWithBackendUrl(quiz.imageUrl) : undefined} />
           </Head>
-          <div ref={topAnchor} />
+          <div ref={topAnchor} style={{ position: 'absolute', top: '0', left: '50%' }} />
           {questions.length === 0 ? (
             <QuizNotFound />
           ) : (
@@ -211,6 +202,14 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
               {!gameDone && (
                 <>
                   <CardContent sx={{ padding: 0 }}>
+                    <Typography
+                      variant="h6"
+                      component="h1"
+                      fontWeight="bold"
+                      sx={{ color: 'action.disabled', paddingTop: 4, paddingInline: 6 }}
+                    >
+                      {quiz.title}
+                    </Typography>
                     <PickAnAnswer
                       index={questionIndex + 1}
                       title={question.title ?? ''}
@@ -258,7 +257,10 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
                 </>
               )}
               {gameDone && (
-                <CardContent>
+                <CardContent sx={{ paddingInline: 6, paddingBlock: 4 }}>
+                  <Typography variant="h6" component="h1" fontWeight="bold" sx={{ color: 'action.disabled' }}>
+                    {quiz.title}
+                  </Typography>
                   <GameSummary
                     questions={questions.map((question) => ({
                       id: question.uuid,
@@ -282,14 +284,14 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
                   </Stack>
                   <CardActions
                     sx={{
-                      marginTop: 4,
+                      marginTop: 8,
                       display: 'flex',
-                      justifyContent: 'space-between',
                       gap: 2,
                       flexWrap: 'wrap',
+                      justifyContent: 'center',
                     }}
                   >
-                    <HomeButton />
+                    <HomeButton>{'Back to the quizzes'}</HomeButton>
                   </CardActions>
                 </CardContent>
               )}

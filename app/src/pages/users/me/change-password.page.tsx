@@ -1,5 +1,3 @@
-import { useRedirectOnUnauthenticated } from '@/custom-hooks/useRedirectOnUnauthenticated';
-import { useSession } from 'next-auth/react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -14,6 +12,7 @@ import Stack from '@mui/material/Stack';
 import FormHelperText from '@mui/material/FormHelperText';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
+import { useTheme } from '@mui/material/styles';
 
 const passwordMinLength = 6;
 const passwordMaxLength = 30;
@@ -40,8 +39,7 @@ const defaultValues: ChangePaswordForm = {
 };
 
 export default function ChangePasswordPage() {
-  const { status } = useSession();
-
+  const theme = useTheme();
   const { control, handleSubmit, formState, reset } = useForm<ChangePaswordForm>({
     defaultValues,
     resolver: zodResolver(schema),
@@ -49,8 +47,6 @@ export default function ChangePasswordPage() {
   const errors = formState.errors as ZodFieldErrors<ChangePaswordForm>;
 
   const { mutateAsync: changePassword, isError, isSuccess, reset: resetChangePassword } = useChangePasswordMutation();
-
-  useRedirectOnUnauthenticated(status);
 
   async function onSubmit(data: ChangePaswordForm) {
     try {
@@ -63,7 +59,7 @@ export default function ChangePasswordPage() {
   }
 
   return (
-    <Card sx={{ marginTop: 4, padding: 2 }} elevation={2}>
+    <Card sx={{ marginTop: 4, padding: 2, maxWidth: theme.breakpoints.values.sm }} elevation={2}>
       <CardContent>
         <Typography variant="h1" sx={{ marginTop: 0 }}>
           Change your password
