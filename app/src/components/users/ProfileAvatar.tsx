@@ -1,6 +1,6 @@
 import { ClearImageInputIcon } from '@/components/ClearImageInputIcon';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SaveOutlined } from '@mui/icons-material';
+import SaveOutlined from '@mui/icons-material/SaveOutlined';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';

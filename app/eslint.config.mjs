@@ -55,8 +55,13 @@ export const config = [
               message:
                 "Please use named imports from @mui/material/* instead of importing from the root package (e.g. import Button from '@mui/material')",
             },
+            {
+              name: '@mui/icons-material',
+              message:
+                "Please use named imports from @mui/icons-material/* instead of importing from the root package (e.g. import Star from '@mui/icons-material/Star')",
+            },
           ],
-          patterns: ['@mui/material/*/*'], // Disallow deep imports (e.g., @mui/material/Button/Button)
+          patterns: ['@mui/material/*/*', '@mui/icons-material/*/*'], // Disallow deep imports (e.g., @mui/material/Button/Button)
         },
       ],
 
