@@ -1,4 +1,3 @@
-import { ClearImageInputIcon } from '@/components/ClearImageInputIcon';
 import { getBase64 } from '@/data/getBase64';
 import { useDeleteFileMutation } from '@/data/useDeleteFileMutation';
 import { useUpdateProfileImageMutation } from '@/data/useUpdateProfileImageMutation';
@@ -7,6 +6,9 @@ import { useToastStore } from '@/persistence/taost.store';
 import { raise } from '@/utilities/errorHandling';
 import { getImageName, prefixWithBackendUrl } from '@/utilities/urlUtils';
 import { zodResolver } from '@hookform/resolvers/zod';
+import DeleteOutlined from '@mui/icons-material/DeleteOutlined';
+import InfoOutlined from '@mui/icons-material/InfoOutlined';
+import EditOutlined from '@mui/icons-material/EditOutlined';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -18,6 +20,7 @@ import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import Typography from '@mui/material/Typography';
 
 export const profileImageDimensions = {
   width: 240,
@@ -100,7 +103,7 @@ export function ProfileAvatar() {
   return (
     <>
       <Dialog open={deleteImageDialogOpen} onClose={handleCloseDialog}>
-        <DialogTitle>{'Do you really want to delete your current profile image?'}</DialogTitle>
+        <DialogTitle>{'Do you want to permanently delete your current profile image?'}</DialogTitle>
         <DialogActions>
           <Button onClick={handleCloseDialog}>{'No, cancel'}</Button>
           <Button onClick={onConfirmDeleteProfileImage} color="error" autoFocus>
@@ -144,7 +147,15 @@ export function ProfileAvatar() {
                     }}
                   >
                     {previewImageUrl != null ? (
-                      <Stack alignItems="center">
+                      <Box
+                        sx={{
+                          display: 'grid',
+                          gridTemplateColumns: '1fr',
+                          gridTemplateRows: '1fr',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
                         <Image
                           src={previewImageUrl}
                           width={width}
@@ -154,11 +165,32 @@ export function ProfileAvatar() {
                             borderRadius: 2,
                             objectFit: 'cover',
                             margin: '-1rem',
+                            gridColumn: 1,
+                            gridRow: 1,
                           }}
                           unoptimized
                           priority
                         />
-                      </Stack>
+                        <Stack
+                          alignItems="center"
+                          justifyContent="center"
+                          sx={{
+                            margin: '-1rem',
+                            gridColumn: 1,
+                            gridRow: 1,
+                            height: 'calc(100% + 2rem)',
+                            opacity: 0,
+                            backgroundColor: '#0000007b',
+                            transitionDuration: '100ms',
+                            transitionProperty: 'opacity',
+                            '&:hover': {
+                              opacity: 1,
+                            },
+                          }}
+                        >
+                          <EditOutlined fontSize="large" sx={{ color: 'white' }} />
+                        </Stack>
+                      </Box>
                     ) : (
                       <Box>{'Upload profile image'}</Box>
                     )}
@@ -168,20 +200,29 @@ export function ProfileAvatar() {
             )}
             control={control}
           />
-          <Stack direction="column" gap={2} sx={{ marginTop: 2 }}>
-            <Button
-              variant="outlined"
-              color="error"
-              startIcon={<ClearImageInputIcon />}
-              onClick={() => {
-                setValue('imageFile', null);
-                setDeleteImageDialogOpen(true);
-              }}
-              disabled={previewImageUrl == null}
-            >
-              {'Delete image'}
-            </Button>
-          </Stack>
+          {previewImageUrl != null && (
+            <>
+              <Stack direction="row" gap={1} sx={{ color: 'action.active' }}>
+                <InfoOutlined fontSize="small" />
+                <Typography sx={{ fontSize: 'small' }}>{'Click the image to change it.'}</Typography>
+              </Stack>
+
+              <Stack direction="column" gap={2} sx={{ marginTop: 2 }}>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<DeleteOutlined />}
+                  onClick={() => {
+                    setValue('imageFile', null);
+                    setDeleteImageDialogOpen(true);
+                  }}
+                  disabled={previewImageUrl == null}
+                >
+                  {'Delete image'}
+                </Button>
+              </Stack>
+            </>
+          )}
         </Stack>
       </form>
     </>
