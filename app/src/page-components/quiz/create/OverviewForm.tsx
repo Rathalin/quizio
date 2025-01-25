@@ -1,12 +1,5 @@
 import QuizioTextField from '@/components/inputs/QuizioTextField';
-import {
-  Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Stack,
-} from '@mui/material';
+import { Box, Button, Card, CardActions, CardContent, Stack } from '@mui/material';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { constraints } from '@/content-type-utilities/content-type-constraints';
 import { QuizOverviewForm, quizOverviewFormSchema } from '../quiz-form-schema';
@@ -18,8 +11,8 @@ import { storageKeys } from '@/persistence/storage-keys';
 import { DevTool } from '@hookform/devtools';
 import Image from 'next/image';
 import { isBrowser } from '@/utilities/isBrowser';
-import { ClearImageInputIcon } from './ClearImageInputIcon';
 import { useOverviewImageInputDimensions } from './useImageInputDimensions';
+import { ClearImageInputIcon } from '@/components/ClearImageInputIcon';
 
 type OverviewFormProps = {
   defaultData: QuizOverviewForm;
@@ -29,18 +22,10 @@ type OverviewFormProps = {
   editMode: boolean;
 };
 
-export default function OverviewForm({
-  defaultData,
-  onSubmit,
-  backLabel,
-  nextLabel,
-  editMode,
-}: OverviewFormProps) {
-  const { width: imageWidth, height: imageHeight } =
-    useOverviewImageInputDimensions();
+export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLabel, editMode }: OverviewFormProps) {
+  const { width: imageWidth, height: imageHeight } = useOverviewImageInputDimensions();
   const methods = useForm<QuizOverviewForm>({
     defaultValues: defaultData,
-    //@ts-ignore
     resolver: zodResolver(quizOverviewFormSchema),
   });
   const {
@@ -56,9 +41,7 @@ export default function OverviewForm({
   const getStorageItem = useCallback((): QuizOverviewForm | null => {
     if (!isBrowser()) return null;
     try {
-      return JSON.parse(
-        localStorage.getItem(storageKeys.quizOverviewDraft) ?? ''
-      ) as QuizOverviewForm | null;
+      return JSON.parse(localStorage.getItem(storageKeys.quizOverviewDraft) ?? '') as QuizOverviewForm | null;
     } catch (error) {
       return null;
     }
@@ -66,10 +49,7 @@ export default function OverviewForm({
 
   const setStorageItem = useCallback((value: QuizOverviewForm) => {
     if (isBrowser()) {
-      localStorage.setItem(
-        storageKeys.quizOverviewDraft,
-        JSON.stringify(value)
-      );
+      localStorage.setItem(storageKeys.quizOverviewDraft, JSON.stringify(value));
     }
   }, []);
 
@@ -110,12 +90,6 @@ export default function OverviewForm({
     }
     return previewImage?.url ?? null;
   }, [imageFile, previewImage]);
-  const imageName = useMemo(() => {
-    if (imageFile != null) {
-      return imageFile?.name?.split('\\').pop()?.split('/').pop();
-    }
-    return previewImage?.name;
-  }, [imageFile, previewImage?.name]);
 
   function handleFormSubmit(data: QuizOverviewForm) {
     onSubmit(data);
@@ -138,8 +112,10 @@ export default function OverviewForm({
                         fullWidth
                         error={errors.title != null}
                         helperText={errors.title?.message?.toString() ?? ''}
-                        inputProps={{
-                          maxLength: constraints.quiz.title.maxLength,
+                        slotProps={{
+                          htmlInput: {
+                            maxLength: constraints.quiz.title.maxLength,
+                          },
                         }}
                         {...field}
                       />
@@ -155,8 +131,10 @@ export default function OverviewForm({
                       <QuizioTextField
                         id="description"
                         label="Description"
-                        inputProps={{
-                          maxLength: constraints.quiz.description.maxLength,
+                        slotProps={{
+                          htmlInput: {
+                            maxLength: constraints.quiz.description.maxLength,
+                          },
                         }}
                         multiline
                         fullWidth
@@ -181,10 +159,7 @@ export default function OverviewForm({
                           style={{ display: 'none' }}
                           value={undefined}
                           onChange={(e) => {
-                            setValue(
-                              'image.data.file',
-                              e.target.files != null ? e.target.files[0] : null
-                            );
+                            setValue('image.data.file', e.target.files != null ? e.target.files[0] : null);
                           }}
                         />
                         <label
@@ -197,9 +172,8 @@ export default function OverviewForm({
                             variant="outlined"
                             component="span"
                             sx={{
-                              paddingTop: 2,
-                              minWidth: imageWidth,
-                              minHeight: imageHeight,
+                              minWidth: imageWidth + 2 * 1, // Account for button border width
+                              minHeight: imageHeight + 2 * 1,
                             }}
                           >
                             {imageUrl != null ? (
@@ -212,12 +186,10 @@ export default function OverviewForm({
                                   style={{
                                     borderRadius: 2,
                                     objectFit: 'cover',
+                                    margin: '-1rem',
                                   }}
                                   unoptimized
                                 />
-                                <Box sx={{ overflowWrap: 'anywhere' }}>
-                                  {imageName}
-                                </Box>
                               </Stack>
                             ) : (
                               <Box>{'Upload Image'}</Box>

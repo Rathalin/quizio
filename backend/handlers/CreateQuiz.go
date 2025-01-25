@@ -36,12 +36,12 @@ func (dbw *DBWrapper) CreateQuiz() usecase.Interactor {
 	return usecase.NewInteractor(func(ctx context.Context, input createQuizRequest, output *createQuizResponse) error {
 		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		tx, err := dbw.DB.BeginTx(ctx, nil)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		defer tx.Rollback()
@@ -54,7 +54,7 @@ func (dbw *DBWrapper) CreateQuiz() usecase.Interactor {
 			RETURNING id
 		`, input.Title, input.Description, input.IsPublished, input.ImageUrl, userId).Scan(&quizId)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		for questionIndex, question := range input.Questions {
@@ -66,7 +66,7 @@ func (dbw *DBWrapper) CreateQuiz() usecase.Interactor {
 				RETURNING id
 			`, questionIndex, question.Title, question.Description, question.ImageUrl, question.Explanation, question.ExplanationImageUrl, quizId).Scan(&questionId)
 			if err != nil {
-				return logAndReturnError(err.Error())
+				return logAndReturnError(err)
 			}
 
 			for answerIndex, answer := range question.Answers {
@@ -75,13 +75,13 @@ func (dbw *DBWrapper) CreateQuiz() usecase.Interactor {
 					VALUES ($1, $2, $3, $4, $5, $6)
 				`, answerIndex, answer.Title, answer.Description, answer.ImageUrl, answer.IsCorrect, questionId)
 				if err != nil {
-					return logAndReturnError(err.Error())
+					return logAndReturnError(err)
 				}
 			}
 		}
 		err = tx.Commit()
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		response := createQuizResponse{}

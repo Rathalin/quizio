@@ -24,19 +24,19 @@ func (dbw *DBWrapper) Register() usecase.Interactor {
 	return usecase.NewInteractor(func(ctx context.Context, input registerRequest, output *registerResponse) error {
 		// Validate username and password
 		if len(input.Username) < 3 {
-			return logAndReturnError("username must be at least 3 characters long")
+			return logAndReturnErrorMessage("username must be at least 3 characters long")
 		}
 		if len(input.Password) < 8 {
-			return logAndReturnError("password must be at least 8 characters long")
+			return logAndReturnErrorMessage("password must be at least 8 characters long")
 		}
 		if !isValidPassword(input.Password) {
-			return logAndReturnError("password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character")
+			return logAndReturnErrorMessage("password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character")
 		}
 
 		// Hash the password
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		trimmedUsername := strings.TrimSpace(input.Username)
@@ -44,11 +44,11 @@ func (dbw *DBWrapper) Register() usecase.Interactor {
 		// Check if username is taken
 		usernameExists, err := dbw.UsernameExists(trimmedUsername)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		if usernameExists {
-			return status.Wrap(logAndReturnError("username already exists"), status.AlreadyExists)
+			return status.Wrap(logAndReturnErrorMessage("username already exists"), status.AlreadyExists)
 		}
 
 		// Insert user into the database
@@ -57,7 +57,7 @@ func (dbw *DBWrapper) Register() usecase.Interactor {
 			VALUES ($1, $2, true, false)
 		`, trimmedUsername, string(hashedPassword))
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		fmt.Printf("New user: %v - %v", trimmedUsername, input.Password)

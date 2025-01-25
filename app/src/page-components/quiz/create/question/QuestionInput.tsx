@@ -26,10 +26,10 @@ import { FormErrorIcon } from '../../FormErrorIcon';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
 import InfoIcon from '@mui/icons-material/Info';
-import { ClearImageInputIcon } from '../ClearImageInputIcon';
 import { useGameImageInputDimensions } from '../useImageInputDimensions';
 import { useMemo } from 'react';
 import Image from 'next/image';
+import { ClearImageInputIcon } from '@/components/ClearImageInputIcon';
 
 type QuestionInputProps = {
   deletable: boolean;
@@ -77,12 +77,6 @@ export default function QuestionInput({ deletable, onDelete, expanded, onExpand 
     }
     return questionPreviewImage?.url ?? null;
   }, [questionImageFile, questionPreviewImage]);
-  const questionImageName = useMemo(() => {
-    if (questionImageFile != null) {
-      return questionImageFile?.name?.split('\\').pop()?.split('/').pop();
-    }
-    return questionPreviewImage?.name;
-  }, [questionImageFile, questionPreviewImage?.name]);
 
   const explanationImageFile = watch(`${name}.explanationImage.data.file`) as File | null;
   const explanationPreviewImage = watch(`${name}.explanationImage.preview`);
@@ -92,12 +86,6 @@ export default function QuestionInput({ deletable, onDelete, expanded, onExpand 
     }
     return explanationPreviewImage?.url ?? null;
   }, [explanationImageFile, explanationPreviewImage]);
-  const explanationImageName = useMemo(() => {
-    if (explanationImageFile != null) {
-      return explanationImageFile?.name?.split('\\').pop()?.split('/').pop();
-    }
-    return explanationPreviewImage?.name;
-  }, [explanationImageFile, explanationPreviewImage?.name]);
 
   return (
     <Accordion
@@ -166,7 +154,7 @@ export default function QuestionInput({ deletable, onDelete, expanded, onExpand 
                     variant="outlined"
                     component="span"
                     sx={{
-                      paddingTop: 2,
+                      paddingBlock: 2,
                       minWidth: imageWidth,
                       minHeight: imageHeight,
                     }}
@@ -184,7 +172,6 @@ export default function QuestionInput({ deletable, onDelete, expanded, onExpand 
                           }}
                           unoptimized
                         />
-                        <Box sx={{ overflowWrap: 'anywhere' }}>{questionImageName}</Box>
                       </Stack>
                     ) : (
                       <Box>{'Upload question image'}</Box>
@@ -225,8 +212,10 @@ export default function QuestionInput({ deletable, onDelete, expanded, onExpand 
                 error={questionErrors?.title != null}
                 helperText={questionErrors?.title?.message?.toString() ?? ''}
                 required
-                inputProps={{
-                  maxLength: constraints.quiz.question.title.maxLength,
+                slotProps={{
+                  htmlInput: {
+                    maxLength: constraints.quiz.question.title.maxLength,
+                  },
                 }}
                 autoComplete="off"
                 {...field}
@@ -301,9 +290,8 @@ export default function QuestionInput({ deletable, onDelete, expanded, onExpand 
                       variant="outlined"
                       component="span"
                       sx={{
-                        paddingTop: 2,
-                        minWidth: imageWidth,
-                        minHeight: imageHeight,
+                        minWidth: imageWidth + 2 * 1, // Account for button border width
+                        minHeight: imageHeight + 2 * 1,
                       }}
                     >
                       {explanationImageUrl != null ? (
@@ -316,10 +304,10 @@ export default function QuestionInput({ deletable, onDelete, expanded, onExpand 
                             style={{
                               borderRadius: 2,
                               objectFit: 'cover',
+                              margin: '-1rem',
                             }}
                             unoptimized
                           />
-                          <Box sx={{ overflowWrap: 'anywhere' }}>{explanationImageName}</Box>
                         </Stack>
                       ) : (
                         <Box>{'Upload explanation image'}</Box>
@@ -352,17 +340,22 @@ export default function QuestionInput({ deletable, onDelete, expanded, onExpand 
                   label="Explanation"
                   fullWidth
                   multiline
-                  inputProps={{
-                    maxLength: constraints.quiz.question.explanation.maxLength,
-                  }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Tooltip title="Explain the correct answer or give some context. This input is optional." arrow>
-                          <InfoIcon />
-                        </Tooltip>
-                      </InputAdornment>
-                    ),
+                  slotProps={{
+                    htmlInput: {
+                      maxLength: constraints.quiz.question.explanation.maxLength,
+                    },
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Tooltip
+                            title="Explain the correct answer or give some context. This input is optional."
+                            arrow
+                          >
+                            <InfoIcon />
+                          </Tooltip>
+                        </InputAdornment>
+                      ),
+                    },
                   }}
                   autoComplete="off"
                   {...field}

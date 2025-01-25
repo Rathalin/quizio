@@ -35,7 +35,6 @@ export default function QuestionsForm({
   const [expanded, setExpanded] = useState<string | null>(null);
   const methods = useForm({
     defaultValues: defaultData,
-    //@ts-ignore
     resolver: zodResolver(quizQuestionsFormSchema),
   });
   const {
@@ -127,7 +126,11 @@ export default function QuestionsForm({
                     onDelete={() => remove(index)}
                     deletable={fields.length > minQuestions}
                     expanded={expanded === field.uuid}
-                    onExpand={() => setExpanded(expanded === field.uuid ? null : field.uuid)}
+                    onExpand={() =>
+                      setExpanded(
+                        expanded === field.uuid ? null : (field.uuid ?? raise('Cannot expand question without uuid')),
+                      )
+                    }
                   />
                 </QuestionIndexContext.Provider>
               ))}

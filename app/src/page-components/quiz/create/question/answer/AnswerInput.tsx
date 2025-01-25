@@ -16,12 +16,7 @@ type AnswerInputProps = {
   deletable: boolean;
 };
 
-export default function AnswerInput({
-  isCorrect,
-  onDelete,
-  minAnswers,
-  deletable,
-}: AnswerInputProps) {
+export default function AnswerInput({ isCorrect, onDelete, minAnswers, deletable }: AnswerInputProps) {
   const questionIndex = useQuestionIndex();
   const index = useAnswerIndex();
   const {
@@ -29,18 +24,12 @@ export default function AnswerInput({
     formState: { errors: formErrors },
   } = useFormContext<QuizQuestionsForm>();
 
-  const name =
-    `questions.${questionIndex}.answers.${index}` as `questions.${number}.answers.${number}`;
+  const name = `questions.${questionIndex}.answers.${index}` as `questions.${number}.answers.${number}`;
   const errors = formErrors as ZodFieldErrors<typeof formErrors>;
   const answerErrors = errors.questions?.[questionIndex]?.answers?.[index];
 
   return (
-    <Stack
-      direction="row"
-      columnGap={2}
-      alignItems="start"
-      flexWrap="wrap-reverse"
-    >
+    <Stack direction="row" columnGap={2} alignItems="start" flexWrap="wrap-reverse">
       <Controller
         name={`${name}.title`}
         render={({ field }) => (
@@ -58,7 +47,11 @@ export default function AnswerInput({
             error={answerErrors != null}
             helperText={answerErrors?.title?.message?.toString() ?? ''}
             required
-            inputProps={{ maxLength: constraints.quiz.answer.title.maxLength }}
+            slotProps={{
+              htmlInput: {
+                maxLength: constraints.quiz.answer.title.maxLength,
+              },
+            }}
             autoComplete="off"
             {...field}
           />
@@ -83,11 +76,7 @@ export default function AnswerInput({
         }}
       >
         <CorrectToggle />
-        <DeleteAnswerButton
-          minAnswers={minAnswers}
-          onDelete={onDelete}
-          disabled={!deletable}
-        />
+        <DeleteAnswerButton minAnswers={minAnswers} onDelete={onDelete} disabled={!deletable} />
       </Stack>
     </Stack>
   );

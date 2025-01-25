@@ -28,11 +28,11 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 
 		usernameExists, err := dbw.UsernameExists(trimmedUsername)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		if !usernameExists {
-			return status.Wrap(logAndReturnError("username does not exist"), status.NotFound)
+			return status.Wrap(logAndReturnErrorMessage("username does not exist"), status.NotFound)
 		}
 
 		response := signInResponse{}
@@ -58,25 +58,25 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 			&response.User.ProfileImageUrl,
 		)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		// Validate password
 		err = bcrypt.CompareHashAndPassword([]byte(row.PasswordHash), []byte(input.Password))
 		if err != nil {
-			return logAndReturnError("invalid username or password")
+			return logAndReturnErrorMessage("invalid username or password")
 		}
 
 		// Generate access token
 		accessToken, err := generateJWT(row.ID)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		// Generate refresh token
 		refreshToken, err := generateRefreshToken(row.ID)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		_, err = dbw.DB.Exec(`
@@ -84,7 +84,7 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 			VALUES ($1, $2, $3)
 		`, row.ID, refreshToken, time.Now().Add(7*24*time.Hour)) // 7 days expiry
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		response.AccessToken = accessToken

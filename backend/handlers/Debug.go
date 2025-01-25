@@ -18,7 +18,7 @@ func (dbw *DBWrapper) Debug() usecase.Interactor {
 	return usecase.NewInteractor(func(ctx context.Context, input debugRequest, output *debugResponse) error {
 		userID, err := getUserIdFromContext(ctx)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		fmt.Printf("userId: %v\n", userID)

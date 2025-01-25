@@ -74,6 +74,7 @@ func main() {
 			r.Method(http.MethodPost, "/play-protocol-entry", nethttp.NewHandler((dbWrapper.PostPlayProtocolEntry())))
 			r.Method(http.MethodGet, "/me", nethttp.NewHandler(dbWrapper.GetMyUserProfile()))
 			r.Method(http.MethodPost, "/change-password", nethttp.NewHandler(dbWrapper.ChangePassword()))
+			r.Method(http.MethodPost, "/update-profile-image", nethttp.NewHandler(dbWrapper.HandleUpdateUserProfileImage()))
 
 			r.Method(http.MethodGet, "/debug", nethttp.NewHandler(dbWrapper.Debug()))
 		})

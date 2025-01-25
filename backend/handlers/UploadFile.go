@@ -25,12 +25,12 @@ func (dbw *DBWrapper) UploadFile() usecase.Interactor {
 	return usecase.NewInteractor(func(ctx context.Context, input uploadFileRequest, output *uploadFileResponse) error {
 		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		userUuid, err := dbw.GetUserUuid(userId)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		// Define the upload directory

@@ -18,7 +18,7 @@ export default function SearchInput() {
       debounce((newValue: string) => {
         setSearchText(newValue);
       }, debounceTime),
-    [setSearchText]
+    [setSearchText],
   );
 
   useEffect(() => {
@@ -32,25 +32,27 @@ export default function SearchInput() {
       onChange={(e) => setInputValue(e.target.value)}
       size="small"
       sx={{ marginTop: '2px', width: isMobile ? '230px' : 'auto' }}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <SearchIcon />
-          </InputAdornment>
-        ),
-        endAdornment: (
-          <InputAdornment position="end">
-            <IconButton
-              size="small"
-              onClick={() => setInputValue('')}
-              sx={{
-                visibility: searchText.length === 0 ? 'hidden' : 'visible',
-              }}
-            >
-              <ClearIcon />
-            </IconButton>
-          </InputAdornment>
-        ),
+      slotProps={{
+        input: {
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon />
+            </InputAdornment>
+          ),
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                size="small"
+                onClick={() => setInputValue('')}
+                sx={{
+                  visibility: searchText.length === 0 ? 'hidden' : 'visible',
+                }}
+              >
+                <ClearIcon />
+              </IconButton>
+            </InputAdornment>
+          ),
+        },
       }}
     />
   );

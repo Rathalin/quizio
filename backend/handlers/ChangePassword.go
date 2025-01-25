@@ -23,7 +23,7 @@ func (dbw *DBWrapper) ChangePassword() usecase.Interactor {
 	return usecase.NewInteractor(func(ctx context.Context, input changePasswordRequest, output *changePasswordResponse) error {
 		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		if len(input.NewPassword) < 8 {
@@ -41,19 +41,19 @@ func (dbw *DBWrapper) ChangePassword() usecase.Interactor {
 			WHERE id = $1
 		`, userId).Scan(&currentPasswordHash)
 		if err != nil {
-			return status.Wrap(logAndReturnError("username not found"), status.NotFound)
+			return status.Wrap(logAndReturnErrorMessage("username not found"), status.NotFound)
 		}
 
 		// Verify current password
 		err = bcrypt.CompareHashAndPassword([]byte(currentPasswordHash), []byte(input.CurrentPassword))
 		if err != nil {
-			return status.Wrap(logAndReturnError("current password is incorrect"), status.FailedPrecondition)
+			return status.Wrap(logAndReturnErrorMessage("current password is incorrect"), status.FailedPrecondition)
 		}
 
 		// Hash the new password
 		hashedNewPassword, err := bcrypt.GenerateFromPassword([]byte(input.NewPassword), bcrypt.DefaultCost)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		// Update the password in the database
@@ -63,7 +63,7 @@ func (dbw *DBWrapper) ChangePassword() usecase.Interactor {
 			WHERE id = $2
 		`, string(hashedNewPassword), userId)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		fmt.Printf("Password updated for user with id %v\n", userId)

@@ -42,25 +42,25 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 	return usecase.NewInteractor(func(ctx context.Context, input updateQuizRequest, output *updateQuizResponse) error {
 		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		quizExists, err := dbw.QuizExistsForUser(input.UUID, userId)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 		if !quizExists {
-			return status.Wrap(logAndReturnError(fmt.Sprintf("quiz with uuid %v does not exist for this user", input.UUID)), status.NotFound)
+			return status.Wrap(logAndReturnErrorMessage(fmt.Sprintf("quiz with uuid %v does not exist for this user", input.UUID)), status.NotFound)
 		}
 
 		quizId, err := dbw.GetQuizId(input.UUID)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		tx, err := dbw.DB.BeginTx(ctx, nil)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 		defer tx.Rollback()
 
@@ -71,7 +71,7 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 			WHERE uuid = $5
 		`, input.Title, input.Description, input.IsPublished, input.ImageUrl, input.UUID)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		// Handle questions
@@ -82,7 +82,7 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 			WHERE quiz_id = $1
 		`, quizId)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 		defer rows.Close()
 		for rows.Next() {
@@ -90,7 +90,7 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 			err = rows.Scan(&questionUuid)
 			existingQuestionUuids = append(existingQuestionUuids, questionUuid)
 			if err != nil {
-				return logAndReturnError(err.Error())
+				return logAndReturnError(err)
 			}
 		}
 
@@ -115,7 +115,7 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 					questionInput.UUID,
 				).Scan(&questionId)
 				if err != nil {
-					return logAndReturnError(err.Error())
+					return logAndReturnError(err)
 				}
 
 				// Remove from remainingQuestionUuids
@@ -138,7 +138,7 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 					quizId,
 				).Scan(&questionId)
 				if err != nil {
-					return logAndReturnError(err.Error())
+					return logAndReturnError(err)
 				}
 			}
 
@@ -150,7 +150,7 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 					WHERE question_id = $1
 			`, questionId)
 			if err != nil {
-				return logAndReturnError(err.Error())
+				return logAndReturnError(err)
 			}
 			defer answerRows.Close()
 			for answerRows.Next() {
@@ -158,7 +158,7 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 				err = answerRows.Scan(&answerUuid)
 				existingAnswerUuids = append(existingAnswerUuids, answerUuid)
 				if err != nil {
-					return logAndReturnError(err.Error())
+					return logAndReturnError(err)
 				}
 			}
 
@@ -173,7 +173,7 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 							WHERE uuid = $5
 					`, answerIndex, answerInput.Title, answerInput.Description, answerInput.ImageUrl, answerInput.IsCorrect, answerInput.UUID)
 					if err != nil {
-						return logAndReturnError(err.Error())
+						return logAndReturnError(err)
 					}
 
 					// Remove from remainingAnswerUuids
@@ -186,7 +186,7 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 							VALUES ($1, $2, $3, $4, $5, $6)
 					`, answerIndex, answerInput.Title, answerInput.Description, answerInput.ImageUrl, answerInput.IsCorrect, questionId)
 					if err != nil {
-						return logAndReturnError(err.Error())
+						return logAndReturnError(err)
 					}
 				}
 			}
@@ -197,7 +197,7 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 						DELETE FROM answer WHERE uuid = $1
 				`, answerUuid)
 				if err != nil {
-					return logAndReturnError(err.Error())
+					return logAndReturnError(err)
 				}
 			}
 		}
@@ -208,12 +208,12 @@ func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
 					DELETE FROM question WHERE uuid = $1
 			`, questionUuid)
 			if err != nil {
-				return logAndReturnError(err.Error())
+				return logAndReturnError(err)
 			}
 		}
 
 		if err := tx.Commit(); err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		*output = updateQuizResponse{}

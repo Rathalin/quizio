@@ -25,7 +25,7 @@ func (dbw *DBWrapper) GetAlerts() usecase.Interactor {
 			ORDER BY order_index ASC
 		`)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 		defer rows.Close()
 		for rows.Next() {

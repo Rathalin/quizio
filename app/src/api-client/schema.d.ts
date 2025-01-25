@@ -125,6 +125,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/a/update-profile-image': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper Handle Update User Profile Image */
+    post: operations['backend/handlers.(*DBWrapper).HandleUpdateUserProfileImage'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/a/upload': {
     parameters: {
       query?: never;
@@ -413,6 +430,9 @@ export interface components {
       imageUrl: string | null;
       title: string;
       uuid: string | null;
+    };
+    HandlersUpdateUserProfileImageRequest: {
+      profileImageUrl: string;
     };
     HandlersUploadFileRequest: {
       /** Format: base64 */
@@ -754,6 +774,37 @@ export interface operations {
     requestBody?: {
       content: {
         'application/json': components['schemas']['HandlersSignOutRequest'];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).HandleUpdateUserProfileImage': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['HandlersUpdateUserProfileImageRequest'];
       };
     };
     responses: {

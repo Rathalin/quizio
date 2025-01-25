@@ -6,26 +6,27 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 
 type QuizioPasswordFieldProps = QuizioTextInputProps & {};
 
-export default forwardRef<HTMLDivElement, QuizioPasswordFieldProps>(
-  function QuizioPasswordField(
-    { InputProps, ...other }: QuizioPasswordFieldProps,
-    ref
-  ) {
-    const [showInput, setShowInput] = useState(false);
+export default forwardRef<HTMLDivElement, QuizioPasswordFieldProps>(function QuizioPasswordField(
+  { slotProps, ...other }: QuizioPasswordFieldProps,
+  ref,
+) {
+  const [showInput, setShowInput] = useState(false);
 
-    function handleClickShowPassword() {
-      setShowInput((show) => !show);
-    }
+  function handleClickShowPassword() {
+    setShowInput((show) => !show);
+  }
 
-    function handleMouseDownPassword(event: MouseEvent<HTMLButtonElement>) {
-      event.preventDefault();
-    }
+  function handleMouseDownPassword(event: MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+  }
 
-    return (
-      <QuizioTextField
-        type={showInput ? 'text' : 'password'}
-        InputProps={{
-          ...InputProps,
+  return (
+    <QuizioTextField
+      type={showInput ? 'text' : 'password'}
+      slotProps={{
+        ...slotProps,
+        input: {
+          ...slotProps?.input,
           endAdornment: (
             <InputAdornment position="end">
               <IconButton
@@ -38,10 +39,10 @@ export default forwardRef<HTMLDivElement, QuizioPasswordFieldProps>(
               </IconButton>
             </InputAdornment>
           ),
-        }}
-        ref={ref}
-        {...other}
-      />
-    );
-  }
-);
+        },
+      }}
+      ref={ref}
+      {...other}
+    />
+  );
+});

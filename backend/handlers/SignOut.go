@@ -19,7 +19,7 @@ func (dbw *DBWrapper) SignOut() usecase.Interactor {
 			WHERE token = $1
 		`, input.RefreshToken)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 		return nil
 	})

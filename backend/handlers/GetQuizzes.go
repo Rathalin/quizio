@@ -48,7 +48,7 @@ func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 			FROM quiz
 		`).Scan(&totalQuizCount)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 		sort := "q.created_at"
 		if input.Sort == "playCount" {
@@ -90,7 +90,7 @@ func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 			OFFSET $2
 		`, sort, strings.ToUpper(input.SortDirection)), input.PageSize, input.Page*input.PageSize)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 		defer rows.Close()
 
@@ -119,7 +119,7 @@ func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 				&q.QuestionCount,
 				&q.PlayCount,
 			); err != nil {
-				return logAndReturnError(err.Error())
+				return logAndReturnError(err)
 			}
 			quizzes = append(quizzes, q)
 		}

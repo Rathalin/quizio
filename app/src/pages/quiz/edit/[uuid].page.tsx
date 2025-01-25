@@ -127,7 +127,6 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
             quiz.imageUrl != null
               ? {
                   url: getImageUrl(quiz.imageUrl),
-                  name: '',
                 }
               : undefined,
         },
@@ -135,7 +134,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
       setQuestionsFormData({
         questions:
           quiz.questions.map((question) => ({
-            id: question.uuid,
+            uuid: question.uuid,
             title: question.title,
             questionImage: {
               data: {
@@ -145,13 +144,12 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
                 question.imageUrl != null
                   ? {
                       url: getImageUrl(question.imageUrl),
-                      name: '',
                     }
                   : undefined,
             },
             answers:
               question.answers.map((answer) => ({
-                id: answer.uuid,
+                uuid: answer.uuid,
                 title: answer.title,
                 isCorrect: answer.isCorrect,
               })) ?? [],
@@ -164,7 +162,6 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
                 question.explanationImageUrl != null
                   ? {
                       url: getImageUrl(question.explanationImageUrl),
-                      name: '',
                     }
                   : undefined,
             },

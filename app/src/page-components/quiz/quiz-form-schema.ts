@@ -6,7 +6,7 @@ function minLengthError(field: string, minLength: number) {
 }
 
 export const quizOverviewFormSchema = z.object({
-  id: z.string().optional(),
+  uuid: z.string().optional(),
   title: z
     .string()
     .trim()
@@ -15,13 +15,11 @@ export const quizOverviewFormSchema = z.object({
   description: z.string().trim().max(constraints.quiz.description.maxLength).optional(),
   image: z.object({
     data: z.object({
-      id: z.string().optional(),
       file: z.any().nullable(),
     }),
     preview: z
       .object({
         url: z.string(),
-        name: z.string(),
       })
       .optional(),
   }),

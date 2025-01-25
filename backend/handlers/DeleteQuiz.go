@@ -18,15 +18,15 @@ func (dbw *DBWrapper) DeleteQuiz() usecase.Interactor {
 	return usecase.NewInteractor(func(ctx context.Context, input deleteQuizRequest, output *deleteQuizResponse) error {
 		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		quizExists, err := dbw.QuizExistsForUser(input.UUID, userId)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 		if !quizExists {
-			return status.Wrap(logAndReturnError(fmt.Sprintf("quiz with uuid %v does not exist for this user", input.UUID)), status.NotFound)
+			return status.Wrap(logAndReturnErrorMessage(fmt.Sprintf("quiz with uuid %v does not exist for this user", input.UUID)), status.NotFound)
 		}
 
 		_, err = dbw.DB.ExecContext(ctx, `
@@ -34,7 +34,7 @@ func (dbw *DBWrapper) DeleteQuiz() usecase.Interactor {
 			WHERE uuid = $1
 		`, input.UUID)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		*output = deleteQuizResponse{}

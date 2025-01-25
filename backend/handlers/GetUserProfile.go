@@ -29,15 +29,15 @@ func (dbw *DBWrapper) GetUserProfile() usecase.Interactor {
 	return usecase.NewInteractor(func(ctx context.Context, input getUserProfileRequest, output *getUserProfileResponse) error {
 		userExists, err := dbw.UserExists(input.UUID)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 		if !userExists {
-			return status.Wrap(logAndReturnError("user does not exists"), status.NotFound)
+			return status.Wrap(logAndReturnErrorMessage("user does not exists"), status.NotFound)
 		}
 
 		userId, err := dbw.GetUserId(input.UUID)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		response := getUserProfileResponse{}
@@ -48,7 +48,7 @@ func (dbw *DBWrapper) GetUserProfile() usecase.Interactor {
 			WHERE id = $1
 		`, userId).Scan(&response.User.UUID, &response.User.CreatedAt, &response.User.Username, &response.User.ProfileImageUrl)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		err = dbw.DB.QueryRow(`
@@ -57,7 +57,7 @@ func (dbw *DBWrapper) GetUserProfile() usecase.Interactor {
 			WHERE user_account_id = $1
 		`, userId).Scan(&response.QuizStats.TotalQuizzesCreated)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		err = dbw.DB.QueryRow(`
@@ -66,7 +66,7 @@ func (dbw *DBWrapper) GetUserProfile() usecase.Interactor {
 			WHERE user_account_id = $1
 		`, userId).Scan(&response.QuizStats.TotalQuizzesPlayCount)
 		if err != nil {
-			return logAndReturnError(err.Error())
+			return logAndReturnError(err)
 		}
 
 		*output = response

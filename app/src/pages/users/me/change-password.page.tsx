@@ -1,13 +1,5 @@
 import { useRedirectOnUnauthenticated } from '@/custom-hooks/useRedirectOnUnauthenticated';
-import {
-  Alert,
-  Button,
-  Card,
-  CardContent,
-  FormHelperText,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { Alert, Button, Card, CardContent, FormHelperText, Stack, Typography } from '@mui/material';
 import { useSession } from 'next-auth/react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -22,15 +14,9 @@ const passwordMaxLength = 30;
 const passwordMinLengthError = `Password must be at least ${passwordMinLength} characters long`;
 const schema = z
   .object({
-    currentPassword: z
-      .string()
-      .min(passwordMinLength, { message: passwordMinLengthError }),
-    password: z
-      .string()
-      .min(passwordMinLength, { message: passwordMinLengthError }),
-    passwordConfirmation: z
-      .string()
-      .min(passwordMinLength, { message: passwordMinLengthError }),
+    currentPassword: z.string().min(passwordMinLength, { message: passwordMinLengthError }),
+    password: z.string().min(passwordMinLength, { message: passwordMinLengthError }),
+    passwordConfirmation: z.string().min(passwordMinLength, { message: passwordMinLengthError }),
   })
   .refine((data) => data.password === data.passwordConfirmation, {
     message: 'Passwords do not match',
@@ -50,19 +36,13 @@ const defaultValues: ChangePaswordForm = {
 export default function ChangePasswordPage() {
   const { status } = useSession();
 
-  const { control, handleSubmit, formState, reset } =
-    useForm<ChangePaswordForm>({
-      defaultValues,
-      resolver: zodResolver(schema),
-    });
+  const { control, handleSubmit, formState, reset } = useForm<ChangePaswordForm>({
+    defaultValues,
+    resolver: zodResolver(schema),
+  });
   const errors = formState.errors as ZodFieldErrors<ChangePaswordForm>;
 
-  const {
-    mutateAsync: changePassword,
-    isError,
-    isSuccess,
-    reset: resetChangePassword,
-  } = useChangePasswordMutation();
+  const { mutateAsync: changePassword, isError, isSuccess, reset: resetChangePassword } = useChangePasswordMutation();
 
   useRedirectOnUnauthenticated(status);
 
@@ -98,7 +78,11 @@ export default function ChangePasswordPage() {
                   fullWidth
                   error={errors.currentPassword != null}
                   helperText={errors.currentPassword?.message}
-                  inputProps={{ maxLength: passwordMaxLength }}
+                  slotProps={{
+                    htmlInput: {
+                      maxLength: passwordMaxLength,
+                    },
+                  }}
                   {...field}
                 />
               )}
@@ -114,7 +98,11 @@ export default function ChangePasswordPage() {
                   fullWidth
                   error={errors.password != null}
                   helperText={errors.password?.message}
-                  inputProps={{ maxLength: passwordMaxLength }}
+                  slotProps={{
+                    htmlInput: {
+                      maxLength: passwordMaxLength,
+                    },
+                  }}
                   {...field}
                 />
               )}
@@ -130,7 +118,11 @@ export default function ChangePasswordPage() {
                   fullWidth
                   error={errors.passwordConfirmation != null}
                   helperText={errors.passwordConfirmation?.message}
-                  inputProps={{ maxLength: passwordMaxLength }}
+                  slotProps={{
+                    htmlInput: {
+                      maxLength: passwordMaxLength,
+                    },
+                  }}
                   {...field}
                 />
               )}
@@ -139,12 +131,8 @@ export default function ChangePasswordPage() {
             />
           </Stack>
           <Stack>
-            <FormHelperText error>
-              {errors.global?.passwordMatch?.message}
-            </FormHelperText>
-            <FormHelperText error>
-              {errors.global?.passwordDifferent?.message}
-            </FormHelperText>
+            <FormHelperText error>{errors.global?.passwordMatch?.message}</FormHelperText>
+            <FormHelperText error>{errors.global?.passwordDifferent?.message}</FormHelperText>
           </Stack>
           {isError && (
             <Alert severity="error" sx={{ marginBottom: 2 }}>
