@@ -1,10 +1,9 @@
 import { throwOnError } from '@/api-client';
 import GenericLoadingErrorMessage from '@/components/GenericLoadingErrorMessage';
 import HomeButton from '@/components/buttons/HomeButton';
-import UserProfile from '@/components/users/UserProfile';
+import PublicUserProfile from '@/components/users/PublicUserProfile';
 import UserProfilePlaceholder from '@/components/users/UserProfilePlaceholder';
 import { fetchUserProfile, useUserProfileQuery } from '@/data/useUserProfileQuery';
-import { getImageUrl } from '@/utilities/getImageUrl';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -47,12 +46,12 @@ export default function UserIdPage({ uuid }: InferGetServerSidePropsType<typeof 
         <CardContent sx={{ padding: 4 }}>
           {isPending && <UserProfilePlaceholder />}
           {isSuccess && (
-            <UserProfile
+            <PublicUserProfile
               username={data.user.username}
               createdAt={new Date(data.user.createdAt)}
               quizCount={data.quizStats.totalQuizzesCreated}
               quizViewsTotal={data.quizStats.totalQuizzesPlayCount}
-              imageUrl={data.user.profileImageUrl != null ? getImageUrl(data.user.profileImageUrl) : null}
+              imageUrl={data.user.profileImageUrl}
             />
           )}
           {isError && <GenericLoadingErrorMessage />}

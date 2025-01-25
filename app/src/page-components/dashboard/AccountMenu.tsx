@@ -1,4 +1,5 @@
 import SignInButton from '@/components/buttons/SignInButton';
+import { raise } from '@/utilities/errorHandling';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
@@ -40,21 +41,26 @@ export default function AccountMenu() {
     return <SignInButton />;
   }
 
-  const initial = session.user?.username?.at(0)?.toUpperCase() ?? '';
+  const initial =
+    session.user.username.at(0)?.toUpperCase() ??
+    raise('Cannot display initials in account menu because session.user.username is missing');
 
   return (
     <>
       <IconButton onClick={handleClick}>
-        <Avatar
-          title={'123'} //session.username
-          sx={{
-            backgroundColor: theme.palette.primary.main,
-            color: theme.palette.primary.contrastText,
-            fontWeight: '600',
-          }}
-        >
-          {initial}
-        </Avatar>
+        {session.user.profileImageUrl != null ? (
+          <Avatar alt={`Profile image of ${session.user.username}`} src={session.user.profileImageUrl} />
+        ) : (
+          <Avatar
+            sx={{
+              backgroundColor: theme.palette.primary.main,
+              color: theme.palette.primary.contrastText,
+              fontWeight: '600',
+            }}
+          >
+            {initial}
+          </Avatar>
+        )}
       </IconButton>
       <Menu
         id="account-menu"
@@ -86,6 +92,7 @@ export default function AccountMenu() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
+        {JSON.stringify(session.user.profileImageUrl)}
         <Link href="/quiz/create" className="no-underline">
           <MenuItem>
             <ListItemIcon>

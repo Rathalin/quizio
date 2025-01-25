@@ -21,7 +21,7 @@ import { useColorMode } from '@/page-components/theme.context';
 import Link from 'next/link';
 import { usePageTransition } from '@/persistence/page-transition.store';
 import LoadingCircle from './LoadingCircle';
-import { getImageUrl } from '@/utilities/getImageUrl';
+import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import { useToastStore } from '@/persistence/taost.store';
 
 type QuizOverviewCardProps = {
@@ -80,7 +80,7 @@ export default function QuizOverviewCard({
       >
         {imageUrl != null ? (
           <Image
-            src={getImageUrl(imageUrl)}
+            src={prefixWithBackendUrl(imageUrl)}
             alt="QuizImage"
             width={300}
             height={200}

@@ -3,7 +3,6 @@ import HomeButton from '@/components/buttons/HomeButton';
 import UserProfile from '@/components/users/UserProfile';
 import { useMyUserProfileQuery } from '@/data/useMyUserProfileQuery';
 import MyProfilePlaceholder from '@/page-components/user/me/MyProfilePlaceholder';
-import { getImageUrl } from '@/utilities/getImageUrl';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -26,11 +25,9 @@ export default function MePage() {
             <>
               <Box sx={{ marginBottom: 4 }}>
                 <UserProfile
-                  username={data.user.username}
                   createdAt={new Date(data.user.createdAt)}
                   quizCount={data.quizStats.totalQuizzesCreated}
                   quizViewsTotal={data.quizStats.totalQuizzesPlayCount}
-                  imageUrl={data.user.profileImageUrl != null ? getImageUrl(data.user.profileImageUrl) : null}
                 />
               </Box>
             </>

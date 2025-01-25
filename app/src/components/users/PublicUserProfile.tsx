@@ -1,29 +1,35 @@
 import { useMemo } from 'react';
-import { ProfileAvatar } from './ProfileAvatar';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import { useSession } from 'next-auth/react';
+import { PublicProfileAvatar } from './PublicProfileAvatar';
 
 type UserProfileProps = {
+  username: string;
   createdAt: Date;
   quizCount: number;
   quizViewsTotal: number;
+  imageUrl: string | null;
 };
 
-export default function UserProfile({ createdAt, quizCount, quizViewsTotal }: UserProfileProps) {
-  const { data: session } = useSession();
+export default function PublicUserProfile({
+  username,
+  createdAt,
+  quizCount,
+  quizViewsTotal,
+  imageUrl,
+}: UserProfileProps) {
   const dateFormat = useMemo(() => new Intl.DateTimeFormat('en-GB', { dateStyle: 'short' }), []);
 
   return (
     <>
       <Box sx={{ marginBottom: 4 }}>
-        <ProfileAvatar />
+        <PublicProfileAvatar imageUrl={imageUrl} username={username} />
       </Box>
       <Stack spacing={1} alignItems="start">
         <Typography variant="h1" sx={{ marginTop: 0 }}>
-          {session?.user.username}
+          {username}
         </Typography>
         <Typography>{`Joined on ${dateFormat.format(new Date(createdAt))}`}</Typography>
         <Divider />

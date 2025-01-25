@@ -23,7 +23,7 @@ func (dbw *DBWrapper) HandleUpdateUserProfileImage() usecase.Interactor {
 		}
 
 		if input.ProfileImageUrl != nil {
-			log.Printf("%v\n", *input.ProfileImageUrl)
+			log.Printf(".%v\n", *input.ProfileImageUrl)
 			profileImageExists, err := fileExists(*input.ProfileImageUrl)
 			if err != nil {
 				return logAndReturnError(err)

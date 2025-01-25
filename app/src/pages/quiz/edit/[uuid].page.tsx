@@ -20,7 +20,7 @@ import { useUpdateQuizMutation } from '@/data/useUpdateQuizMutation';
 import { useToastStore } from '@/persistence/taost.store';
 import { useDeleteQuizMutation } from '@/data/useDeleteQuizMutation';
 import LoadingCircle from '@/components/LoadingCircle';
-import { getImageName, getImageUrl } from '@/utilities/getImageUrl';
+import { getImageName, prefixWithBackendUrl } from '@/utilities/urlUtils';
 import { useUploadFileMutation } from '@/data/useUploadFileMutation';
 import { useDeleteFileMutation } from '@/data/useDeleteFileMutation';
 import { raise } from '@/utilities/errorHandling';
@@ -135,7 +135,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
           preview:
             quiz.imageUrl != null
               ? {
-                  url: getImageUrl(quiz.imageUrl),
+                  url: prefixWithBackendUrl(quiz.imageUrl),
                 }
               : undefined,
         },
@@ -152,7 +152,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
               preview:
                 question.imageUrl != null
                   ? {
-                      url: getImageUrl(question.imageUrl),
+                      url: prefixWithBackendUrl(question.imageUrl),
                     }
                   : undefined,
             },
@@ -170,7 +170,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
               preview:
                 question.explanationImageUrl != null
                   ? {
-                      url: getImageUrl(question.explanationImageUrl),
+                      url: prefixWithBackendUrl(question.explanationImageUrl),
                     }
                   : undefined,
             },

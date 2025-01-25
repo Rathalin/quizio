@@ -1,6 +1,6 @@
 import { useAlertsQuery } from '@/data/useAlertsQuery';
 import { useDismissedAlertIds } from '@/persistence/dismissed-alert-ids.store';
-import { getImageUrl } from '@/utilities/getImageUrl';
+import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
 import Grid from '@mui/material/Grid';
@@ -58,7 +58,7 @@ export default function AlertsViewer() {
                 <Stack justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
                   {alert.imageUrl != null && (
                     <Image
-                      src={getImageUrl(alert.imageUrl)}
+                      src={prefixWithBackendUrl(alert.imageUrl)}
                       alt="alert image"
                       width={imageSizes[alert.imageSize ?? 'medium'].width}
                       height={imageSizes[alert.imageSize ?? 'medium'].height}

@@ -3,7 +3,7 @@ import { AnsweredState } from '@/pages/play/[uuid].page';
 import IndexAvatar from './IndexAvatar';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
-import { getImageUrl } from '@/utilities/getImageUrl';
+import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import { GameImage } from './GameImage';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -41,7 +41,7 @@ export default function PickAnAnswer({
       <Box sx={{ paddingTop: 6, paddingInline: 6 }}>
         {imageUrl != null && (
           <Stack sx={{ paddingBottom: 4 }}>
-            <GameImage src={getImageUrl(imageUrl)} alt="Question image" />
+            <GameImage src={prefixWithBackendUrl(imageUrl)} alt="Question image" />
           </Stack>
         )}
         <Grid container spacing={4} wrap="wrap-reverse" sx={{ paddingBottom: 2 }}>

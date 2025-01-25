@@ -16,7 +16,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePlayProtocolEntryMutation } from '../../data/usePlayProtocolEntryMutation';
 import { throwOnError } from '@/api-client';
-import { getImageUrl } from '@/utilities/getImageUrl';
+import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import { useSession } from 'next-auth/react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -197,7 +197,7 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
           <Head>
             <meta property="og:title" content="Play Quizio" />
             <meta property="og:description" content={quiz?.title ?? ''} />
-            <meta property="og:image" content={quiz?.imageUrl ? getImageUrl(quiz.imageUrl) : undefined} />
+            <meta property="og:image" content={quiz?.imageUrl ? prefixWithBackendUrl(quiz.imageUrl) : undefined} />
           </Head>
           <div ref={topAnchor} />
           {questions.length === 0 ? (

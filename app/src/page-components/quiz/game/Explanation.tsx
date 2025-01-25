@@ -1,4 +1,4 @@
-import { getImageUrl } from '@/utilities/getImageUrl';
+import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import { GameImage } from './GameImage';
 import { useTheme } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
@@ -28,7 +28,7 @@ export default function Explanation({ correct, text, imageUrl }: ExplanationProp
     <>
       {imageUrl != null && (
         <Stack sx={{ marginBottom: 4 }}>
-          <GameImage src={getImageUrl(imageUrl)} alt="Explanation image" />
+          <GameImage src={prefixWithBackendUrl(imageUrl)} alt="Explanation image" />
         </Stack>
       )}
       <Typography variant="h3">

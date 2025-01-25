@@ -4,15 +4,18 @@ import { useDeleteFileMutation } from '@/data/useDeleteFileMutation';
 import { useUpdateProfileImageMutation } from '@/data/useUpdateProfileImageMutation';
 import { useUploadFileMutation } from '@/data/useUploadFileMutation';
 import { useToastStore } from '@/persistence/taost.store';
-import { getImageName } from '@/utilities/getImageUrl';
+import { raise } from '@/utilities/errorHandling';
+import { getImageName, prefixWithBackendUrl } from '@/utilities/urlUtils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import SaveOutlined from '@mui/icons-material/SaveOutlined';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogTitle from '@mui/material/DialogTitle';
 import Stack from '@mui/material/Stack';
-import { useQueryClient } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -29,19 +32,16 @@ const defaultFormData: ProfileImageForm = {
   imageFile: null,
 };
 
-type AvatarImageProps = {
-  imageUrl: string | null;
-  username: string;
-};
-
-export function ProfileAvatar({ imageUrl, username }: AvatarImageProps) {
-  const queryClient = useQueryClient();
+export function ProfileAvatar() {
+  const { data: session, update: updateSession } = useSession();
   const { showToast } = useToastStore();
   const { width, height } = profileImageDimensions;
   const { control, handleSubmit, setValue, watch } = useForm({
     defaultValues: defaultFormData,
     resolver: zodResolver(profileImageFormSchema),
   });
+  const [deleteImageDialogOpen, setDeleteImageDialogOpen] = useState(false);
+  const imageUrl = session?.user.profileImageUrl ?? null;
 
   const { mutateAsync: uploadFile } = useUploadFileMutation();
   const { mutateAsync: deleteFile } = useDeleteFileMutation();
@@ -51,15 +51,22 @@ export function ProfileAvatar({ imageUrl, username }: AvatarImageProps) {
     if (formImageFile != null) {
       return URL.createObjectURL(formImageFile);
     }
-    return imageUrl;
+    if (imageUrl != null) {
+      return prefixWithBackendUrl(imageUrl);
+    }
+    return null;
   }, [formImageFile, imageUrl]);
 
   async function handleFormSubmit({ imageFile }: ProfileImageForm) {
+    if (session == null) {
+      raise('Cannot update user profile when session is null!');
+    }
     try {
       let newImageUrl = imageUrl;
       // Delete image
-      if (newImageUrl != null && imageFile != null) {
+      if (newImageUrl != null) {
         await deleteFile({ filename: getImageName(newImageUrl) });
+        newImageUrl = null;
       }
       // Upload image
       if (imageFile != null) {
@@ -71,16 +78,36 @@ export function ProfileAvatar({ imageUrl, username }: AvatarImageProps) {
       }
 
       await updateProfileImage({ profileImageUrl: newImageUrl });
-
+      await updateSession({
+        ...session.user,
+        profileImageUrl: newImageUrl,
+      });
       showToast('Profile image updated.', 'success');
-      queryClient.invalidateQueries({ queryKey: ['getUserProfile'] });
     } catch (error) {
       showToast('Could not update profile image!', 'error');
     }
   }
 
+  function handleCloseDialog() {
+    setDeleteImageDialogOpen(false);
+  }
+
+  function onConfirmDeleteProfileImage() {
+    handleSubmit(handleFormSubmit)();
+    setDeleteImageDialogOpen(false);
+  }
+
   return (
     <>
+      <Dialog open={deleteImageDialogOpen} onClose={handleCloseDialog}>
+        <DialogTitle>{'Do you really want to delete your current profile image?'}</DialogTitle>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>{'No, cancel'}</Button>
+          <Button onClick={onConfirmDeleteProfileImage} color="error" autoFocus>
+            {'Yes, delete'}
+          </Button>
+        </DialogActions>
+      </Dialog>
       <form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
         <Stack display="inline-flex" alignItems="center" gap={1} sx={{ marginBottom: 4 }}>
           <Controller
@@ -97,6 +124,9 @@ export function ProfileAvatar({ imageUrl, username }: AvatarImageProps) {
                   onChange={(e) => {
                     const newFile: File | null = e.target.files != null ? (e.target.files[0] ?? null) : null;
                     setValue('imageFile', newFile);
+                    if (newFile != null) {
+                      handleSubmit(handleFormSubmit)();
+                    }
                   }}
                 />
                 <label
@@ -119,13 +149,14 @@ export function ProfileAvatar({ imageUrl, username }: AvatarImageProps) {
                           src={previewImageUrl}
                           width={width}
                           height={height}
-                          alt={`imageFile of ${username}`}
+                          alt={`imageFile of ${session?.user.username}`}
                           style={{
                             borderRadius: 2,
                             objectFit: 'cover',
                             margin: '-1rem',
                           }}
                           unoptimized
+                          priority
                         />
                       </Stack>
                     ) : (
@@ -137,20 +168,18 @@ export function ProfileAvatar({ imageUrl, username }: AvatarImageProps) {
             )}
             control={control}
           />
-          <Stack direction="column" gap={2}>
+          <Stack direction="column" gap={2} sx={{ marginTop: 2 }}>
             <Button
               variant="outlined"
               color="error"
               startIcon={<ClearImageInputIcon />}
               onClick={() => {
                 setValue('imageFile', null);
+                setDeleteImageDialogOpen(true);
               }}
               disabled={previewImageUrl == null}
             >
-              {'Clear selection'}
-            </Button>
-            <Button variant="outlined" startIcon={<SaveOutlined />} type="submit">
-              {'Update profile image'}
+              {'Delete image'}
             </Button>
           </Stack>
         </Stack>
