@@ -13,15 +13,6 @@ WORKDIR /app
 # Copy the built binary
 COPY --from=builder /app/main .
 
-# Build argument for the environment
-ARG GO_ENV=local
-
-# Set the GO_ENV environment variable
-ENV GO_ENV=$GO_ENV
-
-# Copy the appropriate .env.<environment> file based on GO_ENV
-COPY --from=builder /app/.env.${GO_ENV} .env.${GO_ENV}
-
 # Ensure the binary is executable
 RUN chmod +x ./main
 
