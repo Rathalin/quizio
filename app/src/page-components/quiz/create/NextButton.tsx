@@ -1,5 +1,6 @@
-import { Box, Button, ButtonProps } from '@mui/material';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import Box from '@mui/material/Box';
+import Button, { ButtonProps } from '@mui/material/Button';
 
 type NextButtonProps = ButtonProps & {};
 

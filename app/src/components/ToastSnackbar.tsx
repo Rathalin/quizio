@@ -2,7 +2,8 @@ import { SyntheticEvent, useEffect, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { SnackbarMessage, useToastStore } from '@/persistence/taost.store';
-import { Alert, Snackbar, SnackbarCloseReason } from '@mui/material';
+import Alert from '@mui/material/Alert';
+import Snackbar, { type SnackbarCloseReason } from '@mui/material/Snackbar';
 
 export default function ToastSnackbar() {
   const { snackPack, removeToast } = useToastStore();

@@ -1,17 +1,3 @@
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  Button,
-  Divider,
-  FormHelperText,
-  InputAdornment,
-  Stack,
-  Tooltip,
-  Typography,
-  useTheme,
-} from '@mui/material';
 import AnswerInput from './answer/AnswerInput';
 import DeleteQuestionButton from './DeleteQuestionButton';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
@@ -30,6 +16,18 @@ import { useGameImageInputDimensions } from '../useImageInputDimensions';
 import { useMemo } from 'react';
 import Image from 'next/image';
 import { ClearImageInputIcon } from '@/components/ClearImageInputIcon';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Box from '@mui/material/Box';
+import FormHelperText from '@mui/material/FormHelperText';
+import Button from '@mui/material/Button';
+import InputAdornment from '@mui/material/InputAdornment';
+import Divider from '@mui/material/Divider';
+import { useTheme } from '@mui/material/styles';
 
 type QuestionInputProps = {
   deletable: boolean;

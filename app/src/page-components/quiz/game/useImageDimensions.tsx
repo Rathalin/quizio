@@ -1,5 +1,6 @@
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { useMemo } from 'react';
-import { useMediaQuery, useTheme } from '@mui/material';
 
 const image = {
   width: 600,
@@ -17,13 +18,7 @@ export function useImageDimensions() {
   const isSm = useMediaQuery(`(max-width: ${theme.breakpoints.values.sm}px)`);
 
   return useMemo(() => {
-    const multiplier = isSm
-      ? smMultiplier
-      : isMd
-      ? mdMultiplier
-      : isLg
-      ? lgMultiplier
-      : 1.0;
+    const multiplier = isSm ? smMultiplier : isMd ? mdMultiplier : isLg ? lgMultiplier : 1.0;
     return {
       width: image.width * multiplier,
       height: image.height * multiplier,

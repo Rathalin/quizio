@@ -1,4 +1,6 @@
-import { FormHelperText, Stack, TextField, TextFieldProps } from '@mui/material';
+import FormHelperText from '@mui/material/FormHelperText';
+import Stack from '@mui/material/Stack';
+import TextField, { TextFieldProps } from '@mui/material/TextField';
 import { forwardRef, useMemo } from 'react';
 
 export type QuizioTextInputProps = TextFieldProps & {};

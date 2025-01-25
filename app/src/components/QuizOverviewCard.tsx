@@ -1,16 +1,13 @@
-import {
-  Box,
-  Card,
-  CardContent,
-  Chip,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography,
-  darken,
-  lighten,
-  useTheme,
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import { darken, lighten, useTheme } from '@mui/material/styles';
+
 import Image from 'next/image';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import EditIcon from '@mui/icons-material/Edit';
@@ -59,15 +56,11 @@ export default function QuizOverviewCard({
   const toastStore = useToastStore();
   const { transitionHref } = usePageTransition();
 
-  const dateFormat = useMemo(
-    () => new Intl.DateTimeFormat('en-GB', { dateStyle: 'short' }),
-    []
-  );
+  const dateFormat = useMemo(() => new Intl.DateTimeFormat('en-GB', { dateStyle: 'short' }), []);
 
   const copiedText = useMemo(() => {
     const titleLimit = 30;
-    const shortTitle =
-      title.length > titleLimit ? `${title.slice(0, titleLimit)}...` : title;
+    const shortTitle = title.length > titleLimit ? `${title.slice(0, titleLimit)}...` : title;
 
     return `Link to "${shortTitle}" copied.`;
   }, [title]);
@@ -147,10 +140,7 @@ export default function QuizOverviewCard({
                   {isMyQuiz && (
                     <Tooltip title="Edit your quiz" arrow>
                       <Box>
-                        <LinkIconButton
-                          hrefObserver={`/quiz/edit/${uuid}`}
-                          navigateOnClick
-                        >
+                        <LinkIconButton hrefObserver={`/quiz/edit/${uuid}`} navigateOnClick>
                           <EditIcon color="secondary" />
                         </LinkIconButton>
                       </Box>
@@ -176,9 +166,7 @@ export default function QuizOverviewCard({
                     label={
                       <Stack direction="row" alignItems="center" gap={1}>
                         <Box component="span">{username}</Box>
-                        {transitionHref === `/users/${userUuid}` && (
-                          <LoadingCircle />
-                        )}
+                        {transitionHref === `/users/${userUuid}` && <LoadingCircle />}
                       </Stack>
                     }
                     variant="filled"
@@ -190,17 +178,8 @@ export default function QuizOverviewCard({
                     }}
                   />
                 </Link>
-                <Chip
-                  label={`${questionCount} question${
-                    isQuestionCountSingular ? '' : 's'
-                  }`}
-                  variant="outlined"
-                />
-                <Chip
-                  label={playCount}
-                  icon={<BarChartIcon fontSize="small" />}
-                  variant="outlined"
-                />
+                <Chip label={`${questionCount} question${isQuestionCountSingular ? '' : 's'}`} variant="outlined" />
+                <Chip label={playCount} icon={<BarChartIcon fontSize="small" />} variant="outlined" />
                 <Chip label={dateFormat.format(createdAt)} variant="outlined" />
               </Box>
             </Box>

@@ -9,19 +9,6 @@ import { playQuiz, usePlayQuizQuery } from '@/data/usePlayQuizQuery';
 import { isBrowser } from '@/utilities/isBrowser';
 import { timeout } from '@/utilities/timeout';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import {
-  Box,
-  Card,
-  CardContent,
-  Alert,
-  useTheme,
-  Button,
-  Snackbar,
-  CardActions,
-  Divider,
-  Typography,
-  Stack,
-} from '@mui/material';
 import { QueryClient, dehydrate, useQueryClient } from '@tanstack/react-query';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import Head from 'next/head';
@@ -31,6 +18,17 @@ import { usePlayProtocolEntryMutation } from '../../data/usePlayProtocolEntryMut
 import { throwOnError } from '@/api-client';
 import { getImageUrl } from '@/utilities/getImageUrl';
 import { useSession } from 'next-auth/react';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import { useTheme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import CardActions from '@mui/material/CardActions';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 export type AnsweredState = {
   correctAnswerId: string;
@@ -61,9 +59,7 @@ export const getServerSideProps: GetServerSideProps<{
   };
 };
 
-export default function PlayIdPage({
-  uuid,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const theme = useTheme();
   const router = useRouter();
   const { data: session } = useSession();
@@ -77,16 +73,12 @@ export default function PlayIdPage({
   const [playCountIncreased, setPlayCountIncreased] = useState(false);
   const questions = useMemo(() => quiz?.questions ?? [], [quiz]);
   const [questionIndex, setQuestionIndex] = useState(0);
-  const [answeredProgress, setAnswerwedProgress] = useState<AnsweredState[]>(
-    []
-  );
+  const [answeredProgress, setAnswerwedProgress] = useState<AnsweredState[]>([]);
   const [showCopiedAlert, setShowCopiedAlert] = useState(false);
 
   const question = questions[questionIndex];
   const gameDone = quizQuery.isSuccess && question == null;
-  const answerState = answeredProgress[questionIndex] as
-    | AnsweredState
-    | undefined;
+  const answerState = answeredProgress[questionIndex] as AnsweredState | undefined;
   const questionAnswered = answerState?.selectedAnswerId != null;
   const questionAnsweredCorrectly = questionAnswered
     ? answerState.selectedAnswerId === answerState.correctAnswerId
@@ -100,20 +92,15 @@ export default function PlayIdPage({
       return theme.palette.success.main;
     }
     return theme.palette.error.main;
-  }, [
-    questionAnsweredCorrectly,
-    theme.palette.error.main,
-    theme.palette.success.main,
-  ]);
+  }, [questionAnsweredCorrectly, theme.palette.error.main, theme.palette.success.main]);
 
   useEffect(() => {
     setQuestionIndex(0);
     setAnswerwedProgress(
       questions.map((question) => ({
-        correctAnswerId: question.answers.find((answer) => answer.isCorrect)!
-          .uuid,
+        correctAnswerId: question.answers.find((answer) => answer.isCorrect)!.uuid,
         selectedAnswerId: null,
-      }))
+      })),
     );
   }, [questions]);
 
@@ -135,7 +122,7 @@ export default function PlayIdPage({
     if (gameDone && !playCountIncreased) {
       increasePlayCountAsync();
     }
-  }, [gameDone, playCountIncreased, addPlayProtocolEntry, uuid, queryClient]);
+  }, [gameDone, playCountIncreased, addPlayProtocolEntry, uuid, queryClient, session?.user.uuid]);
 
   async function setAnswerOfCurrentQuestion(selectedAnswerId: string) {
     setAnswerwedProgress((progress) =>
@@ -145,8 +132,8 @@ export default function PlayIdPage({
               selectedAnswerId: selectedAnswerId,
               correctAnswerId: answeredState.correctAnswerId,
             }
-          : answeredState
-      )
+          : answeredState,
+      ),
     );
     await timeout(0);
     resultAnchor?.current?.scrollIntoView({
@@ -168,19 +155,13 @@ export default function PlayIdPage({
 
   const resultScore = useMemo(() => {
     if (!isBrowser()) return null;
-    const answeredStates = answeredProgress.map(
-      (answered) => answered.correctAnswerId === answered.selectedAnswerId
-    );
+    const answeredStates = answeredProgress.map((answered) => answered.correctAnswerId === answered.selectedAnswerId);
     const lines: string[] = [];
     lines.push(`QUIZIO (${quiz?.title ?? ''})`);
     lines.push(
-      `Score: ${answeredStates.filter((correct) => correct).length}/${
-        answeredProgress.length
-      } answers correct`
+      `Score: ${answeredStates.filter((correct) => correct).length}/${answeredProgress.length} answers correct`,
     );
-    lines.push(
-      answeredStates.map((correct) => (correct ? '🟩' : '🟥')).join('')
-    );
+    lines.push(answeredStates.map((correct) => (correct ? '🟩' : '🟥')).join(''));
     lines.push(`${window.location.origin}${router.asPath}`);
     return lines.join('\n');
   }, [answeredProgress, quiz?.title, router.asPath]);
@@ -216,10 +197,7 @@ export default function PlayIdPage({
           <Head>
             <meta property="og:title" content="Play Quizio" />
             <meta property="og:description" content={quiz?.title ?? ''} />
-            <meta
-              property="og:image"
-              content={quiz?.imageUrl ? getImageUrl(quiz.imageUrl) : undefined}
-            />
+            <meta property="og:image" content={quiz?.imageUrl ? getImageUrl(quiz.imageUrl) : undefined} />
           </Head>
           <div ref={topAnchor} />
           {questions.length === 0 ? (
@@ -296,21 +274,9 @@ export default function PlayIdPage({
                     answeredProgress={answeredProgress}
                   />
                   <Divider />
-                  <Stack
-                    alignItems="center"
-                    gap={2}
-                    sx={{ marginBottom: 2, marginTop: 2 }}
-                  >
-                    <Typography
-                      sx={{ whiteSpace: 'pre-line', textAlign: 'center' }}
-                    >
-                      {resultScore}
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      endIcon={<ContentCopyIcon />}
-                      onClick={writeResultToClipboard}
-                    >
+                  <Stack alignItems="center" gap={2} sx={{ marginBottom: 2, marginTop: 2 }}>
+                    <Typography sx={{ whiteSpace: 'pre-line', textAlign: 'center' }}>{resultScore}</Typography>
+                    <Button variant="contained" endIcon={<ContentCopyIcon />} onClick={writeResultToClipboard}>
                       Copy
                     </Button>
                   </Stack>

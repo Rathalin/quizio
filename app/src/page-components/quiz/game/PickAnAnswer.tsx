@@ -1,14 +1,3 @@
-import {
-  Typography,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  ListItemIcon,
-  Stack,
-  Grid,
-  Box,
-} from '@mui/material';
 import AnsweredProgress from './AnsweredProgress';
 import { AnsweredState } from '@/pages/play/[uuid].page';
 import IndexAvatar from './IndexAvatar';
@@ -16,6 +5,15 @@ import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import { getImageUrl } from '@/utilities/getImageUrl';
 import { GameImage } from './GameImage';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 
 type PickAnAnswerProps = {
   index: number;
@@ -46,12 +44,7 @@ export default function PickAnAnswer({
             <GameImage src={getImageUrl(imageUrl)} alt="Question image" />
           </Stack>
         )}
-        <Grid
-          container
-          spacing={4}
-          wrap="wrap-reverse"
-          sx={{ paddingBottom: 2 }}
-        >
+        <Grid container spacing={4} wrap="wrap-reverse" sx={{ paddingBottom: 2 }}>
           <Grid item xs={12} md={8}>
             <Stack sx={{ height: '100%' }}>
               <Stack direction="row" alignItems="center" gap={2}>
@@ -89,12 +82,7 @@ export default function PickAnAnswer({
               disabled={answered}
             >
               <ListItemIcon>
-                {answered &&
-                  (answer.correct ? (
-                    <CheckIcon color="success" />
-                  ) : (
-                    <ClearIcon color="error" />
-                  ))}
+                {answered && (answer.correct ? <CheckIcon color="success" /> : <ClearIcon color="error" />)}
               </ListItemIcon>
               <ListItemText>{answer.title}</ListItemText>
             </ListItemButton>

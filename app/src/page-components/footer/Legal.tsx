@@ -1,4 +1,4 @@
-import { Stack } from '@mui/material';
+import Stack from '@mui/material/Stack';
 import Link from 'next/link';
 
 export default function Legal() {

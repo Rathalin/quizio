@@ -1,6 +1,5 @@
 import QuizOverviewCard from '@/components/QuizOverviewCard';
 import QuizOverviewPlaceholder from '@/components/QuizOverviewPlaceholder';
-import { Box, Stack, Typography } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { SortProvider, defaultSort } from './sort.context';
 import FilterBar from './filter-bar/FilterBar';
@@ -14,9 +13,12 @@ import ScrollObserver from '@/components/ScrollObserver';
 import { useQuizzesInfiniteQuery } from '@/data/useQuizzesQuery';
 import { GetQuizzesRequestQuery } from '@/api-client';
 import { useSession } from 'next-auth/react';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
 
 export default function QuizzesOverview() {
-  const { data: session } = useSession()
+  const { data: session } = useSession();
   const [searchText, setSearchText] = useState('');
   const [sort, setSort] = useStorage(storageKeys.sort, defaultSort);
 
@@ -28,22 +30,12 @@ export default function QuizzesOverview() {
       sort: sort.option,
       sortDirection: sort.mode,
     }),
-    [sort.mode, sort.option]
+    [sort.mode, sort.option],
   );
-  const {
-    data,
-    isSuccess,
-    isPending,
-    fetchNextPage,
-    isFetchingNextPage,
-    hasNextPage,
-    isError,
-  } = useQuizzesInfiniteQuery(quizzesQueryParams);
+  const { data, isSuccess, isPending, fetchNextPage, isFetchingNextPage, hasNextPage, isError } =
+    useQuizzesInfiniteQuery(quizzesQueryParams);
 
-  const quizzes = useMemo(
-    () => data?.pages.map((page) => page.quizzes).flat() ?? [],
-    [data?.pages]
-  );
+  const quizzes = useMemo(() => data?.pages.map((page) => page.quizzes).flat() ?? [], [data?.pages]);
   const searchedQuizzes = useMemo(() => {
     const searchKey = searchText.trim().toLowerCase();
     return searchText.trim() === ''
@@ -57,9 +49,7 @@ export default function QuizzesOverview() {
   }, [quizzes, searchText]);
 
   const quizzesCount =
-    searchText.trim().length > 0
-      ? searchedQuizzes.length
-      : data?.pages.at(0)?.meta.totalItems ?? 0;
+    searchText.trim().length > 0 ? searchedQuizzes.length : (data?.pages.at(0)?.meta.totalItems ?? 0);
 
   return (
     <Box>
@@ -83,16 +73,7 @@ export default function QuizzesOverview() {
           >
             {data != null &&
               searchedQuizzes.map(
-                ({
-                  uuid,
-                  createdAt,
-                  title,
-                  description,
-                  imageUrl,
-                  playCount,
-                  questionCount,
-                  user,
-                }) => (
+                ({ uuid, createdAt, title, description, imageUrl, playCount, questionCount, user }) => (
                   <QuizOverviewCard
                     key={uuid}
                     uuid={uuid}
@@ -104,20 +85,16 @@ export default function QuizzesOverview() {
                     questionCount={questionCount}
                     userUuid={user.uuid}
                     username={user.username}
-                    isMyQuiz={user.uuid === session?.user.uuid} 
+                    isMyQuiz={user.uuid === session?.user.uuid}
                     published
                   />
-                )
+                ),
               )}
             {(isPending || isFetchingNextPage) &&
-              Array.from({ length: placeholderCount }).map((_, index) => (
-                <QuizOverviewPlaceholder key={index} />
-              ))}
+              Array.from({ length: placeholderCount }).map((_, index) => <QuizOverviewPlaceholder key={index} />)}
           </Box>
           {isSuccess && searchedQuizzes.length === 0 && (
-            <Typography>
-              {'No quizzes found. Try changing your search criteria.'}
-            </Typography>
+            <Typography>{'No quizzes found. Try changing your search criteria.'}</Typography>
           )}
           {isError && <GenericLoadingErrorMessage />}
           <Box sx={{ marginTop: 8 }}>

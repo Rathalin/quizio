@@ -1,7 +1,6 @@
 import GradientWord from '@/components/GradientWord';
 import OverviewForm from '@/page-components/quiz/create/OverviewForm';
 import SummaryForm from '@/page-components/quiz/create/SummaryForm';
-import { Box, Card, CardContent, Grid, Step, StepLabel, Stepper, Typography } from '@mui/material';
 import { useState } from 'react';
 
 import { useQueryClient } from '@tanstack/react-query';
@@ -14,6 +13,14 @@ import { useCreateQuizMutation } from '@/data/useCreateQuizMutation';
 import { useToastStore } from '@/persistence/taost.store';
 import { useUploadFileMutation } from '@/data/useUploadFileMutation';
 import { getBase64 } from '@/data/getBase64';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
 
 const stepTitles = ['Overview', 'Questions', 'Summary'] as const;
 export type StepData = {

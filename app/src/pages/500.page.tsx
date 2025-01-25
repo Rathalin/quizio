@@ -1,6 +1,8 @@
 import LinkButton from '@/components/LinkButton';
 import { useColorMode } from '@/page-components/theme.context';
-import { Box, Stack, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -36,12 +38,7 @@ export default function InternalServerErrorPage() {
           <Link href="mailto:daniel@flockert">daniel@flockert.at</Link>
           <span>{', if the error persists.'}</span>
         </Typography>
-        <LinkButton
-          hrefObserver="/"
-          navigateOnClick
-          variant="contained"
-          iconSide="left"
-        >
+        <LinkButton hrefObserver="/" navigateOnClick variant="contained" iconSide="left">
           Home
         </LinkButton>
       </Stack>

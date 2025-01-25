@@ -1,5 +1,4 @@
 import '@/styles/globals.css';
-import { CssBaseline, ThemeProvider } from '@mui/material';
 import type { AppProps } from 'next/app';
 import Layout from '../page-components/Layout';
 import Head from 'next/head';
@@ -20,11 +19,9 @@ import { Analytics } from '@vercel/analytics/react';
 import { theme } from '@/theme';
 import '@total-typescript/ts-reset';
 import ToastSnackbar from '@/components/ToastSnackbar';
-import {
-  AppCacheProvider,
-  DocumentHeadTags,
-  DocumentHeadTagsProps,
-} from '@mui/material-nextjs/v15-pagesRouter';
+import { AppCacheProvider, DocumentHeadTags, DocumentHeadTagsProps } from '@mui/material-nextjs/v15-pagesRouter';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
 export interface MyAppProps extends AppProps {
   pageProps: {
@@ -40,17 +37,13 @@ export default function App(props: MyAppProps & DocumentHeadTagsProps) {
       new QueryClient({
         queryCache: new QueryCache({
           onError: (error) => {
-            if (
-              typeof error === 'object' &&
-              'error' in error &&
-              typeof error.error === 'string'
-            )
+            if (typeof error === 'object' && 'error' in error && typeof error.error === 'string')
               if (error.error.includes('token is expired')) {
                 router.reload();
               }
           },
         }),
-      })
+      }),
   );
 
   const router = useRouter();
@@ -85,22 +78,10 @@ export default function App(props: MyAppProps & DocumentHeadTagsProps) {
               <Head>
                 <DocumentHeadTags {...props} />
                 <title>Quizio</title>
-                <link
-                  rel="dns-prefetch"
-                  href={process.env.NEXT_PUBLIC_BACKEND_URL}
-                />
-                <link
-                  rel="dns-prefetch"
-                  href={process.env.NEXT_PUBLIC_GRAPHQL_URL}
-                />
-                <link
-                  rel="preconnect"
-                  href={process.env.NEXT_PUBLIC_BACKEND_URL}
-                />
-                <link
-                  rel="preconnect"
-                  href={process.env.NEXT_PUBLIC_GRAPHQL_URL}
-                />
+                <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_BACKEND_URL} />
+                <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_GRAPHQL_URL} />
+                <link rel="preconnect" href={process.env.NEXT_PUBLIC_BACKEND_URL} />
+                <link rel="preconnect" href={process.env.NEXT_PUBLIC_GRAPHQL_URL} />
               </Head>
             </AppCacheProvider>
             <Layout>

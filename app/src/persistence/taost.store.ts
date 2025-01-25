@@ -1,4 +1,4 @@
-import { AlertProps } from '@mui/material';
+import { AlertProps } from '@mui/material/Alert';
 import { create } from 'zustand';
 
 export type SnackbarMessage = {

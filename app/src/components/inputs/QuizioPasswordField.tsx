@@ -1,8 +1,9 @@
 import { forwardRef, useState, type MouseEvent } from 'react';
 import QuizioTextField, { QuizioTextInputProps } from './QuizioTextField';
-import { InputAdornment, IconButton } from '@mui/material';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
 
 type QuizioPasswordFieldProps = QuizioTextInputProps & {};
 

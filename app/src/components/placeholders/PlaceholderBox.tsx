@@ -1,4 +1,5 @@
-import { Box, SxProps, Theme, useTheme } from '@mui/material';
+import Box from '@mui/material/Box';
+import { SxProps, Theme, useTheme } from '@mui/material/styles';
 import { PropsWithChildren } from 'react';
 
 type PlaceholderBoxProps = PropsWithChildren<{
@@ -7,12 +8,7 @@ type PlaceholderBoxProps = PropsWithChildren<{
   sx?: SxProps<Theme>;
 }>;
 
-export default function PlaceholderBox({
-  minWidth = '2rem',
-  minHeight = '2rem',
-  sx,
-  children,
-}: PlaceholderBoxProps) {
+export default function PlaceholderBox({ minWidth = '2rem', minHeight = '2rem', sx, children }: PlaceholderBoxProps) {
   const theme = useTheme();
   return (
     <Box

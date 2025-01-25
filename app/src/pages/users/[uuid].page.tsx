@@ -3,12 +3,13 @@ import GenericLoadingErrorMessage from '@/components/GenericLoadingErrorMessage'
 import HomeButton from '@/components/buttons/HomeButton';
 import UserProfile from '@/components/users/UserProfile';
 import UserProfilePlaceholder from '@/components/users/UserProfilePlaceholder';
-import {
-  fetchUserProfile,
-  useUserProfileQuery,
-} from '@/data/useUserProfileQuery';
+import { fetchUserProfile, useUserProfileQuery } from '@/data/useUserProfileQuery';
 import { getImageUrl } from '@/utilities/getImageUrl';
-import { Box, Card, CardActions, CardContent, Stack } from '@mui/material';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Stack from '@mui/material/Stack';
 import { dehydrate, QueryClient } from '@tanstack/react-query';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 
@@ -37,9 +38,7 @@ export const getServerSideProps: GetServerSideProps<{
   };
 };
 
-export default function UserIdPage({
-  uuid,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function UserIdPage({ uuid }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { data, isPending, isSuccess, isError } = useUserProfileQuery(uuid);
 
   return (
@@ -53,22 +52,13 @@ export default function UserIdPage({
               createdAt={new Date(data.user.createdAt)}
               quizCount={data.quizStats.totalQuizzesCreated}
               quizViewsTotal={data.quizStats.totalQuizzesPlayCount}
-              imageUrl={
-                data.user.profileImageUrl != null
-                  ? getImageUrl(data.user.profileImageUrl)
-                  : null
-              }
+              imageUrl={data.user.profileImageUrl != null ? getImageUrl(data.user.profileImageUrl) : null}
             />
           )}
           {isError && <GenericLoadingErrorMessage />}
         </CardContent>
         <CardActions sx={{ padding: 4 }}>
-          <Stack
-            direction="column"
-            justifyContent="space-between"
-            gap={2}
-            sx={{ marginTop: 4 }}
-          >
+          <Stack direction="column" justifyContent="space-between" gap={2} sx={{ marginTop: 4 }}>
             <HomeButton />
           </Stack>
         </CardActions>

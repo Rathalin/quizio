@@ -1,5 +1,7 @@
 import { usePageTransition } from '@/persistence/page-transition.store';
-import { Box, IconButton, IconButtonProps } from '@mui/material';
+import Box from '@mui/material/Box';
+import IconButton, { type IconButtonProps } from '@mui/material/IconButton';
+
 import LoadingCircle from './LoadingCircle';
 import Link from 'next/link';
 
@@ -18,17 +20,11 @@ export default function LinkIconButton({
   ...props
 }: LinkIconButtonProps) {
   const { transitionHref, transitionReason } = usePageTransition();
-  const loading =
-    transitionHref === hrefObserver &&
-    (reason == null || reason === transitionReason);
+  const loading = transitionHref === hrefObserver && (reason == null || reason === transitionReason);
 
   const button = (
     <IconButton {...props}>
-      {loading ? (
-        <LoadingCircle color="secondary" size="1.5rem" thickness={5} />
-      ) : (
-        children
-      )}
+      {loading ? <LoadingCircle color="secondary" size="1.5rem" thickness={5} /> : children}
     </IconButton>
   );
 

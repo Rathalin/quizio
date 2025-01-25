@@ -1,5 +1,8 @@
 import LoadingCircle from '@/components/LoadingCircle';
-import { Dialog, DialogTitle, DialogActions, Button } from '@mui/material';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogTitle from '@mui/material/DialogTitle';
 import { Dispatch, SetStateAction } from 'react';
 
 type DeleteQuizDialogProps = {
@@ -10,13 +13,7 @@ type DeleteQuizDialogProps = {
   loading: boolean;
 };
 
-export default function DeleteQuizDialog({
-  open,
-  setOpen,
-  onConfirm,
-  quizTitle,
-  loading,
-}: DeleteQuizDialogProps) {
+export default function DeleteQuizDialog({ open, setOpen, onConfirm, quizTitle, loading }: DeleteQuizDialogProps) {
   function handleClose() {
     setOpen(false);
   }
@@ -28,9 +25,7 @@ export default function DeleteQuizDialog({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">
-        {`Do you really want to delete '${quizTitle}'?`}
-      </DialogTitle>
+      <DialogTitle id="alert-dialog-title">{`Do you really want to delete '${quizTitle}'?`}</DialogTitle>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
         <Button

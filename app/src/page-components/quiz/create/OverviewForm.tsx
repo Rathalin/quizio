@@ -1,5 +1,4 @@
 import QuizioTextField from '@/components/inputs/QuizioTextField';
-import { Box, Button, Card, CardActions, CardContent, Stack } from '@mui/material';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { constraints } from '@/content-type-utilities/content-type-constraints';
 import { QuizOverviewForm, quizOverviewFormSchema } from '../quiz-form-schema';
@@ -13,6 +12,12 @@ import Image from 'next/image';
 import { isBrowser } from '@/utilities/isBrowser';
 import { useOverviewImageInputDimensions } from './useImageInputDimensions';
 import { ClearImageInputIcon } from '@/components/ClearImageInputIcon';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import CardActions from '@mui/material/CardActions';
 
 type OverviewFormProps = {
   defaultData: QuizOverviewForm;

@@ -1,16 +1,3 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Divider,
-  List,
-  ListItem,
-  Stack,
-  Typography,
-  useTheme,
-} from '@mui/material';
 import IndexAvatar from '../game/IndexAvatar';
 import { QuizOverviewForm, QuizQuestionsForm } from '../quiz-form-schema';
 import LoadingCircle from '@/components/LoadingCircle';
@@ -18,6 +5,17 @@ import BackButton from './BackButton';
 import PublishIcon from '@mui/icons-material/Publish';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
+import { useTheme } from '@mui/material/styles';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import List from '@mui/material/List';
+import Box from '@mui/material/Box';
+import ListItem from '@mui/material/ListItem';
+import Stack from '@mui/material/Stack';
+import CardActions from '@mui/material/CardActions';
+import Button from '@mui/material/Button';
 
 type SummaryFormProps = {
   overviewFormData: QuizOverviewForm;
@@ -60,11 +58,7 @@ export default function SummaryForm({
                 <Box>
                   <Stack direction="row" alignItems="center" gap={2}>
                     <IndexAvatar index={qIndex + 1} />
-                    <Typography
-                      variant="h5"
-                      component="h3"
-                      sx={{ marginBlock: 0 }}
-                    >
+                    <Typography variant="h5" component="h3" sx={{ marginBlock: 0 }}>
                       {question.title}
                     </Typography>
                   </Stack>
@@ -78,29 +72,21 @@ export default function SummaryForm({
                           columnGap: 3,
                         }}
                       >
-                        {answer.isCorrect ? (
-                          <CheckIcon color="success" />
-                        ) : (
-                          <ClearIcon color="error" />
-                        )}
+                        {answer.isCorrect ? <CheckIcon color="success" /> : <ClearIcon color="error" />}
                         <Box>{answer.title}</Box>
                       </ListItem>
                     ))}
                   </List>
-                  {question.explanation != null &&
-                    question.explanation.length > 0 && (
-                      <Box sx={{ marginBottom: 2 }}>
-                        <Typography
-                          component="span"
-                          color={theme.palette.primary.main}
-                        >
-                          Explanation:
-                        </Typography>
-                        <Typography component="span" sx={{ marginLeft: 1 }}>
-                          {question.explanation}
-                        </Typography>
-                      </Box>
-                    )}
+                  {question.explanation != null && question.explanation.length > 0 && (
+                    <Box sx={{ marginBottom: 2 }}>
+                      <Typography component="span" color={theme.palette.primary.main}>
+                        Explanation:
+                      </Typography>
+                      <Typography component="span" sx={{ marginLeft: 1 }}>
+                        {question.explanation}
+                      </Typography>
+                    </Box>
+                  )}
                 </Box>
               </ListItem>
             </Box>

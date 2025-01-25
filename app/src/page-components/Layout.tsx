@@ -1,7 +1,8 @@
-import { Container, Box } from '@mui/material';
 import { PropsWithChildren } from 'react';
 import Header from './Header';
 import Footer from './footer/Footer';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
 
 type LayoutProps = PropsWithChildren<{}>;
 

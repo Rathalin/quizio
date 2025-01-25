@@ -1,15 +1,13 @@
-import { Box, Typography, TypographyProps, useTheme } from '@mui/material';
+import Box from '@mui/material/Box';
+import { useTheme } from '@mui/material/styles';
+import Typography, { type TypographyProps } from '@mui/material/Typography';
 import { ElementType } from 'react';
 
-type PlaceholderTypographyProps = { text?: string } & Omit<
-  TypographyProps,
-  'children'
-> & { component?: ElementType<any> };
+type PlaceholderTypographyProps = { text?: string } & Omit<TypographyProps, 'children'> & {
+    component?: ElementType<any>;
+  };
 
-export default function PlaceholderTypography({
-  text = '.',
-  ...other
-}: PlaceholderTypographyProps) {
+export default function PlaceholderTypography({ text = '.', ...other }: PlaceholderTypographyProps) {
   const theme = useTheme();
   return (
     <Typography {...other}>

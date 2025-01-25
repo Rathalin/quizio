@@ -1,7 +1,11 @@
 import { useAlertsQuery } from '@/data/useAlertsQuery';
 import { useDismissedAlertIds } from '@/persistence/dismissed-alert-ids.store';
 import { getImageUrl } from '@/utilities/getImageUrl';
-import { Alert, Collapse, Grid, Stack } from '@mui/material';
+import Alert from '@mui/material/Alert';
+import Collapse from '@mui/material/Collapse';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 
@@ -51,11 +55,7 @@ export default function AlertsViewer() {
                 <ReactMarkdown>{alert.markdownContent}</ReactMarkdown>
               </Grid>
               <Grid item xs={12} sm={12} md={4}>
-                <Stack
-                  justifyContent="center"
-                  alignItems="center"
-                  sx={{ height: '100%' }}
-                >
+                <Stack justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
                   {alert.imageUrl != null && (
                     <Image
                       src={getImageUrl(alert.imageUrl)}

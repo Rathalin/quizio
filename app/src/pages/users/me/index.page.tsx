@@ -4,14 +4,12 @@ import UserProfile from '@/components/users/UserProfile';
 import { useMyUserProfileQuery } from '@/data/useMyUserProfileQuery';
 import MyProfilePlaceholder from '@/page-components/user/me/MyProfilePlaceholder';
 import { getImageUrl } from '@/utilities/getImageUrl';
-import {
-  Box,
-  Card,
-  CardActions,
-  CardContent,
-  Stack,
-  Typography,
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 export default function MePage() {
   const { data, isPending, isError, isSuccess } = useMyUserProfileQuery();
@@ -32,11 +30,7 @@ export default function MePage() {
                   createdAt={new Date(data.user.createdAt)}
                   quizCount={data.quizStats.totalQuizzesCreated}
                   quizViewsTotal={data.quizStats.totalQuizzesPlayCount}
-                  imageUrl={
-                    data.user.profileImageUrl != null
-                      ? getImageUrl(data.user.profileImageUrl)
-                      : null
-                  }
+                  imageUrl={data.user.profileImageUrl != null ? getImageUrl(data.user.profileImageUrl) : null}
                 />
               </Box>
             </>
@@ -44,12 +38,7 @@ export default function MePage() {
           {isError && <GenericLoadingErrorMessage />}
         </CardContent>
         <CardActions sx={{ padding: 4 }}>
-          <Stack
-            direction="column"
-            justifyContent="space-between"
-            gap={2}
-            sx={{ marginTop: 4 }}
-          >
+          <Stack direction="column" justifyContent="space-between" gap={2} sx={{ marginTop: 4 }}>
             <HomeButton />
           </Stack>
         </CardActions>

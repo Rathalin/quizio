@@ -6,7 +6,6 @@ import { defaultOverviewFormData, defaultQuestionsFormData } from '@/page-compon
 import DeleteQuizDialog from '@/page-components/quiz/edit/DeleteQuizDialog';
 import OverviewFormPlaceholder from '@/page-components/quiz/edit/OverviewFormPlaceholder';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Box, Typography, Grid, Card, CardContent, Stepper, Step, StepLabel, Button, Stack } from '@mui/material';
 import { QueryClient, dehydrate, useQueryClient } from '@tanstack/react-query';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/router';
@@ -26,6 +25,16 @@ import { useUploadFileMutation } from '@/data/useUploadFileMutation';
 import { useDeleteFileMutation } from '@/data/useDeleteFileMutation';
 import { raise } from '@/utilities/errorHandling';
 import { getBase64 } from '@/data/getBase64';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
 
 export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (ctx) => {
   const uuid = ctx.params?.uuid;

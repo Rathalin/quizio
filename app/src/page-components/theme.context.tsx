@@ -1,4 +1,4 @@
-import { PaletteMode } from '@mui/material';
+import { PaletteMode } from '@mui/material/styles';
 import { createContext, PropsWithChildren, useContext } from 'react';
 
 const ColorModeContext = createContext({
@@ -14,11 +14,7 @@ export function ColorModeProvider({
   mode: PaletteMode;
   toggleColorMode: () => void;
 }>) {
-  return (
-    <ColorModeContext.Provider value={{ mode, toggleColorMode }}>
-      {children}
-    </ColorModeContext.Provider>
-  );
+  return <ColorModeContext.Provider value={{ mode, toggleColorMode }}>{children}</ColorModeContext.Provider>;
 }
 
 export function useColorMode() {

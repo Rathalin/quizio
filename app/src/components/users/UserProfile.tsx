@@ -1,6 +1,9 @@
-import { Typography, Stack, Divider, Box } from '@mui/material';
 import { useMemo } from 'react';
 import { ProfileAvatar } from './ProfileAvatar';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
 
 type UserProfileProps = {
   username: string;
@@ -10,17 +13,8 @@ type UserProfileProps = {
   imageUrl: string | null;
 };
 
-export default function UserProfile({
-  username,
-  createdAt,
-  quizCount,
-  quizViewsTotal,
-  imageUrl,
-}: UserProfileProps) {
-  const dateFormat = useMemo(
-    () => new Intl.DateTimeFormat('en-GB', { dateStyle: 'short' }),
-    []
-  );
+export default function UserProfile({ username, createdAt, quizCount, quizViewsTotal, imageUrl }: UserProfileProps) {
+  const dateFormat = useMemo(() => new Intl.DateTimeFormat('en-GB', { dateStyle: 'short' }), []);
 
   return (
     <>
@@ -31,18 +25,12 @@ export default function UserProfile({
         <Typography variant="h1" sx={{ marginTop: 0 }}>
           {username}
         </Typography>
-        <Typography>{`Joined on ${dateFormat.format(
-          new Date(createdAt)
-        )}`}</Typography>
+        <Typography>{`Joined on ${dateFormat.format(new Date(createdAt))}`}</Typography>
         <Divider />
         {/* TODO Fix this mess with translations */}
-        <Typography>{`Created ${quizCount} quiz${
-          quizCount === 1 ? '' : 'zes'
-        } which ${
+        <Typography>{`Created ${quizCount} quiz${quizCount === 1 ? '' : 'zes'} which ${
           quizCount === 1 ? 'has' : 'have'
-        } been played a total of ${quizViewsTotal} time${
-          quizViewsTotal === 1 ? '' : 's'
-        }.`}</Typography>
+        } been played a total of ${quizViewsTotal} time${quizViewsTotal === 1 ? '' : 's'}.`}</Typography>
       </Stack>
     </>
   );

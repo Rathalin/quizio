@@ -1,16 +1,14 @@
 import { AnsweredState } from '@/pages/play/[uuid].page';
-import { Stack } from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CircleIcon from '@mui/icons-material/RadioButtonUnchecked';
+import Stack from '@mui/material/Stack';
 
 type ScoreProgressProps = {
   answeredProgress: AnsweredState[];
 };
 
-export default function AnsweredProgress({
-  answeredProgress,
-}: ScoreProgressProps) {
+export default function AnsweredProgress({ answeredProgress }: ScoreProgressProps) {
   function isAnswerCorrect(state: AnsweredState) {
     if (state.selectedAnswerId == null) {
       return null;

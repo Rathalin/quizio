@@ -1,4 +1,4 @@
-import { createTheme, responsiveFontSizes } from '@mui/material';
+import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 
 export const theme = responsiveFontSizes(
   createTheme({
@@ -72,14 +72,7 @@ export const theme = responsiveFontSizes(
       },
     },
     typography: {
-      fontFamily: [
-        'Rubik',
-        'Segoe UI',
-        'Roboto',
-        'Helvetica',
-        'Arial',
-        'sans-serif',
-      ].join(','),
+      fontFamily: ['Rubik', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'].join(','),
       h1: {
         fontSize: '2.5rem',
         marginTop: '1rem',
@@ -114,7 +107,7 @@ export const theme = responsiveFontSizes(
         textTransform: 'none',
       },
     },
-  })
+  }),
 );
 
 declare module '@mui/material/styles/createPalette' {

@@ -2,15 +2,13 @@ import GradientWord from '@/components/GradientWord';
 import LoadingCircle from '@/components/LoadingCircle';
 import HomeButton from '@/components/buttons/HomeButton';
 import { useToastStore } from '@/persistence/taost.store';
-import {
-  Alert,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  TextField,
-  Typography,
-} from '@mui/material';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { useMutation } from '@tanstack/react-query';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { signIn } from 'next-auth/react';
@@ -21,8 +19,7 @@ import { FormEvent, useState } from 'react';
 export const getServerSideProps: GetServerSideProps<{
   callbackUrl: string | null;
 }> = async (ctx) => {
-  const callbackUrl =
-    typeof ctx.query?.callbackUrl === 'string' ? ctx.query.callbackUrl : null;
+  const callbackUrl = typeof ctx.query?.callbackUrl === 'string' ? ctx.query.callbackUrl : null;
 
   return {
     props: {
@@ -31,9 +28,7 @@ export const getServerSideProps: GetServerSideProps<{
   };
 };
 
-export default function SigninPage({
-  callbackUrl,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
   const toastStore = useToastStore();
 
@@ -148,11 +143,7 @@ export default function SigninPage({
       </form>
       <Alert severity="info" sx={{ marginTop: 10 }}>
         <Typography>
-          <span>
-            {
-              'Do you need an account to create quizzes? Feel free to contact me on '
-            }
-          </span>
+          <span>{'Do you need an account to create quizzes? Feel free to contact me on '}</span>
           <Link href="mailto:daniel@flockert.at">daniel@flockert.at</Link>
           <span>{'.'}</span>
         </Typography>

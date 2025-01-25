@@ -1,5 +1,7 @@
 import { usePageTransition } from '@/persistence/page-transition.store';
-import { Box, Button, ButtonProps } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button, { type ButtonProps } from '@mui/material/Button';
+
 import Link from 'next/link';
 import LoadingCircle from './LoadingCircle';
 
@@ -20,9 +22,7 @@ export default function LinkButton({
   ...props
 }: LinkButtonProps) {
   const { transitionHref, transitionReason } = usePageTransition();
-  const loading =
-    transitionHref === hrefObserver &&
-    (reason == null || reason === transitionReason);
+  const loading = transitionHref === hrefObserver && (reason == null || reason === transitionReason);
   const icon = loading ? <LoadingCircle /> : null;
 
   const button = (

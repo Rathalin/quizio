@@ -1,6 +1,9 @@
-import { Box, Stack, Typography, useTheme } from '@mui/material';
 import { getImageUrl } from '@/utilities/getImageUrl';
 import { GameImage } from './GameImage';
+import { useTheme } from '@mui/material/styles';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 const correctEmojies = ['😀', '😁', '😃', '😄', '😆', '😊', '😎'];
 const incorrectEmojies = ['😐', '😶', '😮', '😯', '🫤', '🫥', '😮‍💨'];
@@ -11,11 +14,7 @@ type ExplanationProps = {
   imageUrl: string | null;
 };
 
-export default function Explanation({
-  correct,
-  text,
-  imageUrl,
-}: ExplanationProps) {
+export default function Explanation({ correct, text, imageUrl }: ExplanationProps) {
   const theme = useTheme();
 
   const trimmedText = text?.trim();
@@ -36,9 +35,7 @@ export default function Explanation({
         <Box
           component="span"
           sx={{
-            color: correct
-              ? theme.palette.success.light
-              : theme.palette.error.light,
+            color: correct ? theme.palette.success.light : theme.palette.error.light,
           }}
         >
           {correct ? 'Correct' : 'Incorrect'}

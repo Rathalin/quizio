@@ -1,10 +1,12 @@
-import { Box, Stack, useTheme } from '@mui/material';
 import Link from 'next/link';
 import { PropsWithChildren } from 'react';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/Twitter';
+import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
 
 export default function Socials() {
   return (

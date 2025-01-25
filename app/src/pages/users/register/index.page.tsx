@@ -1,13 +1,11 @@
 import GradientWord from '@/components/GradientWord';
 import LinkButton from '@/components/LinkButton';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  TextField,
-  Typography,
-} from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { FormEvent, useState } from 'react';
 
 export default function RegisterPage() {
@@ -79,12 +77,7 @@ export default function RegisterPage() {
           <LinkButton hrefObserver="/" navigateOnClick iconSide="right">
             Back
           </LinkButton>
-          <Button
-            sx={{ marginLeft: 'auto' }}
-            variant="contained"
-            color="primary"
-            type="submit"
-          >
+          <Button sx={{ marginLeft: 'auto' }} variant="contained" color="primary" type="submit">
             Register
           </Button>
         </Box>

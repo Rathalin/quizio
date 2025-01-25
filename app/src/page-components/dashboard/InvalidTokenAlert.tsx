@@ -1,5 +1,8 @@
 import SignInButton from '@/components/buttons/SignInButton';
-import { Alert, AlertTitle, Box, Collapse } from '@mui/material';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import Box from '@mui/material/Box';
+import Collapse from '@mui/material/Collapse';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 

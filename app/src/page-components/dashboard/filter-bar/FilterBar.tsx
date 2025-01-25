@@ -1,8 +1,9 @@
-import { Stack, useTheme } from '@mui/material';
 import IndexAvatar from '../../quiz/game/IndexAvatar';
 import SearchInput from './SearchInput';
 import SortButton from './SortButton';
 import { useSearch } from '../search.context';
+import { useTheme } from '@mui/material/styles';
+import Stack from '@mui/material/Stack';
 
 type FilterBarProps = {
   quizzesCount: number;

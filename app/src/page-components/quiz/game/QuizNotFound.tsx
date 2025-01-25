@@ -1,5 +1,6 @@
 import HomeButton from '@/components/buttons/HomeButton';
-import { Box, Alert } from '@mui/material';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
 
 export default function QuizNotFound() {
   return (

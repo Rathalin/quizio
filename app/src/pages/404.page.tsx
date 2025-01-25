@@ -1,5 +1,6 @@
 import LinkButton from '@/components/LinkButton';
-import { Box, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 export default function NotFoundPage() {
   return (
@@ -14,12 +15,7 @@ export default function NotFoundPage() {
       <Box>
         <Typography variant="h1">This page does not exist.</Typography>
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <LinkButton
-            hrefObserver="/"
-            navigateOnClick
-            variant="contained"
-            iconSide="left"
-          >
+          <LinkButton hrefObserver="/" navigateOnClick variant="contained" iconSide="left">
             Home
           </LinkButton>
         </Box>

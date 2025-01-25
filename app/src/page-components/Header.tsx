@@ -1,8 +1,11 @@
 import LogoButton from '@/components/buttons/LogoButton';
-import { AppBar, Container, Grid, Toolbar } from '@mui/material';
 import AccountMenu from './dashboard/AccountMenu';
 import { ThemeSwitch } from '@/components/buttons/ThemeSwitch';
 import { useColorMode } from './theme.context';
+import AppBar from '@mui/material/AppBar';
+import Container from '@mui/material/Container';
+import Toolbar from '@mui/material/Toolbar';
+import Grid from '@mui/material/Grid';
 
 export default function Header() {
   const { mode } = useColorMode();

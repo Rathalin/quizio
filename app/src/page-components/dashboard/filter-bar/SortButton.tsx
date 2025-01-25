@@ -1,16 +1,15 @@
-import { Button } from '@mui/material';
 import { SortOption, useSort } from '../sort.context';
 import { PropsWithChildren, useMemo } from 'react';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import Button from '@mui/material/Button';
 
 type SortButtonProps = PropsWithChildren<{
   option: SortOption;
 }>;
 
 export default function SortButton({ option, children }: SortButtonProps) {
-  const { sortOption, sortMode, setSortOption, setSortMode, toggleSortMode } =
-    useSort();
+  const { sortOption, sortMode, setSortOption, setSortMode, toggleSortMode } = useSort();
 
   const icon = useMemo(() => {
     if (sortOption !== option) {

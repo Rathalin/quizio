@@ -1,4 +1,8 @@
-import { Card, CardContent, CardMedia, Stack } from '@mui/material';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Stack from '@mui/material/Stack';
+
 import PlaceholderTypography from './placeholders/PlaceholderTypography';
 import PlaceholderBox from './placeholders/PlaceholderBox';
 
@@ -10,11 +14,7 @@ export default function QuizOverviewPlaceholder() {
       </CardMedia>
       <CardContent>
         <Stack alignItems="start">
-          <PlaceholderTypography
-            variant="h3"
-            sx={{ marginTop: 1 }}
-            text="Et consectetur irure."
-          />
+          <PlaceholderTypography variant="h3" sx={{ marginTop: 1 }} text="Et consectetur irure." />
           <PlaceholderTypography text="Adipisicing amet dolor ullamco Adipisicing amet dolor ullamco." />
           <PlaceholderTypography text="Et consectetur irure." />
         </Stack>

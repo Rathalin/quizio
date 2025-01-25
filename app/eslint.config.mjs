@@ -46,6 +46,20 @@ export const config = [
         },
       ],
 
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@mui/material',
+              message:
+                "Please use named imports from @mui/material/* instead of importing from the root package (e.g. import Button from '@mui/material')",
+            },
+          ],
+          patterns: ['@mui/material/*/*'], // Disallow deep imports (e.g., @mui/material/Button/Button)
+        },
+      ],
+
       'react/jsx-key': 'error',
     },
   },

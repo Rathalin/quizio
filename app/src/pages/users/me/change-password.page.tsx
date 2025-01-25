@@ -1,5 +1,4 @@
 import { useRedirectOnUnauthenticated } from '@/custom-hooks/useRedirectOnUnauthenticated';
-import { Alert, Button, Card, CardContent, FormHelperText, Stack, Typography } from '@mui/material';
 import { useSession } from 'next-auth/react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,6 +7,13 @@ import { z } from 'zod';
 import QuizioPasswordField from '@/components/inputs/QuizioPasswordField';
 import { ZodFieldErrors } from '../../../../types/hook-form-zod';
 import { useChangePasswordMutation } from '@/data/useChangePasswordMutation';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
+import FormHelperText from '@mui/material/FormHelperText';
+import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
 
 const passwordMinLength = 6;
 const passwordMaxLength = 30;

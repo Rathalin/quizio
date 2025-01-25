@@ -1,4 +1,3 @@
-import { Box, Button, Card, CardActions, CardContent, Stack, Tooltip, Typography } from '@mui/material';
 import QuestionInput from './question/QuestionInput';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { QuestionIndexContext } from './question/QuestionIndexContext';
@@ -14,6 +13,14 @@ import { isBrowser } from '@/utilities/isBrowser';
 import { FormErrorIcon } from '../FormErrorIcon';
 import AddIcon from '@mui/icons-material/Add';
 import { raise } from '@/utilities/errorHandling';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Box from '@mui/material/Box';
+import Tooltip from '@mui/material/Tooltip';
+import Button from '@mui/material/Button';
+import CardActions from '@mui/material/CardActions';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 type QuestionsFormProps = {
   defaultData: QuizQuestionsForm;

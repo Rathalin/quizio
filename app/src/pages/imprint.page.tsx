@@ -1,4 +1,5 @@
-import { Box, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 
 export default function ImprintPage() {
@@ -14,9 +15,7 @@ export default function ImprintPage() {
         <Link href="mailto:daniel@flockert.at">{'daniel@flockert.at'}</Link>
       </Typography>
       <Typography variant="body2" sx={{ marginTop: 6 }}>
-        {
-          'This website is not operated for commercial purposes and is solely intended to spread joy.'
-        }
+        {'This website is not operated for commercial purposes and is solely intended to spread joy.'}
       </Typography>
     </Box>
   );
