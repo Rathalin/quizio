@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"os"
 )
@@ -17,7 +18,8 @@ func logAndReturnErrorMessage(message string) error {
 }
 
 func fileExists(filePath string) (bool, error) {
-	_, err := os.Stat(filePath)
+	// Convert to relative path by adding "."
+	_, err := os.Stat(fmt.Sprintf(".%s", filePath))
 	if err == nil {
 		// The file exists
 		return true, nil

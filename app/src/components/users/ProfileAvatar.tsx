@@ -1,9 +1,16 @@
 import { ClearImageInputIcon } from '@/components/ClearImageInputIcon';
+import { getBase64 } from '@/data/getBase64';
+import { useDeleteFileMutation } from '@/data/useDeleteFileMutation';
+import { useUpdateProfileImageMutation } from '@/data/useUpdateProfileImageMutation';
+import { useUploadFileMutation } from '@/data/useUploadFileMutation';
+import { useToastStore } from '@/persistence/taost.store';
+import { getImageName } from '@/utilities/getImageUrl';
 import { zodResolver } from '@hookform/resolvers/zod';
 import SaveOutlined from '@mui/icons-material/SaveOutlined';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
+import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -15,22 +22,11 @@ export const profileImageDimensions = {
 };
 
 const profileImageFormSchema = z.object({
-  image: z.object({
-    data: z.object({
-      file: z.any().nullable(),
-    }),
-    preview: z
-      .object({
-        url: z.string(),
-      })
-      .optional(),
-  }),
+  imageFile: z.any(),
 });
 type ProfileImageForm = z.infer<typeof profileImageFormSchema>;
 const defaultFormData: ProfileImageForm = {
-  image: {
-    data: {},
-  },
+  imageFile: null,
 };
 
 type AvatarImageProps = {
@@ -39,72 +35,72 @@ type AvatarImageProps = {
 };
 
 export function ProfileAvatar({ imageUrl, username }: AvatarImageProps) {
+  const queryClient = useQueryClient();
+  const { showToast } = useToastStore();
   const { width, height } = profileImageDimensions;
   const { control, handleSubmit, setValue, watch } = useForm({
     defaultValues: defaultFormData,
     resolver: zodResolver(profileImageFormSchema),
   });
 
-  const profileImageFile = watch('image.data.file') as File | null;
-  const profilePreviewImage = watch('image.preview');
-  const profileImageUrl = useMemo(() => {
-    if (profileImageFile != null) {
-      return URL.createObjectURL(profileImageFile);
+  const { mutateAsync: uploadFile } = useUploadFileMutation();
+  const { mutateAsync: deleteFile } = useDeleteFileMutation();
+  const { mutateAsync: updateProfileImage } = useUpdateProfileImageMutation();
+  const formImageFile = watch('imageFile') as File | null;
+  const previewImageUrl = useMemo(() => {
+    if (formImageFile != null) {
+      return URL.createObjectURL(formImageFile);
     }
-    return profilePreviewImage?.url ?? null;
-  }, [profileImageFile, profilePreviewImage]);
+    return imageUrl;
+  }, [formImageFile, imageUrl]);
 
-  function handleFormSubmit(data: ProfileImageForm) {
-    // TODO Call mutation
+  async function handleFormSubmit({ imageFile }: ProfileImageForm) {
+    try {
+      let newImageUrl = imageUrl;
+      // Delete image
+      if (newImageUrl != null && imageFile != null) {
+        await deleteFile({ filename: getImageName(newImageUrl) });
+      }
+      // Upload image
+      if (imageFile != null) {
+        const { url } = await uploadFile({
+          file: await getBase64(imageFile),
+          filename: imageFile.name,
+        });
+        newImageUrl = url;
+      }
+
+      await updateProfileImage({ profileImageUrl: newImageUrl });
+
+      showToast('Profile image updated.', 'success');
+      queryClient.invalidateQueries({ queryKey: ['getUserProfile'] });
+    } catch (error) {
+      showToast('Could not update profile image!', 'error');
+    }
   }
 
   return (
     <>
-      {/* {imageUrl == null ? (
-        <Avatar
-          variant="rounded"
-          sx={{
-            backgroundColor: theme.palette.primary.main,
-            fontWeight: 'bold',
-            width,
-            height,
-            fontSize: '4rem',
-            color: theme.palette.primary.contrastText,
-          }}
-        >
-          {initials}
-        </Avatar>
-      ) : (
-        <Avatar
-          variant="rounded"
-          sx={{
-            backgroundColor: theme.palette.primary.main,
-            width,
-            height,
-          }}
-        >
-          <Image src={imageUrl} alt={`Profile image of ${username}.`} width={width} height={height} unoptimized />
-        </Avatar>
-      )} */}
       <form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
         <Stack display="inline-flex" alignItems="center" gap={1} sx={{ marginBottom: 4 }}>
           <Controller
-            name="image.data.file"
+            name="imageFile"
             render={({ field }) => (
               <Box>
                 <input
                   {...field}
-                  id="image.data.file"
+                  id="imageFile"
                   type="file"
                   accept="image/*"
                   style={{ display: 'none' }}
-                  value={undefined}
+                  value={''} // Always needs to be empty string (https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#value)
                   onChange={(e) => {
-                    setValue('image.data.file', e.target.files != null ? e.target.files[0] : null);
+                    const newFile: File | null = e.target.files != null ? (e.target.files[0] ?? null) : null;
+                    setValue('imageFile', newFile);
                   }}
                 />
                 <label
-                  htmlFor="image.data.file"
+                  htmlFor="imageFile"
                   style={{
                     display: 'flex',
                   }}
@@ -117,17 +113,17 @@ export function ProfileAvatar({ imageUrl, username }: AvatarImageProps) {
                       minHeight: height + 2 * 1,
                     }}
                   >
-                    {profileImageUrl != null ? (
+                    {previewImageUrl != null ? (
                       <Stack alignItems="center">
                         <Image
-                          src={profileImageUrl}
+                          src={previewImageUrl}
                           width={width}
                           height={height}
-                          alt={'image.data.file input'}
+                          alt={`imageFile of ${username}`}
                           style={{
                             borderRadius: 2,
                             objectFit: 'cover',
-                            margin: '-17px',
+                            margin: '-1rem',
                           }}
                           unoptimized
                         />
@@ -141,21 +137,22 @@ export function ProfileAvatar({ imageUrl, username }: AvatarImageProps) {
             )}
             control={control}
           />
-          <Button
-            variant="outlined"
-            color="error"
-            startIcon={<ClearImageInputIcon />}
-            onClick={() => {
-              setValue('image.data.file', null);
-              setValue('image.preview', undefined);
-            }}
-            disabled={profileImageUrl == null}
-          >
-            {'Remove'}
-          </Button>
-          <Button variant="outlined" disabled={profileImageUrl == null} startIcon={<SaveOutlined />}>
-            {'Save profile image'}
-          </Button>
+          <Stack direction="column" gap={2}>
+            <Button
+              variant="outlined"
+              color="error"
+              startIcon={<ClearImageInputIcon />}
+              onClick={() => {
+                setValue('imageFile', null);
+              }}
+              disabled={previewImageUrl == null}
+            >
+              {'Clear selection'}
+            </Button>
+            <Button variant="outlined" startIcon={<SaveOutlined />} type="submit">
+              {'Update profile image'}
+            </Button>
+          </Stack>
         </Stack>
       </form>
     </>

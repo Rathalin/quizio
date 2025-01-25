@@ -1,16 +1,8 @@
-import {
-  client,
-  InferFetchError,
-  InferFetchResult,
-  throwOnError,
-} from '@/api-client';
+import { client, InferFetchError, InferFetchResult, throwOnError } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 
 export function useUserProfileQuery(uuid: string) {
-  return useQuery<
-    InferFetchResult<typeof fetchUserProfile>,
-    InferFetchError<typeof fetchUserProfile>
-  >({
+  return useQuery<InferFetchResult<typeof fetchUserProfile>, InferFetchError<typeof fetchUserProfile>>({
     queryKey: ['getUserProfile', uuid],
     queryFn: () => throwOnError(() => fetchUserProfile(uuid)),
   });

@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
@@ -10,7 +11,7 @@ import (
 
 func (dbw *DBWrapper) HandleUpdateUserProfileImage() usecase.Interactor {
 	type updateUserProfileImageRequest struct {
-		ProfileImageUrl string `json:"profileImageUrl" required:"true"`
+		ProfileImageUrl *string `json:"profileImageUrl" required:"true" nullable:"true"`
 	}
 
 	type updateUserProfileImageResponse struct{}
@@ -21,12 +22,15 @@ func (dbw *DBWrapper) HandleUpdateUserProfileImage() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
-		profileImageExists, err := fileExists(input.ProfileImageUrl)
-		if err != nil {
-			return logAndReturnError(err)
-		}
-		if !profileImageExists {
-			return status.Wrap(logAndReturnErrorMessage(fmt.Sprintf("file with url %s does not exist", input.ProfileImageUrl)), status.FailedPrecondition)
+		if input.ProfileImageUrl != nil {
+			log.Printf("%v\n", *input.ProfileImageUrl)
+			profileImageExists, err := fileExists(*input.ProfileImageUrl)
+			if err != nil {
+				return logAndReturnError(err)
+			}
+			if !profileImageExists {
+				return status.Wrap(logAndReturnErrorMessage(fmt.Sprintf("file with url %s does not exist", *input.ProfileImageUrl)), status.FailedPrecondition)
+			}
 		}
 
 		_, err = dbw.DB.ExecContext(ctx, `

@@ -432,7 +432,7 @@ export interface components {
       uuid: string | null;
     };
     HandlersUpdateUserProfileImageRequest: {
-      profileImageUrl: string;
+      profileImageUrl: string | null;
     };
     HandlersUploadFileRequest: {
       /** Format: base64 */

@@ -30,7 +30,7 @@ export const getServerSideProps: GetServerSideProps<{
 
 export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
-  const toastStore = useToastStore();
+  const { showToast } = useToastStore();
 
   const {
     mutateAsync: login,
@@ -53,13 +53,13 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
     try {
       const res = await login();
       if (res?.ok === true) {
-        toastStore.addToast('Login successful.', 'success');
+        showToast('Login successful.', 'success');
         router.push(callbackUrl ?? '/');
       } else {
         setErrorStatus(res?.status ?? null);
       }
     } catch (error) {
-      toastStore.addToast('An error ooccured!', 'error');
+      showToast('An error ooccured!', 'error');
     }
   }
 

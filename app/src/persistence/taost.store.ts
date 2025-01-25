@@ -10,7 +10,7 @@ export type SnackbarMessage = {
 
 type ToastStore = {
   snackPack: SnackbarMessage[];
-  addToast: (
+  showToast: (
     message: string,
     severity: NonNullable<AlertProps['severity']>,
     variant?: NonNullable<AlertProps['variant']>,
@@ -20,7 +20,7 @@ type ToastStore = {
 
 export const useToastStore = create<ToastStore>((set) => ({
   snackPack: [],
-  addToast: (message, severity, variant = 'filled') =>
+  showToast: (message, severity, variant = 'filled') =>
     set((state) => ({
       snackPack: [
         ...state.snackPack,

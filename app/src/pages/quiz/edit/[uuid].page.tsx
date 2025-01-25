@@ -80,7 +80,7 @@ const steps = stepTitles.map((title, index) => ({
 export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const toastStore = useToastStore();
+  const { showToast } = useToastStore();
 
   const { data: quiz } = useQuizQuery(uuid);
   const [activeStep, setActiveStep] = useState(0);
@@ -272,13 +272,13 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
       await updateQuiz(requestData);
 
       // Refetch quiz
-      toastStore.addToast('Quiz updated!', 'success');
+      showToast('Quiz updated!', 'success');
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
       await router.push('/');
       queryClient.invalidateQueries({ queryKey: ['quiz', uuid] });
     } catch (error) {
       console.error('Update quiz error', error);
-      toastStore.addToast('Could not update quiz!', 'error');
+      showToast('Could not update quiz!', 'error');
     }
   }
 
@@ -286,12 +286,12 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
     try {
       await deleteQuiz();
 
-      toastStore.addToast('Quiz deleted.', 'success');
+      showToast('Quiz deleted.', 'success');
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
       setDialogOpen(false);
       await router.push('/');
     } catch (error) {
-      toastStore.addToast('Could not delete quiz!', 'error');
+      showToast('Could not delete quiz!', 'error');
     }
   }
 

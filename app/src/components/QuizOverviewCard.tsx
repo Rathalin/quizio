@@ -53,7 +53,7 @@ export default function QuizOverviewCard({
   const theme = useTheme();
   const { mode } = useColorMode();
   const isQuestionCountSingular = questionCount === 1;
-  const toastStore = useToastStore();
+  const { showToast } = useToastStore();
   const { transitionHref } = usePageTransition();
 
   const dateFormat = useMemo(() => new Intl.DateTimeFormat('en-GB', { dateStyle: 'short' }), []);
@@ -67,7 +67,7 @@ export default function QuizOverviewCard({
 
   function handleShareClick() {
     navigator.clipboard.writeText(`${window.location.origin}/play/${uuid}`);
-    toastStore.addToast(copiedText, 'info', 'standard');
+    showToast(copiedText, 'info', 'standard');
   }
   return (
     <>
