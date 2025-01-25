@@ -10,6 +10,13 @@ services:
       - uploads:/app/public/uploads
     depends_on:
       - postgres-db
+    environment:
+      - GO_ENV=${GO_ENV}
+      - JWT_SECRET=${JWT_SECRET}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
   postgres-db:
     image: postgres
@@ -19,6 +26,9 @@ services:
     volumes:
       - ./sql-scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
       - db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
   adminer:
     build:
@@ -29,7 +39,9 @@ services:
       - "8081:8080"
     depends_on:
       - postgres-db
-
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
 
 volumes:
   db:

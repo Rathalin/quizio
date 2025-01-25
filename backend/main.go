@@ -23,6 +23,7 @@ import (
 
 func main() {
 	env.InitiEnvironmentVariables()
+	auth.InitTokenAuth(env.Vars.JwtSecret)
 
 	db.ConnectDB()
 	defer db.CloseDB()

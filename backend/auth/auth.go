@@ -1,5 +1,11 @@
 package auth
 
-import "github.com/go-chi/jwtauth/v5"
+import (
+	"github.com/go-chi/jwtauth/v5"
+)
 
-var TokenAuth *jwtauth.JWTAuth = jwtauth.New("HS256", []byte("your-secret-key"), nil)
+var TokenAuth *jwtauth.JWTAuth
+
+func InitTokenAuth(secret string) {
+	TokenAuth = jwtauth.New("HS256", []byte(secret), nil)
+}
