@@ -83,7 +83,7 @@ func main() {
 	s.Docs("/docs", v5emb.New)
 
 	log.Println("Starting service")
-	if err := http.ListenAndServe("localhost:8080", s); err != nil {
+	if err := http.ListenAndServe("0.0.0.0:8080", s); err != nil {
 		log.Fatal(err)
 	}
 }

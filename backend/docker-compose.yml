@@ -4,6 +4,7 @@ services:
       context: .
       args:
         GO_ENV: ${GO_ENV:-local}
+    restart: always
     ports:
       - "8080:8080"
     env_file:
@@ -24,15 +25,16 @@ services:
       - ./sql-scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
       - db:/var/lib/postgresql/data
 
-  pgadmin:
-    image: dpage/pgadmin4
+  adminer:
+    build:
+      context: ../adminer
+      dockerfile: Dockerfile.adminer
     restart: always
     ports:
-      - "8081:80"
-    env_file:
-      - .env.${GO_ENV:-local}
+      - "8081:8080"
     depends_on:
       - postgres-db
+
 
 volumes:
   db:
