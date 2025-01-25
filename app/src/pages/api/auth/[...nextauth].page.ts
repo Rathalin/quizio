@@ -44,7 +44,7 @@ export const authOptions: AuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         // Initial sign-in
         token = {
@@ -79,6 +79,13 @@ export const authOptions: AuthOptions = {
             console.error('Token refresh failed:', err);
             throw err;
           }
+        }
+
+        if (trigger === 'update') {
+          token = {
+            ...token,
+            ...session, // TODO Validate https://next-auth.js.org/getting-started/client#updating-the-session
+          };
         }
       }
       return token;
