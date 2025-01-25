@@ -5,7 +5,7 @@ import { useQuestionIndex } from './QuestionIndexContext';
 import { AnswerIndexContext } from './answer/AnswerIndexContext';
 import QuizioTextField from '@/components/inputs/QuizioTextField';
 import { defaultAnswerFormData } from '../../quiz-form-data';
-import { AnswerForm, QuizQuestionsForm, maxAnswers, minAnswers } from '../../quiz-form-schema';
+import { QuizQuestionsForm, maxAnswers, minAnswers } from '../../quiz-form-schema';
 import { constraints } from '@/content-type-utilities/content-type-constraints';
 import { ZodFieldErrors } from '../../../../../types/hook-form-zod';
 import { FormErrorIcon } from '../../FormErrorIcon';
@@ -47,13 +47,14 @@ export default function QuestionInput({ deletable, onDelete, expanded, onExpand 
     setValue,
   } = useFormContext<QuizQuestionsForm>();
   const name = `questions.${index}` as const;
-  const { fields, append, remove } = useFieldArray<QuizQuestionsForm>({
+  const { fields, append, remove } = useFieldArray({
     name: `${name}.answers` as 'questions.0.answers',
     control,
     rules: {
       minLength: minAnswers,
       maxLength: maxAnswers,
     },
+    keyName: 'formUuid',
   });
   const errors = formErrors as ZodFieldErrors<typeof formErrors>;
   const questionErrors = errors.questions?.[index] ?? null;
@@ -232,11 +233,11 @@ export default function QuestionInput({ deletable, onDelete, expanded, onExpand 
             }}
           >
             {fields.map((field, index) => (
-              <AnswerIndexContext.Provider key={field.uuid} value={index}>
+              <AnswerIndexContext.Provider key={field.formUuid} value={index}>
                 <AnswerInput
                   onDelete={() => remove(index)}
                   minAnswers={minAnswers}
-                  isCorrect={(field as AnswerForm).isCorrect}
+                  isCorrect={field.isCorrect}
                   deletable={fields.length > minAnswers}
                 />
               </AnswerIndexContext.Provider>

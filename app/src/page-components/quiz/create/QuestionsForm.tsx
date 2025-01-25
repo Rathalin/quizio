@@ -55,6 +55,7 @@ export default function QuestionsForm({
   const { fields, append, remove } = useFieldArray({
     name: 'questions',
     control,
+    keyName: 'formUuid',
   });
 
   const getStorageItem = useCallback((): QuizQuestionsForm | null => {
@@ -128,16 +129,12 @@ export default function QuestionsForm({
           <CardContent>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
               {fields.map((field, index) => (
-                <QuestionIndexContext.Provider key={field.uuid} value={index}>
+                <QuestionIndexContext.Provider key={field.formUuid} value={index}>
                   <QuestionInput
                     onDelete={() => remove(index)}
                     deletable={fields.length > minQuestions}
-                    expanded={expanded === field.uuid}
-                    onExpand={() =>
-                      setExpanded(
-                        expanded === field.uuid ? null : (field.uuid ?? raise('Cannot expand question without uuid')),
-                      )
-                    }
+                    expanded={expanded === field.formUuid}
+                    onExpand={() => setExpanded(expanded === field.formUuid ? null : field.formUuid)}
                   />
                 </QuestionIndexContext.Provider>
               ))}

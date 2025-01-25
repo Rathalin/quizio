@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 
 	"github.com/swaggest/usecase"
 )
@@ -30,9 +29,7 @@ func (dbw *DBWrapper) HandleDeleteFile() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
-		// Define the directory for the user's files
-		uploadDir := fmt.Sprintf("./public/uploads/%v/", userUuid)
-		filePath := filepath.Join(uploadDir, input.Filename)
+		filePath := GetFilePaths(input.Filename, userUuid).filePath
 
 		// Check if the file exists
 		if _, err := os.Stat(filePath); os.IsNotExist(err) {

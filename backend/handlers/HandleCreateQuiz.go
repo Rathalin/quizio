@@ -50,7 +50,7 @@ func (dbw *DBWrapper) HandleCreateQuiz() usecase.Interactor {
 
 		err = tx.QueryRowContext(ctx, `
 			INSERT INTO quiz (title, description_text, is_published, image_url, user_account_id)
-			VALUES ($1, $2, $3, $4, $5, $6)
+			VALUES ($1, $2, $3, $4, $5)
 			RETURNING id
 		`, input.Title, input.Description, input.IsPublished, input.ImageUrl, userId).Scan(&quizId)
 		if err != nil {
