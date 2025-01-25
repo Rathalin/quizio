@@ -19,17 +19,21 @@ type EnvVars struct {
 var Vars *EnvVars
 
 func InitiEnvironmentVariables() {
-
 	env := os.Getenv("GO_ENV")
 	if env == "" {
 		env = "local"
 	}
 
-	// Load the appropriate .env file
 	envFile := fmt.Sprintf(".env.%s", env)
-	err := godotenv.Load(envFile)
-	if err != nil {
-		log.Fatalf("Error loading %s file: %v", envFile, err)
+	// Check if the file exists
+	if _, err := os.Stat(envFile); err == nil {
+		err := godotenv.Load(envFile)
+		if err != nil {
+			log.Fatalf("Error loading %s file: %v", envFile, err)
+		}
+		log.Printf("Loaded environment variables from %s", envFile)
+	} else {
+		log.Printf("No .env file found for %s environment, relying on system environment variables", env)
 	}
 
 	// Access environment variables
