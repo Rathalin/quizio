@@ -36,15 +36,17 @@ func (dbw *DBWrapper) HandleDeleteFile() usecase.Interactor {
 
 		// Check if the file exists
 		if _, err := os.Stat(filePath); os.IsNotExist(err) {
-			return fmt.Errorf("file does not exist: %v", input.Filename)
-		}
+			*output = deleteFileResponse{
+				Message: fmt.Sprintf("file does not exist: %v", input.Filename),
+			}
+		} else {
+			// Delete the file
+			if err := os.Remove(filePath); err != nil {
+				return fmt.Errorf("failed to delete file: %w", err)
+			}
 
-		// Delete the file
-		if err := os.Remove(filePath); err != nil {
-			return fmt.Errorf("failed to delete file: %w", err)
+			log.Printf("Deleted file %v for user %v\n", input.Filename, userUuid)
 		}
-
-		log.Printf("Deleted file %v for user %v\n", input.Filename, userUuid)
 
 		*output = deleteFileResponse{
 			Message: fmt.Sprintf("File %v successfully deleted.", input.Filename),

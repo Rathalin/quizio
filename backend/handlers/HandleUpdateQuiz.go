@@ -103,7 +103,7 @@ func (dbw *DBWrapper) HandleUpdateQuiz() usecase.Interactor {
 				err = tx.QueryRowContext(ctx, `
 					UPDATE question
 					SET order_index = $1, title = $2, description_text = $3, image_url = $4, explanation = $5, explanation_image_url = $6
-					WHERE uuid = $6
+					WHERE uuid = $7
 					RETURNING id
 				`,
 					questionIndex,
@@ -170,7 +170,7 @@ func (dbw *DBWrapper) HandleUpdateQuiz() usecase.Interactor {
 					_, err = tx.ExecContext(ctx, `
 							UPDATE answer
 							SET order_index = $1, title = $2, description_text = $3, image_url = $4, is_correct = $5
-							WHERE uuid = $5
+							WHERE uuid = $6
 					`, answerIndex, answerInput.Title, answerInput.Description, answerInput.ImageUrl, answerInput.IsCorrect, answerInput.UUID)
 					if err != nil {
 						return logAndReturnError(err)

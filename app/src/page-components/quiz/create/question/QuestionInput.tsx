@@ -5,7 +5,7 @@ import { useQuestionIndex } from './QuestionIndexContext';
 import { AnswerIndexContext } from './answer/AnswerIndexContext';
 import QuizioTextField from '@/components/inputs/QuizioTextField';
 import { defaultAnswerFormData } from '../../quiz-form-data';
-import { QuizQuestionsForm, maxAnswers, minAnswers } from '../../quiz-form-schema';
+import { AnswerForm, QuizQuestionsForm, maxAnswers, minAnswers } from '../../quiz-form-schema';
 import { constraints } from '@/content-type-utilities/content-type-constraints';
 import { ZodFieldErrors } from '../../../../../types/hook-form-zod';
 import { FormErrorIcon } from '../../FormErrorIcon';
@@ -42,7 +42,6 @@ export default function QuestionInput({ deletable, onDelete, expanded, onExpand 
   const { width: imageWidth, height: imageHeight } = useGameImageInputDimensions();
   const {
     control,
-    getValues,
     formState: { errors: formErrors },
     watch,
     setValue,
@@ -137,7 +136,7 @@ export default function QuestionInput({ deletable, onDelete, expanded, onExpand 
                   type="file"
                   accept="image/*"
                   style={{ display: 'none' }}
-                  value={undefined}
+                  value={''}
                   onChange={(e) => {
                     setValue(`${name}.questionImage.data.file`, e.target.files != null ? e.target.files[0] : null);
                   }}
@@ -237,7 +236,7 @@ export default function QuestionInput({ deletable, onDelete, expanded, onExpand 
                 <AnswerInput
                   onDelete={() => remove(index)}
                   minAnswers={minAnswers}
-                  isCorrect={getValues(`${name}.answers.${index}.isCorrect`)}
+                  isCorrect={(field as AnswerForm).isCorrect}
                   deletable={fields.length > minAnswers}
                 />
               </AnswerIndexContext.Provider>
@@ -273,7 +272,7 @@ export default function QuestionInput({ deletable, onDelete, expanded, onExpand 
                     type="file"
                     accept="image/*"
                     style={{ display: 'none' }}
-                    value={undefined}
+                    value={''}
                     onChange={(e) => {
                       setValue(`${name}.explanationImage.data.file`, e.target.files != null ? e.target.files[0] : null);
                     }}

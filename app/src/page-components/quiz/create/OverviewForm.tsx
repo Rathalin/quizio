@@ -162,7 +162,7 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
                           type="file"
                           accept="image/*"
                           style={{ display: 'none' }}
-                          value={undefined}
+                          value={''}
                           onChange={(e) => {
                             setValue('image.data.file', e.target.files != null ? e.target.files[0] : null);
                           }}
