@@ -6,7 +6,7 @@ import (
 	"github.com/swaggest/usecase"
 )
 
-func (dbw *DBWrapper) SignOut() usecase.Interactor {
+func (dbw *DBWrapper) HandleSignOut() usecase.Interactor {
 	type signOutRequest struct {
 		RefreshToken string `json:"refreshToken" required:"true"`
 	}

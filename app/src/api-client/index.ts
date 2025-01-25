@@ -20,7 +20,8 @@ export type UpdateQuizRequest = ApiSchemas['HandlersUpdateQuizRequest'];
 export type UpdateUserProfileImageRequest = ApiSchemas['HandlersUpdateUserProfileImageRequest'];
 
 // Operations
-export type GetQuizzesRequestQuery = operations['backend/handlers.(*DBWrapper).GetQuizzes']['parameters']['query'];
+export type GetQuizzesRequestQuery =
+  operations['backend/handlers.(*DBWrapper).HandleGetQuizzes']['parameters']['query'];
 
 type WithResponse<T> = T & { response: Response };
 type ApiCall = (...args: any[]) => Promise<WithResponse<{ data: any; error?: never } | { data?: never; error: any }>>;

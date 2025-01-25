@@ -6,7 +6,7 @@ import (
 	"github.com/swaggest/usecase"
 )
 
-func (dbw *DBWrapper) CreateQuiz() usecase.Interactor {
+func (dbw *DBWrapper) HandleCreateQuiz() usecase.Interactor {
 	type createQuizRequestAnswer struct {
 		Title       string  `json:"title" required:"true"`
 		Description *string `json:"description" required:"true" nullable:"true"`
@@ -84,8 +84,7 @@ func (dbw *DBWrapper) CreateQuiz() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
-		response := createQuizResponse{}
-		*output = response
+		*output = createQuizResponse{}
 		return nil
 	})
 }

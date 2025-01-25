@@ -5,12 +5,15 @@ import (
 	"time"
 
 	"github.com/swaggest/usecase"
+	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) GetMyUserProfile() usecase.Interactor {
-	type getMyUserProfileRequest struct{}
+func (dbw *DBWrapper) HandleGetUserProfile() usecase.Interactor {
+	type getUserProfileRequest struct {
+		UUID string `path:"uuid" required:"true" example:"9dfd2a83-b8be-4c35-90ec-0acda6df26d0"`
+	}
 
-	type getMyUserProfileResponse struct {
+	type getUserProfileResponse struct {
 		User struct {
 			UUID            string    `json:"uuid" required:"true"`
 			CreatedAt       time.Time `json:"createdAt" required:"true"`
@@ -23,13 +26,21 @@ func (dbw *DBWrapper) GetMyUserProfile() usecase.Interactor {
 		} `json:"quizStats" required:"true"`
 	}
 
-	return usecase.NewInteractor(func(ctx context.Context, input getMyUserProfileRequest, output *getMyUserProfileResponse) error {
-		userId, err := getUserIdFromContext(ctx)
+	return usecase.NewInteractor(func(ctx context.Context, input getUserProfileRequest, output *getUserProfileResponse) error {
+		userExists, err := dbw.UserExists(input.UUID)
+		if err != nil {
+			return logAndReturnError(err)
+		}
+		if !userExists {
+			return status.Wrap(logAndReturnErrorMessage("user does not exists"), status.NotFound)
+		}
+
+		userId, err := dbw.GetUserId(input.UUID)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
-		response := getMyUserProfileResponse{}
+		response := getUserProfileResponse{}
 
 		err = dbw.DB.QueryRow(`
 			SELECT uuid, created_at, username, profile_image_url

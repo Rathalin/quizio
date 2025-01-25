@@ -1,5 +1,6 @@
 import SignInButton from '@/components/buttons/SignInButton';
 import { raise } from '@/utilities/errorHandling';
+import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
@@ -49,7 +50,11 @@ export default function AccountMenu() {
     <>
       <IconButton onClick={handleClick}>
         {session.user.profileImageUrl != null ? (
-          <Avatar alt={`Profile image of ${session.user.username}`} src={session.user.profileImageUrl} />
+          <Avatar
+            alt={`Profile image of ${session.user.username}`}
+            src={prefixWithBackendUrl(session.user.profileImageUrl)}
+            sx={{ borderColor: 'primary.dark', borderStyle: 'solid', borderWidth: '2px' }}
+          />
         ) : (
           <Avatar
             sx={{
@@ -92,7 +97,6 @@ export default function AccountMenu() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        {JSON.stringify(session.user.profileImageUrl)}
         <Link href="/quiz/create" className="no-underline">
           <MenuItem>
             <ListItemIcon>

@@ -6,15 +6,15 @@ import (
 	"github.com/swaggest/usecase"
 )
 
-func (dbw *DBWrapper) PostPlayProtocolEntry() usecase.Interactor {
-	type postPlayProtocolEntryRequest struct {
+func (dbw *DBWrapper) HandleCreatePlayProtocolEntry() usecase.Interactor {
+	type createPlayProtocolEntryRequest struct {
 		QuizUuid string  `json:"quizUuid" required:"true"`
 		UserUuid *string `json:"userUuid"`
 	}
 
-	type postPlayProtocolEntryResponse struct{}
+	type createPlayProtocolEntryResponse struct{}
 
-	return usecase.NewInteractor(func(ctx context.Context, input postPlayProtocolEntryRequest, output *postPlayProtocolEntryResponse) error {
+	return usecase.NewInteractor(func(ctx context.Context, input createPlayProtocolEntryRequest, output *createPlayProtocolEntryResponse) error {
 		var quizId string
 		var userId *string
 
@@ -46,8 +46,7 @@ func (dbw *DBWrapper) PostPlayProtocolEntry() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
-		response := postPlayProtocolEntryResponse{}
-		*output = response
+		*output = createPlayProtocolEntryResponse{}
 		return nil
 	})
 }

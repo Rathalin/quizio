@@ -33,7 +33,7 @@ export const authOptions: AuthOptions = {
           console.error(`Signin-error`, error);
           return null;
         }
-        console.info(`Signed in as ${data.user.username}`);
+        console.info(`Signed in as ${data.user.username}. ProfileImageUrl: ${data.user.profileImageUrl}`);
         return {
           id: data.user.uuid,
           ...data.user,
@@ -70,8 +70,11 @@ export const authOptions: AuthOptions = {
               throw new Error('Failed to refresh access token');
             }
 
-            token.accessToken = data.accessToken; // Update access token
-            // token.refreshToken = data.refreshToken || token.refreshToken; // Update refresh token if provided
+            token = {
+              ...token,
+              ...data,
+            };
+            // token.accessToken = data.accessToken; // Update access token
           } catch (err) {
             console.error('Token refresh failed:', err);
             throw err;

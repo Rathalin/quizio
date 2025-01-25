@@ -9,7 +9,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) UpdateQuiz() usecase.Interactor {
+func (dbw *DBWrapper) HandleUpdateQuiz() usecase.Interactor {
 	type updateQuizRequestAnswer struct {
 		UUID        *string `json:"uuid" required:"true" nullable:"true"`
 		Title       string  `json:"title" required:"true"`

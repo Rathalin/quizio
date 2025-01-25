@@ -7,7 +7,7 @@ import (
 	"github.com/swaggest/usecase"
 )
 
-func (dbw *DBWrapper) GetAlerts() usecase.Interactor {
+func (dbw *DBWrapper) HandleGetAlerts() usecase.Interactor {
 	type getAlertsRequest struct{}
 
 	type getAlertsResponse struct {

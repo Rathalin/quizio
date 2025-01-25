@@ -46,13 +46,13 @@ func main() {
 	// Public routes
 	s.Group(func(r chi.Router) {
 		r.Handle("/public/*", http.StripPrefix("/public/", http.FileServer(http.Dir("./public"))))
-		r.Method(http.MethodPost, "/register", nethttp.NewHandler(dbWrapper.Register()))
-		r.Method(http.MethodPost, "/signin", nethttp.NewHandler(dbWrapper.SignIn()))
-		r.Method(http.MethodGet, "/quizzes", nethttp.NewHandler(dbWrapper.GetQuizzes()))
-		r.Method(http.MethodGet, "/play/{uuid}", nethttp.NewHandler(dbWrapper.PlayQuiz()))
-		r.Method(http.MethodGet, "/user-profile/{uuid}", nethttp.NewHandler(dbWrapper.GetUserProfile()))
-		r.Method(http.MethodGet, "/alerts", nethttp.NewHandler(dbWrapper.GetAlerts()))
-		r.Method(http.MethodPost, "/refresh-token", nethttp.NewHandler(dbWrapper.RefreshToken()))
+		r.Method(http.MethodPost, "/register", nethttp.NewHandler(dbWrapper.HandleRegister()))
+		r.Method(http.MethodPost, "/signin", nethttp.NewHandler(dbWrapper.HandleSignIn()))
+		r.Method(http.MethodGet, "/quizzes", nethttp.NewHandler(dbWrapper.HandleGetQuizzes()))
+		r.Method(http.MethodGet, "/play/{uuid}", nethttp.NewHandler(dbWrapper.HandleHandlePlayQuiz()))
+		r.Method(http.MethodGet, "/user-profile/{uuid}", nethttp.NewHandler(dbWrapper.HandleGetUserProfile()))
+		r.Method(http.MethodGet, "/alerts", nethttp.NewHandler(dbWrapper.HandleGetAlerts()))
+		r.Method(http.MethodPost, "/refresh-token", nethttp.NewHandler(dbWrapper.HandleRefreshToken()))
 	})
 
 	// Auth routes
@@ -64,19 +64,19 @@ func main() {
 				jwtauth.Verifier(auth.TokenAuth),
 				jwtauth.Authenticator(auth.TokenAuth),
 			)
-			r.Method(http.MethodPost, "/upload", nethttp.NewHandler((dbWrapper.UploadFile())))
-			r.Method(http.MethodDelete, "/upload", nethttp.NewHandler((dbWrapper.DeleteFile())))
-			r.Method(http.MethodPost, "/signout", nethttp.NewHandler(dbWrapper.SignOut()))
-			r.Method(http.MethodPost, "/quiz/create", nethttp.NewHandler((dbWrapper.CreateQuiz())))
-			r.Method(http.MethodGet, "/quiz/{uuid}", nethttp.NewHandler(dbWrapper.GetQuiz()))
-			r.Method(http.MethodPost, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.UpdateQuiz())))
-			r.Method(http.MethodDelete, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.DeleteQuiz())))
-			r.Method(http.MethodPost, "/play-protocol-entry", nethttp.NewHandler((dbWrapper.PostPlayProtocolEntry())))
-			r.Method(http.MethodGet, "/me", nethttp.NewHandler(dbWrapper.GetMyUserProfile()))
-			r.Method(http.MethodPost, "/change-password", nethttp.NewHandler(dbWrapper.ChangePassword()))
+			r.Method(http.MethodPost, "/upload", nethttp.NewHandler((dbWrapper.HandleUploadFile())))
+			r.Method(http.MethodDelete, "/upload", nethttp.NewHandler((dbWrapper.HandleDeleteFile())))
+			r.Method(http.MethodPost, "/signout", nethttp.NewHandler(dbWrapper.HandleSignOut()))
+			r.Method(http.MethodPost, "/quiz/create", nethttp.NewHandler((dbWrapper.HandleCreateQuiz())))
+			r.Method(http.MethodGet, "/quiz/{uuid}", nethttp.NewHandler(dbWrapper.HandleGetQuiz()))
+			r.Method(http.MethodPost, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.HandleUpdateQuiz())))
+			r.Method(http.MethodDelete, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.HandleDeleteQuiz())))
+			r.Method(http.MethodPost, "/play-protocol-entry", nethttp.NewHandler((dbWrapper.HandleCreatePlayProtocolEntry())))
+			r.Method(http.MethodGet, "/me", nethttp.NewHandler(dbWrapper.HandleGetMyUserProfile()))
+			r.Method(http.MethodPost, "/change-password", nethttp.NewHandler(dbWrapper.HandleChangePassword()))
 			r.Method(http.MethodPost, "/update-profile-image", nethttp.NewHandler(dbWrapper.HandleUpdateUserProfileImage()))
 
-			r.Method(http.MethodGet, "/debug", nethttp.NewHandler(dbWrapper.Debug()))
+			r.Method(http.MethodGet, "/debug", nethttp.NewHandler(dbWrapper.HandleDebug()))
 		})
 	})
 

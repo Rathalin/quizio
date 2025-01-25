@@ -10,7 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (dbw *DBWrapper) ChangePassword() usecase.Interactor {
+func (dbw *DBWrapper) HandleChangePassword() usecase.Interactor {
 	type changePasswordRequest struct {
 		CurrentPassword string `json:"currentPassword" required:"true"`
 		NewPassword     string `json:"newPassword" required:"true"`

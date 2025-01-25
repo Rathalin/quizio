@@ -7,7 +7,7 @@ import (
 	"github.com/swaggest/usecase"
 )
 
-func (dbw *DBWrapper) Debug() usecase.Interactor {
+func (dbw *DBWrapper) HandleDebug() usecase.Interactor {
 	type debugRequest struct {
 	}
 
@@ -23,8 +23,7 @@ func (dbw *DBWrapper) Debug() usecase.Interactor {
 
 		fmt.Printf("userId: %v\n", userID)
 
-		response := debugResponse{UserID: userID}
-		*output = response
+		*output = debugResponse{UserID: userID}
 		return nil
 	})
 }

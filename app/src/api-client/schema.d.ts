@@ -13,8 +13,8 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** DB Wrapper Change Password */
-    post: operations['backend/handlers.(*DBWrapper).ChangePassword'];
+    /** DB Wrapper Handle Change Password */
+    post: operations['backend/handlers.(*DBWrapper).HandleChangePassword'];
     delete?: never;
     options?: never;
     head?: never;
@@ -28,8 +28,8 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** DB Wrapper Debug */
-    get: operations['backend/handlers.(*DBWrapper).Debug'];
+    /** DB Wrapper Handle Debug */
+    get: operations['backend/handlers.(*DBWrapper).HandleDebug'];
     put?: never;
     post?: never;
     delete?: never;
@@ -45,8 +45,8 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** DB Wrapper Get My User Profile */
-    get: operations['backend/handlers.(*DBWrapper).GetMyUserProfile'];
+    /** DB Wrapper Handle Get My User Profile */
+    get: operations['backend/handlers.(*DBWrapper).HandleGetMyUserProfile'];
     put?: never;
     post?: never;
     delete?: never;
@@ -64,8 +64,8 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** DB Wrapper Post Play Protocol Entry */
-    post: operations['backend/handlers.(*DBWrapper).PostPlayProtocolEntry'];
+    /** DB Wrapper Handle Create Play Protocol Entry */
+    post: operations['backend/handlers.(*DBWrapper).HandleCreatePlayProtocolEntry'];
     delete?: never;
     options?: never;
     head?: never;
@@ -81,8 +81,8 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** DB Wrapper Create Quiz */
-    post: operations['backend/handlers.(*DBWrapper).CreateQuiz'];
+    /** DB Wrapper Handle Create Quiz */
+    post: operations['backend/handlers.(*DBWrapper).HandleCreateQuiz'];
     delete?: never;
     options?: never;
     head?: never;
@@ -96,13 +96,13 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** DB Wrapper Get Quiz */
-    get: operations['backend/handlers.(*DBWrapper).GetQuiz'];
+    /** DB Wrapper Handle Get Quiz */
+    get: operations['backend/handlers.(*DBWrapper).HandleGetQuiz'];
     put?: never;
-    /** DB Wrapper Update Quiz */
-    post: operations['backend/handlers.(*DBWrapper).UpdateQuiz'];
-    /** DB Wrapper Delete Quiz */
-    delete: operations['backend/handlers.(*DBWrapper).DeleteQuiz'];
+    /** DB Wrapper Handle Update Quiz */
+    post: operations['backend/handlers.(*DBWrapper).HandleUpdateQuiz'];
+    /** DB Wrapper Handle Delete Quiz */
+    delete: operations['backend/handlers.(*DBWrapper).HandleDeleteQuiz'];
     options?: never;
     head?: never;
     patch?: never;
@@ -117,8 +117,8 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** DB Wrapper Sign Out */
-    post: operations['backend/handlers.(*DBWrapper).SignOut'];
+    /** DB Wrapper Handle Sign Out */
+    post: operations['backend/handlers.(*DBWrapper).HandleSignOut'];
     delete?: never;
     options?: never;
     head?: never;
@@ -151,10 +151,10 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** DB Wrapper Upload File */
-    post: operations['backend/handlers.(*DBWrapper).UploadFile'];
-    /** DB Wrapper Delete File */
-    delete: operations['backend/handlers.(*DBWrapper).DeleteFile'];
+    /** DB Wrapper Handle Upload File */
+    post: operations['backend/handlers.(*DBWrapper).HandleUploadFile'];
+    /** DB Wrapper Handle Delete File */
+    delete: operations['backend/handlers.(*DBWrapper).HandleDeleteFile'];
     options?: never;
     head?: never;
     patch?: never;
@@ -167,8 +167,8 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** DB Wrapper Get Alerts */
-    get: operations['backend/handlers.(*DBWrapper).GetAlerts'];
+    /** DB Wrapper Handle Get Alerts */
+    get: operations['backend/handlers.(*DBWrapper).HandleGetAlerts'];
     put?: never;
     post?: never;
     delete?: never;
@@ -184,8 +184,8 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** DB Wrapper Play Quiz */
-    get: operations['backend/handlers.(*DBWrapper).PlayQuiz'];
+    /** DB Wrapper Handle Handle Play Quiz */
+    get: operations['backend/handlers.(*DBWrapper).HandleHandlePlayQuiz'];
     put?: never;
     post?: never;
     delete?: never;
@@ -201,8 +201,8 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** DB Wrapper Get Quizzes */
-    get: operations['backend/handlers.(*DBWrapper).GetQuizzes'];
+    /** DB Wrapper Handle Get Quizzes */
+    get: operations['backend/handlers.(*DBWrapper).HandleGetQuizzes'];
     put?: never;
     post?: never;
     delete?: never;
@@ -220,8 +220,8 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** DB Wrapper Refresh Token */
-    post: operations['backend/handlers.(*DBWrapper).RefreshToken'];
+    /** DB Wrapper Handle Refresh Token */
+    post: operations['backend/handlers.(*DBWrapper).HandleRefreshToken'];
     delete?: never;
     options?: never;
     head?: never;
@@ -237,8 +237,8 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** DB Wrapper Register */
-    post: operations['backend/handlers.(*DBWrapper).Register'];
+    /** DB Wrapper Handle Register */
+    post: operations['backend/handlers.(*DBWrapper).HandleRegister'];
     delete?: never;
     options?: never;
     head?: never;
@@ -254,8 +254,8 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** DB Wrapper Sign In */
-    post: operations['backend/handlers.(*DBWrapper).SignIn'];
+    /** DB Wrapper Handle Sign In */
+    post: operations['backend/handlers.(*DBWrapper).HandleSignIn'];
     delete?: never;
     options?: never;
     head?: never;
@@ -269,8 +269,8 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** DB Wrapper Get User Profile */
-    get: operations['backend/handlers.(*DBWrapper).GetUserProfile'];
+    /** DB Wrapper Handle Get User Profile */
+    get: operations['backend/handlers.(*DBWrapper).HandleGetUserProfile'];
     put?: never;
     post?: never;
     delete?: never;
@@ -289,6 +289,10 @@ export interface components {
     };
     HandlersChangePasswordResponse: {
       message?: string;
+    };
+    HandlersCreatePlayProtocolEntryRequest: {
+      quizUuid: string;
+      userUuid?: string | null;
     };
     HandlersCreateQuizRequest: {
       description: string | null;
@@ -362,10 +366,6 @@ export interface components {
       questions: components['schemas']['ModelsQuestion'][];
       title: string;
     };
-    HandlersPostPlayProtocolEntryRequest: {
-      quizUuid: string;
-      userUuid?: string | null;
-    };
     HandlersQuiz: {
       /** Format: date-time */
       createdAt: string;
@@ -388,6 +388,7 @@ export interface components {
     };
     HandlersRefreshTokenResponse: {
       accessToken: string;
+      user: components['schemas']['ModelsUserAccount'];
     };
     HandlersRegisterRequest: {
       password: string;
@@ -518,7 +519,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-  'backend/handlers.(*DBWrapper).ChangePassword': {
+  'backend/handlers.(*DBWrapper).HandleChangePassword': {
     parameters: {
       query?: never;
       header?: never;
@@ -551,7 +552,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).Debug': {
+  'backend/handlers.(*DBWrapper).HandleDebug': {
     parameters: {
       query?: never;
       header?: never;
@@ -580,7 +581,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).GetMyUserProfile': {
+  'backend/handlers.(*DBWrapper).HandleGetMyUserProfile': {
     parameters: {
       query?: never;
       header?: never;
@@ -609,7 +610,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).PostPlayProtocolEntry': {
+  'backend/handlers.(*DBWrapper).HandleCreatePlayProtocolEntry': {
     parameters: {
       query?: never;
       header?: never;
@@ -618,7 +619,7 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        'application/json': components['schemas']['HandlersPostPlayProtocolEntryRequest'];
+        'application/json': components['schemas']['HandlersCreatePlayProtocolEntryRequest'];
       };
     };
     responses: {
@@ -640,7 +641,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).CreateQuiz': {
+  'backend/handlers.(*DBWrapper).HandleCreateQuiz': {
     parameters: {
       query?: never;
       header?: never;
@@ -671,7 +672,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).GetQuiz': {
+  'backend/handlers.(*DBWrapper).HandleGetQuiz': {
     parameters: {
       query?: never;
       header?: never;
@@ -702,7 +703,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).UpdateQuiz': {
+  'backend/handlers.(*DBWrapper).HandleUpdateQuiz': {
     parameters: {
       query?: never;
       header?: never;
@@ -735,7 +736,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).DeleteQuiz': {
+  'backend/handlers.(*DBWrapper).HandleDeleteQuiz': {
     parameters: {
       query?: never;
       header?: never;
@@ -764,7 +765,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).SignOut': {
+  'backend/handlers.(*DBWrapper).HandleSignOut': {
     parameters: {
       query?: never;
       header?: never;
@@ -826,7 +827,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).UploadFile': {
+  'backend/handlers.(*DBWrapper).HandleUploadFile': {
     parameters: {
       query?: never;
       header?: never;
@@ -859,7 +860,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).DeleteFile': {
+  'backend/handlers.(*DBWrapper).HandleDeleteFile': {
     parameters: {
       query: {
         filename: string;
@@ -890,7 +891,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).GetAlerts': {
+  'backend/handlers.(*DBWrapper).HandleGetAlerts': {
     parameters: {
       query?: never;
       header?: never;
@@ -910,7 +911,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).PlayQuiz': {
+  'backend/handlers.(*DBWrapper).HandleHandlePlayQuiz': {
     parameters: {
       query?: never;
       header?: never;
@@ -932,7 +933,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).GetQuizzes': {
+  'backend/handlers.(*DBWrapper).HandleGetQuizzes': {
     parameters: {
       query: {
         page: number;
@@ -957,7 +958,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).RefreshToken': {
+  'backend/handlers.(*DBWrapper).HandleRefreshToken': {
     parameters: {
       query?: never;
       header?: never;
@@ -981,7 +982,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).Register': {
+  'backend/handlers.(*DBWrapper).HandleRegister': {
     parameters: {
       query?: never;
       header?: never;
@@ -1005,7 +1006,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).SignIn': {
+  'backend/handlers.(*DBWrapper).HandleSignIn': {
     parameters: {
       query?: never;
       header?: never;
@@ -1029,7 +1030,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).GetUserProfile': {
+  'backend/handlers.(*DBWrapper).HandleGetUserProfile': {
     parameters: {
       query?: never;
       header?: never;
