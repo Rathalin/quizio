@@ -71,10 +71,12 @@ func Init() {
 		log.Fatal("Environment variable OPENAPI_DOCS_PASSWORD is not set\n")
 	}
 
-	log.Printf("Database: %s\n", Vars.PostgresDB)
-	log.Printf("Host: %s\n", Vars.PostgresHost)
-	log.Printf("User: %s\n", Vars.PostgresUser)
-	log.Printf("Password: %s\n", "(hidden)")
-	log.Printf("JWT Secret: %s\n", "(hidden)")
+	log.Printf("JWT_SECRET: %s\n", "(hidden)")
+	log.Printf("POSTGRES_DB: %s\n", Vars.PostgresDB)
+	log.Printf("POSTGRES_HOST: %s\n", Vars.PostgresHost)
+	log.Printf("POSTGRES_USER: %s\n", Vars.PostgresUser)
+	log.Printf("POSTGRES_PASSWORD: %s\n", "(hidden)")
+	log.Printf("OPENAPI_DOCS_USER: %s\n", Vars.OpenAPIDocsUser)
+	log.Printf("OPENAPI_DOCS_PASSWORD: %s\n", "(hidden)")
 	log.Printf("\n")
 }
