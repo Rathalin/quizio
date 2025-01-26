@@ -18,7 +18,7 @@ const compat = new FlatCompat({
  */
 export const config = [
   {
-    ignores: ['**/temp.js', '**/generated/*'],
+    ignores: ['**/temp.js', '**/generated/*', 'env.d.ts', 'next-env.d.ts', 'next-auth.d.ts'],
   },
   ...compat.extends('next', 'prettier'),
   {
