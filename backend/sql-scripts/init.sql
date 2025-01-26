@@ -7,6 +7,9 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 DROP DATABASE IF EXISTS quizio;
 CREATE DATABASE quizio;
 
+-- Switch to quizio database
+\c quizio
+
 -- Drop tables
 DROP TABLE IF EXISTS alert;
 DROP TABLE IF EXISTS play_protocol_entry;
