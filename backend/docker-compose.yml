@@ -22,7 +22,7 @@ services:
     image: postgres
     restart: always
     volumes:
-      - ./backend/sql-scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - /backend/sql-scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
       - db:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
