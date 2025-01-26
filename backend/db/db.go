@@ -15,6 +15,11 @@ func ConnectDB() {
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v\n", err)
 	}
+
+	// Test the connection
+	if err = DB.Ping(); err != nil {
+		log.Fatalf("Unable to establish a connection to the database: %v\n", err)
+	}
 	log.Println("Connected to PostgreSQL database.")
 }
 
