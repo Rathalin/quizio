@@ -4,6 +4,8 @@ services:
       context: .
     pull_policy: build
     restart: always
+    ports:
+      - "8080:8080"
     volumes:
       - uploads:/app/public/uploads
     depends_on:
@@ -19,6 +21,8 @@ services:
   postgres-db:
     image: postgres
     restart: always
+    ports:
+      - "5432:5432"
     volumes:
       - ./sql-scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
       - db:/var/lib/postgresql/data
@@ -31,6 +35,8 @@ services:
       context: ../adminer
       dockerfile: Dockerfile.adminer
     restart: always
+    ports:
+      - "8081:8080"
     depends_on:
       - postgres-db
     environment:
