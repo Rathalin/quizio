@@ -9,16 +9,18 @@ import (
 )
 
 type EnvVars struct {
-	PostgresDb       string
-	PostgresHost     string
-	PostgresUser     string
-	PostgresPassword string
-	JwtSecret        string
+	JWTSecret           string
+	PostgresDB          string
+	PostgresHost        string
+	PostgresUser        string
+	PostgresPassword    string
+	OpenAPIDocsUser     string
+	OpenAPIDocsPassword string
 }
 
 var Vars *EnvVars
 
-func InitiEnvironmentVariables() {
+func Init() {
 	env := os.Getenv("GO_ENV")
 	if env == "" {
 		env = "local"
@@ -38,14 +40,19 @@ func InitiEnvironmentVariables() {
 
 	// Access environment variables
 	Vars = &EnvVars{
-		PostgresDb:       os.Getenv("POSTGRES_DB"),
-		PostgresHost:     os.Getenv("POSTGRES_HOST"),
-		PostgresUser:     os.Getenv("POSTGRES_USER"),
-		PostgresPassword: os.Getenv("POSTGRES_PASSWORD"),
-		JwtSecret:        os.Getenv("JWT_SECRET"),
+		JWTSecret:           os.Getenv("JWT_SECRET"),
+		PostgresDB:          os.Getenv("POSTGRES_DB"),
+		PostgresHost:        os.Getenv("POSTGRES_HOST"),
+		PostgresUser:        os.Getenv("POSTGRES_USER"),
+		PostgresPassword:    os.Getenv("POSTGRES_PASSWORD"),
+		OpenAPIDocsUser:     os.Getenv("OPENAPI_DOCS_USER"),
+		OpenAPIDocsPassword: os.Getenv("OPENAPI_DOCS_PASSWORD"),
 	}
 
-	if Vars.PostgresDb == "" {
+	if Vars.JWTSecret == "" {
+		log.Fatal("Environment variable JWT_SECRET is not set\n")
+	}
+	if Vars.PostgresDB == "" {
 		log.Fatal("Environment variable POSTGRES_DB is not set\n")
 	}
 	if Vars.PostgresHost == "" {
@@ -57,11 +64,14 @@ func InitiEnvironmentVariables() {
 	if Vars.PostgresPassword == "" {
 		log.Fatal("Environment variable POSTGRES_PW is not set\n")
 	}
-	if Vars.JwtSecret == "" {
-		log.Fatal("Environment variable JWT_SECRET is not set\n")
+	if Vars.OpenAPIDocsUser == "" {
+		log.Fatal("Environment variable OPENAPI_DOCS_USER is not set\n")
+	}
+	if Vars.OpenAPIDocsPassword == "" {
+		log.Fatal("Environment variable OPENAPI_DOCS_PASSWORD is not set\n")
 	}
 
-	log.Printf("Database: %s\n", Vars.PostgresDb)
+	log.Printf("Database: %s\n", Vars.PostgresDB)
 	log.Printf("Host: %s\n", Vars.PostgresHost)
 	log.Printf("User: %s\n", Vars.PostgresUser)
 	log.Printf("Password: %s\n", "(hidden)")

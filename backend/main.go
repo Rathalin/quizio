@@ -7,6 +7,7 @@ import (
 	_ "github.com/lib/pq"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	jwtauth "github.com/go-chi/jwtauth/v5"
 	"github.com/rs/cors"
 	"github.com/swaggest/openapi-go/openapi3"
@@ -22,11 +23,12 @@ import (
 )
 
 func main() {
-	env.InitiEnvironmentVariables()
-	auth.InitTokenAuth(env.Vars.JwtSecret)
+	env.Init()
 
-	db.ConnectDB()
-	defer db.CloseDB()
+	auth.InitTokenAuth(env.Vars.JWTSecret)
+
+	db.Connect()
+	defer db.Close()
 
 	dbWrapper := &handlers.DBWrapper{DB: db.DB}
 
@@ -81,7 +83,21 @@ func main() {
 		})
 	})
 
-	s.Docs("/docs", v5emb.New)
+	docsAuth := middleware.BasicAuth("Docs Access", map[string]string{env.Vars.OpenAPIDocsUser: env.Vars.OpenAPIDocsPassword})
+	docsSecuritySchema := nethttp.HTTPBasicSecurityMiddleware(s.OpenAPICollector, "Docs Access", "Basic authentication for accessing the OpenAPI docs")
+	s.Route("/docs", func(r chi.Router) {
+		r.Group(func(r chi.Router) {
+			r.Use(docsAuth, docsSecuritySchema)
+			// Serve the OpenAPI spec at /docs/openapi.json
+			r.Method(http.MethodGet, "/openapi.json", s.OpenAPICollector)
+			// Serve the Swagger UI
+			r.Mount("/", v5emb.New(
+				s.OpenAPISchema().Title(),
+				"/docs/openapi.json",
+				"/docs",
+			))
+		})
+	})
 
 	log.Println("Starting service")
 	if err := http.ListenAndServe("0.0.0.0:8080", s); err != nil {
