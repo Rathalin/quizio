@@ -4,8 +4,8 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- Drop and recreate the database
--- DROP DATABASE IF EXISTS quizio;
--- CREATE DATABASE quizio;
+DROP DATABASE IF EXISTS quizio;
+CREATE DATABASE quizio;
 
 -- Drop tables
 DROP TABLE IF EXISTS alert;

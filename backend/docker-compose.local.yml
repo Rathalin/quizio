@@ -1,0 +1,42 @@
+services:
+  go-backend:
+    build:
+      context: .
+    pull_policy: build
+    restart: always
+    volumes:
+      - uploads:/app/public/uploads
+    depends_on:
+      - postgres-db
+    environment:
+      - GO_ENV=${GO_ENV}
+      - JWT_SECRET=${JWT_SECRET}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+  postgres-db:
+    image: postgres
+    restart: always
+    volumes:
+      - ./sql-scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+  adminer:
+    build:
+      context: ../adminer
+      dockerfile: Dockerfile.adminer
+    restart: always
+    depends_on:
+      - postgres-db
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+
+volumes:
+  db:
+  uploads:
