@@ -98,7 +98,7 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
     setQuestionIndex(0);
     setAnswerwedProgress(
       questions.map((question) => ({
-        correctAnswerId: question.answers.find((answer) => answer.isCorrect)!.uuid,
+        correctAnswerId: question.answers.find((answer) => answer.isCorrect)?.uuid ?? '',
         selectedAnswerId: null,
       })),
     );
