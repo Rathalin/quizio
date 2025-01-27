@@ -3,8 +3,9 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"quizio/backend/models"
 	"time"
+
+	"github.com/Rathalin/quizio/backend/models"
 
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"

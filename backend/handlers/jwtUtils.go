@@ -4,8 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"quizio/backend/auth"
 	"time"
+
+	"github.com/Rathalin/quizio/backend/auth"
 
 	jwtauth "github.com/go-chi/jwtauth/v5"
 )

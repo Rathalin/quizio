@@ -16,10 +16,10 @@ import (
 	"github.com/swaggest/rest/web"
 	"github.com/swaggest/swgui/v5emb"
 
-	"quizio/backend/auth"
-	"quizio/backend/db"
-	"quizio/backend/env"
-	"quizio/backend/handlers"
+	"github.com/Rathalin/quizio/backend/auth"
+	"github.com/Rathalin/quizio/backend/db"
+	"github.com/Rathalin/quizio/backend/env"
+	"github.com/Rathalin/quizio/backend/handlers"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-module quizio/backend
+module github.com/Rathalin/quizio/backend
 
 go 1.23.4
 

@@ -4,7 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"quizio/backend/env"
+
+	"github.com/Rathalin/quizio/backend/env"
 )
 
 var DB *sql.DB

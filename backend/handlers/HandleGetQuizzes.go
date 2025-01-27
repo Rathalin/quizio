@@ -4,9 +4,10 @@ import (
 	"context"
 	"fmt"
 	"math"
-	"quizio/backend/models"
 	"strings"
 	"time"
+
+	"github.com/Rathalin/quizio/backend/models"
 
 	"github.com/swaggest/usecase"
 )

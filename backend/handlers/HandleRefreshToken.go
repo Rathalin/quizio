@@ -3,7 +3,8 @@ package handlers
 import (
 	"context"
 	"errors"
-	"quizio/backend/models"
+
+	"github.com/Rathalin/quizio/backend/models"
 
 	"github.com/swaggest/usecase"
 )

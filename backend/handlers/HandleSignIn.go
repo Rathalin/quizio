@@ -2,9 +2,10 @@ package handlers
 
 import (
 	"context"
-	"quizio/backend/models"
 	"strings"
 	"time"
+
+	"github.com/Rathalin/quizio/backend/models"
 
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
