@@ -14,7 +14,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { usePlayProtocolEntryMutation } from '../../data/usePlayProtocolEntryMutation';
+import { useCreatePlayProtocolEntryMutation } from '../../data/useCreatePlayProtocolEntryMutation';
 import { throwOnError } from '@/api-client';
 import { useSession } from 'next-auth/react';
 import Card from '@mui/material/Card';
@@ -68,7 +68,7 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
   const resultAnchor = useRef<HTMLDivElement>(null);
   const quizQuery = usePlayQuizQuery(uuid);
   const quiz = quizQuery.data;
-  const { mutateAsync: addPlayProtocolEntry } = usePlayProtocolEntryMutation();
+  const { mutateAsync: addPlayProtocolEntry } = useCreatePlayProtocolEntryMutation();
 
   const [playCountIncreased, setPlayCountIncreased] = useState(false);
   const questions = useMemo(() => quiz?.questions ?? [], [quiz]);
@@ -109,7 +109,6 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
       try {
         await addPlayProtocolEntry({
           quizUuid: uuid,
-          userUuid: session?.user.uuid ?? null,
         });
 
         queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });

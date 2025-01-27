@@ -64,8 +64,8 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** DB Wrapper Handle Create Play Protocol Entry */
-    post: operations['backend/handlers.(*DBWrapper).HandleCreatePlayProtocolEntry'];
+    /** DB Wrapper Handle Create Play Protocol Entry With User */
+    post: operations['backend/handlers.(*DBWrapper).HandleCreatePlayProtocolEntryWithUser'];
     delete?: never;
     options?: never;
     head?: never;
@@ -171,6 +171,23 @@ export interface paths {
     get: operations['backend/handlers.(*DBWrapper).HandleGetAlerts'];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/play-protocol-entry': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper Handle Create Play Protocol Entry */
+    post: operations['backend/handlers.(*DBWrapper).HandleCreatePlayProtocolEntry'];
     delete?: never;
     options?: never;
     head?: never;
@@ -292,7 +309,9 @@ export interface components {
     };
     HandlersCreatePlayProtocolEntryRequest: {
       quizUuid: string;
-      userUuid: string | null;
+    };
+    HandlersCreatePlayProtocolEntryWithUserRequest: {
+      quizUuid: string;
     };
     HandlersCreateQuizRequest: {
       description: string | null;
@@ -610,7 +629,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).HandleCreatePlayProtocolEntry': {
+  'backend/handlers.(*DBWrapper).HandleCreatePlayProtocolEntryWithUser': {
     parameters: {
       query?: never;
       header?: never;
@@ -619,7 +638,7 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        'application/json': components['schemas']['HandlersCreatePlayProtocolEntryRequest'];
+        'application/json': components['schemas']['HandlersCreatePlayProtocolEntryWithUserRequest'];
       };
     };
     responses: {
@@ -908,6 +927,28 @@ export interface operations {
         content: {
           'application/json': components['schemas']['HandlersGetAlertsResponse'];
         };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).HandleCreatePlayProtocolEntry': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['HandlersCreatePlayProtocolEntryRequest'];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
       };
     };
   };
