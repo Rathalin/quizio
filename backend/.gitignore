@@ -3,6 +3,7 @@
 ./main
 
 .env.local
+.env.local-docker
 .env.development
 .env.production
 

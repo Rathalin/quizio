@@ -11,9 +11,9 @@ tasks:
       - go run .
 
   docker-up:
-    desc: Start Docker Compose with development environment
+    desc: Start Docker Compose with local-docker environment
     cmds:
-      - GO_ENV=development docker-compose --project-name {{.COMPOSE_PROJECT_NAME}} -f {{.COMPOSE_FILE}} --env-file=.env.development up --build -d
+      - GO_ENV=local-docker docker-compose --project-name {{.COMPOSE_PROJECT_NAME}} -f {{.COMPOSE_FILE}} --env-file=.env.local-docker up --build -d
 
   docker-down:
     desc: Stop Docker Compose
