@@ -56,7 +56,7 @@ export default function QuizOverviewCard({
   const { showToast } = useToastStore();
   const { transitionHref } = usePageTransition();
 
-  const dateFormat = useMemo(() => new Intl.DateTimeFormat('en-GB', { dateStyle: 'short' }), []);
+  const dateFormat = useMemo(() => new Intl.DateTimeFormat('de-AT', { dateStyle: 'medium' }), []);
 
   const copiedText = useMemo(() => {
     const titleLimit = 30;
