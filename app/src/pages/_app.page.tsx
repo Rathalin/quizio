@@ -5,6 +5,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { usePageTransition } from '@/persistence/page-transition.store';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import {
   DehydratedState,
   HydrationBoundary,
@@ -88,6 +89,7 @@ export default function App(props: MyAppProps & DocumentHeadTagsProps) {
               <Component {...pageProps} />
               <ToastSnackbar />
               <Analytics />
+              <SpeedInsights />
             </Layout>
           </ThemeProvider>
           <ReactQueryDevtools initialIsOpen={false} />
