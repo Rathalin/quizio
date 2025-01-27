@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
 import { ProfileAvatar } from './ProfileAvatar';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import { useSession } from 'next-auth/react';
+import { dateFormatter } from '@/utilities/intlFormats';
 
 type UserProfileProps = {
   createdAt: Date;
@@ -14,7 +14,6 @@ type UserProfileProps = {
 
 export default function UserProfile({ createdAt, quizCount, quizViewsTotal }: UserProfileProps) {
   const { data: session } = useSession();
-  const dateFormat = useMemo(() => new Intl.DateTimeFormat('en-GB', { dateStyle: 'short' }), []);
 
   return (
     <>
@@ -25,7 +24,7 @@ export default function UserProfile({ createdAt, quizCount, quizViewsTotal }: Us
         <Typography variant="h1" sx={{ marginTop: 0 }}>
           {session?.user.username}
         </Typography>
-        <Typography>{`Joined on ${dateFormat.format(new Date(createdAt))}`}</Typography>
+        <Typography>{`Joined on ${dateFormatter.format(new Date(createdAt))}`}</Typography>
         <Divider />
         {/* TODO Fix this mess with translations */}
         <Typography>{`Created ${quizCount} quiz${quizCount === 1 ? '' : 'zes'} which ${

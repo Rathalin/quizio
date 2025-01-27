@@ -23,6 +23,7 @@ import { usePageTransition } from '@/persistence/page-transition.store';
 import LoadingCircle from './LoadingCircle';
 import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import { useToastStore } from '@/persistence/taost.store';
+import { dateFormatter } from '@/utilities/intlFormats';
 
 type QuizOverviewCardProps = {
   uuid: string;
@@ -52,11 +53,8 @@ export default function QuizOverviewCard({
 }: QuizOverviewCardProps) {
   const theme = useTheme();
   const { mode } = useColorMode();
-  const isQuestionCountSingular = questionCount === 1;
   const { showToast } = useToastStore();
   const { transitionHref } = usePageTransition();
-
-  const dateFormat = useMemo(() => new Intl.DateTimeFormat('de-AT', { dateStyle: 'medium' }), []);
 
   const copiedText = useMemo(() => {
     const titleLimit = 30;
@@ -178,9 +176,9 @@ export default function QuizOverviewCard({
                     }}
                   />
                 </Link>
-                <Chip label={`${questionCount} question${isQuestionCountSingular ? '' : 's'}`} variant="outlined" />
+                <Chip label={`${questionCount} question${questionCount === 1 ? '' : 's'}`} variant="outlined" />
                 <Chip label={playCount} icon={<BarChartIcon fontSize="small" />} variant="outlined" />
-                <Chip label={dateFormat.format(createdAt)} variant="outlined" />
+                <Chip label={dateFormatter.format(createdAt)} variant="outlined" />
               </Box>
             </Box>
           </Box>

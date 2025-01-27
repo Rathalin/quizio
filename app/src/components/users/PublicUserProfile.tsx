@@ -1,9 +1,9 @@
-import { useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import { PublicProfileAvatar } from './PublicProfileAvatar';
+import { dateFormatter } from '@/utilities/intlFormats';
 
 type UserProfileProps = {
   username: string;
@@ -20,8 +20,6 @@ export default function PublicUserProfile({
   quizViewsTotal,
   imageUrl,
 }: UserProfileProps) {
-  const dateFormat = useMemo(() => new Intl.DateTimeFormat('en-GB', { dateStyle: 'short' }), []);
-
   return (
     <>
       <Box sx={{ marginBottom: 4 }}>
@@ -31,7 +29,7 @@ export default function PublicUserProfile({
         <Typography variant="h1" sx={{ marginTop: 0 }}>
           {username}
         </Typography>
-        <Typography>{`Joined on ${dateFormat.format(new Date(createdAt))}`}</Typography>
+        <Typography>{`Joined on ${dateFormatter.format(new Date(createdAt))}`}</Typography>
         <Divider />
         {/* TODO Fix this mess with translations */}
         <Typography>{`Created ${quizCount} quiz${quizCount === 1 ? '' : 'zes'} which ${
