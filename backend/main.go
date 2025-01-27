@@ -99,6 +99,10 @@ func main() {
 		})
 	})
 
+	s.Route("/", func(r chi.Router) {
+		r.Method(http.MethodGet, "/", http.RedirectHandler("/docs", http.StatusMovedPermanently))
+	})
+
 	log.Println("Starting service")
 	if err := http.ListenAndServe("0.0.0.0:8080", s); err != nil {
 		log.Fatal(err)
