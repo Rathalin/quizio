@@ -17,13 +17,21 @@ import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
 import Link from 'next/link';
 import GradientText from '@/components/GradientText';
 
-const passwordMinLength = 6;
-const passwordMaxLength = 30;
+const passwordMinLength = 8;
+const passwordMaxLength = 50;
 const passwordMinLengthError = `Password must be at least ${passwordMinLength} characters long`;
+const passwordComplexityError =
+  'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character';
 const schema = z
   .object({
     currentPassword: z.string().min(passwordMinLength, { message: passwordMinLengthError }),
-    password: z.string().min(passwordMinLength, { message: passwordMinLengthError }),
+    password: z
+      .string()
+      .min(passwordMinLength, { message: passwordMinLengthError })
+      .regex(/[A-Z]/, { message: passwordComplexityError }) // At least one uppercase letter
+      .regex(/[a-z]/, { message: passwordComplexityError }) // At least one lowercase letter
+      .regex(/\d/, { message: passwordComplexityError }) // At least one digit
+      .regex(/[^A-Za-z0-9]/, { message: passwordComplexityError }), // At least one special character
     passwordConfirmation: z.string().min(passwordMinLength, { message: passwordMinLengthError }),
   })
   .refine((data) => data.password === data.passwordConfirmation, {
