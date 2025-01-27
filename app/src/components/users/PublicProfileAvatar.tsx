@@ -48,6 +48,7 @@ export function PublicProfileAvatar({ imageUrl, username }: AvatarImageProps) {
             alt={`Profile image of ${username}.`}
             width={width}
             height={height}
+            style={{ objectFit: 'cover' }}
             unoptimized
           />
         </Avatar>
