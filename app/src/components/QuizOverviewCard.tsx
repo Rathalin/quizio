@@ -87,6 +87,7 @@ export default function QuizOverviewCard({
               width: '100%',
               minHeight: '180px',
             }}
+            priority
             unoptimized
           />
         ) : (
