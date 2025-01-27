@@ -1,27 +1,16 @@
-import {
-  Html,
-  Head,
-  Main,
-  NextScript,
-  DocumentContext,
-  DocumentProps,
-} from 'next/document';
+import { Html, Head, Main, NextScript, DocumentContext, DocumentProps } from 'next/document';
 import * as React from 'react';
-import {
-  DocumentHeadTags,
-  DocumentHeadTagsProps,
-  documentGetInitialProps,
-} from '@mui/material-nextjs/v15-pagesRouter';
+import { DocumentHeadTags, DocumentHeadTagsProps, documentGetInitialProps } from '@mui/material-nextjs/v15-pagesRouter';
+import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
 
-export default function MyDocument(
-  props: DocumentProps & DocumentHeadTagsProps
-) {
+export default function MyDocument(props: DocumentProps & DocumentHeadTagsProps) {
   return (
     <Html lang="en">
       <Head>
         <DocumentHeadTags {...props} />
       </Head>
       <body>
+        <InitColorSchemeScript attribute="class" />
         <Main />
         <NextScript />
       </body>
