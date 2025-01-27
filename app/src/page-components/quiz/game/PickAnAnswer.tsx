@@ -14,6 +14,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import Circle from '@mui/icons-material/Circle';
 
 type PickAnAnswerProps = {
   index: number;
@@ -82,7 +83,15 @@ export default function PickAnAnswer({
               disabled={answered}
             >
               <ListItemIcon>
-                {answered && (answer.correct ? <CheckIcon color="success" /> : <ClearIcon color="error" />)}
+                {answered ? (
+                  answer.correct ? (
+                    <CheckIcon color="success" />
+                  ) : (
+                    <ClearIcon color="error" />
+                  )
+                ) : (
+                  <Circle color="disabled" sx={{ marginLeft: 1.5, fontSize: '0.5rem' }} />
+                )}
               </ListItemIcon>
               <ListItemText>{answer.title}</ListItemText>
             </ListItemButton>
