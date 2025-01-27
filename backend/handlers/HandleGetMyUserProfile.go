@@ -51,8 +51,10 @@ func (dbw *DBWrapper) HandleGetMyUserProfile() usecase.Interactor {
 
 		err = dbw.DB.QueryRow(`
 			SELECT COUNT(*)
-			FROM play_protocol_entry
-			WHERE user_account_id = $1
+			FROM play_protocol_entry e
+			JOIN quiz q
+				ON q.id = e.quiz_id
+			WHERE q.user_account_id = $1
 		`, userId).Scan(&response.QuizStats.TotalQuizzesPlayCount)
 		if err != nil {
 			return logAndReturnError(err)
