@@ -1,7 +1,7 @@
 services:
   go-backend:
     build:
-      context: .
+      context: ../backend
     pull_policy: build
     restart: always
     volumes:

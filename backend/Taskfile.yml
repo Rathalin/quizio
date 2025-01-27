@@ -1,32 +1,18 @@
 version: '3'
 
-vars:
-  COMPOSE_PROJECT_NAME: quizio
-  COMPOSE_FILE: docker-compose.local.yml
-
 tasks:
+  help:
+    desc: Show help message
+    cmds:
+      - task --list
+
   run:
     desc: Run the Go application
     cmds:
       - go run .
-
-  docker-up:
-    desc: Start Docker Compose with local-docker environment
-    cmds:
-      - GO_ENV=local-docker docker-compose --project-name {{.COMPOSE_PROJECT_NAME}} -f {{.COMPOSE_FILE}} --env-file=.env.local-docker up --build -d
-
-  docker-down:
-    desc: Stop Docker Compose
-    cmds:
-      - docker-compose --project-name {{.COMPOSE_PROJECT_NAME}} -f {{.COMPOSE_FILE}} down
 
   psql:
     desc: Connect to PostgreSQL database
     dotenv: ['.env.local']
     cmds:
       - PGPASSWORD=$POSTGRES_PASSWORD psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB
-
-  help:
-    desc: Show help message
-    cmds:
-      - task --list

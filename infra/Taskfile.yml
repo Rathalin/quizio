@@ -1,0 +1,21 @@
+version: '3'
+
+vars:
+  COMPOSE_PROJECT_NAME: quizio
+  COMPOSE_FILE: docker-compose.local.yml
+
+tasks:
+  help:
+    desc: Show help message
+    cmds:
+      - task --list
+
+  docker-up:
+    desc: Start Docker Compose with local-docker environment
+    cmds:
+      - GO_ENV=local-docker docker-compose --project-name {{.COMPOSE_PROJECT_NAME}} -f {{.COMPOSE_FILE}} --env-file=../backend/.env.local-docker up --build -d
+
+  docker-down:
+    desc: Stop Docker Compose
+    cmds:
+      - docker-compose --project-name {{.COMPOSE_PROJECT_NAME}} -f {{.COMPOSE_FILE}} down
