@@ -71,8 +71,8 @@ export default function ChangePasswordPage() {
       <Card sx={{ marginTop: 2, padding: 2, maxWidth: theme.breakpoints.values.sm }} elevation={2}>
         <CardContent>
           <Typography variant="h3" component="h1" sx={{ marginTop: 0 }}>
-            <span>{'Change your '}</span>
-            <GradientText>{'password'}</GradientText>
+            <GradientText>{'Change'}</GradientText>
+            <span>{' your password'}</span>
           </Typography>
           <form
             onSubmit={(e) => {
