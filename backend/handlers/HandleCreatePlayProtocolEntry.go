@@ -9,7 +9,7 @@ import (
 func (dbw *DBWrapper) HandleCreatePlayProtocolEntry() usecase.Interactor {
 	type createPlayProtocolEntryRequest struct {
 		QuizUuid string  `json:"quizUuid" required:"true"`
-		UserUuid *string `json:"userUuid"`
+		UserUuid *string `json:"userUuid" required:"true" nullable:"true"`
 	}
 
 	type createPlayProtocolEntryResponse struct{}

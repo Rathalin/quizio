@@ -292,7 +292,7 @@ export interface components {
     };
     HandlersCreatePlayProtocolEntryRequest: {
       quizUuid: string;
-      userUuid?: string | null;
+      userUuid: string | null;
     };
     HandlersCreateQuizRequest: {
       description: string | null;

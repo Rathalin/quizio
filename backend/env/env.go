@@ -9,6 +9,7 @@ import (
 )
 
 type EnvVars struct {
+	GoEnv               string
 	JWTSecret           string
 	PostgresDB          string
 	PostgresHost        string
@@ -40,6 +41,7 @@ func Init() {
 
 	// Access environment variables
 	Vars = &EnvVars{
+		GoEnv:               env,
 		JWTSecret:           os.Getenv("JWT_SECRET"),
 		PostgresDB:          os.Getenv("POSTGRES_DB"),
 		PostgresHost:        os.Getenv("POSTGRES_HOST"),
@@ -71,6 +73,7 @@ func Init() {
 		log.Fatal("Environment variable OPENAPI_DOCS_PASSWORD is not set\n")
 	}
 
+	log.Printf("GO_ENV: %s\n", env)
 	log.Printf("JWT_SECRET: %s\n", "(hidden)")
 	log.Printf("POSTGRES_DB: %s\n", Vars.PostgresDB)
 	log.Printf("POSTGRES_HOST: %s\n", Vars.PostgresHost)

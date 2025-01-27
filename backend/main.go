@@ -88,8 +88,9 @@ func main() {
 	s.Route("/docs", func(r chi.Router) {
 		r.Group(func(r chi.Router) {
 			r.Use(docsAuth, docsSecuritySchema)
-			// Serve the OpenAPI spec at /docs/openapi.json
-			r.Method(http.MethodGet, "/openapi.json", s.OpenAPICollector)
+			if env.Vars.GoEnv != "local" {
+				r.Method(http.MethodGet, "/openapi.json", s.OpenAPICollector)
+			}
 			// Serve the Swagger UI
 			r.Mount("/", v5emb.New(
 				s.OpenAPISchema().Title(),
@@ -98,6 +99,10 @@ func main() {
 			))
 		})
 	})
+
+	if env.Vars.GoEnv == "local" {
+		s.Method(http.MethodGet, "/docs/openapi.json", s.OpenAPICollector)
+	}
 
 	s.Route("/", func(r chi.Router) {
 		r.Method(http.MethodGet, "/", http.RedirectHandler("/docs", http.StatusMovedPermanently))
