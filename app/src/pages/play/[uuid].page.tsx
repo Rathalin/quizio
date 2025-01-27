@@ -29,6 +29,8 @@ import Typography from '@mui/material/Typography';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import { prefixWithBackendUrl } from '@/utilities/urlUtils';
+import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
+import Link from 'next/link';
 
 export type AnsweredState = {
   correctAnswerId: string;
@@ -190,6 +192,11 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
             <meta property="og:image" content={quiz.imageUrl ? prefixWithBackendUrl(quiz.imageUrl) : undefined} />
           </Head>
           <div ref={topAnchor} style={{ position: 'absolute', top: '0', left: '50%' }} />
+          <QuizioBreadcrumbs sx={{ marginBottom: 2 }}>
+            <Link href={`/play/${uuid}`} aria-current="page">
+              {`Play "${quiz.title}"`}
+            </Link>
+          </QuizioBreadcrumbs>
           {questions.length === 0 ? (
             <QuizNotFound />
           ) : (
@@ -200,15 +207,7 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
             >
               {!gameDone && (
                 <>
-                  <CardContent sx={{ padding: 0 }}>
-                    <Typography
-                      variant="h6"
-                      component="h1"
-                      fontWeight="bold"
-                      sx={{ color: 'action.disabled', paddingTop: 4, paddingInline: 6 }}
-                    >
-                      {quiz.title}
-                    </Typography>
+                  <CardContent sx={{ padding: 0, paddingTop: 4 }}>
                     <PickAnAnswer
                       index={questionIndex + 1}
                       title={question.title ?? ''}
@@ -257,9 +256,6 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
               )}
               {gameDone && (
                 <CardContent sx={{ paddingInline: 6, paddingBlock: 4 }}>
-                  <Typography variant="h6" component="h1" fontWeight="bold" sx={{ color: 'action.disabled' }}>
-                    {quiz.title}
-                  </Typography>
                   <GameSummary
                     questions={questions.map((question) => ({
                       id: question.uuid,

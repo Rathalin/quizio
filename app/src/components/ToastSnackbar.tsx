@@ -37,7 +37,7 @@ export default function ToastSnackbar() {
     <Snackbar
       key={messageInfo ? messageInfo.key : undefined}
       open={open}
-      autoHideDuration={6000}
+      autoHideDuration={4000}
       onClose={handleClose}
       TransitionProps={{ onExited: handleExited }}
       action={

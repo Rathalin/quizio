@@ -1,4 +1,4 @@
-import GradientWord from '@/components/GradientWord';
+import GradientText from '@/components/GradientText';
 import { AnsweredState } from '@/pages/play/[uuid].page';
 import { useColorMode } from '@/page-components/theme.context';
 import CheckIcon from '@mui/icons-material/Check';
@@ -32,7 +32,7 @@ export default function GameSummary({ questions, answeredProgress }: GameSummary
   return (
     <>
       <Typography variant="h1">
-        <GradientWord>Summary</GradientWord>
+        <GradientText>Summary</GradientText>
       </Typography>
       <Typography>
         {`You got ${

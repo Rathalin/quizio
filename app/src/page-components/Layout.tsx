@@ -18,7 +18,7 @@ export default function Layout({ children }: LayoutProps) {
       }}
     >
       <Header />
-      <Container maxWidth="lg" sx={{ flex: 1, marginTop: 4 }}>
+      <Container maxWidth="lg" sx={{ flex: 1, marginTop: 2 }}>
         <main>{children}</main>
       </Container>
       <Footer

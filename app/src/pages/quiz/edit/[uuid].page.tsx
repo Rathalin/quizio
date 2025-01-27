@@ -1,4 +1,4 @@
-import GradientWord from '@/components/GradientWord';
+import GradientText from '@/components/GradientText';
 
 import OverviewForm from '@/page-components/quiz/create/OverviewForm';
 import SummaryForm from '@/page-components/quiz/create/SummaryForm';
@@ -35,6 +35,8 @@ import CardContent from '@mui/material/CardContent';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
+import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
+import Link from 'next/link';
 
 export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (ctx) => {
   const uuid = ctx.params?.uuid;
@@ -317,12 +319,14 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
           loading={isDeletePending}
         />
       )}
-      <Typography variant="h1">
+      <QuizioBreadcrumbs>
+        <Link href={`/quiz/edit/${uuid}`}>{quiz != null ? `Edit "${quiz.title}"` : 'Edit'}</Link>
+      </QuizioBreadcrumbs>
+      <Typography variant="h3" component="h1">
         <Stack direction="row" alignItems="center" flexWrap="wrap" gap={2}>
           <Box>
-            <span>Edit your </span>
-            <GradientWord>quiz</GradientWord>
-            <span>.</span>
+            <GradientText>{'Edit'}</GradientText>
+            <span>{' your quiz'}</span>
           </Box>
           <Stack direction="row" gap={2} flexWrap="wrap" sx={{ marginLeft: 'auto' }}>
             <Button

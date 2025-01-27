@@ -7,7 +7,7 @@ import { SearchProvider } from './search.context';
 import GenericLoadingErrorMessage from '@/components/GenericLoadingErrorMessage';
 import { storageKeys } from '@/persistence/storage-keys';
 import useStorage from '@/custom-hooks/useStorage';
-import GradientWord from '@/components/GradientWord';
+import GradientText from '@/components/GradientText';
 import GradientDivider from '@/components/GradientDivider';
 import ScrollObserver from '@/components/ScrollObserver';
 import { useQuizzesInfiniteQuery } from '@/data/useQuizzesQuery';
@@ -110,7 +110,7 @@ export default function QuizzesOverview() {
                 <Stack direction="row" justifyContent="center">
                   <Typography>
                     <span>{'No more '}</span>
-                    <GradientWord>{'quizzes'}</GradientWord>
+                    <GradientText>{'quizzes'}</GradientText>
                     <span>{' to load.'}</span>
                   </Typography>
                 </Stack>

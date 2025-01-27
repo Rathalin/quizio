@@ -1,6 +1,6 @@
-import GradientWord from '@/components/GradientWord';
+import GradientText from '@/components/GradientText';
 import LoadingCircle from '@/components/LoadingCircle';
-import HomeButton from '@/components/buttons/HomeButton';
+import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
 import { useToastStore } from '@/persistence/taost.store';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -53,7 +53,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
     try {
       const res = await login();
       if (res?.ok === true) {
-        showToast('Login successful.', 'success');
+        showToast('Sign in successful.', 'success');
         router.push(callbackUrl ?? '/');
       } else {
         setErrorStatus(res?.status ?? null);
@@ -67,87 +67,102 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
   const [password, setPassword] = useState('');
 
   return (
-    <Box
-      sx={{
-        marginInline: 'auto',
-        maxWidth: '60ch',
-      }}
-    >
-      <Typography
-        variant="h1"
+    <Box>
+      <QuizioBreadcrumbs>
+        <Link href="/auth/signin">{'Sign in'}</Link>
+      </QuizioBreadcrumbs>
+      <Box
         sx={{
-          textAlign: 'center',
+          marginInline: 'auto',
+          maxWidth: '60ch',
+          marginTop: {
+            sx: 4,
+            lg: 6,
+          },
         }}
       >
-        <span>Enter your </span>
-        <GradientWord>credentials</GradientWord>
-        <span>.</span>
-      </Typography>
-      <form onSubmit={onSubmit}>
-        <Card
+        <Typography
+          variant="h1"
           sx={{
-            marginBottom: 2,
+            textAlign: {
+              xs: 'start',
+              md: 'center',
+            },
           }}
         >
-          <CardContent>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 2,
-              }}
-            >
-              <TextField
-                id="identifier"
-                label="Email or username"
-                type="text"
-                fullWidth
-                required
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-              />
-              <TextField
-                id="password"
-                label="Password"
-                type="password"
-                fullWidth
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </Box>
-            {errorStatus === 401 && (
-              <Typography sx={{ marginTop: 2 }} variant="body2" color="error">
-                {`Invalid username or password!`}
-              </Typography>
-            )}
-          </CardContent>
-        </Card>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <HomeButton />
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            startIcon={isPending ? <LoadingCircle /> : undefined}
-            disabled={isPending || (isSuccess && errorStatus == null)}
-          >
-            Login
-          </Button>
-        </Box>
-      </form>
-      <Alert severity="info" sx={{ marginTop: 10 }}>
-        <Typography>
-          <span>{'Do you need an account to create quizzes? Feel free to contact me on '}</span>
-          <Link href="mailto:daniel@flockert.at">daniel@flockert.at</Link>
-          <span>{'.'}</span>
+          <span>Enter your </span>
+          <GradientText>credentials</GradientText>
         </Typography>
-      </Alert>
+        <form onSubmit={onSubmit}>
+          <Card
+            sx={{
+              marginBottom: 2,
+            }}
+          >
+            <CardContent>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 2,
+                }}
+              >
+                <TextField
+                  id="identifier"
+                  label="Email or username"
+                  type="text"
+                  fullWidth
+                  required
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                />
+                <TextField
+                  id="password"
+                  label="Password"
+                  type="password"
+                  fullWidth
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </Box>
+              {errorStatus === 401 && (
+                <Typography sx={{ marginTop: 2 }} variant="body2" color="error">
+                  {`Invalid username or password!`}
+                </Typography>
+              )}
+            </CardContent>
+          </Card>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: {
+                xs: 'end',
+                md: 'center',
+              },
+            }}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              startIcon={isPending ? <LoadingCircle /> : undefined}
+              disabled={isPending || (isSuccess && errorStatus == null)}
+              size="large"
+              sx={{ minWidth: '16ch' }}
+            >
+              {'Sign in'}
+            </Button>
+          </Box>
+        </form>
+        <Alert severity="info" sx={{ marginTop: 10 }}>
+          <Typography>
+            <span>{'Do you need an account to create quizzes? Feel free to contact me on '}</span>
+            <Link href="mailto:daniel@flockert.at">daniel@flockert.at</Link>
+            <span>{'.'}</span>
+          </Typography>
+        </Alert>
+      </Box>
     </Box>
   );
 }

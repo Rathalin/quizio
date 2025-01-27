@@ -1,4 +1,4 @@
-import GradientWord from '@/components/GradientWord';
+import GradientText from '@/components/GradientText';
 import LinkButton from '@/components/LinkButton';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -19,7 +19,7 @@ export default function RegisterPage() {
     <Box>
       <Typography variant="h1">
         <span>Create your </span>
-        <GradientWord>account</GradientWord>
+        <GradientText>account</GradientText>
         <span>.</span>
       </Typography>
       <form autoComplete="off" onSubmit={onSubmit}>

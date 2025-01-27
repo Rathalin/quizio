@@ -1,4 +1,4 @@
-import GradientWord from '@/components/GradientWord';
+import GradientText from '@/components/GradientText';
 import OverviewForm from '@/page-components/quiz/create/OverviewForm';
 import SummaryForm from '@/page-components/quiz/create/SummaryForm';
 import { useState } from 'react';
@@ -21,6 +21,8 @@ import CardContent from '@mui/material/CardContent';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
+import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
+import Link from 'next/link';
 
 const stepTitles = ['Overview', 'Questions', 'Summary'] as const;
 export type StepData = {
@@ -139,10 +141,14 @@ export default function QuizCreatePage() {
 
   return (
     <Box>
-      <Typography variant="h1">
-        <span>Create your </span>
-        <GradientWord>quiz</GradientWord>
-        <span>.</span>
+      <QuizioBreadcrumbs>
+        <Link href="/quiz/create" aria-current="page">
+          {'Create quiz'}
+        </Link>
+      </QuizioBreadcrumbs>
+      <Typography variant="h3" component="h1">
+        <GradientText>{'Create'}</GradientText>
+        <span>{' your quiz'}</span>
       </Typography>
       <Grid container spacing={4}>
         <Grid item xs={12} md={3} sx={{ display: { xs: 'none', md: 'block' } }}>

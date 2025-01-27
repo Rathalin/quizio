@@ -1,3 +1,5 @@
+import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
+import GradientText from '@/components/GradientText';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
@@ -5,7 +7,12 @@ import Link from 'next/link';
 export default function ImprintPage() {
   return (
     <Box>
-      <Typography variant="h1">{'Imprint'}</Typography>
+      <QuizioBreadcrumbs>
+        <Link href="/imprint">{'Imprint'}</Link>
+      </QuizioBreadcrumbs>
+      <Typography variant="h1">
+        <GradientText>{'Imprint'}</GradientText>
+      </Typography>
       <Typography variant="h5" component="p">
         {'Daniel Flockert, MSc.'}
       </Typography>

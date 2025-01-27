@@ -46,7 +46,7 @@ export default function HomePage() {
         <meta property="og:description" content="Create and share quizzes with your friends." />
         <meta property="og:image" content="public/favicion" />
       </Head>
-      <Box>
+      <Box sx={{ marginTop: 2 }}>
         <AlertsViewer />
         {showInvalidTokenAlert && <InvalidTokenAlert />}
         <QuizzesOverview />

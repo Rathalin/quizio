@@ -1,5 +1,5 @@
 import Typography from '@mui/material/Typography';
-import GradientWord from '../GradientWord';
+import GradientText from '../GradientText';
 
 export default function LogoText() {
   return (
@@ -14,7 +14,7 @@ export default function LogoText() {
         },
       }}
     >
-      <GradientWord>Quizio</GradientWord>
+      <GradientText>Quizio</GradientText>
     </Typography>
   );
 }

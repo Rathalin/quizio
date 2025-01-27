@@ -30,10 +30,14 @@ export const theme = responsiveFontSizes(
           },
           accent: {
             primary: {
+              light: '#ffc800',
               main: '#ffaf37',
+              dark: '#d68624',
             },
             secondary: {
-              main: '#2cc0ff',
+              light: '#1fcbff',
+              main: '#2ca4ff',
+              dark: '#1c92d7',
             },
           },
         },
@@ -62,10 +66,14 @@ export const theme = responsiveFontSizes(
           },
           accent: {
             primary: {
+              light: '#ffbf00',
               main: '#c97900',
+              dark: '#8b4f00',
             },
             secondary: {
+              light: '#00c3ff',
               main: '#0097d7',
+              dark: '#005f9a',
             },
           },
         },
