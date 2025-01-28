@@ -53,7 +53,7 @@ export default function QuizOverviewCard({
 }: QuizOverviewCardProps) {
   const theme = useTheme();
   const { mode } = useColorMode();
-  const { showToast } = useToastStore();
+  const { showInfoToast } = useToastStore();
   const { transitionHref } = usePageTransition();
 
   const copiedText = useMemo(() => {
@@ -65,7 +65,7 @@ export default function QuizOverviewCard({
 
   function handleShareClick() {
     navigator.clipboard.writeText(`${window.location.origin}/play/${uuid}`);
-    showToast(copiedText, 'info', 'standard');
+    showInfoToast(copiedText);
   }
   return (
     <>

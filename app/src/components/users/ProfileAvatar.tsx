@@ -40,7 +40,7 @@ const defaultFormData: ProfileImageForm = {
 export function ProfileAvatar() {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
-  const { showToast } = useToastStore();
+  const { showSuccessToast, showErrorToast } = useToastStore();
   const { queryKey: userAccountQueryKey } = useUserAccountQuery();
   const { width, height } = profileImageDimensions;
   const { control, handleSubmit, setValue, watch } = useForm({
@@ -88,9 +88,9 @@ export function ProfileAvatar() {
 
       await updateProfileImage({ profileImageUrl: newImageUrl });
       queryClient.invalidateQueries({ queryKey: userAccountQueryKey });
-      showToast('Profile image updated.', 'success');
+      showSuccessToast('Profile image updated.');
     } catch (error) {
-      showToast('Could not update profile image!', 'error');
+      showErrorToast('Could not update profile image!');
     }
   }
 

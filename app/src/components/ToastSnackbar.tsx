@@ -55,7 +55,7 @@ export default function ToastSnackbar() {
         variant={messageInfo?.variant}
         sx={{ width: '100%' }}
       >
-        {messageInfo?.message}
+        {messageInfo?.content}
       </Alert>
     </Snackbar>
   );

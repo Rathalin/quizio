@@ -9,6 +9,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import {
   DehydratedState,
   HydrationBoundary,
+  MutationCache,
   QueryCache,
   QueryClient,
   QueryClientProvider,
@@ -23,6 +24,8 @@ import ToastSnackbar from '@/components/ToastSnackbar';
 import { AppCacheProvider, DocumentHeadTags, DocumentHeadTagsProps } from '@mui/material-nextjs/v15-pagesRouter';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { SessionExpiredDialog } from '@/components/SessionExpiredDialog';
+import { useSessionExpiredDialogStore } from '@/persistence/session-expired-dialog.store';
 
 export interface MyAppProps extends AppProps {
   pageProps: {
@@ -33,15 +36,34 @@ export interface MyAppProps extends AppProps {
 
 export default function App(props: MyAppProps & DocumentHeadTagsProps) {
   const { Component, pageProps } = props;
+  const { showSessionExpiredDialog: showSessionExpiredAlert } = useSessionExpiredDialogStore();
   const [queryClient] = useState(
     () =>
       new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: 2,
+          },
+          mutations: {
+            retry: 2,
+          },
+        },
         queryCache: new QueryCache({
           onError: (error) => {
-            if (typeof error === 'object' && 'error' in error && typeof error.error === 'string')
-              if (error.error.includes('token is expired')) {
-                router.reload();
-              }
+            const err = error as unknown;
+            if (typeof err === 'string' && err.trim() === 'token is expired') {
+              // showErrorToast('Your session has expired!');
+              showSessionExpiredAlert();
+            }
+          },
+        }),
+        mutationCache: new MutationCache({
+          onError: (error) => {
+            const err = error as unknown;
+            if (typeof err === 'string' && err.trim() === 'token is expired') {
+              // showErrorToast('Your session has expired!');
+              showSessionExpiredAlert();
+            }
           },
         }),
       }),
@@ -88,6 +110,7 @@ export default function App(props: MyAppProps & DocumentHeadTagsProps) {
             <Layout>
               <Component {...pageProps} />
               <ToastSnackbar />
+              <SessionExpiredDialog />
               <Analytics />
               <SpeedInsights />
             </Layout>

@@ -39,7 +39,7 @@ const steps = stepTitles.map((title, index) => ({
 export default function QuizCreatePage() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { showToast } = useToastStore();
+  const { showSuccessToast, showErrorToast } = useToastStore();
   const [activeStep, setActiveStep] = useState(0);
   const [overviewFormData, setOverviewFormData] = useState<QuizOverviewForm>(defaultOverviewFormData);
   const [questionsFormData, setQuestionsFormData] = useState<QuizQuestionsForm>(defaultQuestionsFormData);
@@ -59,7 +59,7 @@ export default function QuizCreatePage() {
       return url;
     } catch (error) {
       console.error(error);
-      showToast('Could not upload image!', 'error');
+      showErrorToast('Could not upload image!');
       return null;
     }
   }
@@ -84,41 +84,43 @@ export default function QuizCreatePage() {
       });
     }
 
-    try {
-      await createQuiz({
-        title: overviewFormData.title,
-        description: overviewFormData.description ?? null,
-        isPublished: true,
-        imageUrl: imageUrls.url,
-        questions: questionsFormData.questions
-          .map((q) => ({
-            title: q.title,
+    const mutationData = {
+      title: overviewFormData.title,
+      description: overviewFormData.description ?? null,
+      isPublished: true,
+      imageUrl: imageUrls.url,
+      questions: questionsFormData.questions
+        .map((q) => ({
+          title: q.title,
+          description: '',
+          explanation: q.explanation ?? null,
+          explanationImageUrl: null,
+          imageUrl: null,
+          answers: q.answers.map((a) => ({
+            title: a.title,
             description: '',
-            explanation: q.explanation ?? null,
-            explanationImageUrl: null,
+            isCorrect: a.isCorrect,
             imageUrl: null,
-            answers: q.answers.map((a) => ({
-              title: a.title,
-              description: '',
-              isCorrect: a.isCorrect,
-              imageUrl: null,
-            })),
-          }))
-          .map((q, i) => ({
-            ...q,
-            imageUrl: imageUrls.questionUrls.at(i)?.question ?? null,
-            explanationImageUrl: imageUrls.questionUrls.at(i)?.explanation ?? null,
           })),
-      });
+        }))
+        .map((q, i) => ({
+          ...q,
+          imageUrl: imageUrls.questionUrls.at(i)?.question ?? null,
+          explanationImageUrl: imageUrls.questionUrls.at(i)?.explanation ?? null,
+        })),
+    };
 
-      showToast('Quiz created!', 'success');
+    try {
+      await createQuiz(mutationData);
+
+      showSuccessToast('Quiz created!');
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
       await router.push('/');
       resetQuizLocalStorage();
       setOverviewFormData(defaultOverviewFormData);
       setQuestionsFormData(defaultQuestionsFormData);
     } catch (error) {
-      showToast('Could not create quiz!', 'error');
+      showErrorToast('Could not create quiz!');
       console.error('Failed to create quiz', error);
     }
   }

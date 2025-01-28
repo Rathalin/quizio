@@ -13,6 +13,7 @@ export function useUserAccountQuery() {
     ...useQuery({
       queryKey,
       queryFn: () => throwOnError(() => getUserAccount(authHeader)),
+      staleTime: Infinity,
       enabled: authHeader != null,
     }),
     queryKey,
