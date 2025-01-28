@@ -1,1 +1,1 @@
-export const dateFormatter = new Intl.DateTimeFormat('de-AT', { dateStyle: 'short' });
+export const dateFormatter = new Intl.DateTimeFormat('de-AT', { dateStyle: 'medium' });
