@@ -248,7 +248,7 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
                       disabled={answerState?.selectedAnswerId == null}
                       onClick={onNextQuestionClick}
                     >
-                      {!isLastQuestion ? 'Next Question' : 'Finish quiz'}
+                      {!isLastQuestion ? 'Next question' : 'Finish quiz'}
                     </Button>
                   </CardActions>
                   <div ref={resultAnchor} />
