@@ -1,4 +1,5 @@
 import SignInButton from '@/components/buttons/SignInButton';
+import { useUserAccountQuery } from '@/data/useUserAccountQuery';
 import { raise } from '@/utilities/errorHandling';
 import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -21,7 +22,7 @@ export default function AccountMenu() {
   const theme = useTheme();
   const router = useRouter();
   const { data: session, status } = useSession();
-  const isAuthenticated = status === 'authenticated';
+  const { data: user, isSuccess: isUserSuccess } = useUserAccountQuery();
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = anchorEl != null;
@@ -34,25 +35,30 @@ export default function AccountMenu() {
     setAnchorEl(null);
   }
 
-  if (router.pathname === '/auth/signin' && !isAuthenticated) {
+  if (status == 'loading' || (router.pathname === '/auth/signin' && status == 'unauthenticated')) {
     return null;
   }
 
-  if (!isAuthenticated || session == null) {
+  if (status === 'unauthenticated' || session == null) {
     return <SignInButton />;
   }
 
+  // Show null if userAccountQuery is still pending
+  if (!isUserSuccess) {
+    return null;
+  }
+
   const initial =
-    session.user.username.at(0)?.toUpperCase() ??
-    raise('Cannot display initials in account menu because session.user.username is missing');
+    user.username.at(0)?.toUpperCase() ??
+    raise('Cannot display initials in account menu because user.username is empty');
 
   return (
     <>
       <IconButton onClick={handleClick}>
-        {session.user.profileImageUrl != null ? (
+        {user.profileImageUrl != null ? (
           <Avatar
-            alt={`Profile image of ${session.user.username}`}
-            src={prefixWithBackendUrl(session.user.profileImageUrl)}
+            alt={`Profile image of ${user.username}`}
+            src={prefixWithBackendUrl(user.profileImageUrl)}
             sx={{ borderColor: 'primary.dark', borderStyle: 'solid', borderWidth: '2px' }}
           />
         ) : (

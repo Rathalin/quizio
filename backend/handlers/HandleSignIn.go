@@ -5,8 +5,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Rathalin/quizio/backend/models"
-
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
 	"golang.org/x/crypto/bcrypt"
@@ -19,9 +17,9 @@ func (dbw *DBWrapper) HandleSignIn() usecase.Interactor {
 	}
 
 	type signInResponse struct {
-		User         models.UserAccount `json:"user" required:"true"`
-		AccessToken  string             `json:"accessToken" required:"true"`
-		RefreshToken string             `json:"refreshToken" required:"true"`
+		UserUUID     string `json:"uuid" required:"true"`
+		AccessToken  string `json:"accessToken" required:"true"`
+		RefreshToken string `json:"refreshToken" required:"true"`
 	}
 
 	return usecase.NewInteractor(func(ctx context.Context, input signInRequest, output *signInResponse) error {
@@ -44,19 +42,13 @@ func (dbw *DBWrapper) HandleSignIn() usecase.Interactor {
 		}
 		// Fetch user details
 		err = dbw.DB.QueryRow(`
-			SELECT id, password_hash, uuid, created_at, updated_at, username, is_confirmed, is_blocked, profile_image_url
+			SELECT id, password_hash, uuid
 			FROM user_account
 			WHERE username = $1
 		`, trimmedUsername).Scan(
 			&row.ID,
 			&row.PasswordHash,
-			&response.User.UUID,
-			&response.User.CreatedAt,
-			&response.User.UpdatedAt,
-			&response.User.Username,
-			&response.User.IsConfirmed,
-			&response.User.IsBlocked,
-			&response.User.ProfileImageUrl,
+			&response.UserUUID,
 		)
 		if err != nil {
 			return logAndReturnError(err)

@@ -8,12 +8,12 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandleGetUserProfile() usecase.Interactor {
-	type getUserProfileRequest struct {
+func (dbw *DBWrapper) HandleGetPublicUserProfile() usecase.Interactor {
+	type getPublicUserProfileRequest struct {
 		UUID string `path:"uuid" required:"true" example:"9dfd2a83-b8be-4c35-90ec-0acda6df26d0"`
 	}
 
-	type getUserProfileResponse struct {
+	type getPublicUserProfileResponse struct {
 		User struct {
 			UUID            string    `json:"uuid" required:"true"`
 			CreatedAt       time.Time `json:"createdAt" required:"true"`
@@ -26,7 +26,7 @@ func (dbw *DBWrapper) HandleGetUserProfile() usecase.Interactor {
 		} `json:"quizStats" required:"true"`
 	}
 
-	return usecase.NewInteractor(func(ctx context.Context, input getUserProfileRequest, output *getUserProfileResponse) error {
+	return usecase.NewInteractor(func(ctx context.Context, input getPublicUserProfileRequest, output *getPublicUserProfileResponse) error {
 		userExists, err := dbw.UserExists(input.UUID)
 		if err != nil {
 			return logAndReturnError(err)
@@ -40,7 +40,7 @@ func (dbw *DBWrapper) HandleGetUserProfile() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
-		response := getUserProfileResponse{}
+		response := getPublicUserProfileResponse{}
 
 		err = dbw.DB.QueryRow(`
 			SELECT uuid, created_at, username, profile_image_url

@@ -38,7 +38,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/a/me': {
+  '/a/my-user-profile': {
     parameters: {
       query?: never;
       header?: never;
@@ -155,6 +155,23 @@ export interface paths {
     post: operations['backend/handlers.(*DBWrapper).HandleUploadFile'];
     /** DB Wrapper Handle Delete File */
     delete: operations['backend/handlers.(*DBWrapper).HandleDeleteFile'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/a/user-account': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** DB Wrapper Handle Get User Account */
+    get: operations['backend/handlers.(*DBWrapper).HandleGetUserAccount'];
+    put?: never;
+    post?: never;
+    delete?: never;
     options?: never;
     head?: never;
     patch?: never;
@@ -286,8 +303,8 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** DB Wrapper Handle Get User Profile */
-    get: operations['backend/handlers.(*DBWrapper).HandleGetUserProfile'];
+    /** DB Wrapper Handle Get Public User Profile */
+    get: operations['backend/handlers.(*DBWrapper).HandleGetPublicUserProfile'];
     put?: never;
     post?: never;
     delete?: never;
@@ -356,18 +373,7 @@ export interface components {
         uuid: string;
       };
     };
-    HandlersGetQuizResponse: {
-      description: string;
-      imageUrl: string | null;
-      isPublished: boolean;
-      questions: components['schemas']['ModelsQuestion'][];
-      title: string;
-    };
-    HandlersGetQuizzesResponse: {
-      meta: components['schemas']['ModelsMeta'];
-      quizzes: components['schemas']['HandlersQuiz'][];
-    };
-    HandlersGetUserProfileResponse: {
+    HandlersGetPublicUserProfileResponse: {
       quizStats: {
         totalQuizzesCreated: number;
         totalQuizzesPlayCount: number;
@@ -379,6 +385,17 @@ export interface components {
         username: string;
         uuid: string;
       };
+    };
+    HandlersGetQuizResponse: {
+      description: string;
+      imageUrl: string | null;
+      isPublished: boolean;
+      questions: components['schemas']['ModelsQuestion'][];
+      title: string;
+    };
+    HandlersGetQuizzesResponse: {
+      meta: components['schemas']['ModelsMeta'];
+      quizzes: components['schemas']['HandlersQuiz'][];
     };
     HandlersPlayQuizResponse: {
       imageUrl: string | null;
@@ -407,7 +424,6 @@ export interface components {
     };
     HandlersRefreshTokenResponse: {
       accessToken: string;
-      user: components['schemas']['ModelsUserAccount'];
     };
     HandlersRegisterRequest: {
       password: string;
@@ -423,7 +439,7 @@ export interface components {
     HandlersSignInResponse: {
       accessToken: string;
       refreshToken: string;
-      user: components['schemas']['ModelsUserAccount'];
+      uuid: string;
     };
     HandlersSignOutRequest: {
       refreshToken: string;
@@ -910,6 +926,35 @@ export interface operations {
       };
     };
   };
+  'backend/handlers.(*DBWrapper).HandleGetUserAccount': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ModelsUserAccount'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
+    };
+  };
   'backend/handlers.(*DBWrapper).HandleGetAlerts': {
     parameters: {
       query?: never;
@@ -1071,7 +1116,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).HandleGetUserProfile': {
+  'backend/handlers.(*DBWrapper).HandleGetPublicUserProfile': {
     parameters: {
       query?: never;
       header?: never;
@@ -1088,7 +1133,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['HandlersGetUserProfileResponse'];
+          'application/json': components['schemas']['HandlersGetPublicUserProfileResponse'];
         };
       };
     };

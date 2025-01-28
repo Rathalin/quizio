@@ -21,6 +21,8 @@ import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import Typography from '@mui/material/Typography';
+import { useUserAccountQuery } from '@/data/useUserAccountQuery';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const profileImageDimensions = {
   width: 240,
@@ -36,15 +38,19 @@ const defaultFormData: ProfileImageForm = {
 };
 
 export function ProfileAvatar() {
-  const { data: session, update: updateSession } = useSession();
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
   const { showToast } = useToastStore();
+  const { queryKey: userAccountQueryKey } = useUserAccountQuery();
   const { width, height } = profileImageDimensions;
   const { control, handleSubmit, setValue, watch } = useForm({
     defaultValues: defaultFormData,
     resolver: zodResolver(profileImageFormSchema),
   });
   const [deleteImageDialogOpen, setDeleteImageDialogOpen] = useState(false);
-  const imageUrl = session?.user.profileImageUrl ?? null;
+
+  const { data: user } = useUserAccountQuery();
+  const imageUrl = user?.profileImageUrl ?? null;
 
   const { mutateAsync: uploadFile } = useUploadFileMutation();
   const { mutateAsync: deleteFile } = useDeleteFileMutation();
@@ -81,10 +87,7 @@ export function ProfileAvatar() {
       }
 
       await updateProfileImage({ profileImageUrl: newImageUrl });
-      await updateSession({
-        ...session.user,
-        profileImageUrl: newImageUrl,
-      });
+      queryClient.invalidateQueries({ queryKey: userAccountQueryKey });
       showToast('Profile image updated.', 'success');
     } catch (error) {
       showToast('Could not update profile image!', 'error');
@@ -160,7 +163,7 @@ export function ProfileAvatar() {
                           src={previewImageUrl}
                           width={width}
                           height={height}
-                          alt={`imageFile of ${session?.user.username}`}
+                          alt={`imageFile of ${user?.username}`}
                           style={{
                             borderRadius: 2,
                             objectFit: 'cover',

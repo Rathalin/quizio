@@ -5,10 +5,6 @@ export declare module 'next-auth' {
   export interface Session {
     user: {
       uuid: string;
-      username: string;
-      isConfirmed: boolean;
-      isBlocked: boolean;
-      profileImageUrl: string | null;
       accessToken: string;
       refreshToken: string;
     };

@@ -5,9 +5,11 @@ import { client } from '@/api-client';
 import { jwtDecode } from 'jwt-decode';
 import { AuthorizationHeader } from '@/custom-hooks/useAuthHeader';
 
-interface DecodedToken {
+type DecodedToken = {
+  userId: number;
+  type: 'access' | 'refresh';
   exp: number; // Expiry timestamp in seconds
-}
+};
 
 export const authOptions: AuthOptions = {
   session: {
@@ -21,11 +23,14 @@ export const authOptions: AuthOptions = {
         password: { type: 'password' },
       },
       async authorize(credentials) {
-        // Call the SignIn endpoint
+        if (credentials == null) {
+          return null;
+        }
+        const { username, password } = credentials;
         const { data, error } = await client.POST('/signin', {
           body: {
-            username: credentials!.username,
-            password: credentials!.password,
+            username,
+            password,
           },
         });
 
@@ -33,10 +38,10 @@ export const authOptions: AuthOptions = {
           console.error(`Signin-error`, error);
           return null;
         }
-        console.info(`Signed in as ${data.user.username}. ProfileImageUrl: ${data.user.profileImageUrl}`);
+        console.info(`${username} signed in.`);
         return {
-          id: data.user.uuid,
-          ...data.user,
+          id: data.uuid,
+          uuid: data.uuid,
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
         };
@@ -56,7 +61,7 @@ export const authOptions: AuthOptions = {
         const decoded = jwtDecode<DecodedToken>(token.accessToken as string);
         const isExpired = Date.now() >= decoded.exp * 1000;
         if (isExpired) {
-          console.info('Access token expired. Refreshing token...');
+          console.info(`Access token expired. Refreshing token...`);
           try {
             const { data, error } = await client.POST('/refresh-token', {
               body: { refreshToken: token.refreshToken as string },
@@ -65,16 +70,15 @@ export const authOptions: AuthOptions = {
               } satisfies AuthorizationHeader,
             });
 
-            if (error) {
+            if (error != null) {
               console.error('Error refreshing token:', error);
               throw new Error('Failed to refresh access token');
             }
 
             token = {
               ...token,
-              ...data,
+              accessToken: data.accessToken,
             };
-            // token.accessToken = data.accessToken; // Update access token
           } catch (err) {
             console.error('Token refresh failed:', err);
             throw err;

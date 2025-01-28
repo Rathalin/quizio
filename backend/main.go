@@ -54,7 +54,7 @@ func main() {
 		r.Method(http.MethodPost, "/signin", nethttp.NewHandler(dbWrapper.HandleSignIn()))
 		r.Method(http.MethodGet, "/quizzes", nethttp.NewHandler(dbWrapper.HandleGetQuizzes()))
 		r.Method(http.MethodGet, "/play/{uuid}", nethttp.NewHandler(dbWrapper.HandleHandlePlayQuiz()))
-		r.Method(http.MethodGet, "/user-profile/{uuid}", nethttp.NewHandler(dbWrapper.HandleGetUserProfile()))
+		r.Method(http.MethodGet, "/user-profile/{uuid}", nethttp.NewHandler(dbWrapper.HandleGetPublicUserProfile()))
 		r.Method(http.MethodGet, "/alerts", nethttp.NewHandler(dbWrapper.HandleGetAlerts()))
 		r.Method(http.MethodPost, "/play-protocol-entry", nethttp.NewHandler((dbWrapper.HandleCreatePlayProtocolEntry())))
 	})
@@ -76,7 +76,8 @@ func main() {
 			r.Method(http.MethodPost, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.HandleUpdateQuiz())))
 			r.Method(http.MethodDelete, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.HandleDeleteQuiz())))
 			r.Method(http.MethodPost, "/play-protocol-entry", nethttp.NewHandler((dbWrapper.HandleCreatePlayProtocolEntryWithUser())))
-			r.Method(http.MethodGet, "/me", nethttp.NewHandler(dbWrapper.HandleGetMyUserProfile()))
+			r.Method(http.MethodGet, "/user-account", nethttp.NewHandler(dbWrapper.HandleGetUserAccount()))
+			r.Method(http.MethodGet, "/my-user-profile", nethttp.NewHandler(dbWrapper.HandleGetMyUserProfile()))
 			r.Method(http.MethodPost, "/change-password", nethttp.NewHandler(dbWrapper.HandleChangePassword()))
 			r.Method(http.MethodPost, "/update-profile-image", nethttp.NewHandler(dbWrapper.HandleUpdateUserProfileImage()))
 

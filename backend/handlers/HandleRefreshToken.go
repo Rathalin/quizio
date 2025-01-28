@@ -4,8 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/Rathalin/quizio/backend/models"
-
 	"github.com/swaggest/usecase"
 )
 
@@ -15,8 +13,7 @@ func (dbw *DBWrapper) HandleRefreshToken() usecase.Interactor {
 	}
 
 	type refreshTokenResponse struct {
-		AccessToken string             `json:"accessToken" required:"true"`
-		User        models.UserAccount `json:"user" required:"true"`
+		AccessToken string `json:"accessToken" required:"true"`
 	}
 
 	return usecase.NewInteractor(func(ctx context.Context, input refreshTokenRequest, output *refreshTokenResponse) error {
@@ -33,24 +30,6 @@ func (dbw *DBWrapper) HandleRefreshToken() usecase.Interactor {
 		}
 
 		response := refreshTokenResponse{}
-
-		// Fetch user details
-		err = dbw.DB.QueryRow(`
-			SELECT uuid, created_at, updated_at, username, is_confirmed, is_blocked, profile_image_url
-			FROM user_account
-			WHERE id = $1
-		`, userID).Scan(
-			&response.User.UUID,
-			&response.User.CreatedAt,
-			&response.User.UpdatedAt,
-			&response.User.Username,
-			&response.User.IsConfirmed,
-			&response.User.IsBlocked,
-			&response.User.ProfileImageUrl,
-		)
-		if err != nil {
-			return logAndReturnError(err)
-		}
 
 		// Generate new access token
 		accessToken, err := generateJWT(userID)
