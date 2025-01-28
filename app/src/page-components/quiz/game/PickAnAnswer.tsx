@@ -85,9 +85,9 @@ export default function PickAnAnswer({
               <ListItemIcon>
                 {answered ? (
                   answer.correct ? (
-                    <CheckIcon color="success" />
+                    <CheckIcon color="success" sx={{ marginLeft: 0.5 }} />
                   ) : (
-                    <ClearIcon color="error" />
+                    <ClearIcon color="error" sx={{ marginLeft: 0.5 }} />
                   )
                 ) : (
                   <Circle color="disabled" sx={{ marginLeft: 1.5, fontSize: '0.5rem' }} />
