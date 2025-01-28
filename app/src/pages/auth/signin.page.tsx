@@ -11,15 +11,27 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useMutation } from '@tanstack/react-query';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { getServerSession } from 'next-auth';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FormEvent, useState } from 'react';
+import { authOptions } from '../api/auth/[...nextauth].page';
 
 export const getServerSideProps: GetServerSideProps<{
   callbackUrl: string | null;
 }> = async (ctx) => {
   const callbackUrl = typeof ctx.query?.callbackUrl === 'string' ? ctx.query.callbackUrl : null;
+  const session = await getServerSession(ctx.req, ctx.res, authOptions);
+
+  if (session != null) {
+    return {
+      redirect: {
+        destination: callbackUrl ?? '/',
+        permanent: false,
+      },
+    };
+  }
 
   return {
     props: {

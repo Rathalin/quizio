@@ -1,11 +1,11 @@
 import { withAuth } from 'next-auth/middleware';
 
 export default withAuth({
-  // callbacks: {
-  //   authorized({ req, token }) {
-  //     return token != null;
-  //   },
-  // },
+  pages: {
+    signIn: '/auth/signin',
+  },
 });
 
-export const config = { matcher: ['/me', '/create', '/edit'] };
+export const config = {
+  matcher: ['/users/me', '/users/me/change-password', '/quiz/create', '/quiz/edit/:path'],
+};
