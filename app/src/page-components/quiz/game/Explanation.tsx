@@ -17,8 +17,6 @@ type ExplanationProps = {
 export default function Explanation({ correct, text, imageUrl }: ExplanationProps) {
   const theme = useTheme();
 
-  const trimmedText = text?.trim();
-
   function getRandomEmoji(correct: boolean) {
     const array = correct ? correctEmojies : incorrectEmojies;
     return array.at(Math.floor(Math.random() * array.length));
@@ -44,7 +42,7 @@ export default function Explanation({ correct, text, imageUrl }: ExplanationProp
           {getRandomEmoji(correct)}
         </Box>
       </Typography>
-      <Typography>{trimmedText}</Typography>
+      <Typography sx={{ whiteSpace: 'pre-line' }}>{text}</Typography>
     </>
   );
 }
