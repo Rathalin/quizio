@@ -176,7 +176,7 @@ a #h1 {
 #content {
 	display: flex;
 	flex-direction: column;
-	overflow-x: auto;
+	overflow-x: hidden;
 	margin: 83px 0 0 19em;
 	padding: 17px 27px 100px;
 	min-width: 600px;
