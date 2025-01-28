@@ -7,8 +7,9 @@ export default function LogoText() {
       variant="h1"
       sx={{
         marginBlock: 0,
-        fontWeight: '700',
         transition: 'transform 0.1s linear',
+        fontWeight: 600,
+        letterSpacing: '-1px',
         '&:hover': {
           transform: 'scale(1.02)',
         },

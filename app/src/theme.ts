@@ -80,7 +80,7 @@ export const theme = responsiveFontSizes(
       },
     },
     typography: {
-      fontFamily: ['Rubik', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'].join(','),
+      fontFamily: ['Figtree', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'].join(','),
       h1: {
         fontSize: '2.5rem',
         marginTop: '1rem',

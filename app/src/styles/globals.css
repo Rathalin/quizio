@@ -20,7 +20,7 @@ a {
 }
 
 a:hover {
-  font-weight: bold;
+  font-weight: 500;
 }
 
 a.no-underline {
