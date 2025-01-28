@@ -8,6 +8,7 @@ export default function MyDocument(props: DocumentProps & DocumentHeadTagsProps)
     <Html lang="en">
       <Head>
         <DocumentHeadTags {...props} />
+        <link rel="icon" href="/favicon.png" />
       </Head>
       <body>
         <InitColorSchemeScript attribute="class" />
