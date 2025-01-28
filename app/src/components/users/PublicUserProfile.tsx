@@ -5,7 +5,7 @@ import Divider from '@mui/material/Divider';
 import { PublicProfileAvatar } from './PublicProfileAvatar';
 import { dateFormatter } from '@/utilities/intlFormats';
 
-type UserProfileProps = {
+type Props = {
   username: string;
   createdAt: Date;
   quizCount: number;
@@ -13,22 +13,16 @@ type UserProfileProps = {
   imageUrl: string | null;
 };
 
-export default function PublicUserProfile({
-  username,
-  createdAt,
-  quizCount,
-  quizViewsTotal,
-  imageUrl,
-}: UserProfileProps) {
+export default function PublicUserProfile({ username, createdAt, quizCount, quizViewsTotal, imageUrl }: Props) {
   return (
     <>
-      <Box sx={{ marginBottom: 4 }}>
+      <Box sx={{ marginBottom: 6 }}>
         <PublicProfileAvatar imageUrl={imageUrl} username={username} />
       </Box>
+      <Typography variant="h3" component="h2" sx={{ marginBottom: 4 }}>
+        {'Stats'}
+      </Typography>
       <Stack spacing={1} alignItems="start">
-        <Typography variant="h1" sx={{ marginTop: 0 }}>
-          {username}
-        </Typography>
         <Typography>{`Joined on ${dateFormatter.format(new Date(createdAt))}`}</Typography>
         <Divider />
         {/* TODO Fix this mess with translations */}

@@ -19,15 +19,20 @@ export default function MePage() {
     <>
       <QuizioBreadcrumbs>
         <Link href="/users/me" aria-current="page">
-          {'Profile'}
+          {'My profile'}
         </Link>
       </QuizioBreadcrumbs>
       <Box sx={{ marginTop: 2 }}>
-        <Card elevation={2}>
+        <Card elevation={2} sx={{ paddingBottom: 2 }}>
           <CardContent sx={{ padding: 4 }}>
-            <Typography variant="h1" sx={{ marginTop: 0 }}>
+            <Typography variant="h1" sx={{ marginBlock: 0 }}>
               <GradientText>{session?.user.username ?? 'Profile'}</GradientText>
             </Typography>
+            {session?.user.uuid === data?.user.uuid && (
+              <Typography sx={{ marginBottom: 4, marginTop: 2 }}>
+                <Link href={`/users/${session?.user.uuid}`}>{'Go to my public profile'}</Link>
+              </Typography>
+            )}
             {isPending && <MyProfilePlaceholder />}
             {isSuccess && (
               <>
