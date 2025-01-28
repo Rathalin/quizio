@@ -80,8 +80,6 @@ func main() {
 			r.Method(http.MethodGet, "/my-user-profile", nethttp.NewHandler(dbWrapper.HandleGetMyUserProfile()))
 			r.Method(http.MethodPost, "/change-password", nethttp.NewHandler(dbWrapper.HandleChangePassword()))
 			r.Method(http.MethodPost, "/update-profile-image", nethttp.NewHandler(dbWrapper.HandleUpdateUserProfileImage()))
-
-			r.Method(http.MethodGet, "/debug", nethttp.NewHandler(dbWrapper.HandleDebug()))
 		})
 	})
 
