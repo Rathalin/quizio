@@ -73,6 +73,7 @@ export default function QuestionsForm({
       localStorage.setItem(storageKeys.quizQuestionsDraft, JSON.stringify(value));
     }
   }, []);
+  const [lastFieldsAction, setLastFieldsAction] = useState<'append' | 'remove' | null>(null);
 
   useEffect(() => {
     if (editMode) return;
@@ -119,6 +120,15 @@ export default function QuestionsForm({
     reset(defaultData);
   }, [defaultData, editMode, reset]);
 
+  useEffect(() => {
+    if (lastFieldsAction === 'append') {
+      const lastUuid = fields.at(-1)?.formUuid;
+      if (lastUuid != null) {
+        setExpanded(lastUuid);
+      }
+    }
+  }, [fields, lastFieldsAction]);
+
   function handleDragEnd(result: DropResult) {
     if (!result.destination) {
       return;
@@ -150,7 +160,10 @@ export default function QuestionsForm({
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
-                                onDelete={() => remove(index)}
+                                onDelete={() => {
+                                  remove(index);
+                                  setLastFieldsAction('remove');
+                                }}
                                 deletable={fields.length > minQuestions}
                                 expanded={expanded === field.formUuid}
                                 onExpand={() => setExpanded(expanded === field.formUuid ? null : field.formUuid)}
@@ -181,10 +194,13 @@ export default function QuestionsForm({
                   <Button
                     startIcon={<AddIcon />}
                     variant="outlined"
-                    onClick={() => append(defaultQuestionFormData)}
+                    onClick={async () => {
+                      append(defaultQuestionFormData);
+                      setLastFieldsAction('append');
+                    }}
                     disabled={fields.length >= maxQuestions}
                   >
-                    Question
+                    {'Question'}
                   </Button>
                 </Box>
               </Tooltip>
