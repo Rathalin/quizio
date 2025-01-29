@@ -1,0 +1,5 @@
+BEGIN;
+
+ALTER TABLE alert ADD COLUMN visible_to TEXT NOT NULL DEFAULT 'everyone';
+
+COMMIT;
