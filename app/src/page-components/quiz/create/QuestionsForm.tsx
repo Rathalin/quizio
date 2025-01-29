@@ -21,6 +21,7 @@ import Button from '@mui/material/Button';
 import CardActions from '@mui/material/CardActions';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
 
 type QuestionsFormProps = {
   defaultData: QuizQuestionsForm;
@@ -52,7 +53,7 @@ export default function QuestionsForm({
     watch,
     formState: { isValid },
   } = methods;
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, move } = useFieldArray({
     name: 'questions',
     control,
     keyName: 'formUuid',
@@ -118,6 +119,15 @@ export default function QuestionsForm({
     reset(defaultData);
   }, [defaultData, editMode, reset]);
 
+  function handleDragEnd(result: DropResult) {
+    if (!result.destination) {
+      return;
+    }
+
+    // console.log('result.destination', result.destination);
+    move(result.source.index, result.destination.index);
+  }
+
   function handleFormSubmit(data: QuizQuestionsForm) {
     onSubmit(data);
   }
@@ -128,16 +138,33 @@ export default function QuestionsForm({
         <Card>
           <CardContent>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-              {fields.map((field, index) => (
-                <QuestionIndexContext.Provider key={field.formUuid} value={index}>
-                  <QuestionInput
-                    onDelete={() => remove(index)}
-                    deletable={fields.length > minQuestions}
-                    expanded={expanded === field.formUuid}
-                    onExpand={() => setExpanded(expanded === field.formUuid ? null : field.formUuid)}
-                  />
-                </QuestionIndexContext.Provider>
-              ))}
+              <DragDropContext onDragEnd={handleDragEnd}>
+                <Droppable droppableId="question">
+                  {(provided) => (
+                    <Box {...provided.droppableProps} ref={provided.innerRef}>
+                      {fields.map((field, index) => (
+                        <Draggable key={field.formUuid} draggableId={field.formUuid} index={index}>
+                          {(provided, snapshot) => (
+                            <QuestionIndexContext.Provider value={index}>
+                              <QuestionInput
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                onDelete={() => remove(index)}
+                                deletable={fields.length > minQuestions}
+                                expanded={expanded === field.formUuid}
+                                onExpand={() => setExpanded(expanded === field.formUuid ? null : field.formUuid)}
+                                isDragging={snapshot.isDragging}
+                              />
+                            </QuestionIndexContext.Provider>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </Box>
+                  )}
+                </Droppable>
+              </DragDropContext>
             </Box>
             <Box
               sx={{

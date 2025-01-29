@@ -16,7 +16,7 @@ import { useGameImageInputDimensions } from '../useImageInputDimensions';
 import { useMemo } from 'react';
 import Image from 'next/image';
 import { ClearImageInputIcon } from '@/components/ClearImageInputIcon';
-import Accordion from '@mui/material/Accordion';
+import Accordion, { AccordionProps } from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -34,9 +34,19 @@ type QuestionInputProps = {
   onDelete: () => void;
   expanded: boolean;
   onExpand: () => void;
-};
+  isDragging: boolean;
+} & Omit<AccordionProps, 'children'>;
 
-export default function QuestionInput({ deletable, onDelete, expanded, onExpand }: QuestionInputProps) {
+export default function QuestionInput({
+  deletable,
+  onDelete,
+  expanded,
+  onExpand,
+  isDragging,
+  sx,
+  slotProps,
+  ...other
+}: QuestionInputProps) {
   const theme = useTheme();
   const index = useQuestionIndex();
   const { width: imageWidth, height: imageHeight } = useGameImageInputDimensions();
@@ -87,14 +97,19 @@ export default function QuestionInput({ deletable, onDelete, expanded, onExpand 
 
   return (
     <Accordion
-      elevation={4}
+      elevation={isDragging ? 10 : 4}
       expanded={expanded}
       onChange={() => onExpand()}
+      sx={{
+        ...sx,
+      }}
       slotProps={{
         transition: {
           unmountOnExit: true,
         },
+        ...slotProps,
       }}
+      {...other}
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />} component="div">
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ flex: 1 }}>
