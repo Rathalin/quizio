@@ -5,6 +5,7 @@ import Paper from '@mui/material/Paper';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import { SxProps, Theme } from '@mui/material/styles';
+import { BuildNumber } from './BuildNumber';
 
 type FooterProps = { sx: SxProps<Theme> };
 
@@ -24,9 +25,13 @@ export default function Footer({ sx }: FooterProps) {
             sm: 'row',
           }}
           justifyContent="space-between"
+          alignItems="start"
           gap={4}
         >
-          <MadeWithLove />
+          <Stack gap={1}>
+            <MadeWithLove />
+            <BuildNumber />
+          </Stack>
           <Socials />
           <Legal />
         </Stack>
