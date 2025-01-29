@@ -1,6 +1,0 @@
-{
-  "scripts": {
-    "prebuild": "echo \"NEXT_PUBLIC_BUILD_NUMBER=$(date +%Y%m%d)-$(git rev-parse --short HEAD)\" > .env.local",
-    "build": "next build"
-  }
-}

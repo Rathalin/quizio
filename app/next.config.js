@@ -6,12 +6,11 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'quizio.flockert.at',
-        port: '',
+        hostname: 'go.quizio.flockert.at',
         pathname: '/uploads',
       },
     ],
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
