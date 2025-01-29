@@ -1,7 +1,7 @@
 {
   "build": {
     "env": {
-      "NEXT_PUBLIC_BUILD_NUMBER": "\"BUILD_$(date +%Y-%m-%d)#$(git rev-parse --short HEAD)\""
+      "NEXT_PUBLIC_BUILD_NUMBER": "BUILD_$(date +%Y-%m-%d)-$(git rev-parse --short HEAD)"
     }
   }
 }
