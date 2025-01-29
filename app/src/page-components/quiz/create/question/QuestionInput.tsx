@@ -16,7 +16,7 @@ import { useGameImageInputDimensions } from '../useImageInputDimensions';
 import { useMemo } from 'react';
 import Image from 'next/image';
 import { ClearImageInputIcon } from '@/components/ClearImageInputIcon';
-import Accordion from '@mui/material/Accordion';
+import Accordion, { AccordionProps } from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -28,15 +28,26 @@ import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
 import Divider from '@mui/material/Divider';
 import { useTheme } from '@mui/material/styles';
+import DragHandleOutlined from '@mui/icons-material/DragHandleOutlined';
 
 type QuestionInputProps = {
   deletable: boolean;
   onDelete: () => void;
   expanded: boolean;
   onExpand: () => void;
-};
+  isDragging: boolean;
+} & Omit<AccordionProps, 'children'>;
 
-export default function QuestionInput({ deletable, onDelete, expanded, onExpand }: QuestionInputProps) {
+export default function QuestionInput({
+  deletable,
+  onDelete,
+  expanded,
+  onExpand,
+  isDragging,
+  sx,
+  slotProps,
+  ...other
+}: QuestionInputProps) {
   const theme = useTheme();
   const index = useQuestionIndex();
   const { width: imageWidth, height: imageHeight } = useGameImageInputDimensions();
@@ -87,18 +98,24 @@ export default function QuestionInput({ deletable, onDelete, expanded, onExpand 
 
   return (
     <Accordion
-      elevation={4}
+      elevation={isDragging ? 10 : 4}
       expanded={expanded}
       onChange={() => onExpand()}
+      sx={{
+        ...sx,
+      }}
       slotProps={{
         transition: {
           unmountOnExit: true,
         },
+        ...slotProps,
       }}
+      {...other}
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />} component="div">
-        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ flex: 1 }}>
-          <Stack gap={0}>
+        <Stack direction="row" alignItems="center" sx={{ flex: 1 }}>
+          <DragHandleOutlined sx={{ marginRight: 2, color: 'action.disabled' }} />
+          <Stack gap={0} sx={{ flex: 1 }}>
             <Stack direction="row" alignItems="center" columnGap={3} rowGap={1} flexWrap="wrap" sx={{ flex: 1 }}>
               <Typography
                 variant="h5"

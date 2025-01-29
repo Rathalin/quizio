@@ -24,6 +24,7 @@ export default function Footer({ sx }: FooterProps) {
             sm: 'row',
           }}
           justifyContent="space-between"
+          alignItems="start"
           gap={4}
         >
           <MadeWithLove />
