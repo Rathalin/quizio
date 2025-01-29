@@ -28,6 +28,7 @@ import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
 import Divider from '@mui/material/Divider';
 import { useTheme } from '@mui/material/styles';
+import DragHandleOutlined from '@mui/icons-material/DragHandleOutlined';
 
 type QuestionInputProps = {
   deletable: boolean;
@@ -112,8 +113,9 @@ export default function QuestionInput({
       {...other}
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />} component="div">
-        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ flex: 1 }}>
-          <Stack gap={0}>
+        <Stack direction="row" alignItems="center" sx={{ flex: 1 }}>
+          <DragHandleOutlined sx={{ marginRight: 2, color: 'action.disabled' }} />
+          <Stack gap={0} sx={{ flex: 1 }}>
             <Stack direction="row" alignItems="center" columnGap={3} rowGap={1} flexWrap="wrap" sx={{ flex: 1 }}>
               <Typography
                 variant="h5"
