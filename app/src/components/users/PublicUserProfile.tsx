@@ -23,7 +23,7 @@ export default function PublicUserProfile({ username, createdAt, quizCount, quiz
         {'Stats'}
       </Typography>
       <Stack spacing={1} alignItems="start">
-        <Typography>{`Joined on ${dateFormatter.format(new Date(createdAt))}`}</Typography>
+        <Typography>{`Joined on ${dateFormatter.format(new Date(createdAt))}.`}</Typography>
         <Divider />
         {/* TODO Fix this mess with translations */}
         <Typography>{`Created ${quizCount} quiz${quizCount === 1 ? '' : 'zes'} which ${
