@@ -9,7 +9,9 @@ import (
 )
 
 func (dbw *DBWrapper) HandleGetAlerts() usecase.Interactor {
-	type getAlertsRequest struct{}
+	type getAlertsRequest struct {
+		VisibleTo string `query:"visibleTo" required:"true" enum:"everyone,authorized"`
+	}
 
 	type getAlertsResponse struct {
 		Alerts []models.Alert `json:"alerts" required:"true" nullable:"false"`
@@ -20,11 +22,11 @@ func (dbw *DBWrapper) HandleGetAlerts() usecase.Interactor {
 			Alerts: make([]models.Alert, 0),
 		}
 		rows, err := dbw.DB.QueryContext(ctx, `
-			SELECT uuid, created_at, updated_at, markdown_content, severity, image_url, image_size, is_active
+			SELECT uuid, created_at, updated_at, markdown_content, severity, image_url, image_size, is_active, visible_to
 			FROM alert
-			WHERE is_active
+			WHERE is_active AND (visible_to = 'everyone' OR visible_to = $1)
 			ORDER BY order_index ASC
-		`)
+		`, input.VisibleTo)
 		if err != nil {
 			return logAndReturnError(err)
 		}
@@ -40,6 +42,7 @@ func (dbw *DBWrapper) HandleGetAlerts() usecase.Interactor {
 				&alert.ImageUrl,
 				&alert.ImageSize,
 				&alert.IsActive,
+				&alert.VisibleTo,
 			)
 			response.Alerts = append(response.Alerts, alert)
 		}

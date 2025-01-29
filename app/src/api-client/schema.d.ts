@@ -21,23 +21,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/a/debug': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** DB Wrapper Handle Debug */
-    get: operations['backend/handlers.(*DBWrapper).HandleDebug'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/a/my-user-profile': {
     parameters: {
       query?: never;
@@ -351,9 +334,6 @@ export interface components {
       imageUrl: string | null;
       title: string;
     };
-    HandlersDebugResponse: {
-      userId: number;
-    };
     HandlersDeleteFileResponse: {
       message: string;
     };
@@ -491,6 +471,8 @@ export interface components {
       /** Format: date-time */
       updatedAt: string;
       uuid: string;
+      /** @enum {string} */
+      visibleTo: 'everyone' | 'authorized';
     };
     ModelsAnswer: {
       /** Format: date-time */
@@ -574,35 +556,6 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['HandlersChangePasswordResponse'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['RestErrResponse'];
-        };
-      };
-    };
-  };
-  'backend/handlers.(*DBWrapper).HandleDebug': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['HandlersDebugResponse'];
         };
       };
       /** @description Unauthorized */
@@ -957,7 +910,9 @@ export interface operations {
   };
   'backend/handlers.(*DBWrapper).HandleGetAlerts': {
     parameters: {
-      query?: never;
+      query: {
+        visibleTo: 'everyone' | 'authorized';
+      };
       header?: never;
       path?: never;
       cookie?: never;
