@@ -10,9 +10,3 @@ tasks:
     desc: Run the Go application
     cmds:
       - go run .
-
-  psql:
-    desc: Connect to PostgreSQL database
-    dotenv: ['.env.local']
-    cmds:
-      - PGPASSWORD=$POSTGRES_PASSWORD psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB
