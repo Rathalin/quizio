@@ -23,7 +23,7 @@ export default function Layout({ children }: LayoutProps) {
       </Container>
       <Footer
         sx={{
-          marginTop: 10,
+          marginTop: 16,
         }}
       />
     </Box>
