@@ -4,6 +4,8 @@ import deHeader from '@messages/de/header.json';
 import enHeader from '@messages/en/header.json';
 import deFooter from '@messages/de/footer.json';
 import enFooter from '@messages/en/footer.json';
+import deDashboard from '@messages/de/dashboard.json';
+import enDashboard from '@messages/en/dashboard.json';
 import deImprint from '@messages/de/imprint.json';
 import enImprint from '@messages/en/imprint.json';
 
@@ -12,6 +14,7 @@ type Messages = {
   header: typeof deHeader & typeof enHeader;
   footer: typeof deFooter & typeof enFooter;
 
+  dashboard: typeof deDashboard & typeof enDashboard;
   imprint: typeof deImprint & typeof enImprint;
 };
 

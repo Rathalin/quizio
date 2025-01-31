@@ -8,8 +8,11 @@ import { dehydrate, QueryClient } from '@tanstack/react-query';
 import { GetQuizzesRequestQuery, throwOnError } from '@/api-client';
 import { fetchQuizzes } from '@/data/useQuizzesQuery';
 import Box from '@mui/material/Box';
+import { getMessages } from '@/utilities/getMessages';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const messagesPromise = getMessages(ctx.locale, ['dashboard']);
+
   const queryClient = new QueryClient();
   const defaultQueryParams: GetQuizzesRequestQuery = {
     page: 0,
@@ -17,14 +20,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     sort: 'createdAt',
     sortDirection: 'desc',
   };
-  await queryClient.prefetchInfiniteQuery({
+  const prefetchPromise = queryClient.prefetchInfiniteQuery({
     queryKey: ['getQuizzesInfinite', defaultQueryParams.sort, defaultQueryParams.sortDirection],
     queryFn: async () => throwOnError(() => fetchQuizzes(defaultQueryParams)),
     initialPageParam: 0,
   });
 
+  const [messages] = await Promise.all([messagesPromise, prefetchPromise]);
+
   return {
     props: {
+      messages,
       dehydratedState: dehydrate(queryClient),
     },
   };

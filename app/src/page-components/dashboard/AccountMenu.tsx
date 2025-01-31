@@ -14,11 +14,13 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { lighten, useTheme } from '@mui/material/styles';
 import { signOut, useSession } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState, type MouseEvent } from 'react';
 
 export default function AccountMenu() {
+  const t = useTranslations('header.accountMenu');
   const theme = useTheme();
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -108,7 +110,7 @@ export default function AccountMenu() {
             <ListItemIcon>
               <AddCircleIcon />
             </ListItemIcon>
-            Create a new quiz
+            {t('menu.item.createQuiz')}
           </MenuItem>
         </Link>
         <Divider />
@@ -117,7 +119,7 @@ export default function AccountMenu() {
             <ListItemIcon>
               <AccountCircleIcon />
             </ListItemIcon>
-            Profile
+            {t('menu.item.profile')}
           </MenuItem>
         </Link>
         <Link href="/users/me/change-password" className="no-underline">
@@ -125,7 +127,7 @@ export default function AccountMenu() {
             <ListItemIcon>
               <AdminPanelSettingsIcon />
             </ListItemIcon>
-            Change Password
+            {t('menu.item.changePassword')}
           </MenuItem>
         </Link>
         <Divider />
@@ -138,7 +140,7 @@ export default function AccountMenu() {
           <ListItemIcon>
             <LogoutIcon />
           </ListItemIcon>
-          Logout
+          {t('menu.item.signOut')}
         </MenuItem>
       </Menu>
     </>

@@ -1,11 +1,14 @@
 import Stack from '@mui/material/Stack';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
 export default function Legal() {
+  const t = useTranslations('footer');
+
   return (
     <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
       <Link href="/imprint" className="link">
-        {'Imprint'}
+        {t('imprint')}
       </Link>
     </Stack>
   );

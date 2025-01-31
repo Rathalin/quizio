@@ -5,6 +5,7 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { signIn } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
 
 type SignInButtonProps = {
   variant?: ButtonProps['variant'];
@@ -13,13 +14,14 @@ type SignInButtonProps = {
 };
 
 export default function SignInButton({ variant, color, sx }: SignInButtonProps) {
+  const t = useTranslations('header');
   const theme = useTheme();
 
   const isSmScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   if (isSmScreen) {
     return (
-      <IconButton color={color ?? 'primary'} onClick={() => signIn()} aria-label="Sign in" sx={sx}>
+      <IconButton color={color ?? 'primary'} onClick={() => signIn()} sx={sx}>
         <LoginIcon />
       </IconButton>
     );
@@ -32,7 +34,7 @@ export default function SignInButton({ variant, color, sx }: SignInButtonProps) 
       onClick={() => signIn()}
       sx={sx}
     >
-      Sign In
+      {t('signInButton.label')}
     </Button>
   );
 }
