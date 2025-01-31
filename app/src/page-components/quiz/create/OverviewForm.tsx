@@ -29,7 +29,7 @@ type OverviewFormProps = {
 };
 
 export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLabel, editMode }: OverviewFormProps) {
-  const t = useTranslations('createQuiz.form');
+  const t = useTranslations('quizForm.form');
   const { width: imageWidth, height: imageHeight } = useOverviewImageInputDimensions();
   const methods = useForm<QuizOverviewForm>({
     defaultValues: defaultData,
@@ -195,6 +195,7 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
                                     objectFit: 'cover',
                                     margin: '-1rem',
                                   }}
+                                  priority
                                   unoptimized
                                 />
                               </Stack>

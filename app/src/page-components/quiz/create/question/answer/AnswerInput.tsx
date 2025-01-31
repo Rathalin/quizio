@@ -18,7 +18,7 @@ type AnswerInputProps = {
 };
 
 export default function AnswerInput({ isCorrect, onDelete, minAnswers, deletable }: AnswerInputProps) {
-  const t = useTranslations('createQuiz.form.question.answer');
+  const t = useTranslations('quizForm.form.question.answer');
   const questionIndex = useQuestionIndex();
   const index = useAnswerIndex();
   const {

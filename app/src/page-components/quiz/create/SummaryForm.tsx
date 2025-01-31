@@ -39,7 +39,7 @@ export default function SummaryForm({
   isPending,
   isDisabled,
 }: SummaryFormProps) {
-  const t = useTranslations('createQuiz.summary');
+  const t = useTranslations('quizForm.summary');
   const theme = useTheme();
   const { title, description } = overviewFormData;
   const { questions } = questionsFormData;

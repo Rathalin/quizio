@@ -1,8 +1,19 @@
 {
 	"breadcrumbs": {
-		"current": "Create quiz"
+		"create": {
+			"current": "Create quiz"
+		},
+		"edit": {
+			"current": {
+				"withTitle": "Edit \"{title}\"",
+				"withoutTitle": "Edit"
+			}
+		}
 	},
 	"form": {
+		"delete": {
+			"label": "Delete this quiz"
+		},
 		"description": {
 			"label": "Description"
 		},
@@ -46,8 +57,16 @@
 			"title": "Question {count}"
 		},
 		"status": {
+			"create": {
+				"error": "",
+				"success": ""
+			},
 			"error": "Could not create quiz!",
-			"success": "Quiz created."
+			"success": "Quiz created.",
+			"update": {
+				"error": "",
+				"success": ""
+			}
 		},
 		"steps": {
 			"details": "Details",
@@ -65,6 +84,11 @@
 		},
 		"updateQuiz": {
 			"label": "Update quiz"
+		}
+	},
+	"updateQuiz": {
+		"breadcrumbs": {
+			"current": ""
 		}
 	}
 }

@@ -10,7 +10,7 @@ import Checkbox from '@mui/material/Checkbox';
 import { useTranslations } from 'next-intl';
 
 export default function CorrectToggle() {
-  const t = useTranslations('createQuiz.form.question.answer');
+  const t = useTranslations('quizForm.form.question.answer');
   const isMobile = useIsMobile();
   const { control, watch } = useFormContext();
   const questionIndex = useQuestionIndex();

@@ -1,7 +1,7 @@
 import GradientText from '@/components/GradientText';
 import OverviewForm from '@/page-components/quiz/create/OverviewForm';
 import SummaryForm from '@/page-components/quiz/create/SummaryForm';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import { useQueryClient } from '@tanstack/react-query';
 import { QuizOverviewForm, QuizQuestionsForm } from '@/page-components/quiz/quiz-form-schema';
@@ -26,9 +26,10 @@ import Link from 'next/link';
 import { GetServerSideProps } from 'next';
 import { getMessages } from '@/utilities/getMessages';
 import { useTranslations } from 'next-intl';
+import { steps, useQuizFormSteps } from '../useQuizFormSteps';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const messages = await getMessages(ctx.locale, ['createQuiz']);
+  const messages = await getMessages(ctx.locale, ['quizForm']);
 
   return {
     props: {
@@ -37,26 +38,15 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   };
 };
 
-const stepTitles = ['details', 'questions', 'review'] as const;
-export type StepData = {
-  title: (typeof stepTitles)[number];
-  backLabel?: string;
-  nextLabel?: string;
-};
-const steps = stepTitles.map((title, index) => ({
-  title,
-  backLabel: stepTitles[index - 1],
-  nextLabel: stepTitles[index + 1],
-}));
-
 export default function QuizCreatePage() {
-  const t = useTranslations('createQuiz');
+  const t = useTranslations('quizForm');
   const router = useRouter();
   const queryClient = useQueryClient();
   const { showSuccessToast, showErrorToast } = useToastStore();
   const [activeStep, setActiveStep] = useState(0);
   const [overviewFormData, setOverviewFormData] = useState<QuizOverviewForm>(defaultOverviewFormData);
   const [questionsFormData, setQuestionsFormData] = useState<QuizQuestionsForm>(defaultQuestionsFormData);
+  const { backLabel, nextLabel } = useQuizFormSteps(activeStep);
 
   const { mutateAsync: uploadFile } = useUploadFileMutation();
   const { mutateAsync: createQuiz, isPending, isSuccess } = useCreateQuizMutation();
@@ -127,14 +117,14 @@ export default function QuizCreatePage() {
     try {
       await createQuiz(mutationData);
 
-      showSuccessToast(t('form.status.success'));
+      showSuccessToast(t('form.status.create.success'));
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
       await router.push('/');
       resetQuizLocalStorage();
       setOverviewFormData(defaultOverviewFormData);
       setQuestionsFormData(defaultQuestionsFormData);
     } catch (error) {
-      showErrorToast(t('form.status.error'));
+      showErrorToast(t('form.status.create.error'));
       console.error('Failed to create quiz', error);
     }
   }
@@ -152,27 +142,11 @@ export default function QuizCreatePage() {
     localStorage.removeItem(storageKeys.quizQuestionsDraft);
   }
 
-  const backLabel = useMemo(() => {
-    const back = steps.at(activeStep)?.backLabel;
-    if (back == null) {
-      return null;
-    }
-    return t(`form.steps.${back}`);
-  }, [activeStep, t]);
-
-  const nextLabel = useMemo(() => {
-    const next = steps.at(activeStep)?.nextLabel;
-    if (next == null) {
-      return null;
-    }
-    return t(`form.steps.${next}`);
-  }, [activeStep, t]);
-
   return (
     <Box>
       <QuizioBreadcrumbs>
         <Link href="/quiz/create" aria-current="page">
-          {t('breadcrumbs.current')}
+          {t('breadcrumbs.create.current')}
         </Link>
       </QuizioBreadcrumbs>
       <Typography variant="h3" component="h1">

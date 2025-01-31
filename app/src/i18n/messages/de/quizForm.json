@@ -1,8 +1,19 @@
 {
 	"breadcrumbs": {
-		"current": "Quiz erstellen"
+		"create": {
+			"current": "Quiz erstellen"
+		},
+		"edit": {
+			"current": {
+				"withTitle": "\"{title}\" bearbeiten",
+				"withoutTitle": "Bearbeiten"
+			}
+		}
 	},
 	"form": {
+		"delete": {
+			"label": "Quiz löschen"
+		},
 		"description": {
 			"label": "Beschreibung"
 		},
@@ -46,8 +57,16 @@
 			"title": "Frage {count}"
 		},
 		"status": {
-			"error": "Quiz konnte nicht erstellt werden!",
-			"success": "Quiz erstellt."
+			"create": {
+				"error": "Quiz konnte nicht erstellt werden!",
+				"success": "Quiz erstellt."
+			},
+			"error": "",
+			"success": "",
+			"update": {
+				"error": "Quiz konnte nicht gespeichert werden!",
+				"success": "Quiz gespeichert."
+			}
 		},
 		"steps": {
 			"details": "Details",
@@ -64,7 +83,12 @@
 			"label": "Quiz veröffentlichen"
 		},
 		"updateQuiz": {
-			"label": "Quiz aktualisieren"
+			"label": "Quiz speichern"
+		}
+	},
+	"updateQuiz": {
+		"breadcrumbs": {
+			"current": ""
 		}
 	}
 }

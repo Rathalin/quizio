@@ -49,7 +49,7 @@ export default function QuestionInput({
   slotProps,
   ...other
 }: QuestionInputProps) {
-  const t = useTranslations('createQuiz.form.question');
+  const t = useTranslations('quizForm.form.question');
   const theme = useTheme();
   const index = useQuestionIndex();
   const { width: imageWidth, height: imageHeight } = useGameImageInputDimensions();

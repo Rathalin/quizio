@@ -14,8 +14,8 @@ import enUsers from '@messages/en/users.json';
 import deUsers from '@messages/de/users.json';
 import enChangePassword from '@messages/en/changePassword.json';
 import deChangePassword from '@messages/de/changePassword.json';
-import enCreateQuiz from '@messages/en/createQuiz.json';
-import deCreateQuiz from '@messages/de/createQuiz.json';
+import enQuizForm from '@messages/en/quizForm.json';
+import deQuizForm from '@messages/de/quizForm.json';
 
 type Messages = {
   common: typeof deCommon & typeof enCommon;
@@ -27,7 +27,7 @@ type Messages = {
   myProfile: typeof deMyProfile & typeof enMyProfile;
   users: typeof deUsers & typeof enUsers;
   changePassword: typeof deChangePassword & typeof enChangePassword;
-  createQuiz: typeof deCreateQuiz & typeof enCreateQuiz;
+  quizForm: typeof deQuizForm & typeof enQuizForm;
 };
 
 declare global {

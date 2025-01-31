@@ -129,22 +129,31 @@ export default function QuizOverviewCard({
                   justifyContent: 'space-between',
                 }}
               >
-                {title}
-                <Stack direction="row" alignItems="center">
-                  <Tooltip title="Copy link" arrow>
-                    <IconButton onClick={() => handleShareClick()}>
-                      <ShareIcon color="secondary" />
-                    </IconButton>
-                  </Tooltip>
-                  {isMyQuiz && (
-                    <Tooltip title="Edit your quiz" arrow>
-                      <Box>
-                        <LinkIconButton hrefObserver={`/quiz/edit/${uuid}`} navigateOnClick>
-                          <EditIcon color="secondary" />
-                        </LinkIconButton>
-                      </Box>
+                <Stack direction="row">
+                  <Box
+                    sx={{
+                      flex: 1,
+                      overflowWrap: 'anywhere',
+                    }}
+                  >
+                    {title}
+                  </Box>
+                  <Stack direction="row" alignItems="center">
+                    <Tooltip title="Copy link" arrow>
+                      <IconButton onClick={() => handleShareClick()}>
+                        <ShareIcon color="secondary" />
+                      </IconButton>
                     </Tooltip>
-                  )}
+                    {isMyQuiz && (
+                      <Tooltip title="Edit your quiz" arrow>
+                        <Box>
+                          <LinkIconButton hrefObserver={`/quiz/edit/${uuid}`} navigateOnClick>
+                            <EditIcon color="secondary" />
+                          </LinkIconButton>
+                        </Box>
+                      </Tooltip>
+                    )}
+                  </Stack>
                 </Stack>
               </Typography>
             </Box>

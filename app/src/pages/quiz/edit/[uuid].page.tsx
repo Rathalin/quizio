@@ -37,6 +37,9 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
 import Link from 'next/link';
+import { getMessages } from '@/utilities/getMessages';
+import { useTranslations } from 'next-intl';
+import { steps, useQuizFormSteps } from '../useQuizFormSteps';
 
 export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (ctx) => {
   const uuid = ctx.params?.uuid;
@@ -46,10 +49,11 @@ export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (c
     };
   }
 
+  const messagesPromise = getMessages(ctx.locale, ['quizForm']);
+
   const session = await getServerSession(ctx.req, ctx.res, authOptions);
   const queryClient = new QueryClient();
-
-  await queryClient.prefetchQuery({
+  const prefetchPromise = queryClient.prefetchQuery({
     queryKey: ['quiz', uuid],
     queryFn: () =>
       throwOnError(() =>
@@ -59,33 +63,26 @@ export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (c
       ),
   });
 
+  const [messages] = await Promise.all([messagesPromise, prefetchPromise]);
+
   return {
     props: {
       uuid,
+      messages,
       dehydratedState: dehydrate(queryClient),
     },
   };
 };
 
-const stepTitles = ['Overview', 'Questions', 'Summary'] as const;
-export type StepData = {
-  title: (typeof stepTitles)[number];
-  backLabel?: string;
-  nextLabel?: string;
-};
-const steps = stepTitles.map((title, index) => ({
-  title,
-  backLabel: stepTitles[index - 1],
-  nextLabel: stepTitles[index + 1],
-}));
-
 export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const t = useTranslations('quizForm');
   const queryClient = useQueryClient();
   const router = useRouter();
   const { showSuccessToast, showErrorToast } = useToastStore();
 
   const { data: quiz } = useQuizQuery(uuid);
   const [activeStep, setActiveStep] = useState(0);
+  const { backLabel, nextLabel } = useQuizFormSteps(activeStep);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [overviewFormData, setOverviewFormData] = useState<QuizOverviewForm>(defaultOverviewFormData);
   const [questionsFormData, setQuestionsFormData] = useState<QuizQuestionsForm>(defaultQuestionsFormData);
@@ -274,13 +271,13 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
       await updateQuiz(requestData);
 
       // Refetch quiz
-      showSuccessToast('Quiz updated!');
+      showSuccessToast(t('form.status.update.success'));
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
       await router.push('/');
       queryClient.invalidateQueries({ queryKey: ['quiz', uuid] });
     } catch (error) {
       console.error('Update quiz error', error);
-      showErrorToast('Could not update quiz!');
+      showErrorToast(t('form.status.update.error'));
     }
   }
 
@@ -296,9 +293,6 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
       showErrorToast('Could not delete quiz!');
     }
   }
-
-  const backLabel = steps.at(activeStep)?.backLabel ?? null;
-  const nextLabel = steps.at(activeStep)?.nextLabel ?? null;
 
   function handleNext() {
     setActiveStep((prevActiveStep) => Math.min(prevActiveStep + 1, steps.length - 1));
@@ -320,7 +314,11 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
         />
       )}
       <QuizioBreadcrumbs>
-        <Link href={`/quiz/edit/${uuid}`}>{quiz != null ? `Edit "${quiz.title}"` : 'Edit'}</Link>
+        <Link href={`/quiz/edit/${uuid}`}>
+          {quiz != null
+            ? t('breadcrumbs.edit.current.withTitle', { title: quiz.title })
+            : t('breadcrumbs.edit.current.withoutTitle')}
+        </Link>
       </QuizioBreadcrumbs>
       <Typography variant="h3" component="h1">
         <Stack direction="row" alignItems="center" flexWrap="wrap" gap={2}>
@@ -337,7 +335,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
               onClick={() => setDialogOpen(true)}
               disabled={isDeletePending || isDeleteSuccess}
             >
-              Delete this quiz
+              {t('form.delete.label')}
             </Button>
           </Stack>
         </Stack>
@@ -349,7 +347,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
               <Stepper orientation="vertical" activeStep={activeStep}>
                 {steps.map((step) => (
                   <Step key={step.title}>
-                    <StepLabel>{step.title}</StepLabel>
+                    <StepLabel>{t(`form.steps.${step.title}`)}</StepLabel>
                   </Step>
                 ))}
               </Stepper>
@@ -359,7 +357,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
         <Grid item xs={12} md={9}>
           {quiz != null ? (
             <>
-              {steps[activeStep].title === 'Overview' && (
+              {steps[activeStep].title === 'details' && (
                 <OverviewForm
                   defaultData={overviewFormData}
                   onSubmit={(data) => {
@@ -371,7 +369,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
                   editMode={true}
                 />
               )}
-              {steps[activeStep].title === 'Questions' && (
+              {steps[activeStep].title === 'questions' && (
                 <QuestionsForm
                   defaultData={questionsFormData}
                   onSubmit={(data) => {
@@ -387,7 +385,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
                   editMode={true}
                 />
               )}
-              {steps[activeStep].title === 'Summary' && (
+              {steps[activeStep].title === 'review' && (
                 <SummaryForm
                   overviewFormData={overviewFormData}
                   questionsFormData={questionsFormData}

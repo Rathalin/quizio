@@ -41,7 +41,7 @@ export default function QuestionsForm({
   nextLabel,
   editMode,
 }: QuestionsFormProps) {
-  const t = useTranslations('createQuiz.form');
+  const t = useTranslations('quizForm.form');
   const [expanded, setExpanded] = useState<string | null>(null);
   const methods = useForm({
     defaultValues: defaultData,

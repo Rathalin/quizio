@@ -12,7 +12,7 @@ type DeleteAnswerButtonProps = {
 };
 
 export default function DeleteAnswerButton({ minAnswers, onDelete, disabled }: DeleteAnswerButtonProps) {
-  const t = useTranslations('createQuiz.form.question.answer');
+  const t = useTranslations('quizForm.form.question.answer');
   const isMobile = useIsMobile();
 
   return (
