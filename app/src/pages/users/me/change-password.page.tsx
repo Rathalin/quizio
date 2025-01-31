@@ -16,6 +16,9 @@ import { useTheme } from '@mui/material/styles';
 import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
 import Link from 'next/link';
 import GradientText from '@/components/GradientText';
+import { GetServerSideProps } from 'next';
+import { getMessages } from '@/utilities/getMessages';
+import { useTranslations } from 'next-intl';
 
 const passwordMinLength = 8;
 const passwordMaxLength = 50;
@@ -49,7 +52,18 @@ const defaultValues: ChangePaswordForm = {
   passwordConfirmation: '',
 };
 
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const messages = await getMessages(ctx.locale, ['changePassword']);
+
+  return {
+    props: {
+      messages,
+    },
+  };
+};
+
 export default function ChangePasswordPage() {
+  const t = useTranslations('changePassword');
   const theme = useTheme();
   const { control, handleSubmit, formState, reset } = useForm<ChangePaswordForm>({
     defaultValues,
@@ -60,27 +74,26 @@ export default function ChangePasswordPage() {
   const { mutateAsync: changePassword, isError, isSuccess, reset: resetChangePassword } = useChangePasswordMutation();
 
   async function onSubmit(data: ChangePaswordForm) {
-    try {
-      await changePassword({
-        currentPassword: data.currentPassword,
-        newPassword: data.password,
-      });
-      reset(defaultValues);
-    } catch (error) {}
+    await changePassword({
+      currentPassword: data.currentPassword,
+      newPassword: data.password,
+    });
+    reset(defaultValues);
   }
 
   return (
     <>
       <QuizioBreadcrumbs>
         <Link href="/users/me/change-password" aria-current="page">
-          {'Change password'}
+          {t('breadcrumbs.current')}
         </Link>
       </QuizioBreadcrumbs>
       <Card sx={{ marginTop: 2, padding: 2, maxWidth: theme.breakpoints.values.sm }} elevation={2}>
         <CardContent>
           <Typography variant="h3" component="h1" sx={{ marginTop: 0 }}>
-            <GradientText>{'Change'}</GradientText>
-            <span>{' your password'}</span>
+            {t.rich('heading', {
+              gradient: (chunks) => <GradientText>{chunks}</GradientText>,
+            })}
           </Typography>
           <form
             onSubmit={(e) => {
@@ -94,7 +107,7 @@ export default function ChangePasswordPage() {
                 render={({ field }) => (
                   <QuizioPasswordField
                     id="currentPassword"
-                    label="Current password"
+                    label={t('form.currentPassword.label')}
                     fullWidth
                     error={errors.currentPassword != null}
                     helperText={errors.currentPassword?.message}
@@ -103,6 +116,7 @@ export default function ChangePasswordPage() {
                         maxLength: passwordMaxLength,
                       },
                     }}
+                    autoComplete="current-password"
                     {...field}
                   />
                 )}
@@ -114,7 +128,7 @@ export default function ChangePasswordPage() {
                 render={({ field }) => (
                   <QuizioPasswordField
                     id="password"
-                    label="New password"
+                    label={t('form.newPassword.label')}
                     fullWidth
                     error={errors.password != null}
                     helperText={errors.password?.message}
@@ -123,6 +137,7 @@ export default function ChangePasswordPage() {
                         maxLength: passwordMaxLength,
                       },
                     }}
+                    autoComplete="new-password"
                     {...field}
                   />
                 )}
@@ -134,7 +149,7 @@ export default function ChangePasswordPage() {
                 render={({ field }) => (
                   <QuizioPasswordField
                     id="passwordConfirmation"
-                    label="Confirm password"
+                    label={t('form.confirmPassword.label')}
                     fullWidth
                     error={errors.passwordConfirmation != null}
                     helperText={errors.passwordConfirmation?.message}
@@ -143,6 +158,7 @@ export default function ChangePasswordPage() {
                         maxLength: passwordMaxLength,
                       },
                     }}
+                    autoComplete="new-password"
                     {...field}
                   />
                 )}
@@ -156,17 +172,17 @@ export default function ChangePasswordPage() {
             </Stack>
             {isError && (
               <Alert severity="error" sx={{ marginBottom: 2 }}>
-                Incorrect password
+                {t('form.status.error')}
               </Alert>
             )}
             {isSuccess && (
               <Alert severity="success" sx={{ marginBottom: 2 }}>
-                Password changed successfully
+                {t('form.status.success')}
               </Alert>
             )}
             <Stack sx={{ marginTop: 2 }} direction="row" justifyContent="end">
               <Button variant="contained" type="submit">
-                Change password
+                {t('form.submit.label')}
               </Button>
             </Stack>
           </form>
