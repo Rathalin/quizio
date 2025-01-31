@@ -22,6 +22,7 @@ import CardActions from '@mui/material/CardActions';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
+import { useTranslations } from 'next-intl';
 
 type QuestionsFormProps = {
   defaultData: QuizQuestionsForm;
@@ -40,6 +41,7 @@ export default function QuestionsForm({
   nextLabel,
   editMode,
 }: QuestionsFormProps) {
+  const t = useTranslations('createQuiz.form');
   const [expanded, setExpanded] = useState<string | null>(null);
   const methods = useForm({
     defaultValues: defaultData,
@@ -134,7 +136,6 @@ export default function QuestionsForm({
       return;
     }
 
-    // console.log('result.destination', result.destination);
     move(result.source.index, result.destination.index);
   }
 
@@ -187,7 +188,7 @@ export default function QuestionsForm({
               }}
             >
               <Tooltip
-                title={fields.length >= maxQuestions ? `You can only add ${maxQuestions} questions.` : null}
+                title={fields.length >= maxQuestions ? t('question.error.maxQuestions', { count: maxQuestions }) : null}
                 arrow
               >
                 <Box>
@@ -200,7 +201,7 @@ export default function QuestionsForm({
                     }}
                     disabled={fields.length >= maxQuestions}
                   >
-                    {'Question'}
+                    {t('question.add.label')}
                   </Button>
                 </Box>
               </Tooltip>
@@ -211,7 +212,7 @@ export default function QuestionsForm({
               {!isValid && (
                 <Stack direction="row" alignItems="center" justifyContent="end" gap={1}>
                   <FormErrorIcon />
-                  <Typography color="error">This form still contains errors!</Typography>
+                  <Typography color="error">{t('error.general')}</Typography>
                 </Stack>
               )}
               <Stack direction="row" justifyContent="space-between" flexWrap="wrap">

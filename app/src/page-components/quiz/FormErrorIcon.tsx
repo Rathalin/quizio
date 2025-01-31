@@ -1,5 +1,5 @@
-import ReportProblemIcon from '@mui/icons-material/ReportProblem';
+import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
 
 export function FormErrorIcon() {
-  return <ReportProblemIcon color="error" />;
+  return <ReportProblemOutlinedIcon color="error" fontSize="small" />;
 }

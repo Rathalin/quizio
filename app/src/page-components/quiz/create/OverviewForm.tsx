@@ -18,6 +18,7 @@ import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CardActions from '@mui/material/CardActions';
+import { useTranslations } from 'next-intl';
 
 type OverviewFormProps = {
   defaultData: QuizOverviewForm;
@@ -28,6 +29,7 @@ type OverviewFormProps = {
 };
 
 export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLabel, editMode }: OverviewFormProps) {
+  const t = useTranslations('createQuiz.form');
   const { width: imageWidth, height: imageHeight } = useOverviewImageInputDimensions();
   const methods = useForm<QuizOverviewForm>({
     defaultValues: defaultData,
@@ -113,7 +115,7 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
                     render={({ field }) => (
                       <QuizioTextField
                         id="title"
-                        label="Title"
+                        label={t('title.label')}
                         fullWidth
                         error={errors.title != null}
                         helperText={errors.title?.message?.toString() ?? ''}
@@ -135,7 +137,7 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
                     render={({ field }) => (
                       <QuizioTextField
                         id="description"
-                        label="Description"
+                        label={t('description.label')}
                         slotProps={{
                           htmlInput: {
                             maxLength: constraints.quiz.description.maxLength,
@@ -197,7 +199,7 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
                                 />
                               </Stack>
                             ) : (
-                              <Box>{'Upload Image'}</Box>
+                              <Box>{t('image.label')}</Box>
                             )}
                           </Button>
                         </label>
@@ -213,9 +215,10 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
                       setValue('image.data.file', null);
                       setValue('image.preview', undefined);
                     }}
+                    sx={{ visibility: imageUrl != null ? 'visible' : 'hidden' }}
                     disabled={imageUrl == null}
                   >
-                    {'Remove'}
+                    {t('image.clear')}
                   </Button>
                 </Stack>
               </Stack>

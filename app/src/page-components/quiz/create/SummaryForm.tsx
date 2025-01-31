@@ -16,6 +16,7 @@ import ListItem from '@mui/material/ListItem';
 import Stack from '@mui/material/Stack';
 import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
+import { useTranslations } from 'next-intl';
 
 type SummaryFormProps = {
   overviewFormData: QuizOverviewForm;
@@ -38,6 +39,7 @@ export default function SummaryForm({
   isPending,
   isDisabled,
 }: SummaryFormProps) {
+  const t = useTranslations('createQuiz.summary');
   const theme = useTheme();
   const { title, description } = overviewFormData;
   const { questions } = questionsFormData;
@@ -103,7 +105,7 @@ export default function SummaryForm({
             endIcon={<PublishIcon />}
             disabled={isDisabled}
           >
-            Update quiz
+            {t('updateQuiz.label')}
           </Button>
         ) : (
           <Button
@@ -114,7 +116,7 @@ export default function SummaryForm({
             endIcon={<PublishIcon />}
             disabled={isDisabled}
           >
-            Publish quiz
+            {t('publishQuiz.label')}
           </Button>
         )}
       </CardActions>
