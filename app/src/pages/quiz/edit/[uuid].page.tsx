@@ -323,8 +323,9 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
       <Typography variant="h3" component="h1">
         <Stack direction="row" alignItems="center" flexWrap="wrap" gap={2}>
           <Box>
-            <GradientText>{'Edit'}</GradientText>
-            <span>{' your quiz'}</span>
+            {t.rich('heading.update', {
+              gradient: (chunks) => <GradientText>{chunks}</GradientText>,
+            })}
           </Box>
           <Stack direction="row" gap={2} flexWrap="wrap" sx={{ marginLeft: 'auto' }}>
             <Button

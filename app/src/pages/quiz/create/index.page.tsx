@@ -150,7 +150,7 @@ export default function QuizCreatePage() {
         </Link>
       </QuizioBreadcrumbs>
       <Typography variant="h3" component="h1">
-        {t.rich('heading', {
+        {t.rich('heading.create', {
           gradient: (chunks) => <GradientText>{chunks}</GradientText>,
         })}
       </Typography>

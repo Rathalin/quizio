@@ -1,0 +1,17 @@
+{
+  "heading": "Enter your <gradient>credentials</gradient>",
+  "breadcrumbs": {
+    "current": "Sign in"
+  },
+  "form": {
+    "status": {
+      "success": "Sign in successful.",
+      "error": "An error ooccured during sign in!"
+    },
+    "invalidCredentials": "Invalid username or password!",
+    "button": {
+      "label": "Sign in"
+    }
+  },
+  "helpAlert": "Do you need an account to create quizzes? Feel free to contact me on <email></email>."
+}

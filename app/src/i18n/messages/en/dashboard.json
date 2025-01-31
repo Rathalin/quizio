@@ -1,29 +1,31 @@
 {
-  "meta": {
-    "description": "Quizo is a quiz app that allows you to create and share quizzes with your friends.",
-    "og": {
-      "description": "Create and share quizzes with your friends.",
-      "title": "Quizio - the modern quizz app"
-    }
-  },
-  "noMoreResults": "No more <gradient>quizzes</gradient> to load.",
-  "noResults": "No quizzes found. Try changing your search criteria.",
-  "searchAndFilter": {
-    "search": {
-      "placeholder": "Search quizzes"
-    },
-    "sort": {
-      "menu": {
-        "button": {
-          "label": "Sort by <sort></sort>"
-        },
-        "items": {
-          "createdAtAsc": "oldest",
-          "createdAtDesc": "latest",
-          "playCountAsc": "most played",
-          "playCountDesc": "least played"
-        }
-      }
-    }
-  }
+	"editTooltip": "Edit your quiz",
+	"meta": {
+		"description": "Quizo is a quiz app that allows you to create and share quizzes with your friends.",
+		"og": {
+			"description": "Create and share quizzes with your friends.",
+			"title": "Quizio - the modern quizz app"
+		}
+	},
+	"noMoreResults": "No more <gradient>quizzes</gradient> to load.",
+	"noResults": "No quizzes found. Try changing your search criteria.",
+	"searchAndFilter": {
+		"search": {
+			"placeholder": "Search quizzes"
+		},
+		"sort": {
+			"menu": {
+				"button": {
+					"label": "Sort by <sort></sort>"
+				},
+				"items": {
+					"createdAtAsc": "oldest",
+					"createdAtDesc": "latest",
+					"playCountAsc": "most played",
+					"playCountDesc": "least played"
+				}
+			}
+		}
+	},
+	"share": "Link to \"{title}\" copied."
 }

@@ -1,4 +1,5 @@
 {
+  "editTooltip": "Edit your quiz",
   "meta": {
     "description": "Quizo ist eine App mit der du Quizze erstellen und mit deinen Freunden teilen kannst.",
     "og": {
@@ -25,5 +26,6 @@
         }
       }
     }
-  }
+  },
+  "share": "Link zu \"{title}\" kopiert."
 }

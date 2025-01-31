@@ -23,6 +23,7 @@ import { z } from 'zod';
 import Typography from '@mui/material/Typography';
 import { useUserAccountQuery } from '@/data/useUserAccountQuery';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
 
 export const profileImageDimensions = {
   width: 240,
@@ -38,6 +39,7 @@ const defaultFormData: ProfileImageForm = {
 };
 
 export function ProfilePictureForm() {
+  const t = useTranslations('users.form');
   const { data: session } = useSession();
   const queryClient = useQueryClient();
   const { showSuccessToast, showErrorToast } = useToastStore();
@@ -88,9 +90,9 @@ export function ProfilePictureForm() {
 
       await updateProfileImage({ profileImageUrl: newImageUrl });
       queryClient.invalidateQueries({ queryKey: userAccountQueryKey });
-      showSuccessToast('Profile image updated.');
+      showSuccessToast(t('profileImage.status.success'));
     } catch (error) {
-      showErrorToast('Could not update profile image!');
+      showErrorToast(t('profileImage.status.error'));
     }
   }
 

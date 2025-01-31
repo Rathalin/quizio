@@ -17,13 +17,15 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FormEvent, useState } from 'react';
 import { authOptions } from '../api/auth/[...nextauth].page';
+import { getMessages } from '@/utilities/getMessages';
+import { useTranslations } from 'next-intl';
 
 export const getServerSideProps: GetServerSideProps<{
   callbackUrl: string | null;
 }> = async (ctx) => {
   const callbackUrl = typeof ctx.query?.callbackUrl === 'string' ? ctx.query.callbackUrl : null;
-  const session = await getServerSession(ctx.req, ctx.res, authOptions);
 
+  const session = await getServerSession(ctx.req, ctx.res, authOptions);
   if (session != null) {
     return {
       redirect: {
@@ -33,14 +35,18 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
 
+  const messages = await getMessages(ctx.locale, ['signIn']);
+
   return {
     props: {
       callbackUrl,
+      messages,
     },
   };
 };
 
 export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const t = useTranslations();
   const router = useRouter();
   const { showSuccessToast, showErrorToast } = useToastStore();
 
@@ -65,13 +71,13 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
     try {
       const res = await login();
       if (res?.ok === true) {
-        showSuccessToast('Sign in successful.');
+        showSuccessToast(t('signIn.form.status.success'));
         router.push(callbackUrl ?? '/');
       } else {
         setErrorStatus(res?.status ?? null);
       }
     } catch (error) {
-      showErrorToast('An error ooccured!');
+      showErrorToast(t('signIn.form.status.error'));
     }
   }
 
@@ -81,7 +87,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
   return (
     <Box>
       <QuizioBreadcrumbs>
-        <Link href="/auth/signin">{'Sign in'}</Link>
+        <Link href="/auth/signin">{t('signIn.breadcrumbs.current')}</Link>
       </QuizioBreadcrumbs>
       <Box
         sx={{
@@ -102,8 +108,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
             },
           }}
         >
-          <span>Enter your </span>
-          <GradientText>credentials</GradientText>
+          {t.rich('signIn.heading', { gradient: (chunks) => <GradientText>{chunks}</GradientText> })}
         </Typography>
         <form onSubmit={onSubmit}>
           <Card
@@ -140,7 +145,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
               </Box>
               {errorStatus === 401 && (
                 <Typography sx={{ marginTop: 2 }} variant="body2" color="error">
-                  {`Invalid username or password!`}
+                  {t('signIn.form.invalidCredentials')}
                 </Typography>
               )}
             </CardContent>
@@ -163,15 +168,17 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
               size="large"
               sx={{ minWidth: '16ch' }}
             >
-              {'Sign in'}
+              {t('signIn.form.button.label')}
             </Button>
           </Box>
         </form>
         <Alert severity="info" sx={{ marginTop: 10 }}>
           <Typography>
-            <span>{'Do you need an account to create quizzes? Feel free to contact me on '}</span>
-            <Link href="mailto:daniel@flockert.at">daniel@flockert.at</Link>
-            <span>{'.'}</span>
+            <span>
+              {t.rich('signIn.helpAlert', {
+                email: () => <Link href={`mailto:${t('common.email')}`}>{t('common.email')}</Link>,
+              })}
+            </span>
           </Typography>
         </Alert>
       </Box>
