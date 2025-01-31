@@ -11,7 +11,7 @@ export function QuizioBreadcrumbs({ children, ...other }: Props) {
   return (
     <Breadcrumbs aria-label="breadcrumb" {...other}>
       <Link href="/">
-        <IconButton sx={{ color: grey[500], marginRight: -1 }}>
+        <IconButton sx={{ color: grey[600], marginRight: -1 }}>
           <HomeOutlined />
         </IconButton>
       </Link>

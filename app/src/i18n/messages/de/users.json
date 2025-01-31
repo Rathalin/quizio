@@ -1,0 +1,21 @@
+{
+	"breadcrumbs": {
+		"current": "Profil"
+	},
+	"link": {
+		"toMyProfileSettings": "Go to my profile settings"
+	},
+	"stats": {
+		"created": {
+			"label": "Quizze erstellt"
+		},
+		"heading": "Statistik",
+		"joinedAt": {
+			"label": "Beigetreten am"
+		},
+		"joinedOn": "{username} ist am {date} beigetreten.",
+		"totalPlayCount": {
+			"label": "Gesamtanzahl gespielt"
+		}
+	}
+}

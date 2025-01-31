@@ -2,12 +2,9 @@
 	"breadcrumbs": {
 		"current": "Mein Profil"
 	},
+	"changeUsernameRequest": "Du möchtest deinen Benutzernamen ändern? Schreib mir eine <email>E-Mail</email>.",
 	"link": {
 		"toMyPublicProfile": "Zu meinem öffentlichen Profil"
-	},
-	"stats": {
-		"heading": "Statistik",
-		"joinedOn": "{username} ist am {date} beigetreten."
 	},
 	"title": "Profil"
 }

@@ -2,9 +2,11 @@ import { throwOnError } from '@/api-client';
 import GenericLoadingErrorMessage from '@/components/GenericLoadingErrorMessage';
 import GradientText from '@/components/GradientText';
 import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
-import PublicUserProfile from '@/components/users/PublicUserProfile';
+import { ProfileAvatar } from '@/components/users/ProfileAvatar';
 import UserProfilePlaceholder from '@/components/users/UserProfilePlaceholder';
+import UserStats from '@/components/users/UserStats';
 import { fetchUserProfile, useUserProfileQuery } from '@/data/useUserProfileQuery';
+import { getMessages } from '@/utilities/getMessages';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -12,6 +14,7 @@ import Typography from '@mui/material/Typography';
 import { dehydrate, QueryClient } from '@tanstack/react-query';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useSession } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
 export const getServerSideProps: GetServerSideProps<{
@@ -24,22 +27,27 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
 
-  const queryClient = new QueryClient();
+  const messagesPromise = getMessages(ctx.locale, ['users', 'myProfile']);
 
-  await queryClient.prefetchQuery({
+  const queryClient = new QueryClient();
+  const prefetchPromise = queryClient.prefetchQuery({
     queryKey: ['getUserProfile', uuid],
     queryFn: () => throwOnError(() => fetchUserProfile(uuid)),
   });
 
+  const [messages] = await Promise.all([messagesPromise, prefetchPromise]);
+
   return {
     props: {
       uuid,
+      messages,
       dehydratedState: dehydrate(queryClient),
     },
   };
 };
 
 export default function UserIdPage({ uuid }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const t = useTranslations('users');
   const { data: session } = useSession();
   const { data, isPending, isSuccess, isError } = useUserProfileQuery(uuid);
 
@@ -47,7 +55,7 @@ export default function UserIdPage({ uuid }: InferGetServerSidePropsType<typeof 
     <Box>
       <QuizioBreadcrumbs>
         <Link href="/users/me" aria-current="page">
-          {isSuccess ? `Profile: ${data.user.username}` : 'Profile'}
+          {isSuccess ? `${t('breadcrumbs.current')}: ${data.user.username}` : t('breadcrumbs.current')}
         </Link>
       </QuizioBreadcrumbs>
       <Box sx={{ marginTop: 2 }}>
@@ -59,18 +67,20 @@ export default function UserIdPage({ uuid }: InferGetServerSidePropsType<typeof 
                 <Typography variant="h1" sx={{ marginBlock: 0 }}>
                   <GradientText>{data.user.username}</GradientText>
                 </Typography>
-                {session?.user.uuid === data?.user.uuid && (
+                {session?.user.uuid === data.user.uuid && (
                   <Typography sx={{ marginTop: 2 }}>
-                    <Link href="/users/me">{'Go to my profile settings'}</Link>
+                    <Link href="/users/me">{t('link.toMyProfileSettings')}</Link>
                   </Typography>
                 )}
                 <Box sx={{ marginTop: 4 }}>
-                  <PublicUserProfile
+                  <Box sx={{ marginBottom: 6 }}>
+                    <ProfileAvatar imageUrl={data.user.profileImageUrl} username={data.user.username} />
+                  </Box>
+                  <UserStats
                     username={data.user.username}
                     createdAt={new Date(data.user.createdAt)}
                     quizCount={data.quizStats.totalQuizzesCreated}
                     quizViewsTotal={data.quizStats.totalQuizzesPlayCount}
-                    imageUrl={data.user.profileImageUrl}
                   />
                 </Box>
               </>

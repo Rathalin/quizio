@@ -10,6 +10,8 @@ import deImprint from '@messages/de/imprint.json';
 import enImprint from '@messages/en/imprint.json';
 import deMyProfile from '@messages/de/myProfile.json';
 import enMyProfile from '@messages/en/myProfile.json';
+import enUsers from '@messages/en/users.json';
+import deUsers from '@messages/de/users.json';
 
 type Messages = {
   common: typeof deCommon & typeof enCommon;
@@ -18,7 +20,8 @@ type Messages = {
 
   dashboard: typeof deDashboard & typeof enDashboard;
   imprint: typeof deImprint & typeof enImprint;
-  ['myProfile']: typeof deMyProfile & typeof enMyProfile;
+  myProfile: typeof deMyProfile & typeof enMyProfile;
+  users: typeof deUsers & typeof enUsers;
 };
 
 declare global {

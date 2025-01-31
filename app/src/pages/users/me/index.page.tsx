@@ -2,8 +2,7 @@ import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
 import GenericLoadingErrorMessage from '@/components/GenericLoadingErrorMessage';
 import GradientText from '@/components/GradientText';
 import LoadingCircle from '@/components/LoadingCircle';
-import UserStats from '@/components/users/UserStats';
-import { useMyUserProfileQuery } from '@/data/useMyUserProfileQuery';
+import { ProfilePictureForm } from '@/components/users/ProfilePictureForm';
 import { useUserAccountQuery } from '@/data/useUserAccountQuery';
 import MyProfilePlaceholder from '@/page-components/user/me/MyProfilePlaceholder';
 import { getMessages } from '@/utilities/getMessages';
@@ -17,7 +16,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const messages = await getMessages(ctx.locale, ['myProfile']);
+  const messages = await getMessages(ctx.locale, ['myProfile', 'users']);
 
   return {
     props: {
@@ -27,16 +26,15 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 };
 
 export default function MePage() {
-  const t = useTranslations('myProfile');
+  const t = useTranslations();
   const { data: session } = useSession();
-  const { data, isPending, isError, isSuccess } = useMyUserProfileQuery();
-  const { data: user } = useUserAccountQuery();
+  const { data: user, isPending, isSuccess, isError } = useUserAccountQuery();
 
   return (
     <>
       <QuizioBreadcrumbs>
         <Link href="/users/me" aria-current="page">
-          {t('breadcrumbs.current')}
+          {t('myProfile.breadcrumbs.current')}
         </Link>
       </QuizioBreadcrumbs>
       {user == null && <LoadingCircle />}
@@ -49,18 +47,20 @@ export default function MePage() {
               </Typography>
               {session?.user.uuid === user.uuid && (
                 <Typography sx={{ marginBottom: 4, marginTop: 2 }}>
-                  <Link href={`/users/${session.user.uuid}`}>{t('link.toMyPublicProfile')}</Link>
+                  <Link href={`/users/${session.user.uuid}`}>{t('myProfile.link.toMyPublicProfile')}</Link>
                 </Typography>
               )}
               {isPending && <MyProfilePlaceholder />}
               {isSuccess && (
                 <>
-                  <UserStats
-                    username={user.username}
-                    createdAt={new Date(data.user.createdAt)}
-                    quizCount={data.quizStats.totalQuizzesCreated}
-                    quizViewsTotal={data.quizStats.totalQuizzesPlayCount}
-                  />
+                  <Box sx={{ marginBottom: 4 }}>
+                    <ProfilePictureForm />
+                  </Box>
+                  <Typography variant="body2">
+                    {t.rich('myProfile.changeUsernameRequest', {
+                      email: (chunks) => <Link href={`mailto:${t('common.email')}`}>{chunks}</Link>,
+                    })}
+                  </Typography>
                 </>
               )}
               {isError && <GenericLoadingErrorMessage />}

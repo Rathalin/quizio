@@ -9,7 +9,7 @@ export default function GenericLoadingErrorMessage() {
   const t = useTranslations('common');
 
   return (
-    <Alert severity="error" variant="filled" sx={{ marginTop: 2 }}>
+    <Alert severity="error" variant="standard" sx={{ marginTop: 2 }}>
       <Typography variant="body1" component="div" sx={{ marginBottom: 0 }}>
         <Box component="span">
           {t.rich('error.generic.content', {
