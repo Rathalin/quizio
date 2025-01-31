@@ -18,26 +18,26 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 };
 
 export default function ImprintPage() {
-  const t = useTranslations('imprint');
+  const t = useTranslations();
 
   return (
     <Box>
       <QuizioBreadcrumbs>
-        <Link href="/imprint">{t('breadcrumbs.current')}</Link>
+        <Link href="/imprint">{t('imprint.breadcrumbs.current')}</Link>
       </QuizioBreadcrumbs>
       <Typography variant="h1">
-        <GradientText>{t('title')}</GradientText>
+        <GradientText>{t('imprint.title')}</GradientText>
       </Typography>
       <Typography variant="h5" component="p">
-        {t('fullname')}
+        {t('imprint.fullname')}
       </Typography>
-      <Typography>{t('address')}</Typography>
-      <Typography>{t('country')}</Typography>
+      <Typography>{t('imprint.address')}</Typography>
+      <Typography>{t('imprint.country')}</Typography>
       <Typography variant="h6" component="p" sx={{ marginTop: 2 }}>
-        <Link href={`mailto:${t('email')}`}>{t('email')}</Link>
+        <Link href={`mailto:${t('common.email')}`}>{t('common.email')}</Link>
       </Typography>
       <Typography variant="body2" sx={{ marginTop: 6 }}>
-        {t('disclaimer')}
+        {t('imprint.disclaimer')}
       </Typography>
     </Box>
   );

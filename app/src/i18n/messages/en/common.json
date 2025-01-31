@@ -1,1 +1,20 @@
-{}
+{
+	"email": "daniel@flockert.at",
+	"error": {
+		"generic": {
+			"content": "Sorry, the Quizio services are currently unavailable. If the error persists, contact <email></email>."
+		},
+		"sessionExpired": {
+			"dialog": {
+				"button": {
+					"label": "Reload"
+				},
+				"content": "Your session has expired! Please reload the page.",
+				"picture": {
+					"alt": "Surprised Pikachu"
+				},
+				"title": "Session Expired"
+			}
+		}
+	}
+}

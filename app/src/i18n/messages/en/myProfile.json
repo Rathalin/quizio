@@ -1,0 +1,13 @@
+{
+	"breadcrumbs": {
+		"current": "My Profile"
+	},
+	"link": {
+		"toMyPublicProfile": "Go to my public profile"
+	},
+	"stats": {
+		"heading": "Stats",
+		"joinedOn": "{username} joined on {date}."
+	},
+	"title": "Profile"
+}
