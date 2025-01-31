@@ -26,11 +26,13 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { SessionExpiredDialog } from '@/components/SessionExpiredDialog';
 import { useSessionExpiredDialogStore } from '@/persistence/session-expired-dialog.store';
+import { AbstractIntlMessages, NextIntlClientProvider } from 'next-intl';
 
 export interface MyAppProps extends AppProps {
   pageProps: {
     session?: Session;
     dehydratedState?: DehydratedState;
+    messages?: AbstractIntlMessages;
   };
 }
 
@@ -107,13 +109,16 @@ export default function App(props: MyAppProps & DocumentHeadTagsProps) {
                 <link rel="preconnect" href={process.env.NEXT_PUBLIC_GRAPHQL_URL} />
               </Head>
             </AppCacheProvider>
-            <Layout>
-              <Component {...pageProps} />
-              <ToastSnackbar />
-              <SessionExpiredDialog />
-              <Analytics />
-              <SpeedInsights />
-            </Layout>
+
+            <NextIntlClientProvider locale={router.locale} timeZone="Europe/Vienna" messages={pageProps.messages}>
+              <Layout>
+                <Component {...pageProps} />
+                <ToastSnackbar />
+                <SessionExpiredDialog />
+                <Analytics />
+                <SpeedInsights />
+              </Layout>
+            </NextIntlClientProvider>
           </ThemeProvider>
           <ReactQueryDevtools initialIsOpen={false} />
         </HydrationBoundary>

@@ -2,6 +2,11 @@
 const nextConfig = {
   pageExtensions: ['page.tsx', 'page.ts'],
   reactStrictMode: true,
+  i18n: {
+    locales: ['de', 'en'],
+    defaultLocale: 'de',
+    localeDetection: true,
+  },
   images: {
     remotePatterns: [
       {
