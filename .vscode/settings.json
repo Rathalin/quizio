@@ -1,4 +1,7 @@
 {
-  "i18n-ally.localesPaths": ["app"],
-  "discord.enabled": true
+  "i18n-ally.localesPaths": [ 
+    "app/src/i18n/messages"
+  ],
+  "discord.enabled": true,
+  "i18n-ally.keystyle": "nested"
 }

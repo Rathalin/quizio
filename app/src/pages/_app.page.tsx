@@ -95,22 +95,22 @@ export default function App(props: MyAppProps & DocumentHeadTagsProps) {
 
   return (
     <SessionProvider session={pageProps.session}>
-      <QueryClientProvider client={queryClient}>
-        <HydrationBoundary state={pageProps.dehydratedState}>
-          <ThemeProvider theme={theme} defaultMode="dark">
-            <CssBaseline />
-            <AppCacheProvider {...props}>
-              <Head>
-                <DocumentHeadTags {...props} />
-                <title>Quizio</title>
-                <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_BACKEND_URL} />
-                <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_GRAPHQL_URL} />
-                <link rel="preconnect" href={process.env.NEXT_PUBLIC_BACKEND_URL} />
-                <link rel="preconnect" href={process.env.NEXT_PUBLIC_GRAPHQL_URL} />
-              </Head>
-            </AppCacheProvider>
+      <NextIntlClientProvider locale={router.locale} timeZone="Europe/Vienna" messages={pageProps.messages}>
+        <QueryClientProvider client={queryClient}>
+          <HydrationBoundary state={pageProps.dehydratedState}>
+            <ThemeProvider theme={theme} defaultMode="dark">
+              <CssBaseline />
+              <AppCacheProvider {...props}>
+                <Head>
+                  <DocumentHeadTags {...props} />
+                  <title>Quizio</title>
+                  <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_BACKEND_URL} />
+                  <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_GRAPHQL_URL} />
+                  <link rel="preconnect" href={process.env.NEXT_PUBLIC_BACKEND_URL} />
+                  <link rel="preconnect" href={process.env.NEXT_PUBLIC_GRAPHQL_URL} />
+                </Head>
+              </AppCacheProvider>
 
-            <NextIntlClientProvider locale={router.locale} timeZone="Europe/Vienna" messages={pageProps.messages}>
               <Layout>
                 <Component {...pageProps} />
                 <ToastSnackbar />
@@ -118,11 +118,11 @@ export default function App(props: MyAppProps & DocumentHeadTagsProps) {
                 <Analytics />
                 <SpeedInsights />
               </Layout>
-            </NextIntlClientProvider>
-          </ThemeProvider>
-          <ReactQueryDevtools initialIsOpen={false} />
-        </HydrationBoundary>
-      </QueryClientProvider>
+            </ThemeProvider>
+            <ReactQueryDevtools initialIsOpen={false} />
+          </HydrationBoundary>
+        </QueryClientProvider>
+      </NextIntlClientProvider>
     </SessionProvider>
   );
 }

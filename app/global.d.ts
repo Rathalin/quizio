@@ -1,8 +1,19 @@
-import deCommon from './src/i18n/messages/de/common.json';
+import deCommon from '@messages/de/common.json';
+import enCommon from '@messages/en/common.json';
+import deHeader from '@messages/de/header.json';
+import enHeader from '@messages/en/header.json';
+import deFooter from '@messages/de/footer.json';
+import enFooter from '@messages/en/footer.json';
+import deImprint from '@messages/de/imprint.json';
+import enImprint from '@messages/en/imprint.json';
 
-import enCommon from './src/i18n/messages/en/common.json';
+type Messages = {
+  common: typeof deCommon & typeof enCommon;
+  header: typeof deHeader & typeof enHeader;
+  footer: typeof deFooter & typeof enFooter;
 
-type Messages = typeof deCommon & typeof enCommon;
+  imprint: typeof deImprint & typeof enImprint;
+};
 
 declare global {
   // Use type safe message keys with `next-intl`
