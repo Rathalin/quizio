@@ -7,8 +7,11 @@ import { Sort, useSort } from '../sort.context';
 import SortIcon from '@mui/icons-material/Sort';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
+import { useTranslations } from 'next-intl';
+import Typography from '@mui/material/Typography';
 
 export function SortMenu() {
+  const t = useTranslations('dashboard.searchAndFilter.sort');
   const { sort, setSort } = useSort();
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -27,10 +30,10 @@ export function SortMenu() {
   }
 
   const sortLabels = {
-    'createdAt-desc': 'latest',
-    'createdAt-asc': 'oldest',
-    'playCount-desc': 'most played',
-    'playCount-asc': 'least played',
+    'createdAt-desc': t('menu.items.createdAtDesc'),
+    'createdAt-asc': t('menu.items.createdAtAsc'),
+    'playCount-desc': t('menu.items.playCountAsc'),
+    'playCount-asc': t('menu.items.playCountDesc'),
   } as const;
 
   const open = Boolean(anchorEl);
@@ -41,10 +44,13 @@ export function SortMenu() {
       <Button aria-describedby={id} variant="outlined" onClick={handleClick} startIcon={<SortIcon />}>
         <Stack direction="row" gap={1}>
           <Box component="span" sx={{ fontWeight: 400 }}>
-            {'Sort by'}
-          </Box>
-          <Box component="span" sx={{ fontWeight: 800 }}>
-            {sortLabels[`${sort.option}-${sort.mode}`]}
+            {t.rich('menu.button.label', {
+              sort: () => (
+                <Box component="span" sx={{ fontWeight: 800 }}>
+                  {sortLabels[`${sort.option}-${sort.mode}`]}
+                </Box>
+              ),
+            })}
           </Box>
         </Stack>
       </Button>
@@ -85,13 +91,16 @@ type SortItemButtonProps = ListItemButtonProps;
 
 function SortItemButton({ children, ...other }: SortItemButtonProps) {
   return (
-    <ListItemButton
-      sx={{
-        textTransform: 'capitalize',
-      }}
-      {...other}
-    >
-      {children}
+    <ListItemButton {...other}>
+      <Typography
+        sx={{
+          ':first-letter': {
+            textTransform: 'capitalize',
+          },
+        }}
+      >
+        {children}
+      </Typography>
     </ListItemButton>
   );
 }

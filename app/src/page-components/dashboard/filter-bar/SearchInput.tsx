@@ -7,10 +7,12 @@ import ClearIcon from '@mui/icons-material/Clear';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import { debounce } from '@mui/material/utils';
+import { useTranslations } from 'next-intl';
 
 const debounceTime = 300;
 
 export default function SearchInput() {
+  const t = useTranslations('dashboard.searchAndFilter.search');
   const isMobile = useIsMobile();
   const { searchText, setSearchText } = useSearch();
   const [inputValue, setInputValue] = useState('');
@@ -30,7 +32,7 @@ export default function SearchInput() {
   return (
     <QuizioTextField
       value={inputValue}
-      placeholder="Search quizzes"
+      placeholder={t('placeholder')}
       onChange={(e) => setInputValue(e.target.value)}
       size="small"
       sx={{ marginTop: '2px', width: isMobile ? '230px' : 'auto' }}
