@@ -17,6 +17,7 @@ import Stack from '@mui/material/Stack';
 import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
 import { useTranslations } from 'next-intl';
+import SaveIcon from '@mui/icons-material/Save';
 
 type SummaryFormProps = {
   overviewFormData: QuizOverviewForm;
@@ -101,8 +102,7 @@ export default function SummaryForm({
           <Button
             variant="contained"
             onClick={onSubmit}
-            startIcon={isPending ? <LoadingCircle /> : undefined}
-            endIcon={<PublishIcon />}
+            startIcon={isPending ? <LoadingCircle /> : <SaveIcon />}
             disabled={isDisabled}
           >
             {t('updateQuiz.label')}
@@ -112,8 +112,7 @@ export default function SummaryForm({
             variant="contained"
             color="primary"
             onClick={onSubmit}
-            startIcon={isPending ? <LoadingCircle /> : null}
-            endIcon={<PublishIcon />}
+            startIcon={isPending ? <LoadingCircle /> : <PublishIcon />}
             disabled={isDisabled}
           >
             {t('publishQuiz.label')}

@@ -284,7 +284,7 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
                   <Divider />
                   <Stack alignItems="center" gap={2} sx={{ marginBottom: 2, marginTop: 2 }}>
                     <Typography sx={{ whiteSpace: 'pre-line', textAlign: 'center' }}>{resultScore}</Typography>
-                    <Button variant="contained" endIcon={<ContentCopyIcon />} onClick={writeResultToClipboard}>
+                    <Button variant="contained" startIcon={<ContentCopyIcon />} onClick={writeResultToClipboard}>
                       Copy
                     </Button>
                   </Stack>

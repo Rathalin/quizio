@@ -6,9 +6,9 @@ import { useToastStore } from '@/persistence/taost.store';
 import { raise } from '@/utilities/errorHandling';
 import { getImageName, prefixWithBackendUrl } from '@/utilities/urlUtils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import DeleteOutlined from '@mui/icons-material/DeleteOutlined';
-import InfoOutlined from '@mui/icons-material/InfoOutlined';
-import EditOutlined from '@mui/icons-material/EditOutlined';
+import DeleteIcon from '@mui/icons-material/Delete';
+import InfoIcon from '@mui/icons-material/Info';
+import EditIcon from '@mui/icons-material/Edit';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -193,7 +193,7 @@ export function ProfilePictureForm() {
                             },
                           }}
                         >
-                          <EditOutlined fontSize="large" sx={{ color: 'white' }} />
+                          <EditIcon fontSize="large" sx={{ color: 'white' }} />
                         </Stack>
                       </Box>
                     ) : (
@@ -208,7 +208,7 @@ export function ProfilePictureForm() {
           {previewImageUrl != null && (
             <>
               <Stack direction="row" gap={1} sx={{ color: 'action.active' }}>
-                <InfoOutlined fontSize="small" />
+                <InfoIcon fontSize="small" />
                 <Typography sx={{ fontSize: 'small' }}>{t('profileImage.hint')}</Typography>
               </Stack>
 
@@ -216,7 +216,7 @@ export function ProfilePictureForm() {
                 <Button
                   variant="outlined"
                   color="primary"
-                  startIcon={<DeleteOutlined />}
+                  startIcon={<DeleteIcon />}
                   onClick={() => {
                     setValue('imageFile', null);
                     setDeleteImageDialogOpen(true);

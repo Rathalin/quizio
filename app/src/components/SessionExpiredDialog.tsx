@@ -6,7 +6,7 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import { useRouter } from 'next/router';
 import Typography from '@mui/material/Typography';
-import RefreshOutlined from '@mui/icons-material/RefreshOutlined';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Box from '@mui/material/Box';
@@ -44,7 +44,7 @@ export function SessionExpiredDialog() {
         </Box>
       </DialogContent>
       <DialogActions sx={{ paddingBottom: 3, paddingInline: 3 }}>
-        <Button onClick={handleReload} color="primary" variant="contained" startIcon={<RefreshOutlined />}>
+        <Button onClick={handleReload} color="primary" variant="contained" startIcon={<RefreshIcon />}>
           {t('button.label')}
         </Button>
       </DialogActions>

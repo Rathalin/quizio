@@ -100,7 +100,7 @@
 			"label": "Publish quiz"
 		},
 		"updateQuiz": {
-			"label": "Update quiz"
+			"label": "Save quiz"
 		}
 	},
 	"updateQuiz": {

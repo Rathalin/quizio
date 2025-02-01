@@ -30,7 +30,7 @@ export default function SignInButton({ variant, color, sx }: SignInButtonProps) 
     <Button
       variant={variant ?? 'outlined'}
       color={color ?? 'primary'}
-      endIcon={<LoginIcon />}
+      startIcon={<LoginIcon />}
       onClick={() => signIn()}
       sx={sx}
     >

@@ -331,8 +331,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
             <Button
               variant="contained"
               color="error"
-              startIcon={isDeletePending ? <LoadingCircle /> : undefined}
-              endIcon={<DeleteIcon />}
+              startIcon={isDeletePending ? <LoadingCircle /> : <DeleteIcon />}
               onClick={() => setDialogOpen(true)}
               disabled={isDeletePending || isDeleteSuccess}
             >

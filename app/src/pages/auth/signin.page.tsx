@@ -19,7 +19,7 @@ import { FormEvent, useState } from 'react';
 import { authOptions } from '../api/auth/[...nextauth].page';
 import { getMessages } from '@/utilities/getMessages';
 import { useTranslations } from 'next-intl';
-import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined';
+import LoginIcon from '@mui/icons-material/Login';
 
 export const getServerSideProps: GetServerSideProps<{
   callbackUrl: string | null;
@@ -164,7 +164,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
               variant="contained"
               color="primary"
               type="submit"
-              endIcon={isPending ? <LoadingCircle /> : <LoginOutlinedIcon />}
+              startIcon={isPending ? <LoadingCircle /> : <LoginIcon />}
               disabled={isPending || (isSuccess && errorStatus == null)}
               size="large"
               sx={{ minWidth: '16ch' }}
