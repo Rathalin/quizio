@@ -1,28 +1,41 @@
 {
-  "breadcrumbs": {
-    "current": "Profile"
-  },
-  "form": {
-    "profileImage": {
-      "status": {
-        "success": "Profile image updated."
-      }
-    }
-  },
-  "link": {
-    "toMyProfileSettings": "Go to my profile settings"
-  },
-  "stats": {
-    "created": {
-      "label": "Quizzes created"
-    },
-    "heading": "Stats",
-    "joinedAt": {
-      "label": "Joined at"
-    },
-    "joinedOn": "{username} joined on {date}.",
-    "totalPlayCount": {
-      "label": "Total play count"
-    }
-  }
+	"breadcrumbs": {
+		"current": "Profile"
+	},
+	"form": {
+		"profileImage": {
+			"delete": "Delete profile image",
+			"deleteDialog": {
+				"action": {
+					"cancel": {
+						"label": "No, cancel"
+					},
+					"confirm": {
+						"label": "Yes, delete"
+					}
+				},
+				"title": "Do you want to permanently delete your current profile image?"
+			},
+			"hint": "Click the image to change it.",
+			"status": {
+				"success": "Profile image updated."
+			}
+		}
+	},
+	"link": {
+		"toMyProfileSettings": "Go to my profile settings"
+	},
+	"stats": {
+		"created": {
+			"label": "Quizzes created"
+		},
+		"heading": "Stats",
+		"joinedAt": {
+			"label": "Joined at"
+		},
+		"joinedOn": "{username} joined on {date}.",
+		"totalPlayCount": {
+			"label": "Total play count"
+		}
+	}
 }

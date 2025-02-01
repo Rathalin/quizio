@@ -12,6 +12,17 @@
 	},
 	"form": {
 		"delete": {
+			"dialog": {
+				"action": {
+					"cancel": {
+						"label": "No, cancel"
+					},
+					"confirm": {
+						"label": "Yes, delete"
+					}
+				},
+				"title": "Do you want to permanently delete the quiz \"{title}\"?"
+			},
 			"label": "Delete this quiz"
 		},
 		"description": {
@@ -37,6 +48,12 @@
 				"disabledTooltip": "A question needs at least {count} answers.",
 				"incorrect": "This answer is marked as incorrect",
 				"label": "Answer {count}"
+			},
+			"delete": {
+				"tooltip": {
+					"default": "Delete question",
+					"minQuestionsError": "A quiz must have at least 1 question."
+				}
 			},
 			"error": {
 				"invalid": "Invalid",

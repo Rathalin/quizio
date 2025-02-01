@@ -108,11 +108,11 @@ export function ProfilePictureForm() {
   return (
     <>
       <Dialog open={deleteImageDialogOpen} onClose={handleCloseDialog}>
-        <DialogTitle>{'Do you want to permanently delete your current profile image?'}</DialogTitle>
+        <DialogTitle>{t('profileImage.deleteDialog.title')}</DialogTitle>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>{'No, cancel'}</Button>
+          <Button onClick={handleCloseDialog}>{t('profileImage.deleteDialog.action.cancel.label')}</Button>
           <Button onClick={onConfirmDeleteProfileImage} color="error" autoFocus>
-            {'Yes, delete'}
+            {t('profileImage.deleteDialog.action.confirm.label')}
           </Button>
         </DialogActions>
       </Dialog>
@@ -209,7 +209,7 @@ export function ProfilePictureForm() {
             <>
               <Stack direction="row" gap={1} sx={{ color: 'action.active' }}>
                 <InfoOutlined fontSize="small" />
-                <Typography sx={{ fontSize: 'small' }}>{'Click the image to change it.'}</Typography>
+                <Typography sx={{ fontSize: 'small' }}>{t('profileImage.hint')}</Typography>
               </Stack>
 
               <Stack direction="column" gap={2} sx={{ marginTop: 2 }}>
@@ -223,7 +223,7 @@ export function ProfilePictureForm() {
                   }}
                   disabled={previewImageUrl == null}
                 >
-                  {'Delete image'}
+                  {t('profileImage.delete')}
                 </Button>
               </Stack>
             </>

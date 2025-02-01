@@ -59,7 +59,7 @@ export default function QuizOverviewCard({
     const titleLimit = 30;
     const shortTitle = title.length > titleLimit ? `${title.slice(0, titleLimit)}...` : title;
 
-    return t('share', { title: shortTitle });
+    return t('share.toast', { title: shortTitle });
   }, [t, title]);
 
   function handleShareClick() {
@@ -137,7 +137,7 @@ export default function QuizOverviewCard({
                   {title}
                 </Box>
                 <Stack direction="row" alignItems="center">
-                  <Tooltip title="Copy link" arrow>
+                  <Tooltip title={t('share.tooltip')} arrow>
                     <IconButton onClick={() => handleShareClick()}>
                       <ShareIcon color="secondary" />
                     </IconButton>

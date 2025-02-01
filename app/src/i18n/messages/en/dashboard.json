@@ -14,10 +14,13 @@
 				"label": "Play"
 			}
 		},
-		"editTooltip": "Edit your quiz",
+		"editTooltip": "Edit quiz",
 		"playCount": "{count} times played",
 		"questionCount": "{count, plural, =1 {# question} other {# questions}}",
-		"share": "Link to \"{title}\" copied."
+		"share": {
+			"toast": "Link to \"{title}\" copied.",
+			"tooltip": "Copy link to quiz"
+		}
 	},
 	"searchAndFilter": {
 		"search": {

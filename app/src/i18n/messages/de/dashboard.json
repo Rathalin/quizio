@@ -1,40 +1,43 @@
 {
-  "meta": {
-    "description": "Quizo ist eine App mit der du Quiz erstellen und mit deinen Freunden teilen kannst.",
-    "og": {
-      "description": "Erstelle und teile Quiz mit deinen Freunden.",
-      "title": "Quizio - die moderne Quiz-App"
-    }
-  },
-  "noMoreResults": "Keine <gradient>Quiz</gradient> mehr zum Laden.",
-  "noResults": "Keine Quiz gefunden. Passe die Suchkriterien an.",
-  "quizCard": {
-    "button": {
-      "play": {
-        "label": "Spielen"
-      }
-    },
-    "editTooltip": "Edit your quiz",
-    "playCount": "{count}x gespielt",
-    "questionCount": "{count, plural, =1 {# Frage} other {# Fragen}}",
-    "share": "Link zu \"{title}\" kopiert."
-  },
-  "searchAndFilter": {
-    "search": {
-      "placeholder": "Quiz durchsuchen"
-    },
-    "sort": {
-      "menu": {
-        "button": {
-          "label": "Nach <sort></sort> sortieren"
-        },
-        "items": {
-          "createdAtAsc": "älteste",
-          "createdAtDesc": "neueste",
-          "playCountAsc": "am häufigsten gespielt",
-          "playCountDesc": "am seltensten gespielt"
-        }
-      }
-    }
-  }
+	"meta": {
+		"description": "Quizo ist eine App mit der du Quiz erstellen und mit deinen Freunden teilen kannst.",
+		"og": {
+			"description": "Erstelle und teile Quiz mit deinen Freunden.",
+			"title": "Quizio - die moderne Quiz-App"
+		}
+	},
+	"noMoreResults": "Keine <gradient>Quiz</gradient> mehr zum Laden.",
+	"noResults": "Keine Quiz gefunden. Passe die Suchkriterien an.",
+	"quizCard": {
+		"button": {
+			"play": {
+				"label": "Spielen"
+			}
+		},
+		"editTooltip": "Quiz bearbeiten",
+		"playCount": "{count}x gespielt",
+		"questionCount": "{count, plural, =1 {# Frage} other {# Fragen}}",
+		"share": {
+			"toast": "Link zu \"{title}\" kopiert.",
+			"tooltip": "Link zu Quiz kopieren"
+		}
+	},
+	"searchAndFilter": {
+		"search": {
+			"placeholder": "Quiz durchsuchen"
+		},
+		"sort": {
+			"menu": {
+				"button": {
+					"label": "Nach <sort></sort> sortieren"
+				},
+				"items": {
+					"createdAtAsc": "älteste",
+					"createdAtDesc": "neueste",
+					"playCountAsc": "am häufigsten gespielt",
+					"playCountDesc": "am seltensten gespielt"
+				}
+			}
+		}
+	}
 }

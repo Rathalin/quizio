@@ -2,6 +2,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
+import { useTranslations } from 'next-intl';
 
 type DeleteQuestionButtonProps = {
   onDelete: () => void;
@@ -9,8 +10,9 @@ type DeleteQuestionButtonProps = {
 };
 
 export default function DeleteQuestionButton({ onDelete, disabled }: DeleteQuestionButtonProps) {
+  const t = useTranslations('quizForm.form.question.delete');
   return (
-    <Tooltip title={disabled ? `You cannot delete the first question.` : 'Delete questions'} arrow>
+    <Tooltip title={disabled ? t('tooltip.minQuestionsError') : t('tooltip.default')} arrow>
       <Box>
         <IconButton
           color="error"

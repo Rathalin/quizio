@@ -1,29 +1,42 @@
 {
-  "breadcrumbs": {
-    "current": "Profil"
-  },
-  "form": {
-    "profileImage": {
-      "status": {
-        "error": "Could not update profile image!",
-        "success": "Profilbild aktualisiert."
-      }
-    }
-  },
-  "link": {
-    "toMyProfileSettings": "Zu meinen Profileinstellungen"
-  },
-  "stats": {
-    "created": {
-      "label": "Quiz erstellt"
-    },
-    "heading": "Statistik",
-    "joinedAt": {
-      "label": "Beigetreten am"
-    },
-    "joinedOn": "{username} ist am {date} beigetreten.",
-    "totalPlayCount": {
-      "label": "Gesamtanzahl gespielt"
-    }
-  }
+	"breadcrumbs": {
+		"current": "Profil"
+	},
+	"form": {
+		"profileImage": {
+			"delete": "Profilbild löschen",
+			"deleteDialog": {
+				"action": {
+					"cancel": {
+						"label": "Nein, abbrechen"
+					},
+					"confirm": {
+						"label": "Ja, löschen"
+					}
+				},
+				"title": "Möchtest du dein aktuelles Profilbild permanent löschen?"
+			},
+			"hint": "Klicke auf das Bild, um es zu ändern.",
+			"status": {
+				"error": "Could not update profile image!",
+				"success": "Profilbild aktualisiert."
+			}
+		}
+	},
+	"link": {
+		"toMyProfileSettings": "Zu meinen Profileinstellungen"
+	},
+	"stats": {
+		"created": {
+			"label": "Quiz erstellt"
+		},
+		"heading": "Statistik",
+		"joinedAt": {
+			"label": "Beigetreten am"
+		},
+		"joinedOn": "{username} ist am {date} beigetreten.",
+		"totalPlayCount": {
+			"label": "Gesamtanzahl gespielt"
+		}
+	}
 }

@@ -297,7 +297,7 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
                       justifyContent: 'center',
                     }}
                   >
-                    <HomeButton>{'Back to the quizzes'}</HomeButton>
+                    <HomeButton />
                   </CardActions>
                 </CardContent>
               )}

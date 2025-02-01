@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
+import { useTranslations } from 'next-intl';
 import { Dispatch, SetStateAction } from 'react';
 
 type DeleteQuizDialogProps = {
@@ -14,6 +15,7 @@ type DeleteQuizDialogProps = {
 };
 
 export default function DeleteQuizDialog({ open, setOpen, onConfirm, quizTitle, loading }: DeleteQuizDialogProps) {
+  const t = useTranslations('quizForm.form.delete.dialog');
   function handleClose() {
     setOpen(false);
   }
@@ -25,9 +27,9 @@ export default function DeleteQuizDialog({ open, setOpen, onConfirm, quizTitle, 
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">{`Do you really want to delete '${quizTitle}'?`}</DialogTitle>
+      <DialogTitle id="alert-dialog-title">{t('title', { title: quizTitle })}</DialogTitle>
       <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
+        <Button onClick={handleClose}>{t('action.cancel.label')}</Button>
         <Button
           onClick={() => onConfirm()}
           startIcon={loading ? <LoadingCircle color="error" /> : null}
@@ -35,7 +37,7 @@ export default function DeleteQuizDialog({ open, setOpen, onConfirm, quizTitle, 
           color="error"
           autoFocus
         >
-          Delete my quiz
+          {t('action.confirm.label')}
         </Button>
       </DialogActions>
     </Dialog>
