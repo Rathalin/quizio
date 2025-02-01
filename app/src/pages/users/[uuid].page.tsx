@@ -7,6 +7,7 @@ import UserProfilePlaceholder from '@/components/users/UserProfilePlaceholder';
 import UserStats from '@/components/users/UserStats';
 import { fetchUserProfile, useUserProfileQuery } from '@/data/useUserProfileQuery';
 import { getMessages } from '@/utilities/getMessages';
+import { quizioTitle } from '@/utilities/quizioTitle';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -15,6 +16,7 @@ import { dehydrate, QueryClient } from '@tanstack/react-query';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
+import Head from 'next/head';
 import Link from 'next/link';
 
 export const getServerSideProps: GetServerSideProps<{
@@ -52,43 +54,48 @@ export default function UserIdPage({ uuid }: InferGetServerSidePropsType<typeof 
   const { data, isPending, isSuccess, isError } = useUserProfileQuery(uuid);
 
   return (
-    <Box>
-      <QuizioBreadcrumbs>
-        <Link href="/users/me" aria-current="page">
-          {isSuccess ? `${t('breadcrumbs.current')}: ${data.user.username}` : t('breadcrumbs.current')}
-        </Link>
-      </QuizioBreadcrumbs>
-      <Box sx={{ marginTop: 2 }}>
-        <Card elevation={2} sx={{ paddingBottom: 2 }}>
-          <CardContent sx={{ padding: 4 }}>
-            {isPending && <UserProfilePlaceholder />}
-            {isSuccess && (
-              <>
-                <Typography variant="h1" sx={{ marginBlock: 0 }}>
-                  <GradientText>{data.user.username}</GradientText>
-                </Typography>
-                {session?.user.uuid === data.user.uuid && (
-                  <Typography sx={{ marginTop: 2 }}>
-                    <Link href="/users/me">{t('link.toMyProfileSettings')}</Link>
+    <>
+      <Head>
+        <title>{quizioTitle(t('profile.meta.title', { username: data?.user.username ?? '' }))}</title>
+      </Head>
+      <Box>
+        <QuizioBreadcrumbs>
+          <Link href="/users/me" aria-current="page">
+            {isSuccess ? `${t('breadcrumbs.current')}: ${data.user.username}` : t('breadcrumbs.current')}
+          </Link>
+        </QuizioBreadcrumbs>
+        <Box sx={{ marginTop: 2 }}>
+          <Card elevation={2} sx={{ paddingBottom: 2 }}>
+            <CardContent sx={{ padding: 4 }}>
+              {isPending && <UserProfilePlaceholder />}
+              {isSuccess && (
+                <>
+                  <Typography variant="h1" sx={{ marginBlock: 0 }}>
+                    <GradientText>{data.user.username}</GradientText>
                   </Typography>
-                )}
-                <Box sx={{ marginTop: 4 }}>
-                  <Box sx={{ marginBottom: 6 }}>
-                    <ProfileAvatar imageUrl={data.user.profileImageUrl} username={data.user.username} />
+                  {session?.user.uuid === data.user.uuid && (
+                    <Typography sx={{ marginTop: 2 }}>
+                      <Link href="/users/me">{t('link.toMyProfileSettings')}</Link>
+                    </Typography>
+                  )}
+                  <Box sx={{ marginTop: 4 }}>
+                    <Box sx={{ marginBottom: 6 }}>
+                      <ProfileAvatar imageUrl={data.user.profileImageUrl} username={data.user.username} />
+                    </Box>
+                    <UserStats
+                      username={data.user.username}
+                      createdAt={new Date(data.user.createdAt)}
+                      quizCount={data.quizStats.totalQuizzesCreated}
+                      quizViewsTotal={data.quizStats.totalQuizzesPlayCount}
+                    />
                   </Box>
-                  <UserStats
-                    username={data.user.username}
-                    createdAt={new Date(data.user.createdAt)}
-                    quizCount={data.quizStats.totalQuizzesCreated}
-                    quizViewsTotal={data.quizStats.totalQuizzesPlayCount}
-                  />
-                </Box>
-              </>
-            )}
-            {isError && <GenericLoadingErrorMessage />}
-          </CardContent>
-        </Card>
+                </>
+              )}
+              {isError && <GenericLoadingErrorMessage />}
+            </CardContent>
+          </Card>
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 }

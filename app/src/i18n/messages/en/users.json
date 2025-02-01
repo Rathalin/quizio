@@ -28,6 +28,16 @@
 	"link": {
 		"toMyProfileSettings": "Go to my profile settings"
 	},
+	"myProfile": {
+		"meta": {
+			"title": "My Profile"
+		}
+	},
+	"profile": {
+		"meta": {
+			"title": "{username}"
+		}
+	},
 	"stats": {
 		"created": {
 			"label": "Quizzes created"

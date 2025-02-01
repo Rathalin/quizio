@@ -1,23 +1,29 @@
 {
-  "answer": {
-    "correct": "Richtig",
-    "incorrect": "Falsch"
-  },
-  "breadcrumbs": {
-    "current": "\"{title}\" spielen"
-  },
-  "button": {
-    "finishQuiz": {
-      "label": "Quiz abschließen"
-    },
-    "nextQuestion": {
-      "label": "Nächte Frage"
-    }
-  },
-  "result": {
-    "score": "Ergebnis: {correctCount}/{count, plural, =1 {# Antwort} other {# Antworten}} korrekt"
-  },
-  "toast": {
-    "copiedToClipboard": "In die Zwischenablage kopiert"
-  }
+	"answer": {
+		"correct": "Richtig",
+		"incorrect": "Falsch"
+	},
+	"breadcrumbs": {
+		"current": "\"{title}\" spielen"
+	},
+	"button": {
+		"finishQuiz": {
+			"label": "Quiz abschließen"
+		},
+		"nextQuestion": {
+			"label": "Nächte Frage"
+		}
+	},
+	"meta": {
+		"og": {
+			"title": "Quizio spielen"
+		},
+		"title": "{title}"
+	},
+	"result": {
+		"score": "Ergebnis: {correctCount}/{count, plural, =1 {# Antwort} other {# Antworten}} korrekt"
+	},
+	"toast": {
+		"copiedToClipboard": "In die Zwischenablage kopiert"
+	}
 }

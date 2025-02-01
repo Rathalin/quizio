@@ -4,7 +4,8 @@
 		"og": {
 			"description": "Erstelle und teile Quiz mit deinen Freunden.",
 			"title": "Quizio - die moderne Quiz-App"
-		}
+		},
+		"title": "Quizio"
 	},
 	"noMoreResults": "Keine <gradient>Quiz</gradient> mehr zum Laden.",
 	"noResults": "Keine Quiz gefunden. Passe die Suchkriterien an.",

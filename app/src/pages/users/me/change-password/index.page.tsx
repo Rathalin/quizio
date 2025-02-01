@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
 import QuizioPasswordField from '@/components/inputs/QuizioPasswordField';
-import { ZodFieldErrors } from '../../../../types/hook-form-zod';
+import { ZodFieldErrors } from '../../../../../types/hook-form-zod';
 import { useChangePasswordMutation } from '@/data/useChangePasswordMutation';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -22,6 +22,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import { useMemo } from 'react';
 import LoadingCircle from '@/components/LoadingCircle';
 import { useToastStore } from '@/persistence/taost.store';
+import Head from 'next/head';
+import { quizioTitle } from '@/utilities/quizioTitle';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const messages = await getMessages(ctx.locale, ['changePassword']);
@@ -99,6 +101,9 @@ export default function ChangePasswordPage() {
 
   return (
     <>
+      <Head>
+        <title>{quizioTitle(t('meta.title'))}</title>
+      </Head>
       <QuizioBreadcrumbs>
         <Link href="/users/me/change-password" aria-current="page">
           {t('breadcrumbs.current')}

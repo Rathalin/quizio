@@ -1,23 +1,29 @@
 {
-  "answer": {
-    "correct": "Correct",
-    "incorrect": "Incorrect"
-  },
-  "breadcrumbs": {
-    "current": "Play \"{title}\""
-  },
-  "button": {
-    "finishQuiz": {
-      "label": "Finish quiz"
-    },
-    "nextQuestion": {
-      "label": "Next question"
-    }
-  },
-  "result": {
-    "score": "Score: {correctCount}/{count, plural, =1 {# answer} other {# answers}} correct"
-  },
-  "toast": {
-    "copiedToClipboard": "Copied to clipboard"
-  }
+	"answer": {
+		"correct": "Correct",
+		"incorrect": "Incorrect"
+	},
+	"breadcrumbs": {
+		"current": "Play \"{title}\""
+	},
+	"button": {
+		"finishQuiz": {
+			"label": "Finish quiz"
+		},
+		"nextQuestion": {
+			"label": "Next question"
+		}
+	},
+	"meta": {
+		"og": {
+			"title": "Play Quizio"
+		},
+		"title": "{title}"
+	},
+	"result": {
+		"score": "Score: {correctCount}/{count, plural, =1 {# answer} other {# answers}} correct"
+	},
+	"toast": {
+		"copiedToClipboard": "Copied to clipboard"
+	}
 }

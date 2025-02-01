@@ -27,6 +27,8 @@ import { GetServerSideProps } from 'next';
 import { getMessages } from '@/utilities/getMessages';
 import { useTranslations } from 'next-intl';
 import { steps, useQuizFormSteps } from '../useQuizFormSteps';
+import Head from 'next/head';
+import { quizioTitle } from '@/utilities/quizioTitle';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const messages = await getMessages(ctx.locale, ['quizForm']);
@@ -143,74 +145,79 @@ export default function QuizCreatePage() {
   }
 
   return (
-    <Box>
-      <QuizioBreadcrumbs>
-        <Link href="/quiz/create" aria-current="page">
-          {t('breadcrumbs.create.current')}
-        </Link>
-      </QuizioBreadcrumbs>
-      <Typography variant="h3" component="h1">
-        {t.rich('heading.create', {
-          gradient: (chunks) => <GradientText>{chunks}</GradientText>,
-        })}
-      </Typography>
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={3} sx={{ display: { xs: 'none', md: 'block' } }}>
-          <Card>
-            <CardContent>
-              <Stepper orientation="vertical" activeStep={activeStep}>
-                {steps.map((step) => (
-                  <Step key={step.title}>
-                    <StepLabel>{t(`form.steps.${step.title}`)}</StepLabel>
-                  </Step>
-                ))}
-              </Stepper>
-            </CardContent>
-          </Card>
+    <>
+      <Head>
+        <title>{quizioTitle(t('create.meta.title'))}</title>
+      </Head>
+      <Box>
+        <QuizioBreadcrumbs>
+          <Link href="/quiz/create" aria-current="page">
+            {t('breadcrumbs.create.current')}
+          </Link>
+        </QuizioBreadcrumbs>
+        <Typography variant="h3" component="h1">
+          {t.rich('heading.create', {
+            gradient: (chunks) => <GradientText>{chunks}</GradientText>,
+          })}
+        </Typography>
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={3} sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Card>
+              <CardContent>
+                <Stepper orientation="vertical" activeStep={activeStep}>
+                  {steps.map((step) => (
+                    <Step key={step.title}>
+                      <StepLabel>{t(`form.steps.${step.title}`)}</StepLabel>
+                    </Step>
+                  ))}
+                </Stepper>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={9}>
+            {steps[activeStep].title === 'details' && (
+              <OverviewForm
+                defaultData={overviewFormData}
+                onSubmit={(data) => {
+                  setOverviewFormData(data);
+                  handleNext();
+                }}
+                backLabel={backLabel}
+                nextLabel={nextLabel}
+                editMode={false}
+              />
+            )}
+            {steps[activeStep].title === 'questions' && (
+              <QuestionsForm
+                defaultData={questionsFormData}
+                onSubmit={(data) => {
+                  setQuestionsFormData(data);
+                  handleNext();
+                }}
+                onBack={(data) => {
+                  setQuestionsFormData(data);
+                  handleBack();
+                }}
+                backLabel={backLabel}
+                nextLabel={nextLabel}
+                editMode={false}
+              />
+            )}
+            {steps[activeStep].title === 'review' && (
+              <SummaryForm
+                overviewFormData={overviewFormData}
+                questionsFormData={questionsFormData}
+                backLabel={backLabel}
+                onBack={() => handleBack()}
+                onSubmit={() => handleFinishQuizClick()}
+                isPending={isPending}
+                isDisabled={isPending || isSuccess}
+                editMode={false}
+              />
+            )}
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={9}>
-          {steps[activeStep].title === 'details' && (
-            <OverviewForm
-              defaultData={overviewFormData}
-              onSubmit={(data) => {
-                setOverviewFormData(data);
-                handleNext();
-              }}
-              backLabel={backLabel}
-              nextLabel={nextLabel}
-              editMode={false}
-            />
-          )}
-          {steps[activeStep].title === 'questions' && (
-            <QuestionsForm
-              defaultData={questionsFormData}
-              onSubmit={(data) => {
-                setQuestionsFormData(data);
-                handleNext();
-              }}
-              onBack={(data) => {
-                setQuestionsFormData(data);
-                handleBack();
-              }}
-              backLabel={backLabel}
-              nextLabel={nextLabel}
-              editMode={false}
-            />
-          )}
-          {steps[activeStep].title === 'review' && (
-            <SummaryForm
-              overviewFormData={overviewFormData}
-              questionsFormData={questionsFormData}
-              backLabel={backLabel}
-              onBack={() => handleBack()}
-              onSubmit={() => handleFinishQuizClick()}
-              isPending={isPending}
-              isDisabled={isPending || isSuccess}
-              editMode={false}
-            />
-          )}
-        </Grid>
-      </Grid>
-    </Box>
+      </Box>
+    </>
   );
 }
