@@ -10,7 +10,6 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import FormHelperText from '@mui/material/FormHelperText';
-import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import { useTheme } from '@mui/material/styles';
 import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
@@ -20,38 +19,9 @@ import { GetServerSideProps } from 'next';
 import { getMessages } from '@/utilities/getMessages';
 import { useTranslations } from 'next-intl';
 import SaveIcon from '@mui/icons-material/Save';
-
-const passwordMinLength = 8;
-const passwordMaxLength = 50;
-const passwordMinLengthError = `Password must be at least ${passwordMinLength} characters long`;
-const passwordComplexityError =
-  'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character';
-const schema = z
-  .object({
-    currentPassword: z.string().min(passwordMinLength, { message: passwordMinLengthError }),
-    password: z
-      .string()
-      .min(passwordMinLength, { message: passwordMinLengthError })
-      .regex(/[A-Z]/, { message: passwordComplexityError }) // At least one uppercase letter
-      .regex(/[a-z]/, { message: passwordComplexityError }) // At least one lowercase letter
-      .regex(/\d/, { message: passwordComplexityError }) // At least one digit
-      .regex(/[^A-Za-z0-9]/, { message: passwordComplexityError }), // At least one special character
-    passwordConfirmation: z.string().min(passwordMinLength, { message: passwordMinLengthError }),
-  })
-  .refine((data) => data.password === data.passwordConfirmation, {
-    message: 'Passwords do not match',
-    path: ['global', 'passwordMatch'],
-  })
-  .refine((data) => data.currentPassword !== data.password, {
-    message: 'New password must be different from current password',
-    path: ['global', 'passwordDifferent'],
-  });
-type ChangePaswordForm = z.infer<typeof schema>;
-const defaultValues: ChangePaswordForm = {
-  currentPassword: '',
-  password: '',
-  passwordConfirmation: '',
-};
+import { useMemo } from 'react';
+import LoadingCircle from '@/components/LoadingCircle';
+import { useToastStore } from '@/persistence/taost.store';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const messages = await getMessages(ctx.locale, ['changePassword']);
@@ -63,23 +33,68 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   };
 };
 
+const passwordMinLength = 8;
+const passwordMaxLength = 50;
+function useChangePasswordSchema() {
+  const t = useTranslations('changePassword.form.schema.errorMessage');
+  return useMemo(
+    () =>
+      z
+        .object({
+          currentPassword: z.string().min(passwordMinLength, t('password.minLength', { count: passwordMinLength })),
+          password: z
+            .string()
+            .min(passwordMinLength, t('newPassword.minLength', { count: passwordMinLength }))
+            .regex(/[A-Z]/, t('passwordComplexity')) // At least one uppercase letter
+            .regex(/[a-z]/, t('passwordComplexity')) // At least one lowercase letter
+            .regex(/\d/, t('passwordComplexity')) // At least one digit
+            .regex(/[^A-Za-z0-9]/, t('passwordComplexity')), // At least one special character
+          passwordConfirmation: z
+            .string()
+            .min(passwordMinLength, t('newPasswordConfirm.minLength', { count: passwordMinLength })),
+        })
+        .refine((data) => data.password === data.passwordConfirmation, {
+          message: t('passwordMatch'),
+          path: ['global', 'passwordMatch'],
+        })
+        .refine((data) => data.currentPassword !== data.password, {
+          message: t('passwordDifferent'),
+          path: ['global', 'passwordDifferent'],
+        }),
+    [t],
+  );
+}
+type ChangePaswordForm = z.infer<ReturnType<typeof useChangePasswordSchema>>;
+const defaultValues: ChangePaswordForm = {
+  currentPassword: '',
+  password: '',
+  passwordConfirmation: '',
+};
+
 export default function ChangePasswordPage() {
   const t = useTranslations('changePassword');
   const theme = useTheme();
+  const { showSuccessToast, showErrorToast } = useToastStore();
+  const schema = useChangePasswordSchema();
   const { control, handleSubmit, formState, reset } = useForm<ChangePaswordForm>({
     defaultValues,
     resolver: zodResolver(schema),
   });
   const errors = formState.errors as ZodFieldErrors<ChangePaswordForm>;
 
-  const { mutateAsync: changePassword, isError, isSuccess, reset: resetChangePassword } = useChangePasswordMutation();
+  const { mutateAsync: changePassword, isPending, reset: resetChangePassword } = useChangePasswordMutation();
 
   async function onSubmit(data: ChangePaswordForm) {
-    await changePassword({
-      currentPassword: data.currentPassword,
-      newPassword: data.password,
-    });
-    reset(defaultValues);
+    try {
+      await changePassword({
+        currentPassword: data.currentPassword,
+        newPassword: data.password,
+      });
+      reset(defaultValues);
+      showSuccessToast(t('form.status.success'));
+    } catch (error) {
+      showErrorToast(t('form.status.error'));
+    }
   }
 
   return (
@@ -167,22 +182,17 @@ export default function ChangePasswordPage() {
                 rules={{ required: true }}
               />
             </Stack>
-            <Stack>
+            <Stack sx={{ marginLeft: 1 }}>
               <FormHelperText error>{errors.global?.passwordMatch?.message}</FormHelperText>
               <FormHelperText error>{errors.global?.passwordDifferent?.message}</FormHelperText>
             </Stack>
-            {isError && (
-              <Alert severity="error" sx={{ marginBottom: 2 }}>
-                {t('form.status.error')}
-              </Alert>
-            )}
-            {isSuccess && (
-              <Alert severity="success" sx={{ marginBottom: 2 }}>
-                {t('form.status.success')}
-              </Alert>
-            )}
             <Stack sx={{ marginTop: 2 }} direction="row" justifyContent="end">
-              <Button variant="contained" type="submit" startIcon={<SaveIcon />}>
+              <Button
+                variant="contained"
+                type="submit"
+                startIcon={isPending ? <LoadingCircle /> : <SaveIcon />}
+                disabled={isPending}
+              >
                 {t('form.submit.label')}
               </Button>
             </Stack>
