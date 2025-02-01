@@ -19,6 +19,7 @@ import { FormEvent, useState } from 'react';
 import { authOptions } from '../api/auth/[...nextauth].page';
 import { getMessages } from '@/utilities/getMessages';
 import { useTranslations } from 'next-intl';
+import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined';
 
 export const getServerSideProps: GetServerSideProps<{
   callbackUrl: string | null;
@@ -126,7 +127,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
               >
                 <TextField
                   id="identifier"
-                  label="Email or username"
+                  label={t('signIn.form.username.label')}
                   type="text"
                   fullWidth
                   required
@@ -135,7 +136,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
                 />
                 <TextField
                   id="password"
-                  label="Password"
+                  label={t('signIn.form.password.label')}
                   type="password"
                   fullWidth
                   required
@@ -163,7 +164,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
               variant="contained"
               color="primary"
               type="submit"
-              startIcon={isPending ? <LoadingCircle /> : undefined}
+              endIcon={isPending ? <LoadingCircle /> : <LoginOutlinedIcon />}
               disabled={isPending || (isSuccess && errorStatus == null)}
               size="large"
               sx={{ minWidth: '16ch' }}
