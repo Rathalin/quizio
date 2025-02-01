@@ -3,7 +3,7 @@ import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { QuestionIndexContext } from './question/QuestionIndexContext';
 import { defaultQuestionFormData } from '../quiz-form-data';
 import { useCallback, useEffect, useState } from 'react';
-import { minQuestions, maxQuestions, QuizQuestionsForm, quizQuestionsFormSchema } from '../quiz-form-schema';
+import { minQuestions, maxQuestions, QuizQuestionsForm, useQuizQuestionsFormSchema } from '../quiz-form-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import BackButton from './BackButton';
 import NextButton from './NextButton';
@@ -42,6 +42,7 @@ export default function QuestionsForm({
   editMode,
 }: QuestionsFormProps) {
   const t = useTranslations('quizForm.form');
+  const quizQuestionsFormSchema = useQuizQuestionsFormSchema();
   const [expanded, setExpanded] = useState<string | null>(null);
   const methods = useForm({
     defaultValues: defaultData,
