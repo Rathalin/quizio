@@ -7,10 +7,18 @@
 	"email": "daniel@flockert.at",
 	"error": {
 		"404": {
+			"eyebrow": "404",
+			"meta": {
+				"title": "Page not found"
+			},
 			"title": "This page does not exist."
 		},
 		"500": {
 			"content": "Please contact <email></email>, if the error persists.",
+			"eyebrow": "500",
+			"meta": {
+				"title": "An error occurred"
+			},
 			"title": "Oops, something broke."
 		},
 		"generic": {

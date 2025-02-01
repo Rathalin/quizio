@@ -29,6 +29,16 @@
 	"link": {
 		"toMyProfileSettings": "Zu meinen Profileinstellungen"
 	},
+	"myProfile": {
+		"meta": {
+			"title": "Mein Profil"
+		}
+	},
+	"profile": {
+		"meta": {
+			"title": "{username}"
+		}
+	},
 	"stats": {
 		"created": {
 			"label": "Quiz erstellt"

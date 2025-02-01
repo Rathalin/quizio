@@ -10,6 +10,16 @@
 			}
 		}
 	},
+	"create": {
+		"meta": {
+			"title": "Quiz erstellen"
+		}
+	},
+	"edit": {
+		"meta": {
+			"title": "Quiz bearbeiten"
+		}
+	},
 	"form": {
 		"delete": {
 			"dialog": {

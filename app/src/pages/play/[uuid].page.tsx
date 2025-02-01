@@ -33,6 +33,7 @@ import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
 import Link from 'next/link';
 import { getMessages } from '@/utilities/getMessages';
 import { useTranslations } from 'next-intl';
+import { quizioTitle } from '@/utilities/quizioTitle';
 
 export type AnsweredState = {
   correctAnswerId: string;
@@ -192,129 +193,132 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
   }
 
   return (
-    <Box>
-      {quizQuery.isPending && <PickAnAnswerPlaceholder />}
-      {quizQuery.isError && <GenericLoadingErrorMessage />}
-      {quizQuery.isSuccess && quiz != null && (
-        <>
-          <Head>
-            <meta property="og:title" content="Play Quizio" />
-            <meta property="og:description" content={quiz.title} />
-            <meta property="og:image" content={quiz.imageUrl ? prefixWithBackendUrl(quiz.imageUrl) : undefined} />
-          </Head>
-          <div ref={topAnchor} style={{ position: 'absolute', top: '0', left: '50%' }} />
-          <QuizioBreadcrumbs sx={{ marginBottom: 2 }}>
-            <Link href={`/play/${uuid}`} aria-current="page">
-              {t('breadcrumbs.current', { title: quiz.title })}
-            </Link>
-          </QuizioBreadcrumbs>
-          {questions.length === 0 ? (
-            <QuizNotFound />
-          ) : (
-            <Card
-              sx={{
-                border: `3px solid ${borderColor}`,
-              }}
-            >
-              {!gameDone && (
-                <>
-                  <CardContent sx={{ padding: 0, paddingTop: 4 }}>
-                    <PickAnAnswer
-                      index={questionIndex + 1}
-                      title={question.title ?? ''}
-                      answers={question.answers.map((answer) => ({
-                        id: answer.uuid,
-                        title: answer.title,
-                        correct: answer.isCorrect,
-                      }))}
-                      answeredProgress={answeredProgress}
-                      selectedAnswerId={answerState?.selectedAnswerId ?? null}
-                      onAnswer={setAnswerOfCurrentQuestion}
-                      imageUrl={question.imageUrl}
-                    />
-                    {questionAnswered && (
-                      <Box sx={{ paddingInline: 6 }}>
-                        <Divider sx={{ marginBlock: 4 }} />
-                        <Explanation
-                          correct={questionAnsweredCorrectly ?? false}
-                          text={question.explanation ?? ''}
-                          imageUrl={question.explanationImageUrl}
-                        />
-                      </Box>
-                    )}
-                  </CardContent>
-                  <CardActions
-                    sx={{
-                      marginTop: 2,
-                      marginBottom: 4,
-                      paddingInline: 6,
-                      display: 'flex',
-                      justifyContent: 'end',
-                      gap: 2,
-                      flexWrap: 'wrap',
-                    }}
-                  >
-                    <Button
-                      variant="contained"
-                      disabled={answerState?.selectedAnswerId == null}
-                      onClick={onNextQuestionClick}
-                    >
-                      {!isLastQuestion ? t('button.nextQuestion.label') : t('button.finishQuiz.label')}
-                    </Button>
-                  </CardActions>
-                  <div ref={resultAnchor} />
-                </>
-              )}
-              {gameDone && (
-                <CardContent sx={{ paddingInline: 6, paddingBlock: 4 }}>
-                  <GameSummary
-                    questions={questions.map((question) => ({
-                      id: question.uuid,
-                      title: question.title,
-                      answers:
-                        question.answers.map((answer) => ({
+    <>
+      <Head>
+        <title>{quizioTitle(t('meta.title', { title: quiz?.title ?? '' }))}</title>
+        <meta property="og:title" content={t('meta.og.title')} />
+        <meta property="og:description" content={quiz?.title} />
+        <meta property="og:image" content={quiz?.imageUrl ? prefixWithBackendUrl(quiz.imageUrl) : undefined} />
+      </Head>
+      <Box>
+        {quizQuery.isPending && <PickAnAnswerPlaceholder />}
+        {quizQuery.isError && <GenericLoadingErrorMessage />}
+        {quizQuery.isSuccess && quiz != null && (
+          <>
+            <div ref={topAnchor} style={{ position: 'absolute', top: '0', left: '50%' }} />
+            <QuizioBreadcrumbs sx={{ marginBottom: 2 }}>
+              <Link href={`/play/${uuid}`} aria-current="page">
+                {t('breadcrumbs.current', { title: quiz.title })}
+              </Link>
+            </QuizioBreadcrumbs>
+            {questions.length === 0 ? (
+              <QuizNotFound />
+            ) : (
+              <Card
+                sx={{
+                  border: `3px solid ${borderColor}`,
+                }}
+              >
+                {!gameDone && (
+                  <>
+                    <CardContent sx={{ padding: 0, paddingTop: 4 }}>
+                      <PickAnAnswer
+                        index={questionIndex + 1}
+                        title={question.title ?? ''}
+                        answers={question.answers.map((answer) => ({
                           id: answer.uuid,
                           title: answer.title,
                           correct: answer.isCorrect,
-                        })) ?? [],
-                      explanation: question.explanation ?? '',
-                    }))}
-                    answeredProgress={answeredProgress}
-                  />
-                  <Divider />
-                  <Stack alignItems="center" gap={2} sx={{ marginBottom: 2, marginTop: 2 }}>
-                    <Typography sx={{ whiteSpace: 'pre-line', textAlign: 'center' }}>{resultScore}</Typography>
-                    <Button variant="contained" startIcon={<ContentCopyIcon />} onClick={writeResultToClipboard}>
-                      Copy
-                    </Button>
-                  </Stack>
-                  <CardActions
-                    sx={{
-                      marginTop: 8,
-                      display: 'flex',
-                      gap: 2,
-                      flexWrap: 'wrap',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <HomeButton />
-                  </CardActions>
-                </CardContent>
-              )}
-            </Card>
-          )}
-        </>
-      )}
-      <Snackbar
-        open={showCopiedAlert}
-        anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
-        autoHideDuration={2000}
-        onClose={handleCopiedAlertClose}
-      >
-        <Alert severity="info" onClose={handleCopiedAlertClose}>
-          {t('toast.copiedToClipboard')}
-        </Alert>
-      </Snackbar>
-    </Box>
+                        }))}
+                        answeredProgress={answeredProgress}
+                        selectedAnswerId={answerState?.selectedAnswerId ?? null}
+                        onAnswer={setAnswerOfCurrentQuestion}
+                        imageUrl={question.imageUrl}
+                      />
+                      {questionAnswered && (
+                        <Box sx={{ paddingInline: 6 }}>
+                          <Divider sx={{ marginBlock: 4 }} />
+                          <Explanation
+                            correct={questionAnsweredCorrectly ?? false}
+                            text={question.explanation ?? ''}
+                            imageUrl={question.explanationImageUrl}
+                          />
+                        </Box>
+                      )}
+                    </CardContent>
+                    <CardActions
+                      sx={{
+                        marginTop: 2,
+                        marginBottom: 4,
+                        paddingInline: 6,
+                        display: 'flex',
+                        justifyContent: 'end',
+                        gap: 2,
+                        flexWrap: 'wrap',
+                      }}
+                    >
+                      <Button
+                        variant="contained"
+                        disabled={answerState?.selectedAnswerId == null}
+                        onClick={onNextQuestionClick}
+                      >
+                        {!isLastQuestion ? t('button.nextQuestion.label') : t('button.finishQuiz.label')}
+                      </Button>
+                    </CardActions>
+                    <div ref={resultAnchor} />
+                  </>
+                )}
+                {gameDone && (
+                  <CardContent sx={{ paddingInline: 6, paddingBlock: 4 }}>
+                    <GameSummary
+                      questions={questions.map((question) => ({
+                        id: question.uuid,
+                        title: question.title,
+                        answers:
+                          question.answers.map((answer) => ({
+                            id: answer.uuid,
+                            title: answer.title,
+                            correct: answer.isCorrect,
+                          })) ?? [],
+                        explanation: question.explanation ?? '',
+                      }))}
+                      answeredProgress={answeredProgress}
+                    />
+                    <Divider />
+                    <Stack alignItems="center" gap={2} sx={{ marginBottom: 2, marginTop: 2 }}>
+                      <Typography sx={{ whiteSpace: 'pre-line', textAlign: 'center' }}>{resultScore}</Typography>
+                      <Button variant="contained" startIcon={<ContentCopyIcon />} onClick={writeResultToClipboard}>
+                        Copy
+                      </Button>
+                    </Stack>
+                    <CardActions
+                      sx={{
+                        marginTop: 8,
+                        display: 'flex',
+                        gap: 2,
+                        flexWrap: 'wrap',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <HomeButton />
+                    </CardActions>
+                  </CardContent>
+                )}
+              </Card>
+            )}
+          </>
+        )}
+        <Snackbar
+          open={showCopiedAlert}
+          anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
+          autoHideDuration={2000}
+          onClose={handleCopiedAlertClose}
+        >
+          <Alert severity="info" onClose={handleCopiedAlertClose}>
+            {t('toast.copiedToClipboard')}
+          </Alert>
+        </Snackbar>
+      </Box>
+    </>
   );
 }

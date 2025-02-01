@@ -40,6 +40,8 @@ import Link from 'next/link';
 import { getMessages } from '@/utilities/getMessages';
 import { useTranslations } from 'next-intl';
 import { steps, useQuizFormSteps } from '../useQuizFormSteps';
+import Head from 'next/head';
+import { quizioTitle } from '@/utilities/quizioTitle';
 
 export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (ctx) => {
   const uuid = ctx.params?.uuid;
@@ -303,106 +305,111 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
   }
 
   return (
-    <Box>
-      {quiz != null && (
-        <DeleteQuizDialog
-          open={dialogOpen}
-          setOpen={setDialogOpen}
-          quizTitle={quiz.title}
-          onConfirm={onDeleteDialogConfirm}
-          loading={isDeletePending}
-        />
-      )}
-      <QuizioBreadcrumbs>
-        <Link href={`/quiz/edit/${uuid}`}>
-          {quiz != null
-            ? t('breadcrumbs.edit.current.withTitle', { title: quiz.title })
-            : t('breadcrumbs.edit.current.withoutTitle')}
-        </Link>
-      </QuizioBreadcrumbs>
-      <Typography variant="h3" component="h1">
-        <Stack direction="row" alignItems="center" flexWrap="wrap" gap={2}>
-          <Box>
-            {t.rich('heading.update', {
-              gradient: (chunks) => <GradientText>{chunks}</GradientText>,
-            })}
-          </Box>
-          <Stack direction="row" gap={2} flexWrap="wrap" sx={{ marginLeft: 'auto' }}>
-            <Button
-              variant="contained"
-              color="error"
-              startIcon={isDeletePending ? <LoadingCircle /> : <DeleteIcon />}
-              onClick={() => setDialogOpen(true)}
-              disabled={isDeletePending || isDeleteSuccess}
-            >
-              {t('form.delete.label')}
-            </Button>
+    <>
+      <Head>
+        <title>{quizioTitle(t('edit.meta.title'))}</title>
+      </Head>
+      <Box>
+        {quiz != null && (
+          <DeleteQuizDialog
+            open={dialogOpen}
+            setOpen={setDialogOpen}
+            quizTitle={quiz.title}
+            onConfirm={onDeleteDialogConfirm}
+            loading={isDeletePending}
+          />
+        )}
+        <QuizioBreadcrumbs>
+          <Link href={`/quiz/edit/${uuid}`}>
+            {quiz != null
+              ? t('breadcrumbs.edit.current.withTitle', { title: quiz.title })
+              : t('breadcrumbs.edit.current.withoutTitle')}
+          </Link>
+        </QuizioBreadcrumbs>
+        <Typography variant="h3" component="h1">
+          <Stack direction="row" alignItems="center" flexWrap="wrap" gap={2}>
+            <Box>
+              {t.rich('heading.update', {
+                gradient: (chunks) => <GradientText>{chunks}</GradientText>,
+              })}
+            </Box>
+            <Stack direction="row" gap={2} flexWrap="wrap" sx={{ marginLeft: 'auto' }}>
+              <Button
+                variant="contained"
+                color="error"
+                startIcon={isDeletePending ? <LoadingCircle /> : <DeleteIcon />}
+                onClick={() => setDialogOpen(true)}
+                disabled={isDeletePending || isDeleteSuccess}
+              >
+                {t('form.delete.label')}
+              </Button>
+            </Stack>
           </Stack>
-        </Stack>
-      </Typography>
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={3} sx={{ display: { xs: 'none', md: 'block' } }}>
-          <Card>
-            <CardContent>
-              <Stepper orientation="vertical" activeStep={activeStep}>
-                {steps.map((step) => (
-                  <Step key={step.title}>
-                    <StepLabel>{t(`form.steps.${step.title}`)}</StepLabel>
-                  </Step>
-                ))}
-              </Stepper>
-            </CardContent>
-          </Card>
+        </Typography>
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={3} sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Card>
+              <CardContent>
+                <Stepper orientation="vertical" activeStep={activeStep}>
+                  {steps.map((step) => (
+                    <Step key={step.title}>
+                      <StepLabel>{t(`form.steps.${step.title}`)}</StepLabel>
+                    </Step>
+                  ))}
+                </Stepper>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={9}>
+            {quiz != null ? (
+              <>
+                {steps[activeStep].title === 'details' && (
+                  <OverviewForm
+                    defaultData={overviewFormData}
+                    onSubmit={(data) => {
+                      setOverviewFormData(data);
+                      handleNext();
+                    }}
+                    backLabel={backLabel}
+                    nextLabel={nextLabel}
+                    editMode={true}
+                  />
+                )}
+                {steps[activeStep].title === 'questions' && (
+                  <QuestionsForm
+                    defaultData={questionsFormData}
+                    onSubmit={(data) => {
+                      setQuestionsFormData(data);
+                      handleNext();
+                    }}
+                    onBack={(data) => {
+                      setQuestionsFormData(data);
+                      handleBack();
+                    }}
+                    backLabel={backLabel}
+                    nextLabel={nextLabel}
+                    editMode={true}
+                  />
+                )}
+                {steps[activeStep].title === 'review' && (
+                  <SummaryForm
+                    overviewFormData={overviewFormData}
+                    questionsFormData={questionsFormData}
+                    backLabel={backLabel}
+                    onBack={() => handleBack()}
+                    editMode={true}
+                    onSubmit={handleSaveClick}
+                    isPending={isPending}
+                    isDisabled={isPending || isSuccess}
+                  />
+                )}
+              </>
+            ) : (
+              <OverviewFormPlaceholder />
+            )}
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={9}>
-          {quiz != null ? (
-            <>
-              {steps[activeStep].title === 'details' && (
-                <OverviewForm
-                  defaultData={overviewFormData}
-                  onSubmit={(data) => {
-                    setOverviewFormData(data);
-                    handleNext();
-                  }}
-                  backLabel={backLabel}
-                  nextLabel={nextLabel}
-                  editMode={true}
-                />
-              )}
-              {steps[activeStep].title === 'questions' && (
-                <QuestionsForm
-                  defaultData={questionsFormData}
-                  onSubmit={(data) => {
-                    setQuestionsFormData(data);
-                    handleNext();
-                  }}
-                  onBack={(data) => {
-                    setQuestionsFormData(data);
-                    handleBack();
-                  }}
-                  backLabel={backLabel}
-                  nextLabel={nextLabel}
-                  editMode={true}
-                />
-              )}
-              {steps[activeStep].title === 'review' && (
-                <SummaryForm
-                  overviewFormData={overviewFormData}
-                  questionsFormData={questionsFormData}
-                  backLabel={backLabel}
-                  onBack={() => handleBack()}
-                  editMode={true}
-                  onSubmit={handleSaveClick}
-                  isPending={isPending}
-                  isDisabled={isPending || isSuccess}
-                />
-              )}
-            </>
-          ) : (
-            <OverviewFormPlaceholder />
-          )}
-        </Grid>
-      </Grid>
-    </Box>
+      </Box>
+    </>
   );
 }

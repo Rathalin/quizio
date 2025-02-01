@@ -41,6 +41,7 @@ export default function DashboardPage() {
   return (
     <>
       <Head>
+        <title>{t('meta.title')}</title>
         <meta name="description" content={t('meta.description')} />
         <meta property="og:title" content={t('meta.og.title')} />
         <meta property="og:description" content={t('meta.og.description')} />

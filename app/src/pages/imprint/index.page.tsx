@@ -1,10 +1,12 @@
 import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
 import GradientText from '@/components/GradientText';
 import { getMessages } from '@/utilities/getMessages';
+import { quizioTitle } from '@/utilities/quizioTitle';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { GetStaticProps } from 'next';
 import { useTranslations } from 'next-intl';
+import Head from 'next/head';
 import Link from 'next/link';
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
@@ -21,24 +23,29 @@ export default function ImprintPage() {
   const t = useTranslations();
 
   return (
-    <Box>
-      <QuizioBreadcrumbs>
-        <Link href="/imprint">{t('imprint.breadcrumbs.current')}</Link>
-      </QuizioBreadcrumbs>
-      <Typography variant="h1">
-        <GradientText>{t('imprint.title')}</GradientText>
-      </Typography>
-      <Typography variant="h5" component="p">
-        {t('imprint.fullname')}
-      </Typography>
-      <Typography>{t('imprint.address')}</Typography>
-      <Typography>{t('imprint.country')}</Typography>
-      <Typography variant="h6" component="p" sx={{ marginTop: 2 }}>
-        <Link href={`mailto:${t('common.email')}`}>{t('common.email')}</Link>
-      </Typography>
-      <Typography variant="body2" sx={{ marginTop: 6 }}>
-        {t('imprint.disclaimer')}
-      </Typography>
-    </Box>
+    <>
+      <Head>
+        <title>{quizioTitle(t('imprint.meta.title'))}</title>
+      </Head>
+      <Box>
+        <QuizioBreadcrumbs>
+          <Link href="/imprint">{t('imprint.breadcrumbs.current')}</Link>
+        </QuizioBreadcrumbs>
+        <Typography variant="h1">
+          <GradientText>{t('imprint.title')}</GradientText>
+        </Typography>
+        <Typography variant="h5" component="p">
+          {t('imprint.fullname')}
+        </Typography>
+        <Typography>{t('imprint.address')}</Typography>
+        <Typography>{t('imprint.country')}</Typography>
+        <Typography variant="h6" component="p" sx={{ marginTop: 2 }}>
+          <Link href={`mailto:${t('common.email')}`}>{t('common.email')}</Link>
+        </Typography>
+        <Typography variant="body2" sx={{ marginTop: 6 }}>
+          {t('imprint.disclaimer')}
+        </Typography>
+      </Box>
+    </>
   );
 }
