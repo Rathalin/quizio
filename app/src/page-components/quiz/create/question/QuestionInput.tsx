@@ -150,7 +150,7 @@ export default function QuestionInput({
           <DeleteQuestionButton disabled={!deletable} onDelete={onDelete} />
         </Stack>
       </AccordionSummary>
-      <AccordionDetails>
+      <AccordionDetails sx={{ cursor: 'initial' }}>
         <Stack display="inline-flex" alignItems="center" gap={1} sx={{ marginBottom: 4 }}>
           <Controller
             name={`${name}.questionImage.data.file`}
