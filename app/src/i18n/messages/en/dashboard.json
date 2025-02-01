@@ -1,5 +1,4 @@
 {
-	"editTooltip": "Edit your quiz",
 	"meta": {
 		"description": "Quizo is a quiz app that allows you to create and share quizzes with your friends.",
 		"og": {
@@ -9,6 +8,17 @@
 	},
 	"noMoreResults": "No more <gradient>quizzes</gradient> to load.",
 	"noResults": "No quizzes found. Try changing your search criteria.",
+	"quizCard": {
+		"button": {
+			"play": {
+				"label": "Play"
+			}
+		},
+		"editTooltip": "Edit your quiz",
+		"playCount": "{count} times played",
+		"questionCount": "{count, plural, =1 {# question} other {# questions}}",
+		"share": "Link to \"{title}\" copied."
+	},
 	"searchAndFilter": {
 		"search": {
 			"placeholder": "Search quizzes"
@@ -26,6 +36,5 @@
 				}
 			}
 		}
-	},
-	"share": "Link to \"{title}\" copied."
+	}
 }

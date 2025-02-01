@@ -1,31 +1,40 @@
 {
-  "editTooltip": "Edit your quiz",
-  "meta": {
-    "description": "Quizo ist eine App mit der du Quizze erstellen und mit deinen Freunden teilen kannst.",
-    "og": {
-      "description": "Erstelle und teile Quizze mit deinen Freunden.",
-      "title": "Quizio - die moderne Quiz-App"
-    }
-  },
-  "noMoreResults": "Keine <gradient>Quizze</gradient> mehr zum Laden.",
-  "noResults": "Keine Quizze gefunden. Passe die Suchkriterien an.",
-  "searchAndFilter": {
-    "search": {
-      "placeholder": "Quizze durchsuchen"
-    },
-    "sort": {
-      "menu": {
-        "button": {
-          "label": "Nach <sort></sort> sortieren"
-        },
-        "items": {
-          "createdAtAsc": "älteste",
-          "createdAtDesc": "neueste",
-          "playCountAsc": "am häufigsten gespielt",
-          "playCountDesc": "am seltensten gespielt"
-        }
-      }
-    }
-  },
-  "share": "Link zu \"{title}\" kopiert."
+	"meta": {
+		"description": "Quizo ist eine App mit der du Quizze erstellen und mit deinen Freunden teilen kannst.",
+		"og": {
+			"description": "Erstelle und teile Quizze mit deinen Freunden.",
+			"title": "Quizio - die moderne Quiz-App"
+		}
+	},
+	"noMoreResults": "Keine <gradient>Quizze</gradient> mehr zum Laden.",
+	"noResults": "Keine Quizze gefunden. Passe die Suchkriterien an.",
+	"quizCard": {
+		"button": {
+			"play": {
+				"label": "Spielen"
+			}
+		},
+		"editTooltip": "Edit your quiz",
+		"playCount": "{count}x gespielt",
+		"questionCount": "{count, plural, =1 {# Frage} other {# Fragen}}",
+		"share": "Link zu \"{title}\" kopiert."
+	},
+	"searchAndFilter": {
+		"search": {
+			"placeholder": "Quizze durchsuchen"
+		},
+		"sort": {
+			"menu": {
+				"button": {
+					"label": "Nach <sort></sort> sortieren"
+				},
+				"items": {
+					"createdAtAsc": "älteste",
+					"createdAtDesc": "neueste",
+					"playCountAsc": "am häufigsten gespielt",
+					"playCountDesc": "am seltensten gespielt"
+				}
+			}
+		}
+	}
 }

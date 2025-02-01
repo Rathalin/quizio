@@ -8,7 +8,6 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { darken, lighten, useColorScheme, useTheme } from '@mui/material/styles';
 import Image from 'next/image';
-import BarChartIcon from '@mui/icons-material/BarChart';
 import EditIcon from '@mui/icons-material/Edit';
 import ImageIcon from '@mui/icons-material/Image';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -50,7 +49,7 @@ export default function QuizOverviewCard({
   imageUrl,
   isMyQuiz,
 }: QuizOverviewCardProps) {
-  const t = useTranslations('dashboard');
+  const t = useTranslations('dashboard.quizCard');
   const theme = useTheme();
   const { mode } = useColorScheme();
   const { showInfoToast } = useToastStore();
@@ -184,8 +183,8 @@ export default function QuizOverviewCard({
                     }}
                   />
                 </Link>
-                <Chip label={`${questionCount} question${questionCount === 1 ? '' : 's'}`} variant="outlined" />
-                <Chip label={playCount} icon={<BarChartIcon fontSize="small" />} variant="outlined" />
+                <Chip label={t('questionCount', { count: questionCount })} variant="outlined" />
+                <Chip label={t('playCount', { count: playCount })} variant="outlined" />
                 <Chip label={dateFormatter.format(createdAt)} variant="outlined" />
               </Box>
             </Box>
@@ -205,7 +204,7 @@ export default function QuizOverviewCard({
               endIcon={<PlayArrowIcon />}
               iconSide="left"
             >
-              Play
+              {t('button.play.label')}
             </LinkButton>
           </Box>
         </CardContent>
