@@ -1,6 +1,6 @@
 {
   "name": "quizio-app",
-  "version": "2.0.13",
+  "version": "2.0.15",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -30,6 +30,7 @@
     "jwt-decode": "^4.0.0",
     "next": "15.1.5",
     "next-auth": "^4.24.11",
+    "next-intl": "^3.26.3",
     "openapi-fetch": "^0.13.4",
     "react": "19.0.0",
     "react-dom": "19.0.0",

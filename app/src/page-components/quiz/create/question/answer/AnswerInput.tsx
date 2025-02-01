@@ -8,6 +8,7 @@ import { constraints } from '@/content-type-utilities/content-type-constraints';
 import { ZodFieldErrors } from '../../../../../../types/hook-form-zod';
 import { QuizQuestionsForm } from '@/page-components/quiz/quiz-form-schema';
 import Stack from '@mui/material/Stack';
+import { useTranslations } from 'next-intl';
 
 type AnswerInputProps = {
   isCorrect: boolean;
@@ -17,6 +18,7 @@ type AnswerInputProps = {
 };
 
 export default function AnswerInput({ isCorrect, onDelete, minAnswers, deletable }: AnswerInputProps) {
+  const t = useTranslations('quizForm.form.question.answer');
   const questionIndex = useQuestionIndex();
   const index = useAnswerIndex();
   const {
@@ -35,7 +37,7 @@ export default function AnswerInput({ isCorrect, onDelete, minAnswers, deletable
         render={({ field }) => (
           <QuizioTextField
             id={name}
-            label={`Answer ${index + 1}`}
+            label={t('label', { count: index + 1 })}
             color={isCorrect ? 'success' : 'primary'}
             sx={{
               flex: 1,

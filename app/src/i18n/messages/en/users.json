@@ -1,0 +1,28 @@
+{
+  "breadcrumbs": {
+    "current": "Profile"
+  },
+  "form": {
+    "profileImage": {
+      "status": {
+        "success": "Profile image updated."
+      }
+    }
+  },
+  "link": {
+    "toMyProfileSettings": "Go to my profile settings"
+  },
+  "stats": {
+    "created": {
+      "label": "Quizzes created"
+    },
+    "heading": "Stats",
+    "joinedAt": {
+      "label": "Joined at"
+    },
+    "joinedOn": "{username} joined on {date}.",
+    "totalPlayCount": {
+      "label": "Total play count"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+	"breadcrumbs": {
+		"current": "My Profile"
+	},
+	"changeUsernameRequest": "You want to change your username? Write me a quick <email>email</email>.",
+	"link": {
+		"toMyPublicProfile": "Go to my public profile"
+	},
+	"title": "Profile"
+}

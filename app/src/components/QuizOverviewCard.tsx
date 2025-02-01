@@ -6,10 +6,8 @@ import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import { darken, lighten, useTheme } from '@mui/material/styles';
-
+import { darken, lighten, useColorScheme, useTheme } from '@mui/material/styles';
 import Image from 'next/image';
-import BarChartIcon from '@mui/icons-material/BarChart';
 import EditIcon from '@mui/icons-material/Edit';
 import ImageIcon from '@mui/icons-material/Image';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -17,13 +15,13 @@ import ShareIcon from '@mui/icons-material/Share';
 import LinkButton from './LinkButton';
 import { useMemo } from 'react';
 import LinkIconButton from './LinkIconButton';
-import { useColorMode } from '@/page-components/theme.context';
 import Link from 'next/link';
 import { usePageTransition } from '@/persistence/page-transition.store';
 import LoadingCircle from './LoadingCircle';
 import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import { useToastStore } from '@/persistence/taost.store';
 import { dateFormatter } from '@/utilities/intlFormats';
+import { useTranslations } from 'next-intl';
 
 type QuizOverviewCardProps = {
   uuid: string;
@@ -51,8 +49,9 @@ export default function QuizOverviewCard({
   imageUrl,
   isMyQuiz,
 }: QuizOverviewCardProps) {
+  const t = useTranslations('dashboard.quizCard');
   const theme = useTheme();
-  const { mode } = useColorMode();
+  const { mode } = useColorScheme();
   const { showInfoToast } = useToastStore();
   const { transitionHref } = usePageTransition();
 
@@ -60,8 +59,8 @@ export default function QuizOverviewCard({
     const titleLimit = 30;
     const shortTitle = title.length > titleLimit ? `${title.slice(0, titleLimit)}...` : title;
 
-    return `Link to "${shortTitle}" copied.`;
-  }, [title]);
+    return t('share', { title: shortTitle });
+  }, [t, title]);
 
   function handleShareClick() {
     navigator.clipboard.writeText(`${window.location.origin}/play/${uuid}`);
@@ -99,8 +98,8 @@ export default function QuizOverviewCard({
               justifyContent: 'center',
               backgroundColor:
                 mode === 'light'
-                  ? lighten(theme.palette.secondary.light, 0.4)
-                  : darken(theme.palette.secondary.dark, 0.4),
+                  ? lighten(theme.palette.secondary.light, 0.7)
+                  : darken(theme.palette.secondary.light, 0.7),
             }}
           >
             <ImageIcon fontSize="large" />
@@ -125,11 +124,18 @@ export default function QuizOverviewCard({
                     md: 3,
                   },
                   display: 'flex',
-                  alignItems: 'center',
+                  alignItems: 'start',
                   justifyContent: 'space-between',
                 }}
               >
-                {title}
+                <Box
+                  sx={{
+                    flex: 1,
+                    overflowWrap: 'anywhere',
+                  }}
+                >
+                  {title}
+                </Box>
                 <Stack direction="row" alignItems="center">
                   <Tooltip title="Copy link" arrow>
                     <IconButton onClick={() => handleShareClick()}>
@@ -137,7 +143,7 @@ export default function QuizOverviewCard({
                     </IconButton>
                   </Tooltip>
                   {isMyQuiz && (
-                    <Tooltip title="Edit your quiz" arrow>
+                    <Tooltip title={t('editTooltip')} arrow>
                       <Box>
                         <LinkIconButton hrefObserver={`/quiz/edit/${uuid}`} navigateOnClick>
                           <EditIcon color="secondary" />
@@ -177,8 +183,8 @@ export default function QuizOverviewCard({
                     }}
                   />
                 </Link>
-                <Chip label={`${questionCount} question${questionCount === 1 ? '' : 's'}`} variant="outlined" />
-                <Chip label={playCount} icon={<BarChartIcon fontSize="small" />} variant="outlined" />
+                <Chip label={t('questionCount', { count: questionCount })} variant="outlined" />
+                <Chip label={t('playCount', { count: playCount })} variant="outlined" />
                 <Chip label={dateFormatter.format(createdAt)} variant="outlined" />
               </Box>
             </Box>
@@ -198,7 +204,7 @@ export default function QuizOverviewCard({
               endIcon={<PlayArrowIcon />}
               iconSide="left"
             >
-              Play
+              {t('button.play.label')}
             </LinkButton>
           </Box>
         </CardContent>

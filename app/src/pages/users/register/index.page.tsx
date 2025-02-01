@@ -1,12 +1,24 @@
 import GradientText from '@/components/GradientText';
 import LinkButton from '@/components/LinkButton';
+import { getMessages } from '@/utilities/getMessages';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { GetServerSideProps } from 'next';
 import { FormEvent, useState } from 'react';
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const messages = await getMessages(ctx.locale, []);
+
+  return {
+    props: {
+      messages,
+    },
+  };
+};
 
 export default function RegisterPage() {
   function onSubmit(event: FormEvent<HTMLFormElement>) {}

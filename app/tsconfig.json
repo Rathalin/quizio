@@ -15,7 +15,8 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@messages/*": ["./src/i18n/messages/*"]
     }
   },
   "include": [
@@ -25,5 +26,5 @@
     "**/*.tsx",
     "env.d.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
 }

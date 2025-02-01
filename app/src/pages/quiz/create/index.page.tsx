@@ -23,26 +23,30 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
 import Link from 'next/link';
+import { GetServerSideProps } from 'next';
+import { getMessages } from '@/utilities/getMessages';
+import { useTranslations } from 'next-intl';
+import { steps, useQuizFormSteps } from '../useQuizFormSteps';
 
-const stepTitles = ['Overview', 'Questions', 'Summary'] as const;
-export type StepData = {
-  title: (typeof stepTitles)[number];
-  backLabel?: string;
-  nextLabel?: string;
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const messages = await getMessages(ctx.locale, ['quizForm']);
+
+  return {
+    props: {
+      messages,
+    },
+  };
 };
-const steps = stepTitles.map((title, index) => ({
-  title,
-  backLabel: stepTitles[index - 1],
-  nextLabel: stepTitles[index + 1],
-}));
 
 export default function QuizCreatePage() {
+  const t = useTranslations('quizForm');
   const router = useRouter();
   const queryClient = useQueryClient();
   const { showSuccessToast, showErrorToast } = useToastStore();
   const [activeStep, setActiveStep] = useState(0);
   const [overviewFormData, setOverviewFormData] = useState<QuizOverviewForm>(defaultOverviewFormData);
   const [questionsFormData, setQuestionsFormData] = useState<QuizQuestionsForm>(defaultQuestionsFormData);
+  const { backLabel, nextLabel } = useQuizFormSteps(activeStep);
 
   const { mutateAsync: uploadFile } = useUploadFileMutation();
   const { mutateAsync: createQuiz, isPending, isSuccess } = useCreateQuizMutation();
@@ -113,14 +117,14 @@ export default function QuizCreatePage() {
     try {
       await createQuiz(mutationData);
 
-      showSuccessToast('Quiz created!');
+      showSuccessToast(t('form.status.create.success'));
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
       await router.push('/');
       resetQuizLocalStorage();
       setOverviewFormData(defaultOverviewFormData);
       setQuestionsFormData(defaultQuestionsFormData);
     } catch (error) {
-      showErrorToast('Could not create quiz!');
+      showErrorToast(t('form.status.create.error'));
       console.error('Failed to create quiz', error);
     }
   }
@@ -138,19 +142,17 @@ export default function QuizCreatePage() {
     localStorage.removeItem(storageKeys.quizQuestionsDraft);
   }
 
-  const backLabel = steps.at(activeStep)?.backLabel ?? null;
-  const nextLabel = steps.at(activeStep)?.nextLabel ?? null;
-
   return (
     <Box>
       <QuizioBreadcrumbs>
         <Link href="/quiz/create" aria-current="page">
-          {'Create quiz'}
+          {t('breadcrumbs.create.current')}
         </Link>
       </QuizioBreadcrumbs>
       <Typography variant="h3" component="h1">
-        <GradientText>{'Create'}</GradientText>
-        <span>{' your quiz'}</span>
+        {t.rich('heading.create', {
+          gradient: (chunks) => <GradientText>{chunks}</GradientText>,
+        })}
       </Typography>
       <Grid container spacing={4}>
         <Grid item xs={12} md={3} sx={{ display: { xs: 'none', md: 'block' } }}>
@@ -159,7 +161,7 @@ export default function QuizCreatePage() {
               <Stepper orientation="vertical" activeStep={activeStep}>
                 {steps.map((step) => (
                   <Step key={step.title}>
-                    <StepLabel>{step.title}</StepLabel>
+                    <StepLabel>{t(`form.steps.${step.title}`)}</StepLabel>
                   </Step>
                 ))}
               </Stepper>
@@ -167,7 +169,7 @@ export default function QuizCreatePage() {
           </Card>
         </Grid>
         <Grid item xs={12} md={9}>
-          {steps[activeStep].title === 'Overview' && (
+          {steps[activeStep].title === 'details' && (
             <OverviewForm
               defaultData={overviewFormData}
               onSubmit={(data) => {
@@ -179,7 +181,7 @@ export default function QuizCreatePage() {
               editMode={false}
             />
           )}
-          {steps[activeStep].title === 'Questions' && (
+          {steps[activeStep].title === 'questions' && (
             <QuestionsForm
               defaultData={questionsFormData}
               onSubmit={(data) => {
@@ -195,7 +197,7 @@ export default function QuizCreatePage() {
               editMode={false}
             />
           )}
-          {steps[activeStep].title === 'Summary' && (
+          {steps[activeStep].title === 'review' && (
             <SummaryForm
               overviewFormData={overviewFormData}
               questionsFormData={questionsFormData}

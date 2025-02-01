@@ -1,5 +1,5 @@
 import LogoButton from '@/components/buttons/LogoButton';
-import AccountMenu from './dashboard/AccountMenu';
+import AccountMenu from '../components/AccountMenu';
 import { ThemeSwitch } from '@/components/buttons/ThemeSwitch';
 import { useColorMode } from './theme.context';
 import AppBar from '@mui/material/AppBar';

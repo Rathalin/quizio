@@ -16,8 +16,10 @@ import { useSession } from 'next-auth/react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
+import { useTranslations } from 'next-intl';
 
 export default function QuizzesOverview() {
+  const t = useTranslations('dashboard');
   const { data: session } = useSession();
   const [searchText, setSearchText] = useState('');
   const [sort, setSort] = useStorage(storageKeys.sort, defaultSort);
@@ -93,9 +95,7 @@ export default function QuizzesOverview() {
             {(isPending || isFetchingNextPage) &&
               Array.from({ length: placeholderCount }).map((_, index) => <QuizOverviewPlaceholder key={index} />)}
           </Box>
-          {isSuccess && searchedQuizzes.length === 0 && (
-            <Typography>{'No quizzes found. Try changing your search criteria.'}</Typography>
-          )}
+          {isSuccess && searchedQuizzes.length === 0 && <Typography>{t('noResults')}</Typography>}
           {isError && <GenericLoadingErrorMessage />}
           <Box sx={{ marginTop: 8 }}>
             {hasNextPage && !isFetchingNextPage ? (
@@ -109,9 +109,9 @@ export default function QuizzesOverview() {
                 <GradientDivider />
                 <Stack direction="row" justifyContent="center">
                   <Typography>
-                    <span>{'No more '}</span>
-                    <GradientText>{'quizzes'}</GradientText>
-                    <span>{' to load.'}</span>
+                    {t.rich('noMoreResults', {
+                      gradient: (chunks) => <GradientText>{chunks}</GradientText>,
+                    })}
                   </Typography>
                 </Stack>
               </Stack>

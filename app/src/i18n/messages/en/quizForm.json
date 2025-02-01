@@ -1,0 +1,94 @@
+{
+	"breadcrumbs": {
+		"create": {
+			"current": "Create quiz"
+		},
+		"edit": {
+			"current": {
+				"withTitle": "Edit \"{title}\"",
+				"withoutTitle": "Edit"
+			}
+		}
+	},
+	"form": {
+		"delete": {
+			"label": "Delete this quiz"
+		},
+		"description": {
+			"label": "Description"
+		},
+		"error": {
+			"general": "This form is still invalid!"
+		},
+		"image": {
+			"clear": "Remove",
+			"label": "Upload image"
+		},
+		"question": {
+			"add": {
+				"label": "Question"
+			},
+			"answer": {
+				"add": {
+					"label": "Answer"
+				},
+				"correct": "This answer is marked as correct.",
+				"delete": "Delete answer",
+				"disabledTooltip": "A question needs at least {count} answers.",
+				"incorrect": "This answer is marked as incorrect",
+				"label": "Answer {count}"
+			},
+			"error": {
+				"invalid": "Invalid",
+				"maxQuestions": "You can only add {count} questions."
+			},
+			"explanation": {
+				"label": "Explanation",
+				"tooltip": "Explain the correct answer or give some context. This input is optional."
+			},
+			"explanationImage": {
+				"label": "Upload explanation image"
+			},
+			"image": {
+				"label": "Upload question image",
+				"remove": "Remove"
+			},
+			"label": "Question",
+			"title": "Question {count}"
+		},
+		"status": {
+			"create": {
+				"error": "",
+				"success": ""
+			},
+			"error": "Could not create quiz!",
+			"success": "Quiz created.",
+			"update": {
+				"error": "",
+				"success": ""
+			}
+		},
+		"steps": {
+			"details": "Details",
+			"questions": "Questions",
+			"review": "Review"
+		},
+		"title": {
+			"label": "Title"
+		}
+	},
+	"heading": "<gradient>Create</gradient> your quiz",
+	"summary": {
+		"publishQuiz": {
+			"label": "Publish quiz"
+		},
+		"updateQuiz": {
+			"label": "Update quiz"
+		}
+	},
+	"updateQuiz": {
+		"breadcrumbs": {
+			"current": ""
+		}
+	}
+}

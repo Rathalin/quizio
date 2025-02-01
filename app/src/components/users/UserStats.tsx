@@ -1,32 +1,52 @@
-import { ProfileAvatar } from './ProfileAvatar';
-import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import { dateFormatter } from '@/utilities/intlFormats';
+import { useTranslations } from 'next-intl';
 
 type UserProfileProps = {
+  username: string;
   createdAt: Date;
   quizCount: number;
   quizViewsTotal: number;
 };
 
-export default function UserStats({ createdAt, quizCount, quizViewsTotal }: UserProfileProps) {
+export default function UserStats({ createdAt, quizCount }: UserProfileProps) {
+  const t = useTranslations('users.stats');
+
   return (
     <>
-      <Box sx={{ marginBottom: 4 }}>
-        <ProfileAvatar />
-      </Box>
-      <Typography variant="h3" component="h2" sx={{ marginBottom: 4 }}>
-        {'Stats'}
+      <Typography variant="h3" component="h2" sx={{ marginBottom: 2 }}>
+        {t('heading')}
       </Typography>
       <Stack spacing={1} alignItems="start">
-        <Typography>{`Joined on ${dateFormatter.format(new Date(createdAt))}`}</Typography>
-        <Divider />
-        {/* TODO Fix this mess with translations */}
-        <Typography>{`Created ${quizCount} quiz${quizCount === 1 ? '' : 'zes'} which ${
-          quizCount === 1 ? 'has' : 'have'
-        } been played a total of ${quizViewsTotal} time${quizViewsTotal === 1 ? '' : 's'}.`}</Typography>
+        <Stack direction="row" columnGap={10} rowGap={4} flexWrap="wrap">
+          <Stack justifyContent="space-between">
+            <Typography variant="overline" color="textSecondary">
+              {t('joinedAt.label')}
+            </Typography>
+            <Typography variant="h3" component="div" sx={{ marginBlock: 0 }}>
+              {dateFormatter.format(new Date(createdAt))}
+            </Typography>
+          </Stack>
+
+          <Stack justifyContent="space-between">
+            <Typography variant="overline" color="textSecondary">
+              {t('created.label')}
+            </Typography>
+            <Typography variant="h1" component="div" sx={{ marginBlock: 0, lineHeight: 1 }}>
+              {quizCount}
+            </Typography>
+          </Stack>
+
+          <Stack justifyContent="space-between">
+            <Typography variant="overline" color="textSecondary">
+              {t('totalPlayCount.label')}
+            </Typography>
+            <Typography variant="h1" component="div" sx={{ marginBlock: 0, lineHeight: 1 }}>
+              {quizCount}
+            </Typography>
+          </Stack>
+        </Stack>
       </Stack>
     </>
   );

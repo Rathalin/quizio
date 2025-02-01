@@ -1,7 +1,7 @@
 import Stack from '@mui/material/Stack';
 import PlaceholderTypography from '../placeholders/PlaceholderTypography';
 import PlaceholderBox from '../placeholders/PlaceholderBox';
-import { profileImageDimensions } from './ProfileAvatar';
+import { profileImageDimensions } from './ProfilePictureForm';
 
 export default function UserProfilePlaceholder() {
   const { width, height } = profileImageDimensions;

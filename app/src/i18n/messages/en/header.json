@@ -1,0 +1,15 @@
+{
+  "signInButton": {
+    "label": "Sign in"
+  },
+  "accountMenu": {
+    "menu": {
+      "item": {
+        "createQuiz": "Create a new quiz",
+        "profile": "Profile",
+        "changePassword": "Change Password",
+        "signOut": "Sign out"
+      }
+    }
+  }
+}

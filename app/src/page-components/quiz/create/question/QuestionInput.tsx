@@ -29,6 +29,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Divider from '@mui/material/Divider';
 import { useTheme } from '@mui/material/styles';
 import DragHandleOutlined from '@mui/icons-material/DragHandleOutlined';
+import { useTranslations } from 'next-intl';
 
 type QuestionInputProps = {
   deletable: boolean;
@@ -48,6 +49,7 @@ export default function QuestionInput({
   slotProps,
   ...other
 }: QuestionInputProps) {
+  const t = useTranslations('quizForm.form.question');
   const theme = useTheme();
   const index = useQuestionIndex();
   const { width: imageWidth, height: imageHeight } = useGameImageInputDimensions();
@@ -123,15 +125,21 @@ export default function QuestionInput({
                   marginBlock: 0,
                 }}
               >
-                {`Question ${index + 1}`}
+                {t('title', { count: index + 1 })}
               </Typography>
               <Tooltip title="Some inputs require your attention." arrow>
                 <Stack
+                  direction="row"
+                  alignItems="end"
+                  gap={1}
                   sx={{
                     visibility: questionErrors != null ? 'visible' : 'hidden',
                   }}
                 >
                   <FormErrorIcon />
+                  <FormHelperText sx={{ lineHeight: 1.1 }} error>
+                    {t('error.invalid')}
+                  </FormHelperText>
                 </Stack>
               </Tooltip>
             </Stack>
@@ -169,9 +177,8 @@ export default function QuestionInput({
                     variant="outlined"
                     component="span"
                     sx={{
-                      paddingBlock: 2,
-                      minWidth: imageWidth,
-                      minHeight: imageHeight,
+                      minWidth: imageWidth + 2 * 1,
+                      minHeight: imageHeight + 2 * 1,
                     }}
                   >
                     {questionImageUrl != null ? (
@@ -184,12 +191,13 @@ export default function QuestionInput({
                           style={{
                             borderRadius: 2,
                             objectFit: 'cover',
+                            margin: '-1rem',
                           }}
                           unoptimized
                         />
                       </Stack>
                     ) : (
-                      <Box>{'Upload question image'}</Box>
+                      <Box>{t('image.label')}</Box>
                     )}
                   </Button>
                 </label>
@@ -205,9 +213,10 @@ export default function QuestionInput({
               setValue(`${name}.questionImage.data.file`, null);
               setValue(`${name}.questionImage.preview`, undefined);
             }}
+            sx={{ visibility: questionImageUrl != null ? 'visible' : 'hidden' }}
             disabled={questionImageUrl == null}
           >
-            {'Remove'}
+            {t('image.remove')}
           </Button>
         </Stack>
         <Box
@@ -222,7 +231,7 @@ export default function QuestionInput({
             render={({ field }) => (
               <QuizioTextField
                 id={`${name}.title`}
-                label="Question"
+                label={t('label')}
                 fullWidth
                 error={questionErrors?.title != null}
                 helperText={questionErrors?.title?.message?.toString() ?? ''}
@@ -273,7 +282,7 @@ export default function QuestionInput({
                   onClick={() => append(defaultAnswerFormData)}
                   disabled={fields.length >= maxAnswers}
                 >
-                  {'Answer'}
+                  {t('answer.add.label')}
                 </Button>
               </Box>
             </Tooltip>
@@ -325,7 +334,7 @@ export default function QuestionInput({
                           />
                         </Stack>
                       ) : (
-                        <Box>{'Upload explanation image'}</Box>
+                        <Box>{t('explanationImage.label')}</Box>
                       )}
                     </Button>
                   </label>
@@ -352,7 +361,7 @@ export default function QuestionInput({
               render={({ field }) => (
                 <QuizioTextField
                   id={`${name}.explanation`}
-                  label="Explanation"
+                  label={t('explanation.label')}
                   fullWidth
                   multiline
                   slotProps={{
@@ -362,10 +371,7 @@ export default function QuestionInput({
                     input: {
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Tooltip
-                            title="Explain the correct answer or give some context. This input is optional."
-                            arrow
-                          >
+                          <Tooltip title={t('explanation.tooltip')} arrow>
                             <InfoIcon />
                           </Tooltip>
                         </InputAdornment>

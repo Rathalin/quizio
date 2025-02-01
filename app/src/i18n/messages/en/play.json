@@ -1,0 +1,23 @@
+{
+  "answer": {
+    "correct": "Correct",
+    "incorrect": "Incorrect"
+  },
+  "breadcrumbs": {
+    "current": "Play \"{title}\""
+  },
+  "button": {
+    "finishQuiz": {
+      "label": "Finish quiz"
+    },
+    "nextQuestion": {
+      "label": "Next question"
+    }
+  },
+  "result": {
+    "score": "Score: {correctCount}/{count, plural, =1 {# answer} other {# answers}} correct"
+  },
+  "toast": {
+    "copiedToClipboard": "Copied to clipboard"
+  }
+}

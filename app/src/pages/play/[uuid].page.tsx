@@ -31,6 +31,8 @@ import Alert from '@mui/material/Alert';
 import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
 import Link from 'next/link';
+import { getMessages } from '@/utilities/getMessages';
+import { useTranslations } from 'next-intl';
 
 export type AnsweredState = {
   correctAnswerId: string;
@@ -47,21 +49,27 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
 
+  const messagesPromise = getMessages(ctx.locale, ['play']);
+
   const queryClient = new QueryClient();
-  await queryClient.prefetchQuery({
+  const prefetchPromise = queryClient.prefetchQuery({
     queryKey: ['getQuiz', uuid],
     queryFn: async () => throwOnError(() => playQuiz(uuid)),
   });
 
+  const [messages] = await Promise.all([messagesPromise, prefetchPromise]);
+
   return {
     props: {
       uuid,
+      messages,
       dehydratedState: dehydrate(queryClient),
     },
   };
 };
 
 export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const t = useTranslations('play');
   const theme = useTheme();
   const router = useRouter();
   const { data: session } = useSession();
@@ -153,17 +161,20 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
   }
 
   const resultScore = useMemo(() => {
-    if (!isBrowser()) return null;
+    if (!isBrowser() || quiz == null) return null;
     const answeredStates = answeredProgress.map((answered) => answered.correctAnswerId === answered.selectedAnswerId);
     const lines: string[] = [];
-    lines.push(`QUIZIO (${quiz?.title ?? ''})`);
+    lines.push(`QUIZIO (${quiz.title})`);
     lines.push(
-      `Score: ${answeredStates.filter((correct) => correct).length}/${answeredProgress.length} answers correct`,
+      t('result.score', {
+        correctCount: answeredStates.filter((correct) => correct).length,
+        count: answeredProgress.length,
+      }),
     );
     lines.push(answeredStates.map((correct) => (correct ? '🟩' : '🟥')).join(''));
     lines.push(`${window.location.origin}${router.asPath}`);
     return lines.join('\n');
-  }, [answeredProgress, quiz?.title, router.asPath]);
+  }, [answeredProgress, quiz, router.asPath, t]);
   const isLastQuestion = questionIndex + 1 === questions.length;
 
   function writeResultToClipboard() {
@@ -194,7 +205,7 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
           <div ref={topAnchor} style={{ position: 'absolute', top: '0', left: '50%' }} />
           <QuizioBreadcrumbs sx={{ marginBottom: 2 }}>
             <Link href={`/play/${uuid}`} aria-current="page">
-              {`Play "${quiz.title}"`}
+              {t('breadcrumbs.current', { title: quiz.title })}
             </Link>
           </QuizioBreadcrumbs>
           {questions.length === 0 ? (
@@ -248,7 +259,7 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
                       disabled={answerState?.selectedAnswerId == null}
                       onClick={onNextQuestionClick}
                     >
-                      {!isLastQuestion ? 'Next question' : 'Finish quiz'}
+                      {!isLastQuestion ? t('button.nextQuestion.label') : t('button.finishQuiz.label')}
                     </Button>
                   </CardActions>
                   <div ref={resultAnchor} />
@@ -301,7 +312,7 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
         onClose={handleCopiedAlertClose}
       >
         <Alert severity="info" onClose={handleCopiedAlertClose}>
-          Copied to clipboard
+          {t('toast.copiedToClipboard')}
         </Alert>
       </Snackbar>
     </Box>

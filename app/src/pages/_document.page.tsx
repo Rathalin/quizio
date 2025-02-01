@@ -5,7 +5,7 @@ import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
 
 export default function MyDocument(props: DocumentProps & DocumentHeadTagsProps) {
   return (
-    <Html lang="en">
+    <Html>
       <Head>
         <DocumentHeadTags {...props} />
         <link rel="icon" href="/favicon.png" />

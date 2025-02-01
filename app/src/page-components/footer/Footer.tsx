@@ -3,8 +3,8 @@ import Socials from './Socials';
 import Legal from './Legal';
 import Paper from '@mui/material/Paper';
 import Container from '@mui/material/Container';
-import Stack from '@mui/material/Stack';
 import { SxProps, Theme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
 
 type FooterProps = { sx: SxProps<Theme> };
 
@@ -18,19 +18,26 @@ export default function Footer({ sx }: FooterProps) {
       }}
     >
       <Container maxWidth="lg">
-        <Stack
-          direction={{
-            xs: 'column',
-            sm: 'row',
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              md: 'repeat(auto-fit, minmax(200px, 1fr))',
+            },
+            gap: 6,
           }}
-          justifyContent="space-between"
-          alignItems="start"
-          gap={4}
         >
-          <MadeWithLove />
-          <Socials />
-          <Legal />
-        </Stack>
+          <Box sx={{ justifySelf: { xs: 'start', md: 'start' } }}>
+            <MadeWithLove />
+          </Box>
+          <Box sx={{ justifySelf: { xs: 'start', md: 'center' } }}>
+            <Socials />
+          </Box>
+          <Box sx={{ justifySelf: { xs: 'start', md: 'end' } }}>
+            <Legal />
+          </Box>
+        </Box>
       </Container>
     </Paper>
   );

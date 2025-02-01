@@ -4,6 +4,7 @@ import { useTheme } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import { useTranslations } from 'next-intl';
 
 const correctEmojies = ['😀', '😁', '😃', '😄', '😆', '😊', '😎'];
 const incorrectEmojies = ['😐', '😶', '😮', '😯', '🫤', '🫥', '😮‍💨'];
@@ -15,6 +16,7 @@ type ExplanationProps = {
 };
 
 export default function Explanation({ correct, text, imageUrl }: ExplanationProps) {
+  const t = useTranslations('play.answer');
   const theme = useTheme();
 
   function getRandomEmoji(correct: boolean) {
@@ -36,7 +38,7 @@ export default function Explanation({ correct, text, imageUrl }: ExplanationProp
             color: correct ? theme.palette.success.light : theme.palette.error.light,
           }}
         >
-          {correct ? 'Correct' : 'Incorrect'}
+          {correct ? t('correct') : t('incorrect')}
         </Box>
         <Box component="span" sx={{ marginLeft: 2 }}>
           {getRandomEmoji(correct)}
