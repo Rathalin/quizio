@@ -1,13 +1,27 @@
 import LinkButton from '@/components/LinkButton';
-import { useColorMode } from '@/page-components/theme.context';
+import { getMessages } from '@/utilities/getMessages';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+import { useColorScheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+import { GetStaticProps } from 'next';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
 
+export const getStaticProps: GetStaticProps = async (ctx) => {
+  const messages = await getMessages(ctx.locale, []);
+
+  return {
+    props: {
+      messages,
+    },
+  };
+};
+
 export default function InternalServerErrorPage() {
-  const { mode } = useColorMode();
+  const t = useTranslations('common');
+  const { mode } = useColorScheme();
 
   return (
     <Box
@@ -19,7 +33,7 @@ export default function InternalServerErrorPage() {
       }}
     >
       <Stack alignItems="center">
-        <Typography variant="h1">Something broke.</Typography>
+        <Typography variant="h1">{t('error.500.title')}</Typography>
         <Box sx={{ marginBottom: 4 }}>
           <Image
             src="/images/CatChewingOnWire.jpg"
@@ -34,12 +48,12 @@ export default function InternalServerErrorPage() {
           />
         </Box>
         <Typography sx={{ marginBottom: 4 }}>
-          <span>{'Please contact '}</span>
-          <Link href="mailto:daniel@flockert">daniel@flockert.at</Link>
-          <span>{', if the error persists.'}</span>
+          {t.rich('error.500.content', {
+            email: () => <Link href={`mailto:${t('email')}`}>{t('email')}</Link>,
+          })}
         </Typography>
-        <LinkButton hrefObserver="/" navigateOnClick variant="contained" iconSide="left">
-          Home
+        <LinkButton hrefObserver="/" navigateOnClick variant="contained">
+          {t('button.toDashboard.label')}
         </LinkButton>
       </Stack>
     </Box>

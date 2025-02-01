@@ -1,6 +1,18 @@
 {
+	"button": {
+		"toDashboard": {
+			"label": "Zum Dashboard"
+		}
+	},
 	"email": "daniel@flockert.at",
 	"error": {
+		"404": {
+			"title": "Diese Seite existiert nicht."
+		},
+		"500": {
+			"content": "Bitte kontaktiere <email></email>, falls der Fehler bestehen bleibt.",
+			"title": "Ups, etwas ist kaputt gegangen."
+		},
 		"generic": {
 			"content": "Es ist ein Fehler aufgetreten. Falls der dieser bestehen bleibt, kontaktiere bitte <email></email>."
 		},
