@@ -105,9 +105,7 @@ export default function App(props: MyAppProps & DocumentHeadTagsProps) {
                   <DocumentHeadTags {...props} />
                   <title>Quizio</title>
                   <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_BACKEND_URL} />
-                  <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_GRAPHQL_URL} />
                   <link rel="preconnect" href={process.env.NEXT_PUBLIC_BACKEND_URL} />
-                  <link rel="preconnect" href={process.env.NEXT_PUBLIC_GRAPHQL_URL} />
                 </Head>
               </AppCacheProvider>
 
