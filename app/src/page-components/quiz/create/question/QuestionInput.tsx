@@ -352,7 +352,7 @@ export default function QuestionInput({
               }}
               disabled={explanationImageUrl == null}
             >
-              {'Remove'}
+              {t('image.remove')}
             </Button>
           </Stack>
           <Box sx={{ marginTop: 4 }}>
