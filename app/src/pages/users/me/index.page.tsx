@@ -35,7 +35,7 @@ export default function MePage() {
   return (
     <>
       <Head>
-        <title>{quizioTitle(t('users.myProfile.meta.title'))}</title>
+        <title>{quizioTitle(t('myProfile.meta.title'))}</title>
       </Head>
       <QuizioBreadcrumbs>
         <Link href="/users/me" aria-current="page">
