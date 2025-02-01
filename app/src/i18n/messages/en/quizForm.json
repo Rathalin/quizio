@@ -1,139 +1,135 @@
 {
-	"breadcrumbs": {
-		"create": {
-			"current": "Create quiz"
-		},
-		"edit": {
-			"current": {
-				"withTitle": "Edit \"{title}\"",
-				"withoutTitle": "Edit"
-			}
-		}
-	},
-	"create": {
-		"meta": {
-			"title": "Create quiz"
-		}
-	},
-	"edit": {
-		"meta": {
-			"title": "Edit quiz"
-		}
-	},
-	"form": {
-		"delete": {
-			"dialog": {
-				"action": {
-					"cancel": {
-						"label": "No, cancel"
-					},
-					"confirm": {
-						"label": "Yes, delete"
-					}
-				},
-				"title": "Do you want to permanently delete the quiz \"{title}\"?"
-			},
-			"label": "Delete this quiz"
-		},
-		"description": {
-			"label": "Description"
-		},
-		"error": {
-			"general": "This form is still invalid!"
-		},
-		"image": {
-			"clear": "Remove",
-			"label": "Upload image"
-		},
-		"question": {
-			"add": {
-				"label": "Question"
-			},
-			"answer": {
-				"add": {
-					"label": "Answer"
-				},
-				"correct": "This answer is marked as correct.",
-				"delete": "Delete answer",
-				"disabledTooltip": "A question needs at least {count} answers.",
-				"incorrect": "This answer is marked as incorrect",
-				"label": "Answer {count}"
-			},
-			"delete": {
-				"tooltip": {
-					"default": "Delete question",
-					"minQuestionsError": "A quiz must have at least 1 question."
-				}
-			},
-			"error": {
-				"invalid": "Invalid",
-				"maxQuestions": "You can only add {count} questions."
-			},
-			"explanation": {
-				"label": "Explanation",
-				"tooltip": "Explain the correct answer or give some context. This input is optional."
-			},
-			"explanationImage": {
-				"label": "Upload explanation image"
-			},
-			"image": {
-				"label": "Upload question image",
-				"remove": "Remove"
-			},
-			"label": "Question",
-			"title": "Question {count}"
-		},
-		"schema": {
-			"errorMessage": {
-				"answer": {
-					"exactlyOneCorrectAnswer": "Exactly one answer must be correct.",
-					"title": {
-						"minLength": "Answer must be at least {count, plural, =1 {# character} other {# characters}} long."
-					}
-				},
-				"question": {
-					"title": {
-						"minLength": "Question must be at least {count, plural, =1 {# character} other {# characters}} long."
-					}
-				},
-				"title": {
-					"minLength": "Title has to be at least {count, plural, =1 {# character} other {# characters}} long"
-				}
-			}
-		},
-		"status": {
-			"create": {
-				"error": "",
-				"success": ""
-			},
-			"error": "Could not create quiz!",
-			"success": "Quiz created.",
-			"update": {
-				"error": "",
-				"success": ""
-			}
-		},
-		"steps": {
-			"details": "Details",
-			"questions": "Questions",
-			"review": "Review"
-		},
-		"title": {
-			"label": "Title"
-		}
-	},
-	"heading": "<gradient>Create</gradient> your quiz",
-	"summary": {
-		"publishQuiz": {
-			"label": "Publish quiz"
-		},
-		"updateQuiz": {
-			"label": "Save quiz"
-		}
-	},
-	"updateQuiz": {
-		"breadcrumbs": {
-			"current": ""
-		}
-	}
+  "breadcrumbs": {
+    "create": {
+      "current": "Create quiz"
+    },
+    "edit": {
+      "current": {
+        "withTitle": "Edit \"{title}\"",
+        "withoutTitle": "Edit"
+      }
+    }
+  },
+  "create": {
+    "meta": {
+      "title": "Create quiz"
+    }
+  },
+  "edit": {
+    "meta": {
+      "title": "Edit quiz"
+    }
+  },
+  "form": {
+    "delete": {
+      "dialog": {
+        "action": {
+          "cancel": {
+            "label": "No, cancel"
+          },
+          "confirm": {
+            "label": "Yes, delete"
+          }
+        },
+        "title": "Do you want to permanently delete the quiz \"{title}\"?"
+      },
+      "label": "Delete this quiz"
+    },
+    "description": {
+      "label": "Description"
+    },
+    "error": {
+      "general": "This form is still invalid!"
+    },
+    "image": {
+      "clear": "Remove",
+      "label": "Upload image"
+    },
+    "question": {
+      "add": {
+        "label": "Question"
+      },
+      "answer": {
+        "add": {
+          "label": "Answer"
+        },
+        "correct": "This answer is marked as correct.",
+        "delete": "Delete answer",
+        "disabledTooltip": "A question needs at least {count} answers.",
+        "incorrect": "This answer is marked as incorrect",
+        "label": "Answer {count}"
+      },
+      "delete": {
+        "tooltip": {
+          "default": "Delete question",
+          "minQuestionsError": "A quiz must have at least 1 question."
+        }
+      },
+      "error": {
+        "invalid": "Invalid",
+        "maxQuestions": "You can only add {count} questions."
+      },
+      "explanation": {
+        "label": "Explanation",
+        "tooltip": "Explain the correct answer or give some context. This input is optional."
+      },
+      "explanationImage": {
+        "label": "Upload explanation image"
+      },
+      "image": {
+        "label": "Upload question image",
+        "remove": "Remove"
+      },
+      "label": "Question",
+      "title": "Question {count}"
+    },
+    "schema": {
+      "errorMessage": {
+        "answer": {
+          "exactlyOneCorrectAnswer": "Exactly one answer must be correct.",
+          "title": {
+            "minLength": "Answer must be at least {count, plural, =1 {# character} other {# characters}} long."
+          }
+        },
+        "question": {
+          "title": {
+            "minLength": "Question must be at least {count, plural, =1 {# character} other {# characters}} long."
+          }
+        },
+        "title": {
+          "minLength": "Title has to be at least {count, plural, =1 {# character} other {# characters}} long"
+        }
+      }
+    },
+    "status": {
+      "create": {
+        "error": "Could not create quiz!",
+        "success": "Quiz created."
+      },
+      "update": {
+        "error": "Could not save quiz!",
+        "success": "Quiz zsaved."
+      }
+    },
+    "steps": {
+      "details": "Details",
+      "questions": "Questions",
+      "review": "Review"
+    },
+    "title": {
+      "label": "Title"
+    }
+  },
+  "heading": {
+    "create": "<gradient>Create</gradient> your quiz",
+    "update": "<gradient>Edit</gradient> your quiz"
+  },
+  "summary": {
+    "publishQuiz": {
+      "label": "Publish quiz"
+    },
+    "updateQuiz": {
+      "label": "Save quiz"
+    }
+  }
 }

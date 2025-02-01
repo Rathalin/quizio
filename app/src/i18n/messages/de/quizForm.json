@@ -1,142 +1,135 @@
 {
-	"breadcrumbs": {
-		"create": {
-			"current": "Quiz erstellen"
-		},
-		"edit": {
-			"current": {
-				"withTitle": "\"{title}\" bearbeiten",
-				"withoutTitle": "Bearbeiten"
-			}
-		}
-	},
-	"create": {
-		"meta": {
-			"title": "Quiz erstellen"
-		}
-	},
-	"edit": {
-		"meta": {
-			"title": "Quiz bearbeiten"
-		}
-	},
-	"form": {
-		"delete": {
-			"dialog": {
-				"action": {
-					"cancel": {
-						"label": "Nein, abbrechen"
-					},
-					"confirm": {
-						"label": "Ja, löschen"
-					}
-				},
-				"title": "Möchtest du das Quiz \"{title}\" permanent löschen?"
-			},
-			"label": "Quiz löschen"
-		},
-		"description": {
-			"label": "Beschreibung"
-		},
-		"error": {
-			"general": "Das Formular ist noch ungültig!"
-		},
-		"image": {
-			"clear": "Entfernen",
-			"label": "Bild hochladen"
-		},
-		"question": {
-			"add": {
-				"label": "Frage"
-			},
-			"answer": {
-				"add": {
-					"label": "Antwort"
-				},
-				"correct": "Diese Frage ist als richtig markiert.",
-				"delete": "Frage löschen",
-				"disabledTooltip": "Eine Frage muss mind. {count} Antworten haben.",
-				"incorrect": "Diese Frage ist als falsch markiert.",
-				"label": "Antwort {count}"
-			},
-			"delete": {
-				"tooltip": {
-					"default": "Frage löschen",
-					"minQuestionsError": "Ein Quiz muss mind. 1 Frage haben."
-				}
-			},
-			"error": {
-				"invalid": "Ungültig",
-				"maxQuestions": "Du kannst nur {count} Fragen hinzufügen."
-			},
-			"explanation": {
-				"label": "Erklärung",
-				"tooltip": "Erkläre die Antwort oder gib zusätzlichen Kontext. Diese Eingabe ist optional."
-			},
-			"explanationImage": {
-				"label": "Antwortbild hochladen"
-			},
-			"image": {
-				"label": "Fragebild hochladen",
-				"remove": "Entfernen"
-			},
-			"label": "Frage",
-			"title": "Frage {count}"
-		},
-		"schema": {
-			"errorMessage": {
-				"answer": {
-					"exactlyOneCorrectAnswer": "Exakt eine Antwort muss richtig sein.",
-					"title": {
-						"minLength": "Antwort muss mind. {count} Zeichen lang sein."
-					}
-				},
-				"question": {
-					"title": {
-						"minLength": "Frage muss mind. {count} Zeichen lang sein."
-					}
-				},
-				"title": {
-					"minLength": "Titel muss mind. {count} Zeichen lang sein."
-				}
-			}
-		},
-		"status": {
-			"create": {
-				"error": "Quiz konnte nicht erstellt werden!",
-				"success": "Quiz erstellt."
-			},
-			"error": "",
-			"success": "",
-			"update": {
-				"error": "Quiz konnte nicht gespeichert werden!",
-				"success": "Quiz gespeichert."
-			}
-		},
-		"steps": {
-			"details": "Details",
-			"questions": "Fragen",
-			"review": "Überprüfung"
-		},
-		"title": {
-			"label": "Titel"
-		}
-	},
-	"heading": {
-		"create": "<gradient>Erstelle</gradient> dein Quiz",
-		"update": "<gradient>Bearbeite</gradient> dein Quiz"
-	},
-	"summary": {
-		"publishQuiz": {
-			"label": "Quiz veröffentlichen"
-		},
-		"updateQuiz": {
-			"label": "Quiz speichern"
-		}
-	},
-	"updateQuiz": {
-		"breadcrumbs": {
-			"current": ""
-		}
-	}
+  "breadcrumbs": {
+    "create": {
+      "current": "Quiz erstellen"
+    },
+    "edit": {
+      "current": {
+        "withTitle": "\"{title}\" bearbeiten",
+        "withoutTitle": "Bearbeiten"
+      }
+    }
+  },
+  "create": {
+    "meta": {
+      "title": "Quiz erstellen"
+    }
+  },
+  "edit": {
+    "meta": {
+      "title": "Quiz bearbeiten"
+    }
+  },
+  "form": {
+    "delete": {
+      "dialog": {
+        "action": {
+          "cancel": {
+            "label": "Nein, abbrechen"
+          },
+          "confirm": {
+            "label": "Ja, löschen"
+          }
+        },
+        "title": "Möchtest du das Quiz \"{title}\" permanent löschen?"
+      },
+      "label": "Quiz löschen"
+    },
+    "description": {
+      "label": "Beschreibung"
+    },
+    "error": {
+      "general": "Das Formular ist noch ungültig!"
+    },
+    "image": {
+      "clear": "Entfernen",
+      "label": "Bild hochladen"
+    },
+    "question": {
+      "add": {
+        "label": "Frage"
+      },
+      "answer": {
+        "add": {
+          "label": "Antwort"
+        },
+        "correct": "Diese Frage ist als richtig markiert.",
+        "delete": "Frage löschen",
+        "disabledTooltip": "Eine Frage muss mind. {count} Antworten haben.",
+        "incorrect": "Diese Frage ist als falsch markiert.",
+        "label": "Antwort {count}"
+      },
+      "delete": {
+        "tooltip": {
+          "default": "Frage löschen",
+          "minQuestionsError": "Ein Quiz muss mind. 1 Frage haben."
+        }
+      },
+      "error": {
+        "invalid": "Ungültig",
+        "maxQuestions": "Du kannst nur {count} Fragen hinzufügen."
+      },
+      "explanation": {
+        "label": "Erklärung",
+        "tooltip": "Erkläre die Antwort oder gib zusätzlichen Kontext. Diese Eingabe ist optional."
+      },
+      "explanationImage": {
+        "label": "Antwortbild hochladen"
+      },
+      "image": {
+        "label": "Fragebild hochladen",
+        "remove": "Entfernen"
+      },
+      "label": "Frage",
+      "title": "Frage {count}"
+    },
+    "schema": {
+      "errorMessage": {
+        "answer": {
+          "exactlyOneCorrectAnswer": "Exakt eine Antwort muss richtig sein.",
+          "title": {
+            "minLength": "Antwort muss mind. {count} Zeichen lang sein."
+          }
+        },
+        "question": {
+          "title": {
+            "minLength": "Frage muss mind. {count} Zeichen lang sein."
+          }
+        },
+        "title": {
+          "minLength": "Titel muss mind. {count} Zeichen lang sein."
+        }
+      }
+    },
+    "status": {
+      "create": {
+        "error": "Quiz konnte nicht erstellt werden!",
+        "success": "Quiz erstellt."
+      },
+      "update": {
+        "error": "Quiz konnte nicht gespeichert werden!",
+        "success": "Quiz gespeichert."
+      }
+    },
+    "steps": {
+      "details": "Details",
+      "questions": "Fragen",
+      "review": "Überprüfung"
+    },
+    "title": {
+      "label": "Titel"
+    }
+  },
+  "heading": {
+    "create": "<gradient>Erstelle</gradient> dein Quiz",
+    "update": "<gradient>Bearbeite</gradient> dein Quiz"
+  },
+  "summary": {
+    "publishQuiz": {
+      "label": "Quiz veröffentlichen"
+    },
+    "updateQuiz": {
+      "label": "Quiz speichern"
+    }
+  }
 }

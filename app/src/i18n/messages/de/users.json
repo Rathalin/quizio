@@ -1,55 +1,49 @@
 {
-	"breadcrumbs": {
-		"current": "Profil"
-	},
-	"form": {
-		"profileImage": {
-			"delete": "Profilbild löschen",
-			"deleteDialog": {
-				"action": {
-					"cancel": {
-						"label": "Nein, abbrechen"
-					},
-					"confirm": {
-						"label": "Ja, löschen"
-					}
-				},
-				"title": "Möchtest du dein aktuelles Profilbild permanent löschen?"
-			},
-			"hint": "Klicke auf das Bild, um es zu ändern.",
-			"label": {
-				"empty": "Profilbild hochladen"
-			},
-			"status": {
-				"error": "Could not update profile image!",
-				"success": "Profilbild aktualisiert."
-			}
-		}
-	},
-	"link": {
-		"toMyProfileSettings": "Zu meinen Profileinstellungen"
-	},
-	"myProfile": {
-		"meta": {
-			"title": "Mein Profil"
-		}
-	},
-	"profile": {
-		"meta": {
-			"title": "{username}"
-		}
-	},
-	"stats": {
-		"created": {
-			"label": "Quiz erstellt"
-		},
-		"heading": "Statistik",
-		"joinedAt": {
-			"label": "Beigetreten am"
-		},
-		"joinedOn": "{username} ist am {date} beigetreten.",
-		"totalPlayCount": {
-			"label": "Gesamtanzahl gespielt"
-		}
-	}
+  "breadcrumbs": {
+    "current": "Profil"
+  },
+  "form": {
+    "profileImage": {
+      "delete": "Profilbild löschen",
+      "deleteDialog": {
+        "action": {
+          "cancel": {
+            "label": "Nein, abbrechen"
+          },
+          "confirm": {
+            "label": "Ja, löschen"
+          }
+        },
+        "title": "Möchtest du dein aktuelles Profilbild permanent löschen?"
+      },
+      "hint": "Klicke auf das Bild, um es zu ändern.",
+      "label": {
+        "empty": "Profilbild hochladen"
+      },
+      "status": {
+        "error": "Profilbild konnte nicht gespeichert werden!",
+        "success": "Profilbild aktualisiert."
+      }
+    }
+  },
+  "link": {
+    "toMyProfileSettings": "Zu meinen Profileinstellungen"
+  },
+  "profile": {
+    "meta": {
+      "title": "{username}"
+    }
+  },
+  "stats": {
+    "created": {
+      "label": "Quiz erstellt"
+    },
+    "heading": "Statistik",
+    "joinedAt": {
+      "label": "Beigetreten am"
+    },
+    "totalPlayCount": {
+      "label": "Gesamtanzahl gespielt"
+    }
+  }
 }
