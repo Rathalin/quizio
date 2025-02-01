@@ -1,7 +1,6 @@
 import QuizioTextField from '@/components/inputs/QuizioTextField';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
-import { constraints } from '@/content-type-utilities/content-type-constraints';
-import { QuizOverviewForm, quizOverviewFormSchema } from '../quiz-form-schema';
+import { QuizOverviewForm, useQuizOverviewFormSchema, constraints } from '../quiz-form-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import BackButton from './BackButton';
 import NextButton from './NextButton';
@@ -32,6 +31,7 @@ type OverviewFormProps = {
 export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLabel, editMode }: OverviewFormProps) {
   const t = useTranslations('quizForm.form');
   const { width: imageWidth, height: imageHeight } = useOverviewImageInputDimensions();
+  const quizOverviewFormSchema = useQuizOverviewFormSchema();
   const methods = useForm<QuizOverviewForm>({
     defaultValues: defaultData,
     resolver: zodResolver(quizOverviewFormSchema),

@@ -85,6 +85,9 @@
 					"title": {
 						"minLength": "Frage muss mind. {count} Zeichen lang sein."
 					}
+				},
+				"title": {
+					"minLength": "Titel muss mind. {count} Zeichen lang sein."
 				}
 			}
 		},

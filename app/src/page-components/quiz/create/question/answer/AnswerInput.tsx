@@ -4,9 +4,8 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { useAnswerIndex } from './AnswerIndexContext';
 import { useQuestionIndex } from '../QuestionIndexContext';
 import QuizioTextField from '@/components/inputs/QuizioTextField';
-import { constraints } from '@/content-type-utilities/content-type-constraints';
 import { ZodFieldErrors } from '../../../../../../types/hook-form-zod';
-import { QuizQuestionsForm } from '@/page-components/quiz/quiz-form-schema';
+import { constraints, QuizQuestionsForm } from '@/page-components/quiz/quiz-form-schema';
 import Stack from '@mui/material/Stack';
 import { useTranslations } from 'next-intl';
 

@@ -85,6 +85,9 @@
 					"title": {
 						"minLength": "Question must be at least {count, plural, =1 {# character} other {# characters}} long."
 					}
+				},
+				"title": {
+					"minLength": "Title has to be at least {count, plural, =1 {# character} other {# characters}} long"
 				}
 			}
 		},
