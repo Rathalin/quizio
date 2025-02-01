@@ -10,7 +10,7 @@ type UserProfileProps = {
   quizViewsTotal: number;
 };
 
-export default function UserStats({ createdAt, quizCount }: UserProfileProps) {
+export default function UserStats({ createdAt, quizCount, quizViewsTotal }: UserProfileProps) {
   const t = useTranslations('users.stats');
 
   return (
@@ -43,7 +43,7 @@ export default function UserStats({ createdAt, quizCount }: UserProfileProps) {
               {t('totalPlayCount.label')}
             </Typography>
             <Typography variant="h1" component="div" sx={{ marginBlock: 0, lineHeight: 1 }}>
-              {quizCount}
+              {quizViewsTotal}
             </Typography>
           </Stack>
         </Stack>
