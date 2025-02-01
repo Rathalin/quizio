@@ -19,6 +19,7 @@ import GradientText from '@/components/GradientText';
 import { GetServerSideProps } from 'next';
 import { getMessages } from '@/utilities/getMessages';
 import { useTranslations } from 'next-intl';
+import SaveIcon from '@mui/icons-material/Save';
 
 const passwordMinLength = 8;
 const passwordMaxLength = 50;
@@ -181,7 +182,7 @@ export default function ChangePasswordPage() {
               </Alert>
             )}
             <Stack sx={{ marginTop: 2 }} direction="row" justifyContent="end">
-              <Button variant="contained" type="submit">
+              <Button variant="contained" type="submit" startIcon={<SaveIcon />}>
                 {t('form.submit.label')}
               </Button>
             </Stack>
