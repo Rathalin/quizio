@@ -17,6 +17,9 @@
 				"title": "Do you want to permanently delete your current profile image?"
 			},
 			"hint": "Click the image to change it.",
+			"label": {
+				"empty": "Upload profile image"
+			},
 			"status": {
 				"success": "Profile image updated."
 			}

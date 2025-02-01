@@ -24,6 +24,7 @@ import Typography from '@mui/material/Typography';
 import { useUserAccountQuery } from '@/data/useUserAccountQuery';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
+import ImageIcon from '@mui/icons-material/Image';
 
 export const profileImageDimensions = {
   width: 240,
@@ -39,7 +40,7 @@ const defaultFormData: ProfileImageForm = {
 };
 
 export function ProfilePictureForm() {
-  const t = useTranslations('users.form');
+  const t = useTranslations('users.form.profileImage');
   const { data: session } = useSession();
   const queryClient = useQueryClient();
   const { showSuccessToast, showErrorToast } = useToastStore();
@@ -90,9 +91,9 @@ export function ProfilePictureForm() {
 
       await updateProfileImage({ profileImageUrl: newImageUrl });
       queryClient.invalidateQueries({ queryKey: userAccountQueryKey });
-      showSuccessToast(t('profileImage.status.success'));
+      showSuccessToast(t('status.success'));
     } catch (error) {
-      showErrorToast(t('profileImage.status.error'));
+      showErrorToast(t('status.error'));
     }
   }
 
@@ -108,11 +109,11 @@ export function ProfilePictureForm() {
   return (
     <>
       <Dialog open={deleteImageDialogOpen} onClose={handleCloseDialog}>
-        <DialogTitle>{t('profileImage.deleteDialog.title')}</DialogTitle>
+        <DialogTitle>{t('deleteDialog.title')}</DialogTitle>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>{t('profileImage.deleteDialog.action.cancel.label')}</Button>
+          <Button onClick={handleCloseDialog}>{t('deleteDialog.action.cancel.label')}</Button>
           <Button onClick={onConfirmDeleteProfileImage} color="error" autoFocus>
-            {t('profileImage.deleteDialog.action.confirm.label')}
+            {t('deleteDialog.action.confirm.label')}
           </Button>
         </DialogActions>
       </Dialog>
@@ -197,7 +198,10 @@ export function ProfilePictureForm() {
                         </Stack>
                       </Box>
                     ) : (
-                      <Box>{'Upload profile image'}</Box>
+                      <>
+                        <ImageIcon />
+                        <Box sx={{ marginLeft: 1 }}>{t('label.empty')}</Box>
+                      </>
                     )}
                   </Button>
                 </label>
@@ -209,7 +213,7 @@ export function ProfilePictureForm() {
             <>
               <Stack direction="row" gap={1} sx={{ color: 'action.active' }}>
                 <InfoIcon fontSize="small" />
-                <Typography sx={{ fontSize: 'small' }}>{t('profileImage.hint')}</Typography>
+                <Typography sx={{ fontSize: 'small' }}>{t('hint')}</Typography>
               </Stack>
 
               <Stack direction="column" gap={2} sx={{ marginTop: 2 }}>
@@ -223,7 +227,7 @@ export function ProfilePictureForm() {
                   }}
                   disabled={previewImageUrl == null}
                 >
-                  {t('profileImage.delete')}
+                  {t('delete')}
                 </Button>
               </Stack>
             </>

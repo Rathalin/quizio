@@ -19,6 +19,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CardActions from '@mui/material/CardActions';
 import { useTranslations } from 'next-intl';
+import ImageIcon from '@mui/icons-material/Image';
 
 type OverviewFormProps = {
   defaultData: QuizOverviewForm;
@@ -200,7 +201,10 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
                                 />
                               </Stack>
                             ) : (
-                              <Box>{t('image.label')}</Box>
+                              <>
+                                <ImageIcon />
+                                <Box sx={{ marginLeft: 1 }}>{t('image.label')}</Box>
+                              </>
                             )}
                           </Button>
                         </label>

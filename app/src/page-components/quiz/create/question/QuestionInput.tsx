@@ -30,6 +30,7 @@ import Divider from '@mui/material/Divider';
 import { useTheme } from '@mui/material/styles';
 import DragHandleOutlined from '@mui/icons-material/DragHandleOutlined';
 import { useTranslations } from 'next-intl';
+import ImageIcon from '@mui/icons-material/Image';
 
 type QuestionInputProps = {
   deletable: boolean;
@@ -197,7 +198,10 @@ export default function QuestionInput({
                         />
                       </Stack>
                     ) : (
-                      <Box>{t('image.label')}</Box>
+                      <>
+                        <ImageIcon />
+                        <Box sx={{ marginLeft: 1 }}>{t('image.label')}</Box>
+                      </>
                     )}
                   </Button>
                 </label>
@@ -334,7 +338,10 @@ export default function QuestionInput({
                           />
                         </Stack>
                       ) : (
-                        <Box>{t('explanationImage.label')}</Box>
+                        <>
+                          <ImageIcon />
+                          <Box sx={{ marginLeft: 1 }}>{t('explanationImage.label')}</Box>
+                        </>
                       )}
                     </Button>
                   </label>

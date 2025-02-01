@@ -17,6 +17,9 @@
 				"title": "Möchtest du dein aktuelles Profilbild permanent löschen?"
 			},
 			"hint": "Klicke auf das Bild, um es zu ändern.",
+			"label": {
+				"empty": "Profilbild hochladen"
+			},
 			"status": {
 				"error": "Could not update profile image!",
 				"success": "Profilbild aktualisiert."
