@@ -73,6 +73,21 @@
 			"label": "Question",
 			"title": "Question {count}"
 		},
+		"schema": {
+			"errorMessage": {
+				"answer": {
+					"exactlyOneCorrectAnswer": "Exactly one answer must be correct.",
+					"title": {
+						"minLength": "Answer must be at least {count, plural, =1 {# character} other {# characters}} long."
+					}
+				},
+				"question": {
+					"title": {
+						"minLength": "Question must be at least {count, plural, =1 {# character} other {# characters}} long."
+					}
+				}
+			}
+		},
 		"status": {
 			"create": {
 				"error": "",

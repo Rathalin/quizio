@@ -15,18 +15,27 @@ type AnswerInputProps = {
   onDelete: () => void;
   minAnswers: number;
   deletable: boolean;
+  hasAdditionalError: boolean;
 };
 
-export default function AnswerInput({ isCorrect, onDelete, minAnswers, deletable }: AnswerInputProps) {
+export default function AnswerInput({
+  isCorrect,
+  onDelete,
+  minAnswers,
+  deletable,
+  hasAdditionalError,
+}: AnswerInputProps) {
   const t = useTranslations('quizForm.form.question.answer');
   const questionIndex = useQuestionIndex();
   const index = useAnswerIndex();
   const {
     control,
-    formState: { errors: formErrors },
+    formState: { errors: formErrors, isSubmitted },
+    trigger,
   } = useFormContext<QuizQuestionsForm>();
 
-  const name = `questions.${questionIndex}.answers.${index}` as `questions.${number}.answers.${number}`;
+  const answersName = `questions.${questionIndex}.answers` as `questions.0.answers`;
+  const name = `${answersName}.${index}` as `questions.0.answers.0`;
   const errors = formErrors as ZodFieldErrors<typeof formErrors>;
   const answerErrors = errors.questions?.[questionIndex]?.answers?.[index];
 
@@ -46,7 +55,7 @@ export default function AnswerInput({ isCorrect, onDelete, minAnswers, deletable
                 sm: 'auto',
               },
             }}
-            error={answerErrors != null}
+            error={answerErrors != null || hasAdditionalError}
             helperText={answerErrors?.title?.message?.toString() ?? ''}
             required
             slotProps={{
@@ -77,7 +86,13 @@ export default function AnswerInput({ isCorrect, onDelete, minAnswers, deletable
           },
         }}
       >
-        <CorrectToggle />
+        <CorrectToggle
+          onToggle={() => {
+            if (isSubmitted) {
+              trigger(answersName);
+            }
+          }}
+        />
         <DeleteAnswerButton minAnswers={minAnswers} onDelete={onDelete} disabled={!deletable} />
       </Stack>
     </Stack>

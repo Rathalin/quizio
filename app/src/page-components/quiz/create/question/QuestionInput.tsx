@@ -269,11 +269,12 @@ export default function QuestionInput({
                   minAnswers={minAnswers}
                   isCorrect={field.isCorrect}
                   deletable={fields.length > minAnswers}
+                  hasAdditionalError={oneCorrectAnswerError != ''}
                 />
               </AnswerIndexContext.Provider>
             ))}
           </Box>
-          <FormHelperText sx={{ marginBottom: 2 }} error>
+          <FormHelperText sx={{ marginBottom: 2, marginLeft: 1 }} error>
             {oneCorrectAnswerError}
           </FormHelperText>
 
@@ -357,6 +358,7 @@ export default function QuestionInput({
                 setValue(`${name}.explanationImage.data.file`, null);
                 setValue(`${name}.explanationImage.preview`, undefined);
               }}
+              sx={{ visibility: explanationImageUrl != null ? 'visible' : 'hidden' }}
               disabled={explanationImageUrl == null}
             >
               {t('image.remove')}

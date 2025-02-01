@@ -73,6 +73,21 @@
 			"label": "Frage",
 			"title": "Frage {count}"
 		},
+		"schema": {
+			"errorMessage": {
+				"answer": {
+					"exactlyOneCorrectAnswer": "Exakt eine Antwort muss richtig sein.",
+					"title": {
+						"minLength": "Antwort muss mind. {count} Zeichen lang sein."
+					}
+				},
+				"question": {
+					"title": {
+						"minLength": "Frage muss mind. {count} Zeichen lang sein."
+					}
+				}
+			}
+		},
 		"status": {
 			"create": {
 				"error": "Quiz konnte nicht erstellt werden!",
