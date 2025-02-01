@@ -5,8 +5,7 @@ import { useQuestionIndex } from './QuestionIndexContext';
 import { AnswerIndexContext } from './answer/AnswerIndexContext';
 import QuizioTextField from '@/components/inputs/QuizioTextField';
 import { defaultAnswerFormData } from '../../quiz-form-data';
-import { QuizQuestionsForm, maxAnswers, minAnswers } from '../../quiz-form-schema';
-import { constraints } from '@/content-type-utilities/content-type-constraints';
+import { QuizQuestionsForm, constraints, maxAnswers, minAnswers } from '../../quiz-form-schema';
 import { ZodFieldErrors } from '../../../../../types/hook-form-zod';
 import { FormErrorIcon } from '../../FormErrorIcon';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -269,11 +268,12 @@ export default function QuestionInput({
                   minAnswers={minAnswers}
                   isCorrect={field.isCorrect}
                   deletable={fields.length > minAnswers}
+                  hasAdditionalError={oneCorrectAnswerError != ''}
                 />
               </AnswerIndexContext.Provider>
             ))}
           </Box>
-          <FormHelperText sx={{ marginBottom: 2 }} error>
+          <FormHelperText sx={{ marginBottom: 2, marginLeft: 1 }} error>
             {oneCorrectAnswerError}
           </FormHelperText>
 
@@ -357,6 +357,7 @@ export default function QuestionInput({
                 setValue(`${name}.explanationImage.data.file`, null);
                 setValue(`${name}.explanationImage.preview`, undefined);
               }}
+              sx={{ visibility: explanationImageUrl != null ? 'visible' : 'hidden' }}
               disabled={explanationImageUrl == null}
             >
               {t('image.remove')}
