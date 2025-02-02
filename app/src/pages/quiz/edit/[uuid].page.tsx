@@ -213,18 +213,21 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
 
       for (let questionIndex = 0; questionIndex < questions.length; questionIndex++) {
         const question = questions[questionIndex];
-        // Delete question image
-        let questionImageUrl = quiz.questions.at(questionIndex)?.imageUrl;
+
+        // Find the original question using UUID
+        const originalQuestion = quiz.questions.find((q) => q.uuid === question.uuid);
+
+        let questionImageUrl = originalQuestion?.imageUrl ?? null;
+        // Delete current question image
         if (
           questionImageUrl != null &&
           (question.questionImage.data.file != null || question.questionImage.preview == null)
         ) {
-          await deleteFile({
-            filename: getImageName(questionImageUrl),
-          });
+          await deleteFile({ filename: getImageName(questionImageUrl) });
           questionImageUrl = null;
         }
-        // Upload question image
+
+        // Upload new question image
         if (question.questionImage.data.file != null) {
           const { url } = await uploadFile({
             file: await getBase64(question.questionImage.data.file),
@@ -232,18 +235,18 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
           });
           questionImageUrl = url;
         }
-        // Delete question explanation image
-        let questionExplanationImageUrl = quiz.questions.at(questionIndex)?.explanationImageUrl;
+
+        // Delete current explanation image
+        let questionExplanationImageUrl = originalQuestion?.explanationImageUrl ?? null;
         if (
           questionExplanationImageUrl != null &&
           (question.explanationImage.data.file != null || question.explanationImage.preview == null)
         ) {
-          await deleteFile({
-            filename: getImageName(questionExplanationImageUrl),
-          });
+          await deleteFile({ filename: getImageName(questionExplanationImageUrl) });
           questionExplanationImageUrl = null;
         }
-        // Upload question explanation image
+
+        // Upload new explanation image
         if (question.explanationImage.data.file != null) {
           const { url } = await uploadFile({
             file: await getBase64(question.explanationImage.data.file),
@@ -252,7 +255,6 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
           questionExplanationImageUrl = url;
         }
 
-        // Update question data
         requestData.questions.push({
           uuid: question.uuid ?? '',
           title: question.title,
