@@ -1,40 +1,40 @@
 {
-	"button": {
-		"toDashboard": {
-			"label": "To dashboard"
-		}
-	},
-	"email": "daniel@flockert.at",
-	"error": {
-		"404": {
-			"eyebrow": "404",
-			"meta": {
-				"title": "Page not found"
-			},
-			"title": "This page does not exist."
-		},
-		"500": {
-			"content": "Please contact <email></email>, if the error persists.",
-			"eyebrow": "500",
-			"meta": {
-				"title": "An error occurred"
-			},
-			"title": "Oops, something broke."
-		},
-		"generic": {
-			"content": "Sorry, the Quizio services are currently unavailable. If the error persists, contact <email></email>."
-		},
-		"sessionExpired": {
-			"dialog": {
-				"button": {
-					"label": "Reload"
-				},
-				"content": "Your session has expired! Please reload the page.",
-				"picture": {
-					"alt": "Surprised Pikachu"
-				},
-				"title": "Session Expired"
-			}
-		}
-	}
+  "button": {
+    "toDashboard": {
+      "label": "To dashboard"
+    }
+  },
+  "email": "daniel@flockert.at",
+  "error": {
+    "404": {
+      "eyebrow": "404",
+      "meta": {
+        "title": "Page not found"
+      },
+      "title": "This page does not exist."
+    },
+    "500": {
+      "content": "Please contact <email></email>, if the error persists.",
+      "eyebrow": "500",
+      "meta": {
+        "title": "An error occurred"
+      },
+      "title": "Oops, something broke."
+    },
+    "generic": {
+      "content": "Sorry, the Quizio services are currently unavailable. If the error persists, contact <email></email>."
+    },
+    "sessionExpired": {
+      "dialog": {
+        "button": {
+          "label": "Reload"
+        },
+        "content": "Your session has expired! Please reload the page.",
+        "picture": {
+          "alt": "Surprised Pikachu"
+        },
+        "title": "Session Expired"
+      }
+    }
+  }
 }

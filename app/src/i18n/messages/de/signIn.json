@@ -1,26 +1,26 @@
 {
-	"breadcrumbs": {
-		"current": "Anmelden"
-	},
-	"form": {
-		"button": {
-			"label": "Anmelden"
-		},
-		"invalidCredentials": "Ungültiger Benutzername oder Passwort!",
-		"password": {
-			"label": "Passwort"
-		},
-		"status": {
-			"error": "Bei der Anmeldung ist ein Fehler aufgetreten!",
-			"success": "Erfolgreich angemeldet."
-		},
-		"username": {
-			"label": "Benutzername"
-		}
-	},
-	"heading": "Gib deine <gradient>Zugangsdaten</gradient> ein",
-	"helpAlert": "Du möchtest ein Quizio-Konto haben? Dann schreib mir eine Nachricht an <email></email>.",
-	"meta": {
-		"title": "Anmelden"
-	}
+  "breadcrumbs": {
+    "current": "Anmelden"
+  },
+  "form": {
+    "button": {
+      "label": "Anmelden"
+    },
+    "invalidCredentials": "Ungültiger Benutzername oder Passwort!",
+    "password": {
+      "label": "Passwort"
+    },
+    "status": {
+      "error": "Bei der Anmeldung ist ein Fehler aufgetreten!",
+      "success": "Erfolgreich angemeldet."
+    },
+    "username": {
+      "label": "Benutzername"
+    }
+  },
+  "heading": "Gib deine <gradient>Zugangsdaten</gradient> ein",
+  "helpAlert": "Du möchtest ein Quizio-Konto haben? Dann schreib mir eine Nachricht an <email></email>.",
+  "meta": {
+    "title": "Anmelden"
+  }
 }

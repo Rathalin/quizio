@@ -1,13 +1,13 @@
 {
-	"address": "1120, Vienna",
-	"breadcrumbs": {
-		"current": "Imprint"
-	},
-	"country": "Austria",
-	"disclaimer": "This website is not operated for commercial purposes and is solely intended to spread joy.",
-	"fullname": "Daniel Flockert, MSc.",
-	"meta": {
-		"title": "Imprint"
-	},
-	"title": "Imprint"
+  "address": "1120, Vienna",
+  "breadcrumbs": {
+    "current": "Imprint"
+  },
+  "country": "Austria",
+  "disclaimer": "This website is not operated for commercial purposes and is solely intended to spread joy.",
+  "fullname": "Daniel Flockert, MSc.",
+  "meta": {
+    "title": "Imprint"
+  },
+  "title": "Imprint"
 }
