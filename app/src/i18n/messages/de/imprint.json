@@ -1,13 +1,13 @@
 {
-	"address": "1120, Vienna",
-	"breadcrumbs": {
-		"current": "Impressum"
-	},
-	"country": "Austria",
-	"disclaimer": "Diese Webseite wird nicht aus kommerziellen Gründen betrieben und ist rein zur Unterhaltung da.",
-	"fullname": "Daniel Flockert, MSc.",
-	"meta": {
-		"title": "Impressum"
-	},
-	"title": "Impressum"
+  "address": "1120, Vienna",
+  "breadcrumbs": {
+    "current": "Impressum"
+  },
+  "country": "Austria",
+  "disclaimer": "Diese Webseite wird nicht aus kommerziellen Gründen betrieben und ist rein zur Unterhaltung da.",
+  "fullname": "Daniel Flockert, MSc.",
+  "meta": {
+    "title": "Impressum"
+  },
+  "title": "Impressum"
 }
