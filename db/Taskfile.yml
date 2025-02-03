@@ -22,3 +22,13 @@ tasks:
     desc: Undos all migrations from the database
     cmds:
       - migrate -database postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:5432/$POSTGRES_DB?sslmode=disable -path migrations down
+
+  migrate-set-version:
+    desc: Sets the migration version with force
+    cmds:
+      - migrate -database postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:5432/$POSTGRES_DB?sslmode=disable -path migrations force {{.CLI_ARGS}}
+
+  create-migration:
+    desc: Creates a migration. e.g. task create-migration <migration-name>
+    cmds:
+      - migrate create -ext sql -dir migrations -seq {{.CLI_ARGS}}

@@ -465,6 +465,8 @@ export interface components {
       imageSize: 'small' | 'medium' | 'large' | null;
       imageUrl: string | null;
       isActive: boolean;
+      /** @enum {string} */
+      locale: 'de' | 'en';
       markdownContent: string;
       /** @enum {string} */
       severity: 'success' | 'info' | 'warning' | 'error';
@@ -912,6 +914,7 @@ export interface operations {
     parameters: {
       query: {
         visibleTo: 'everyone' | 'authorized';
+        locale: 'de' | 'en';
       };
       header?: never;
       path?: never;
