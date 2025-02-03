@@ -2,15 +2,13 @@ import { client, GetAlertsRequestQuery, InferFetchError, InferFetchResult, throw
 import { seconds } from '@/utilities/time';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
 
 export function useAlertsQuery() {
   const { status } = useSession();
-  const { locale } = useRouter();
   const visibleTo: GetAlertsRequestQuery['visibleTo'] = status === 'authenticated' ? 'authorized' : 'everyone';
   return useQuery<InferFetchResult<typeof fetchAlerts>, InferFetchError<typeof fetchAlerts>>({
-    queryKey: ['alerts', visibleTo, locale],
-    queryFn: () => throwOnError(() => fetchAlerts({ visibleTo, locale: locale as 'de' | 'en' })),
+    queryKey: ['alerts', visibleTo],
+    queryFn: () => throwOnError(() => fetchAlerts({ visibleTo })),
     staleTime: seconds(30),
     enabled: status !== 'loading',
   });

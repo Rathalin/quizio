@@ -7,9 +7,11 @@ import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import ReactMarkdown from 'react-markdown';
 
 export default function AlertsViewer() {
+  const { locale } = useRouter();
   const { dismissedAlertIds, addDismissedAlertId } = useDismissedAlertIds();
 
   const { data } = useAlertsQuery();
@@ -52,7 +54,7 @@ export default function AlertsViewer() {
                   },
                 }}
               >
-                <ReactMarkdown>{alert.markdownContent}</ReactMarkdown>
+                <ReactMarkdown>{locale === 'de' ? alert.markdownDe : alert.markdownEn}</ReactMarkdown>
               </Grid>
               <Grid item xs={12} sm={12} md={4}>
                 <Stack justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
