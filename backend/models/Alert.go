@@ -12,4 +12,5 @@ type Alert struct {
 	ImageSize       *string   `json:"imageSize" enum:"small,medium,large" required:"true" nullable:"true"`
 	IsActive        bool      `json:"isActive" required:"true"`
 	VisibleTo       string    `json:"visibleTo" required:"true" enum:"everyone,authorized"`
+	Locale          string    `json:"locale" required:"true" enum:"de,en"`
 }
