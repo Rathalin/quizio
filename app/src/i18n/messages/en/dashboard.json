@@ -1,44 +1,44 @@
 {
-	"meta": {
-		"description": "Quizo is a quiz app that allows you to create and share quizzes with your friends.",
-		"og": {
-			"description": "Create and share quizzes with your friends.",
-			"title": "Quizio - the modern quizz app"
-		},
-		"title": "Quizio"
-	},
-	"noMoreResults": "No more <gradient>quizzes</gradient> to load.",
-	"noResults": "No quizzes found. Try changing your search criteria.",
-	"quizCard": {
-		"button": {
-			"play": {
-				"label": "Play"
-			}
-		},
-		"editTooltip": "Edit quiz",
-		"playCount": "{count} times played",
-		"questionCount": "{count, plural, =1 {# question} other {# questions}}",
-		"share": {
-			"toast": "Link to \"{title}\" copied.",
-			"tooltip": "Copy link to quiz"
-		}
-	},
-	"searchAndFilter": {
-		"search": {
-			"placeholder": "Search quizzes"
-		},
-		"sort": {
-			"menu": {
-				"button": {
-					"label": "Sort by <sort></sort>"
-				},
-				"items": {
-					"createdAtAsc": "oldest",
-					"createdAtDesc": "latest",
-					"playCountAsc": "most played",
-					"playCountDesc": "least played"
-				}
-			}
-		}
-	}
+  "meta": {
+    "description": "Quizo is a quiz app that allows you to create and share quizzes with your friends.",
+    "og": {
+      "description": "Create and share quizzes with your friends.",
+      "title": "Quizio - the modern quizz app"
+    },
+    "title": "Quizio"
+  },
+  "noMoreResults": "No more <gradient>quizzes</gradient> to load.",
+  "noResults": "No quizzes found. Try changing your search criteria.",
+  "quizCard": {
+    "button": {
+      "play": {
+        "label": "Play"
+      }
+    },
+    "editTooltip": "Edit quiz",
+    "playCount": "{count} times played",
+    "questionCount": "{count, plural, =1 {# question} other {# questions}}",
+    "share": {
+      "toast": "Link to \"{title}\" copied.",
+      "tooltip": "Copy link to quiz"
+    }
+  },
+  "searchAndFilter": {
+    "search": {
+      "placeholder": "Search quizzes"
+    },
+    "sort": {
+      "menu": {
+        "button": {
+          "label": "Sort by <sort></sort>"
+        },
+        "items": {
+          "createdAtAsc": "oldest",
+          "createdAtDesc": "latest",
+          "playCountAsc": "most played",
+          "playCountDesc": "least played"
+        }
+      }
+    }
+  }
 }
