@@ -11,7 +11,7 @@ tasks:
   psql:
     desc: Connect to PostgreSQL database
     cmds:
-      - PGPASSWORD=$POSTGRES_PASSWORD psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB
+      - PGPASSWORD=$POSTGRES_PASSWORD psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB {{.CLI_ARGS}}
 
   migrate-up:
     desc: Applies all migrations to the database

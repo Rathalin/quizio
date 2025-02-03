@@ -1,5 +1,0 @@
-BEGIN;
-
-ALTER TABLE alert DROP COLUMN locale;
-
-COMMIT;

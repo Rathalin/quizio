@@ -11,7 +11,6 @@ import (
 func (dbw *DBWrapper) HandleGetAlerts() usecase.Interactor {
 	type getAlertsRequest struct {
 		VisibleTo string `query:"visibleTo" required:"true" enum:"everyone,authorized"`
-		Locale    string `query:"locale" required:"true" enum:"de,en"`
 	}
 
 	type getAlertsResponse struct {
@@ -23,13 +22,12 @@ func (dbw *DBWrapper) HandleGetAlerts() usecase.Interactor {
 			Alerts: make([]models.Alert, 0),
 		}
 		rows, err := dbw.DB.QueryContext(ctx, `
-			SELECT uuid, created_at, updated_at, markdown_content, severity, image_url, image_size, is_active, visible_to, locale
+			SELECT uuid, created_at, updated_at, markdown_de, markdown_en, severity, image_url, image_size, is_active, visible_to
 			FROM alert
 			WHERE is_active 
 				AND (visible_to = 'everyone' OR visible_to = $1)
-				AND locale = $2
 			ORDER BY order_index ASC
-		`, input.VisibleTo, input.Locale)
+		`, input.VisibleTo)
 		if err != nil {
 			return logAndReturnError(err)
 		}
@@ -41,13 +39,13 @@ func (dbw *DBWrapper) HandleGetAlerts() usecase.Interactor {
 				&alert.UUID,
 				&alert.CreatedAt,
 				&alert.UpdatedAt,
-				&alert.MarkdownContent,
+				&alert.MarkdownDE,
+				&alert.MarkdownEN,
 				&alert.Severity,
 				&alert.ImageUrl,
 				&alert.ImageSize,
 				&alert.IsActive,
 				&alert.VisibleTo,
-				&alert.Locale,
 			)
 			response.Alerts = append(response.Alerts, alert)
 		}
