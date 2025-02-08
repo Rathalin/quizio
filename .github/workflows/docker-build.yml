@@ -1,0 +1,46 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-go-backend:
+    name: Build & Push Go Backend Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build and Push Go Backend Image
+        run: |
+          docker build -t ghcr.io/Rathalin/quizio/go-backend:latest ../backend
+          docker push ghcr.io/Rathalin/quizio/go-backend:latest
+
+  build-adminer:
+    name: Build & Push Adminer Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build and Push Adminer Image
+        run: |
+          docker build -t ghcr.io/Rathalin/quizio/adminer:latest -f ../adminer/Dockerfile.adminer ../adminer
+          docker push ghcr.io/Rathalin/quizio/adminer:latest
