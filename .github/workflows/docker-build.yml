@@ -24,7 +24,7 @@ jobs:
 
       - name: Build and Push Go Backend Image
         run: |
-          docker build -t ghcr.io/rathalin/quizio/go-backend:latest ../../backend
+          docker build -t ghcr.io/rathalin/quizio/go-backend:latest ./backend
           docker push ghcr.io/rathalin/quizio/go-backend:latest
 
   build-adminer:
@@ -43,5 +43,5 @@ jobs:
 
       - name: Build and Push Adminer Image
         run: |
-          docker build -t ghcr.io/rathalin/quizio/adminer:latest ../../adminer
+          docker build -t ghcr.io/rathalin/quizio/adminer:latest ./adminer
           docker push ghcr.io/rathalin/quizio/adminer:latest
