@@ -35,7 +35,6 @@ services:
   adminer:
     build:
       context: ../adminer
-      dockerfile: Dockerfile.adminer
     pull_policy: build
     restart: always
     ports:
