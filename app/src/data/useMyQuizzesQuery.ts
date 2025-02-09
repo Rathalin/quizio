@@ -1,34 +1,26 @@
-import { apiClient, GetQuizzesRequestQuery, InferFetchError, InferFetchResult, throwOnError } from '@/api-client';
+import { apiClient, GetMyQuizzesRequestQuery, InferFetchError, InferFetchResult, throwOnError } from '@/api-client';
 import { AuthorizationHeader, useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import { seconds } from '@/utilities/time';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 
-export function useMyQuizzesQuery(query: Omit<GetQuizzesRequestQuery, 'page'>) {
+export function useMyQuizzesQuery(query: Omit<GetMyQuizzesRequestQuery, 'page'>) {
   const { data: session } = useSession();
   const authHeader = useAuthHeader();
 
-  const queryKey = ['getMyQuizzesInfinite', session?.user.uuid, query.sortDirection, query.sortOption];
+  const queryKey = ['getMyQuizzes', session?.user.uuid, query.sortDirection, query.sortOption];
 
   return {
     queryKey,
-    ...useInfiniteQuery<InferFetchResult<typeof fetchMyQuizzes>, InferFetchError<typeof fetchMyQuizzes>>({
+    ...useQuery<InferFetchResult<typeof fetchMyQuizzes>, InferFetchError<typeof fetchMyQuizzes>>({
       queryKey,
-      queryFn: ({ pageParam }) =>
-        throwOnError(() => fetchMyQuizzes({ ...query, page: (pageParam as number) ?? 0 }, authHeader)),
-      getNextPageParam: ({ meta: { page, totalPages } }, _pages) => {
-        if (page < totalPages) {
-          return page + 1;
-        }
-        return undefined;
-      },
-      initialPageParam: 0,
+      queryFn: () => throwOnError(() => fetchMyQuizzes(query, authHeader)),
       staleTime: seconds(30),
     }),
   };
 }
 
-export async function fetchMyQuizzes(query: GetQuizzesRequestQuery, authHeader: AuthorizationHeader) {
+export async function fetchMyQuizzes(query: GetMyQuizzesRequestQuery, authHeader: AuthorizationHeader) {
   return apiClient.GET('/a/my-quizzes', {
     params: {
       query,

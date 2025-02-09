@@ -8,19 +8,32 @@
   },
   "table": {
     "column": {
-      "actions": {
+      "action": {
         "copyLink": {
-          "label": "Link kopieren"
+          "tooltip": "Link kopieren"
         },
         "delete": {
-          "label": "Löschen"
+          "dialog": {
+            "action": {
+              "cancel": {
+                "label": "Nein, abbrechen"
+              },
+              "confirm": {
+                "label": "Ja, löschen"
+              }
+            },
+            "title": "Möchtest du das Quiz \"{title}\" permanent löschen?"
+          },
+          "error": "Quiz konnte nicht gelöscht werden!",
+          "success": "Quiz gelöscht.",
+          "tooltip": "Löschen"
         },
         "edit": {
-          "label": "Bearbeiten"
+          "tooltip": "Bearbeiten"
         },
         "header": "Aktionen",
         "play": {
-          "label": "Spielen"
+          "tooltip": "Spielen"
         }
       },
       "createdAt": {

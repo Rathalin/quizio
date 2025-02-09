@@ -358,7 +358,6 @@ export interface components {
       alerts: components['schemas']['ModelsAlert'][];
     };
     HandlersGetMyQuizzesResponse: {
-      meta: components['schemas']['ModelsMeta'];
       quizzes: components['schemas']['HandlersGetMyQuizzesResponseQuiz'][];
     };
     HandlersGetMyQuizzesResponseQuiz: {
@@ -372,10 +371,6 @@ export interface components {
       title: string;
       /** Format: date-time */
       updatedAt: string;
-      user: {
-        username: string;
-        uuid: string;
-      };
       uuid: string;
     };
     HandlersGetMyUserProfileResponse: {
@@ -613,8 +608,6 @@ export interface operations {
   'backend/handlers.(*DBWrapper).HandleGetMyQuizzes': {
     parameters: {
       query: {
-        page: number;
-        pageSize: number;
         sortOption: 'createdAt' | 'playCount';
         sortDirection: 'asc' | 'desc';
       };

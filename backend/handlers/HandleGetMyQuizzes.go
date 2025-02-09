@@ -6,8 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Rathalin/quizio/backend/models"
-
 	"github.com/swaggest/usecase"
 )
 
@@ -32,7 +30,6 @@ func (dbw *DBWrapper) HandleGetMyQuizzes() usecase.Interactor {
 
 	type getMyQuizzesResponse struct {
 		Quizzes []getMyQuizzesResponseQuiz `json:"quizzes" required:"true" nullable:"false"`
-		Meta    models.Meta                `json:"meta" required:"true" nullable:"false"`
 	}
 
 	return usecase.NewInteractor(func(ctx context.Context, input getMyQuizzesRequest, output *getMyQuizzesResponse) error {

@@ -22,8 +22,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerSession(ctx.req, ctx.res, authOptions);
   const queryClient = new QueryClient();
   const defaultQueryParams: GetMyQuizzesRequestQuery = {
-    page: 0,
-    pageSize: 12,
     sortOption: 'createdAt',
     sortDirection: 'desc',
   };
@@ -49,13 +47,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 export default function MyQuizzesPage() {
   const t = useTranslations('myQuizzes');
-  const quizzesMyQueryParams: Omit<GetMyQuizzesRequestQuery, 'page'> = {
-    pageSize: 12,
+  const quizzesMyQueryParams: GetMyQuizzesRequestQuery = {
     sortOption: 'createdAt',
     sortDirection: 'desc',
   };
   const { data } = useMyQuizzesQuery(quizzesMyQueryParams);
-  const quizzes = useMemo(() => data?.pages.map((page) => page.quizzes).flat() ?? [], [data?.pages]);
+  const quizzes = useMemo(() => data?.quizzes ?? [], [data?.quizzes]);
 
   return (
     <>
