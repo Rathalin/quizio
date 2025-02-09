@@ -3,7 +3,6 @@ import { useUserAccountQuery } from '@/data/useUserAccountQuery';
 import { raise } from '@/utilities/errorHandling';
 import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import Avatar from '@mui/material/Avatar';
@@ -106,14 +105,6 @@ export default function AccountMenu() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <Link href="/quiz/create" className="no-underline">
-          <MenuItem>
-            <ListItemIcon>
-              <AddCircleIcon />
-            </ListItemIcon>
-            {t('menu.item.createQuiz')}
-          </MenuItem>
-        </Link>
         <Link href="/my-quizzes" className="no-underline">
           <MenuItem onClick={handleClose}>
             <ListItemIcon>

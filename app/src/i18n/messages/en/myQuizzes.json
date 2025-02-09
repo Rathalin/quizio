@@ -2,6 +2,9 @@
   "breadcrumbs": {
     "current": "My quizzes"
   },
+  "create": {
+    "label": "Create quiz"
+  },
   "heading": "<gradient>Manage</gradient> my quizzes",
   "meta": {
     "title": "My quizzes"
