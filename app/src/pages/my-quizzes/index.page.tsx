@@ -73,47 +73,6 @@ export default function MyQuizzesPage() {
             gradient: (chunks) => <GradientText>{chunks}</GradientText>,
           })}
         </Typography>
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            columnGap: {
-              xs: 6,
-            },
-            rowGap: {
-              xs: 8,
-              md: 6,
-            },
-          }}
-        >
-          {isSuccess &&
-            quizzes.map(({ uuid, createdAt, title, description, imageUrl, playCount, questionCount, isPublished }) => (
-              <MyQuizCard
-                key={uuid}
-                uuid={uuid}
-                title={title}
-                description={description ?? ''}
-                imageUrl={imageUrl}
-                createdAt={new Date(createdAt)}
-                playCount={playCount}
-                questionCount={questionCount}
-                published={isPublished}
-              />
-            ))}
-          {(isPending || isFetchingNextPage) &&
-            Array.from({ length: placeholderCount }).map((_, index) => <QuizOverviewPlaceholder key={index} />)}
-          <Box sx={{ marginTop: 8 }}>
-            {hasNextPage && !isFetchingNextPage ? (
-              <ScrollObserver
-                onIntersect={() => {
-                  fetchNextPage();
-                }}
-              />
-            ) : (
-              <></>
-            )}
-          </Box>
-        </Box>
       </Box>
     </>
   );

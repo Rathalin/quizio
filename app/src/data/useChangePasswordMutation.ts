@@ -1,4 +1,4 @@
-import { ChangePasswordReqest, client, InferFetchError, InferFetchResult, throwOnError } from '@/api-client';
+import { ChangePasswordReqest, apiClient, InferFetchError, InferFetchResult, throwOnError } from '@/api-client';
 import { AuthorizationHeader, useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import { useMutation } from '@tanstack/react-query';
 
@@ -16,7 +16,7 @@ export function useChangePasswordMutation() {
 }
 
 async function changePassword(data: ChangePasswordReqest, authHeader: AuthorizationHeader) {
-  return client.POST('/a/change-password', {
+  return apiClient.POST('/a/change-password', {
     body: data,
     headers: authHeader,
   });

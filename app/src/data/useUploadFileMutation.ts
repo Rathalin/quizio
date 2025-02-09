@@ -1,4 +1,4 @@
-import { client, InferFetchError, InferFetchResult, throwOnError, UploadFileRequestData } from '@/api-client';
+import { apiClient, InferFetchError, InferFetchResult, throwOnError, UploadFileRequestData } from '@/api-client';
 import { AuthorizationHeader, useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import { useMutation } from '@tanstack/react-query';
 
@@ -11,7 +11,7 @@ export function useUploadFileMutation() {
 }
 
 function uploadFile(data: UploadFileRequestData, authHeader: AuthorizationHeader) {
-  return client.POST('/a/upload', {
+  return apiClient.POST('/a/upload', {
     body: data,
     headers: authHeader,
   });

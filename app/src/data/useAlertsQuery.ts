@@ -1,4 +1,4 @@
-import { client, GetAlertsRequestQuery, InferFetchError, InferFetchResult, throwOnError } from '@/api-client';
+import { apiClient, GetAlertsRequestQuery, InferFetchError, InferFetchResult, throwOnError } from '@/api-client';
 import { seconds } from '@/utilities/time';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
@@ -15,7 +15,7 @@ export function useAlertsQuery() {
 }
 
 async function fetchAlerts(query: GetAlertsRequestQuery) {
-  return client.GET('/alerts', {
+  return apiClient.GET('/alerts', {
     params: {
       query,
     },

@@ -1,4 +1,4 @@
-import { client, InferFetchError, InferFetchResult, throwOnError } from '@/api-client';
+import { apiClient, InferFetchError, InferFetchResult, throwOnError } from '@/api-client';
 import { AuthorizationHeader, useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import { useMutation } from '@tanstack/react-query';
 
@@ -21,14 +21,14 @@ export function useCreatePlayProtocolEntryMutation() {
 
 function pushPlayProtocolEntry(quizUuid: string, authHeader: AuthorizationHeader) {
   if (authHeader != null) {
-    return client.POST('/a/play-protocol-entry', {
+    return apiClient.POST('/a/play-protocol-entry', {
       body: {
         quizUuid,
       },
       headers: authHeader,
     });
   }
-  return client.POST('/play-protocol-entry', {
+  return apiClient.POST('/play-protocol-entry', {
     body: {
       quizUuid,
     },

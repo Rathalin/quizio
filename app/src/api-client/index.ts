@@ -1,7 +1,7 @@
 import createClient from 'openapi-fetch';
 import { paths, components, operations } from './schema';
 
-export const client = createClient<paths>({ baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL });
+export const apiClient = createClient<paths>({ baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL });
 
 type ApiSchemas = components['schemas'];
 

@@ -1,4 +1,4 @@
-import { client, GetQuizzesRequestQuery, InferFetchError, InferFetchResult, throwOnError } from '@/api-client';
+import { apiClient, GetQuizzesRequestQuery, InferFetchError, InferFetchResult, throwOnError } from '@/api-client';
 import { AuthorizationHeader, useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import { seconds } from '@/utilities/time';
 import { useInfiniteQuery } from '@tanstack/react-query';
@@ -29,7 +29,7 @@ export function useMyQuizzesInfiniteQuery(query: Omit<GetQuizzesRequestQuery, 'p
 }
 
 export async function fetchMyQuizzes(query: GetQuizzesRequestQuery, authHeader: AuthorizationHeader) {
-  return client.GET('/a/my-quizzes', {
+  return apiClient.GET('/a/my-quizzes', {
     params: {
       query,
     },

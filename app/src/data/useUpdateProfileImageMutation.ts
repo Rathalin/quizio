@@ -1,4 +1,4 @@
-import { client, throwOnError, UpdateUserProfileImageRequest } from '@/api-client';
+import { apiClient, throwOnError, UpdateUserProfileImageRequest } from '@/api-client';
 import { AuthorizationHeader, useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import { useMutation } from '@tanstack/react-query';
 
@@ -11,7 +11,7 @@ export function useUpdateProfileImageMutation() {
 }
 
 async function updateUserProfileImage(data: UpdateUserProfileImageRequest, authHeader: AuthorizationHeader) {
-  return client.POST('/a/update-profile-image', {
+  return apiClient.POST('/a/update-profile-image', {
     body: data,
     headers: authHeader,
   });

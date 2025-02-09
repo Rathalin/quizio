@@ -1,4 +1,4 @@
-import { client, GetQuizzesRequestQuery, InferFetchError, InferFetchResult, throwOnError } from '@/api-client';
+import { apiClient, GetQuizzesRequestQuery, InferFetchError, InferFetchResult, throwOnError } from '@/api-client';
 import { seconds } from '@/utilities/time';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
@@ -23,7 +23,7 @@ export function useQuizzesInfiniteQuery(query: Omit<GetQuizzesRequestQuery, 'pag
 }
 
 export async function fetchQuizzes(query: GetQuizzesRequestQuery) {
-  return client.GET('/quizzes', {
+  return apiClient.GET('/quizzes', {
     params: {
       query,
     },
