@@ -134,11 +134,13 @@ export function QuizColumn({ uuid, title, description, imageUrl, isHovered }: Pr
               }}
             >
               <Tooltip title={t('column.action.edit.tooltip')} enterDelay={500} enterNextDelay={500} arrow>
-                <Link href={`/quiz/edit/${uuid}`}>
-                  <IconButton color="inherit">
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                </Link>
+                <Box>
+                  <Link href={`/quiz/edit/${uuid}`}>
+                    <IconButton color="inherit">
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                  </Link>
+                </Box>
               </Tooltip>
               <Tooltip title={t('column.action.delete.tooltip')} enterDelay={500} enterNextDelay={500} arrow>
                 <Box>
@@ -167,11 +169,13 @@ export function QuizColumn({ uuid, title, description, imageUrl, isHovered }: Pr
                 </Box>
               </Tooltip>
               <Tooltip title={t('column.action.play.tooltip')} enterDelay={500} enterNextDelay={500} arrow>
-                <Link href={`/play/${uuid}`}>
-                  <IconButton color="inherit">
-                    <PlayArrowIcon fontSize="small" />
-                  </IconButton>
-                </Link>
+                <Box>
+                  <Link href={`/play/${uuid}`}>
+                    <IconButton color="inherit">
+                      <PlayArrowIcon fontSize="small" />
+                    </IconButton>
+                  </Link>
+                </Box>
               </Tooltip>
             </Stack>
             <Typography
