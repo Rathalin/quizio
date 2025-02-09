@@ -15,6 +15,7 @@ type DeleteQuizDialogProps = {
 
 export default function DeleteQuizDialog({ open, onCancel, onConfirm, quizTitle, loading }: DeleteQuizDialogProps) {
   const t = useTranslations('myQuizzes.table.column.action.delete');
+
   function handleClose() {
     onCancel();
   }
@@ -28,7 +29,9 @@ export default function DeleteQuizDialog({ open, onCancel, onConfirm, quizTitle,
     >
       <DialogTitle id="alert-dialog-title">{t('dialog.title', { title: quizTitle })}</DialogTitle>
       <DialogActions>
-        <Button onClick={handleClose}>{t('dialog.action.cancel.label')}</Button>
+        <Button color="inherit" onClick={handleClose}>
+          {t('dialog.action.cancel.label')}
+        </Button>
         <Button
           onClick={() => onConfirm()}
           startIcon={loading ? <LoadingCircle color="error" /> : null}

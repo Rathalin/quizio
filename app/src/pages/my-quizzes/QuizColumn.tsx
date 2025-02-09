@@ -2,7 +2,6 @@ import LoadingCircle from '@/components/LoadingCircle';
 import { useDeleteQuizMutation } from '@/data/useDeleteQuizMutation';
 import { useToastStore } from '@/persistence/taost.store';
 import { theme } from '@/theme';
-import { raise } from '@/utilities/errorHandling';
 import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -37,9 +36,8 @@ export function QuizColumn({ uuid, title, description, imageUrl, isHovered }: Pr
   const queryClient = useQueryClient();
   const router = useRouter();
   const { mode } = useColorMode();
-  const [quizToDelete, setQuizToDelete] = useState<{ uuid: string; title: string } | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const { showSuccessToast, showErrorToast } = useToastStore();
-  const dialogOpen = quizToDelete != null;
   const {
     mutateAsync: deleteQuiz,
     isPending: isDeletePending,
@@ -52,17 +50,13 @@ export function QuizColumn({ uuid, title, description, imageUrl, isHovered }: Pr
   };
 
   async function onDeleteDialogConfirm() {
-    if (quizToDelete == null) {
-      raise('quizToDelete state was null');
-    }
-
     try {
       await deleteQuiz();
 
       showSuccessToast(t('column.action.delete.success'));
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
       queryClient.invalidateQueries({ queryKey: ['getMyQuizzes'] });
-      setQuizToDelete(null);
+      setDialogOpen(false);
       await router.push('/my-quizzes');
     } catch (error) {
       showErrorToast(t('column.action.delete.error'));
@@ -73,8 +67,10 @@ export function QuizColumn({ uuid, title, description, imageUrl, isHovered }: Pr
     <>
       <DeleteQuizDialog
         open={dialogOpen}
-        quizTitle={quizToDelete?.title ?? ''}
-        onCancel={() => setQuizToDelete(null)}
+        quizTitle={title}
+        onCancel={() => {
+          setDialogOpen(false);
+        }}
         onConfirm={onDeleteDialogConfirm}
         loading={isDeletePending}
       />
@@ -148,7 +144,9 @@ export function QuizColumn({ uuid, title, description, imageUrl, isHovered }: Pr
                 <Box>
                   <IconButton
                     color="inherit"
-                    onClick={() => setQuizToDelete({ uuid, title })}
+                    onClick={() => {
+                      setDialogOpen(true);
+                    }}
                     disabled={isDeletePending || isDeleteSuccess}
                   >
                     {isDeletePending ? <LoadingCircle /> : <DeleteIcon fontSize="small" />}
