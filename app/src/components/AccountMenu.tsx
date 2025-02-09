@@ -18,6 +18,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState, type MouseEvent } from 'react';
+import ViewAgendaIcon from '@mui/icons-material/ViewAgenda';
 
 export default function AccountMenu() {
   const t = useTranslations('header.accountMenu');
@@ -111,6 +112,14 @@ export default function AccountMenu() {
               <AddCircleIcon />
             </ListItemIcon>
             {t('menu.item.createQuiz')}
+          </MenuItem>
+        </Link>
+        <Link href="/my-quizzes" className="no-underline">
+          <MenuItem onClick={handleClose}>
+            <ListItemIcon>
+              <ViewAgendaIcon />
+            </ListItemIcon>
+            {t('menu.item.myQuizzes')}
           </MenuItem>
         </Link>
         <Divider />

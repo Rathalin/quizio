@@ -29,7 +29,7 @@ export default function QuizzesOverview() {
   const quizzesQueryParams = useMemo<Omit<GetQuizzesRequestQuery, 'page'>>(
     () => ({
       pageSize: 12,
-      sort: sort.option,
+      sortOption: sort.option,
       sortDirection: sort.mode,
     }),
     [sort.mode, sort.option],

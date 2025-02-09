@@ -277,7 +277,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
       // Refetch quiz
       showSuccessToast(t('form.status.update.success'));
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
-      await router.push('/');
+      await router.push('/my-quizzes');
       queryClient.invalidateQueries({ queryKey: ['quiz', uuid] });
     } catch (error) {
       console.error('Update quiz error', error);
@@ -292,7 +292,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
       showSuccessToast('Quiz deleted.');
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
       setDialogOpen(false);
-      await router.push('/');
+      await router.push('/my-quizzes');
     } catch (error) {
       showErrorToast('Could not delete quiz!');
     }
@@ -322,6 +322,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
           />
         )}
         <QuizioBreadcrumbs>
+          <Link href={'/my-quizzes'}>{t('breadcrumbs.myQuizzes')}</Link>
           <Link href={`/quiz/edit/${uuid}`}>
             {quiz != null
               ? t('breadcrumbs.edit.current.withTitle', { title: quiz.title })

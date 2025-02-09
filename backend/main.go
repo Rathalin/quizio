@@ -71,6 +71,7 @@ func main() {
 			r.Method(http.MethodPost, "/upload", nethttp.NewHandler((dbWrapper.HandleUploadFile())))
 			r.Method(http.MethodDelete, "/upload", nethttp.NewHandler((dbWrapper.HandleDeleteFile())))
 			r.Method(http.MethodPost, "/signout", nethttp.NewHandler(dbWrapper.HandleSignOut()))
+			r.Method(http.MethodGet, "/my-quizzes", nethttp.NewHandler((dbWrapper.HandleGetMyQuizzes())))
 			r.Method(http.MethodPost, "/quiz/create", nethttp.NewHandler((dbWrapper.HandleCreateQuiz())))
 			r.Method(http.MethodGet, "/quiz/{uuid}", nethttp.NewHandler(dbWrapper.HandleGetQuiz()))
 			r.Method(http.MethodPost, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.HandleUpdateQuiz())))

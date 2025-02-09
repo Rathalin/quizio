@@ -8,7 +8,8 @@
         "withTitle": "Edit \"{title}\"",
         "withoutTitle": "Edit"
       }
-    }
+    },
+    "myQuizzes": "My quizzes"
   },
   "create": {
     "meta": {

@@ -7,5 +7,5 @@ export default withAuth({
 });
 
 export const config = {
-  matcher: ['/users/me', '/users/me/change-password', '/quiz/create', '/quiz/edit/:path'],
+  matcher: ['/users/me', '/users/me/change-password', '/my-quizzes', '/quiz/create', '/quiz/edit/:path'],
 };

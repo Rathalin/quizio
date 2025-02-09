@@ -22,6 +22,8 @@ export type UpdateUserProfileImageRequest = ApiSchemas['HandlersUpdateUserProfil
 // Operations
 export type GetQuizzesRequestQuery =
   operations['backend/handlers.(*DBWrapper).HandleGetQuizzes']['parameters']['query'];
+export type GetMyQuizzesRequestQuery =
+  operations['backend/handlers.(*DBWrapper).HandleGetMyQuizzes']['parameters']['query'];
 export type GetAlertsRequestQuery = operations['backend/handlers.(*DBWrapper).HandleGetAlerts']['parameters']['query'];
 
 type WithResponse<T> = T & { response: Response };

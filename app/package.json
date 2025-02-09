@@ -23,6 +23,7 @@
     "@mui/material-nextjs": "^6.4.3",
     "@tanstack/react-query": "^5.66.0",
     "@tanstack/react-query-devtools": "^5.66.0",
+    "@tanstack/react-table": "^8.20.6",
     "@vercel/analytics": "^1.4.1",
     "@vercel/speed-insights": "^1.1.0",
     "eslint": "^9.20.0",

@@ -12,15 +12,17 @@ import (
 	"github.com/swaggest/usecase"
 )
 
-func (dbw *DBWrapper) HandleGetQuizzes() usecase.Interactor {
-	type getQuizzesRequest struct {
+func (dbw *DBWrapper) HandleGetMyQuizzes() usecase.Interactor {
+
+	type getMyQuizzesRequest struct {
 		Page          int    `query:"page" required:"true" example:"0"`
 		PageSize      int    `query:"pageSize" required:"true" example:"5"`
 		SortOption    string `query:"sortOption" required:"true" enum:"createdAt,playCount" example:"createdAt"`
 		SortDirection string `query:"sortDirection" required:"true" enum:"asc,desc" example:"desc"`
+		// TODO Add published/unpublished filter
 	}
 
-	type getQuizzesResponseQuiz struct {
+	type getMyQuizzesResponseQuiz struct {
 		UUID          string    `json:"uuid" required:"true"`
 		CreatedAt     time.Time `json:"createdAt" required:"true"`
 		UpdatedAt     time.Time `json:"updatedAt" required:"true"`
@@ -36,27 +38,29 @@ func (dbw *DBWrapper) HandleGetQuizzes() usecase.Interactor {
 		} `json:"user" required:"true"`
 	}
 
-	type getQuizzesResponse struct {
-		Quizzes []getQuizzesResponseQuiz `json:"quizzes" required:"true" nullable:"false"`
-		Meta    models.Meta              `json:"meta" required:"true" nullable:"false"`
+	type getMyQuizzesResponse struct {
+		Quizzes []getMyQuizzesResponseQuiz `json:"quizzes" required:"true" nullable:"false"`
+		Meta    models.Meta                `json:"meta" required:"true" nullable:"false"`
 	}
 
-	return usecase.NewInteractor(func(ctx context.Context, input getQuizzesRequest, output *getQuizzesResponse) error {
-		totalQuizCount := 0
-		err := dbw.DB.QueryRow(`
-			SELECT COUNT(*)
-			FROM quiz
-		`).Scan(&totalQuizCount)
+	return usecase.NewInteractor(func(ctx context.Context, input getMyQuizzesRequest, output *getMyQuizzesResponse) error {
+		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
 			return logAndReturnError(err)
 		}
-		sortOption := "q.created_at"
-		if input.SortOption == "playCount" {
-			sortOption = "play_count"
+
+		totalQuizCount := 0
+		err = dbw.DB.QueryRow(`
+			SELECT COUNT(*)
+			FROM quiz
+			WHERE user_account_id = $1
+		`, userId).Scan(&totalQuizCount)
+		if err != nil {
+			return logAndReturnError(err)
 		}
-		sortDirection := "ASC"
-		if strings.ToUpper(input.SortDirection) == "DESC" {
-			sortDirection = "DESC"
+		sort := "q.created_at"
+		if input.SortOption == "playCount" {
+			sort = "play_count"
 		}
 
 		rows, err := dbw.DB.Query(fmt.Sprintf(`
@@ -79,6 +83,7 @@ func (dbw *DBWrapper) HandleGetQuizzes() usecase.Interactor {
 				ON qn.quiz_id = q.id
 			LEFT JOIN play_protocol_entry pe
 				ON pe.quiz_id = q.id
+			WHERE q.user_account_id = $1
 			GROUP BY 
 				q.uuid, 
 				q.created_at, 
@@ -90,26 +95,26 @@ func (dbw *DBWrapper) HandleGetQuizzes() usecase.Interactor {
 				u.uuid, 
 				u.username
 			ORDER BY %s %s
-			LIMIT $1
-			OFFSET $2
-		`, sortOption, sortDirection), input.PageSize, input.Page*input.PageSize)
+			LIMIT $2
+			OFFSET $3
+		`, sort, strings.ToUpper(input.SortDirection)), userId, input.PageSize, input.Page*input.PageSize)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 		defer rows.Close()
 
-		response := getQuizzesResponse{
+		response := getMyQuizzesResponse{
 			Meta: models.Meta{
 				Page:       input.Page,
 				PageSize:   input.PageSize,
 				TotalItems: totalQuizCount,
 				TotalPages: int(math.Ceil(float64(totalQuizCount) / float64(input.PageSize))),
 			},
-			Quizzes: make([]getQuizzesResponseQuiz, 0),
+			Quizzes: make([]getMyQuizzesResponseQuiz, 0),
 		}
-		var quizzes []getQuizzesResponseQuiz = make([]getQuizzesResponseQuiz, 0)
+		var quizzes []getMyQuizzesResponseQuiz = make([]getMyQuizzesResponseQuiz, 0)
 		for rows.Next() {
-			var q getQuizzesResponseQuiz
+			var q getMyQuizzesResponseQuiz
 			if err := rows.Scan(
 				&q.UUID,
 				&q.CreatedAt,

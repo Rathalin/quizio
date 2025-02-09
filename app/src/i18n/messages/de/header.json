@@ -1,15 +1,16 @@
 {
-  "signInButton": {
-    "label": "Anmelden"
-  },
   "accountMenu": {
     "menu": {
       "item": {
-        "createQuiz": "Neuen Quiz erstellen",
-        "profile": "Profil",
         "changePassword": "Password ändern",
+        "createQuiz": "Neuen Quiz erstellen",
+        "myQuizzes": "Meine Quiz",
+        "profile": "Profil",
         "signOut": "Abmelden"
       }
     }
+  },
+  "signInButton": {
+    "label": "Anmelden"
   }
 }
