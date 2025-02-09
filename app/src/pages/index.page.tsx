@@ -16,11 +16,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const defaultQueryParams: GetQuizzesRequestQuery = {
     page: 0,
     pageSize: 12,
-    sort: 'createdAt',
+    sortOption: 'createdAt',
     sortDirection: 'desc',
   };
   const prefetchPromise = queryClient.prefetchInfiniteQuery({
-    queryKey: ['getQuizzesInfinite', defaultQueryParams.sort, defaultQueryParams.sortDirection],
+    queryKey: ['getQuizzesInfinite', defaultQueryParams.sortOption, defaultQueryParams.sortDirection],
     queryFn: async () => throwOnError(() => fetchQuizzes(defaultQueryParams)),
     initialPageParam: 0,
   });

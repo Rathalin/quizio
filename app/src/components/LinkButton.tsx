@@ -15,7 +15,7 @@ export type LinkButtonProps = {
 export default function LinkButton({
   hrefObserver,
   navigateOnClick = false,
-  iconSide = 'right',
+  iconSide = 'left',
   reason,
   children,
   sx,

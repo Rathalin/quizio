@@ -14,7 +14,7 @@ export default function QuizOverviewPlaceholder() {
       </CardMedia>
       <CardContent>
         <Stack alignItems="start">
-          <PlaceholderTypography variant="h3" sx={{ marginTop: 1 }} text="Et consectetur irure." />
+          <PlaceholderTypography variant="h3" sx={{ marginTop: 1, marginBottom: 3 }} text="Et consectetur irure." />
           <PlaceholderTypography text="Adipisicing amet dolor ullamco Adipisicing amet dolor ullamco." />
           <PlaceholderTypography text="Et consectetur irure." />
         </Stack>

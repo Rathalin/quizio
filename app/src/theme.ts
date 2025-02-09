@@ -83,32 +83,21 @@ export const theme = responsiveFontSizes(
       fontFamily: ['Figtree', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'].join(','),
       h1: {
         fontSize: '2.5rem',
-        marginTop: '1rem',
-        marginBottom: '2rem',
       },
       h2: {
         fontSize: '2rem',
-        marginTop: '0.8rem',
-        marginBottom: '2rem',
       },
       h3: {
         fontSize: '1.75rem',
-        marginTop: '0.6rem',
-        marginBottom: '1.5rem',
       },
       h4: {
         fontSize: '1.5rem',
-        marginTop: '0.4rem',
-        marginBottom: '1rem',
       },
       h5: {
         fontSize: '1.25rem',
-        marginTop: '0.2rem',
-        marginBottom: '0.75rem',
       },
       h6: {
         fontSize: '1rem',
-        marginBottom: '0.5rem',
       },
       button: {
         fontWeight: 600,

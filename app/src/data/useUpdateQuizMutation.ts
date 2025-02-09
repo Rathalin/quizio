@@ -1,4 +1,4 @@
-import { client, throwOnError, UpdateQuizRequestData } from '@/api-client';
+import { apiClient, throwOnError, UpdateQuizRequestData } from '@/api-client';
 import { AuthorizationHeader, useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import { useMutation } from '@tanstack/react-query';
 
@@ -11,7 +11,7 @@ export function useUpdateQuizMutation(uuid: string) {
 }
 
 async function updateQuiz(uuid: string, data: UpdateQuizRequestData, authHeader: AuthorizationHeader) {
-  return client.POST('/a/quiz/{uuid}', {
+  return apiClient.POST('/a/quiz/{uuid}', {
     params: {
       path: {
         uuid,

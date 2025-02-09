@@ -121,7 +121,7 @@ export default function QuizCreatePage() {
 
       showSuccessToast(t('form.status.create.success'));
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
-      await router.push('/');
+      await router.push('/my-quizzes');
       resetQuizLocalStorage();
       setOverviewFormData(defaultOverviewFormData);
       setQuestionsFormData(defaultQuestionsFormData);
@@ -151,11 +151,14 @@ export default function QuizCreatePage() {
       </Head>
       <Box>
         <QuizioBreadcrumbs>
+          <Link href="/my-quizzes" aria-current="page">
+            {t('breadcrumbs.myQuizzes')}
+          </Link>
           <Link href="/quiz/create" aria-current="page">
             {t('breadcrumbs.create.current')}
           </Link>
         </QuizioBreadcrumbs>
-        <Typography variant="h3" component="h1">
+        <Typography variant="h3" component="h1" sx={{ marginTop: 2, marginBottom: 4 }}>
           {t.rich('heading.create', {
             gradient: (chunks) => <GradientText>{chunks}</GradientText>,
           })}

@@ -47,7 +47,7 @@ export default function MePage() {
         <Box sx={{ marginTop: 2 }}>
           <Card elevation={2} sx={{ paddingBottom: 2 }}>
             <CardContent sx={{ padding: 4 }}>
-              <Typography variant="h1" sx={{ marginBlock: 0 }}>
+              <Typography variant="h1">
                 <GradientText>{user.username}</GradientText>
               </Typography>
               {session?.user.uuid === user.uuid && (

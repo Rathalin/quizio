@@ -1,7 +1,7 @@
 import { AuthOptions } from 'next-auth';
 import NextAuth from 'next-auth/next';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { client } from '@/api-client';
+import { apiClient } from '@/api-client';
 import { jwtDecode } from 'jwt-decode';
 import { AuthorizationHeader } from '@/custom-hooks/useAuthHeader';
 
@@ -27,7 +27,7 @@ export const authOptions: AuthOptions = {
           return null;
         }
         const { username, password } = credentials;
-        const { data, error } = await client.POST('/signin', {
+        const { data, error } = await apiClient.POST('/signin', {
           body: {
             username,
             password,
@@ -63,7 +63,7 @@ export const authOptions: AuthOptions = {
         if (isExpired) {
           console.info(`Access token expired. Refreshing token...`);
           try {
-            const { data, error } = await client.POST('/refresh-token', {
+            const { data, error } = await apiClient.POST('/refresh-token', {
               body: { refreshToken: token.refreshToken as string },
               headers: {
                 Authorization: `Bearer ${token.accessToken}`,

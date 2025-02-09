@@ -109,6 +109,8 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
           <Typography
             variant="h1"
             sx={{
+              marginTop: 2,
+              marginBottom: 4,
               textAlign: {
                 xs: 'start',
                 md: 'center',

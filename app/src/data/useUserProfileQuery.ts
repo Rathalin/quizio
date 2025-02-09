@@ -1,4 +1,4 @@
-import { client, InferFetchError, InferFetchResult, throwOnError } from '@/api-client';
+import { apiClient, InferFetchError, InferFetchResult, throwOnError } from '@/api-client';
 import { useQuery } from '@tanstack/react-query';
 
 export function useUserProfileQuery(uuid: string) {
@@ -9,7 +9,7 @@ export function useUserProfileQuery(uuid: string) {
 }
 
 export async function fetchUserProfile(uuid: string) {
-  return client.GET('/user-profile/{uuid}', {
+  return apiClient.GET('/user-profile/{uuid}', {
     params: {
       path: {
         uuid,

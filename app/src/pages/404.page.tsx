@@ -41,7 +41,9 @@ export default function NotFoundPage() {
           <Typography color="secondary" variant="h3" component="p" sx={{ marginTop: 4, marginBottom: 0 }}>
             {t('error.404.eyebrow')}
           </Typography>
-          <Typography variant="h1">{t('error.404.title')}</Typography>
+          <Typography variant="h1" sx={{ marginTop: 2, marginBottom: 4 }}>
+            {t('error.404.title')}
+          </Typography>
           <Box sx={{ marginBottom: 4 }}>
             <Image
               src="/images/Cute-Cat.jpg"

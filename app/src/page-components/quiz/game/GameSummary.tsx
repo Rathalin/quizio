@@ -31,7 +31,7 @@ export default function GameSummary({ questions, answeredProgress }: GameSummary
   const { mode } = useColorMode();
   return (
     <>
-      <Typography variant="h1">
+      <Typography variant="h1" sx={{ marginTop: 2, marginBottom: 4 }}>
         <GradientText>Summary</GradientText>
       </Typography>
       <Typography>
@@ -43,7 +43,7 @@ export default function GameSummary({ questions, answeredProgress }: GameSummary
         {questions.map((question, qIndex) => (
           <Box key={question.id}>
             {qIndex > 0 && <Divider />}
-            <Typography variant="h5" component="h2" sx={{ marginTop: 2, marginBottom: 0 }}>
+            <Typography variant="h5" component="h2" sx={{ marginTop: 2 }}>
               {question.title}
             </Typography>
             <List dense>

@@ -12,7 +12,6 @@ import GradientDivider from '@/components/GradientDivider';
 import ScrollObserver from '@/components/ScrollObserver';
 import { useQuizzesInfiniteQuery } from '@/data/useQuizzesQuery';
 import { GetQuizzesRequestQuery } from '@/api-client';
-import { useSession } from 'next-auth/react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
@@ -20,7 +19,6 @@ import { useTranslations } from 'next-intl';
 
 export default function QuizzesOverview() {
   const t = useTranslations('dashboard');
-  const { data: session } = useSession();
   const [searchText, setSearchText] = useState('');
   const [sort, setSort] = useStorage(storageKeys.sort, defaultSort);
 
@@ -29,7 +27,7 @@ export default function QuizzesOverview() {
   const quizzesQueryParams = useMemo<Omit<GetQuizzesRequestQuery, 'page'>>(
     () => ({
       pageSize: 12,
-      sort: sort.option,
+      sortOption: sort.option,
       sortDirection: sort.mode,
     }),
     [sort.mode, sort.option],
@@ -87,7 +85,6 @@ export default function QuizzesOverview() {
                     questionCount={questionCount}
                     userUuid={user.uuid}
                     username={user.username}
-                    isMyQuiz={user.uuid === session?.user.uuid}
                     published
                   />
                 ),

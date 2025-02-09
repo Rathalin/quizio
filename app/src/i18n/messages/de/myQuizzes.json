@@ -1,0 +1,98 @@
+{
+  "breadcrumbs": {
+    "current": "Meine Quiz"
+  },
+  "create": {
+    "label": "Neues Quiz"
+  },
+  "heading": "Meine Quiz <gradient>verwalten</gradient>",
+  "meta": {
+    "title": "Meine Quiz"
+  },
+  "table": {
+    "column": {
+      "action": {
+        "copyLink": {
+          "toast": "Link zu Quiz kopiert.",
+          "tooltip": "Link kopieren"
+        },
+        "delete": {
+          "dialog": {
+            "action": {
+              "cancel": {
+                "label": "Nein, abbrechen"
+              },
+              "confirm": {
+                "label": "Ja, löschen"
+              }
+            },
+            "title": "Möchtest du das Quiz \"{title}\" permanent löschen?"
+          },
+          "error": "Quiz konnte nicht gelöscht werden!",
+          "success": "Quiz gelöscht.",
+          "tooltip": "Löschen"
+        },
+        "edit": {
+          "tooltip": "Bearbeiten"
+        },
+        "header": "Aktionen",
+        "play": {
+          "tooltip": "Spielen"
+        }
+      },
+      "createdAt": {
+        "cell": {
+          "label": "Erstellt"
+        },
+        "header": "Erstellt am"
+      },
+      "description": {
+        "header": "Beschreibung"
+      },
+      "imageUrl": {
+        "header": "Bild"
+      },
+      "isPublished": {
+        "header": "Sichtbarkeit",
+        "option": {
+          "isPublished": "Öffentlich",
+          "notPublished": "Privat"
+        },
+        "popover": {
+          "footer": "Private Quiz können trotzdem per Link gespielt werden.",
+          "heading": "Sichtbarkeit ändern",
+          "save": {
+            "label": "Speichern"
+          }
+        },
+        "publish": {
+          "error": "Quiz konnte nicht auf \"Öffentlich\" geändert werden!",
+          "success": "Quiz auf \"Öffentlich\" geändert."
+        },
+        "unpublish": {
+          "error": "Quiz konnte nicht auf \"Privat\" geändert werden!",
+          "success": "Quiz auf \"Privat\" geändert."
+        }
+      },
+      "playCount": {
+        "header": "Gespielt",
+        "label": "<span>{count}</span><spanSecondary> mal gespielt</spanSecondary>"
+      },
+      "quiz": {
+        "header": "Quiz",
+        "image": {
+          "alt": "Quiz-Bild"
+        }
+      },
+      "title": {
+        "header": "Titel"
+      },
+      "updatedAt": {
+        "cell": {
+          "label": "Bearbeitet"
+        },
+        "header": "Bearbeitet am"
+      }
+    }
+  }
+}

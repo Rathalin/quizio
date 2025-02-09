@@ -8,13 +8,11 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { darken, lighten, useColorScheme, useTheme } from '@mui/material/styles';
 import Image from 'next/image';
-import EditIcon from '@mui/icons-material/Edit';
 import ImageIcon from '@mui/icons-material/Image';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ShareIcon from '@mui/icons-material/Share';
 import LinkButton from './LinkButton';
 import { useMemo } from 'react';
-import LinkIconButton from './LinkIconButton';
 import Link from 'next/link';
 import { usePageTransition } from '@/persistence/page-transition.store';
 import LoadingCircle from './LoadingCircle';
@@ -34,7 +32,6 @@ type QuizOverviewCardProps = {
   playCount: number;
   published: boolean;
   imageUrl: string | null;
-  isMyQuiz: boolean;
 };
 
 export default function QuizOverviewCard({
@@ -47,7 +44,6 @@ export default function QuizOverviewCard({
   questionCount,
   playCount,
   imageUrl,
-  isMyQuiz,
 }: QuizOverviewCardProps) {
   const t = useTranslations('dashboard.quizCard');
   const theme = useTheme();
@@ -119,6 +115,7 @@ export default function QuizOverviewCard({
                 variant="h3"
                 component="h2"
                 sx={{
+                  marginTop: 1,
                   marginBottom: {
                     xs: 2,
                     md: 3,
@@ -142,15 +139,6 @@ export default function QuizOverviewCard({
                       <ShareIcon color="secondary" />
                     </IconButton>
                   </Tooltip>
-                  {isMyQuiz && (
-                    <Tooltip title={t('editTooltip')} arrow>
-                      <Box>
-                        <LinkIconButton hrefObserver={`/quiz/edit/${uuid}`} navigateOnClick>
-                          <EditIcon color="secondary" />
-                        </LinkIconButton>
-                      </Box>
-                    </Tooltip>
-                  )}
                 </Stack>
               </Typography>
             </Box>

@@ -8,7 +8,8 @@
         "withTitle": "\"{title}\" bearbeiten",
         "withoutTitle": "Bearbeiten"
       }
-    }
+    },
+    "myQuizzes": "Meine Quiz"
   },
   "create": {
     "meta": {
@@ -21,20 +22,6 @@
     }
   },
   "form": {
-    "delete": {
-      "dialog": {
-        "action": {
-          "cancel": {
-            "label": "Nein, abbrechen"
-          },
-          "confirm": {
-            "label": "Ja, löschen"
-          }
-        },
-        "title": "Möchtest du das Quiz \"{title}\" permanent löschen?"
-      },
-      "label": "Quiz löschen"
-    },
     "description": {
       "label": "Beschreibung"
     },

@@ -31,7 +31,13 @@ export default function Explanation({ correct, text, imageUrl }: ExplanationProp
           <GameImage src={prefixWithBackendUrl(imageUrl)} alt="Explanation image" />
         </Stack>
       )}
-      <Typography variant="h3">
+      <Typography
+        variant="h3"
+        sx={{
+          marginTop: 1,
+          marginBottom: 3,
+        }}
+      >
         <Box
           component="span"
           sx={{

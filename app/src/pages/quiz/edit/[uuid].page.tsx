@@ -3,9 +3,7 @@ import GradientText from '@/components/GradientText';
 import OverviewForm from '@/page-components/quiz/create/OverviewForm';
 import SummaryForm from '@/page-components/quiz/create/SummaryForm';
 import { defaultOverviewFormData, defaultQuestionsFormData } from '@/page-components/quiz/quiz-form-data';
-import DeleteQuizDialog from '@/page-components/quiz/edit/DeleteQuizDialog';
 import OverviewFormPlaceholder from '@/page-components/quiz/edit/OverviewFormPlaceholder';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { QueryClient, dehydrate, useQueryClient } from '@tanstack/react-query';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/router';
@@ -18,8 +16,6 @@ import { fetchQuiz, useQuizQuery } from '@/data/useQuizQuery';
 import { throwOnError, UpdateQuizRequest } from '@/api-client';
 import { useUpdateQuizMutation } from '@/data/useUpdateQuizMutation';
 import { useToastStore } from '@/persistence/taost.store';
-import { useDeleteQuizMutation } from '@/data/useDeleteQuizMutation';
-import LoadingCircle from '@/components/LoadingCircle';
 import { getImageName, prefixWithBackendUrl } from '@/utilities/urlUtils';
 import { useUploadFileMutation } from '@/data/useUploadFileMutation';
 import { useDeleteFileMutation } from '@/data/useDeleteFileMutation';
@@ -28,7 +24,6 @@ import { getBase64 } from '@/data/getBase64';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -85,7 +80,6 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
   const { data: quiz } = useQuizQuery(uuid);
   const [activeStep, setActiveStep] = useState(0);
   const { backLabel, nextLabel } = useQuizFormSteps(activeStep);
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [overviewFormData, setOverviewFormData] = useState<QuizOverviewForm>(defaultOverviewFormData);
   const [questionsFormData, setQuestionsFormData] = useState<QuizQuestionsForm>(defaultQuestionsFormData);
   const {
@@ -103,25 +97,14 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
     isPending: isUpdatePending,
     isSuccess: isUpdateSuccess,
   } = useUpdateQuizMutation(uuid);
-  const {
-    mutateAsync: deleteQuiz,
-    isPending: isDeletePending,
-    isSuccess: isDeleteSuccess,
-  } = useDeleteQuizMutation(uuid);
 
   const isPending = useMemo(
-    () =>
-      [isUploadFilePending, isDeleteFilePending, isUpdatePending, isDeletePending].some(
-        (isMutationPending) => isMutationPending,
-      ),
-    [isDeleteFilePending, isDeletePending, isUpdatePending, isUploadFilePending],
+    () => [isUploadFilePending, isDeleteFilePending, isUpdatePending].some((isMutationPending) => isMutationPending),
+    [isDeleteFilePending, isUpdatePending, isUploadFilePending],
   );
   const isSuccess = useMemo(
-    () =>
-      [isUploadFileSuccess, isDeleteFileSuccess, isUpdateSuccess, isDeleteSuccess].some(
-        (isMutationSuccess) => isMutationSuccess,
-      ),
-    [isDeleteFileSuccess, isDeleteSuccess, isUpdateSuccess, isUploadFileSuccess],
+    () => [isUploadFileSuccess, isDeleteFileSuccess, isUpdateSuccess].some((isMutationSuccess) => isMutationSuccess),
+    [isDeleteFileSuccess, isUpdateSuccess, isUploadFileSuccess],
   );
 
   useEffect(() => {
@@ -277,24 +260,11 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
       // Refetch quiz
       showSuccessToast(t('form.status.update.success'));
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
-      await router.push('/');
+      await router.push('/my-quizzes');
       queryClient.invalidateQueries({ queryKey: ['quiz', uuid] });
     } catch (error) {
       console.error('Update quiz error', error);
       showErrorToast(t('form.status.update.error'));
-    }
-  }
-
-  async function onDeleteDialogConfirm() {
-    try {
-      await deleteQuiz();
-
-      showSuccessToast('Quiz deleted.');
-      queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
-      setDialogOpen(false);
-      await router.push('/');
-    } catch (error) {
-      showErrorToast('Could not delete quiz!');
     }
   }
 
@@ -312,40 +282,28 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
         <title>{quizioTitle(t('edit.meta.title'))}</title>
       </Head>
       <Box>
-        {quiz != null && (
-          <DeleteQuizDialog
-            open={dialogOpen}
-            setOpen={setDialogOpen}
-            quizTitle={quiz.title}
-            onConfirm={onDeleteDialogConfirm}
-            loading={isDeletePending}
-          />
-        )}
         <QuizioBreadcrumbs>
+          <Link href={'/my-quizzes'}>{t('breadcrumbs.myQuizzes')}</Link>
           <Link href={`/quiz/edit/${uuid}`}>
             {quiz != null
               ? t('breadcrumbs.edit.current.withTitle', { title: quiz.title })
               : t('breadcrumbs.edit.current.withoutTitle')}
           </Link>
         </QuizioBreadcrumbs>
-        <Typography variant="h3" component="h1">
+        <Typography
+          variant="h3"
+          component="h1"
+          sx={{
+            marginTop: 2,
+            marginBottom: 3,
+          }}
+        >
           <Stack direction="row" alignItems="center" flexWrap="wrap" gap={2}>
             <Box>
               {t.rich('heading.update', {
                 gradient: (chunks) => <GradientText>{chunks}</GradientText>,
               })}
             </Box>
-            <Stack direction="row" gap={2} flexWrap="wrap" sx={{ marginLeft: 'auto' }}>
-              <Button
-                variant="contained"
-                color="error"
-                startIcon={isDeletePending ? <LoadingCircle /> : <DeleteIcon />}
-                onClick={() => setDialogOpen(true)}
-                disabled={isDeletePending || isDeleteSuccess}
-              >
-                {t('form.delete.label')}
-              </Button>
-            </Stack>
           </Stack>
         </Typography>
         <Grid container spacing={4}>

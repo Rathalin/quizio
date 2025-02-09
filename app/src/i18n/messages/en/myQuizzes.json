@@ -1,0 +1,98 @@
+{
+  "breadcrumbs": {
+    "current": "My quizzes"
+  },
+  "create": {
+    "label": "Create quiz"
+  },
+  "heading": "<gradient>Manage</gradient> my quizzes",
+  "meta": {
+    "title": "My quizzes"
+  },
+  "table": {
+    "column": {
+      "action": {
+        "copyLink": {
+          "toast": "Link to quiz copied.",
+          "tooltip": "Copy link"
+        },
+        "delete": {
+          "dialog": {
+            "action": {
+              "cancel": {
+                "label": "No, cancel"
+              },
+              "confirm": {
+                "label": "Yes, delete"
+              }
+            },
+            "title": "Do you want to permanently delete the quiz \"{title}\"?"
+          },
+          "error": "Could not delete quiz!",
+          "success": "Quiz deleted.",
+          "tooltip": "Delete"
+        },
+        "edit": {
+          "tooltip": "Edit"
+        },
+        "header": "Actions",
+        "play": {
+          "tooltip": "Play"
+        }
+      },
+      "createdAt": {
+        "cell": {
+          "label": "Created"
+        },
+        "header": "Created at"
+      },
+      "description": {
+        "header": "Description"
+      },
+      "imageUrl": {
+        "header": "Image"
+      },
+      "isPublished": {
+        "header": "Visibility",
+        "option": {
+          "isPublished": "Public",
+          "notPublished": "Private"
+        },
+        "popover": {
+          "footer": "Private quizzes can still be played per link.",
+          "heading": "Change visibility",
+          "save": {
+            "label": "Save"
+          }
+        },
+        "publish": {
+          "error": "Could not publish quiz!",
+          "success": "Changed quiz to \"Public\"."
+        },
+        "unpublish": {
+          "error": "Could not unpublish quiz!",
+          "success": "Changed quiz to \"Private\"."
+        }
+      },
+      "playCount": {
+        "header": "Played",
+        "label": "<span>{count}</span> <spanSecondary>times played</spanSecondary>"
+      },
+      "quiz": {
+        "header": "Quiz",
+        "image": {
+          "alt": "Quiz image"
+        }
+      },
+      "title": {
+        "header": "Title"
+      },
+      "updatedAt": {
+        "cell": {
+          "label": "Edited"
+        },
+        "header": "Edited at"
+      }
+    }
+  }
+}

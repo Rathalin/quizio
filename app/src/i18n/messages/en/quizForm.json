@@ -8,7 +8,8 @@
         "withTitle": "Edit \"{title}\"",
         "withoutTitle": "Edit"
       }
-    }
+    },
+    "myQuizzes": "My quizzes"
   },
   "create": {
     "meta": {
@@ -21,20 +22,6 @@
     }
   },
   "form": {
-    "delete": {
-      "dialog": {
-        "action": {
-          "cancel": {
-            "label": "No, cancel"
-          },
-          "confirm": {
-            "label": "Yes, delete"
-          }
-        },
-        "title": "Do you want to permanently delete the quiz \"{title}\"?"
-      },
-      "label": "Delete this quiz"
-    },
     "description": {
       "label": "Description"
     },

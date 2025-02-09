@@ -29,7 +29,7 @@ export default function RegisterPage() {
 
   return (
     <Box>
-      <Typography variant="h1">
+      <Typography variant="h1" sx={{ marginTop: 2, marginBottom: 4 }}>
         <span>Create your </span>
         <GradientText>account</GradientText>
         <span>.</span>

@@ -3,7 +3,6 @@ import { useUserAccountQuery } from '@/data/useUserAccountQuery';
 import { raise } from '@/utilities/errorHandling';
 import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import Avatar from '@mui/material/Avatar';
@@ -18,6 +17,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState, type MouseEvent } from 'react';
+import ViewAgendaIcon from '@mui/icons-material/ViewAgenda';
 
 export default function AccountMenu() {
   const t = useTranslations('header.accountMenu');
@@ -105,12 +105,12 @@ export default function AccountMenu() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <Link href="/quiz/create" className="no-underline">
-          <MenuItem>
+        <Link href="/my-quizzes" className="no-underline">
+          <MenuItem onClick={handleClose}>
             <ListItemIcon>
-              <AddCircleIcon />
+              <ViewAgendaIcon />
             </ListItemIcon>
-            {t('menu.item.createQuiz')}
+            {t('menu.item.myQuizzes')}
           </MenuItem>
         </Link>
         <Divider />

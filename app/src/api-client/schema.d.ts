@@ -21,6 +21,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/a/my-quizzes': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** DB Wrapper Handle Get My Quizzes */
+    get: operations['backend/handlers.(*DBWrapper).HandleGetMyQuizzes'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/a/my-user-profile': {
     parameters: {
       query?: never;
@@ -86,6 +103,23 @@ export interface paths {
     post: operations['backend/handlers.(*DBWrapper).HandleUpdateQuiz'];
     /** DB Wrapper Handle Delete Quiz */
     delete: operations['backend/handlers.(*DBWrapper).HandleDeleteQuiz'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/a/quiz/{uuid}/visibility': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper Handle Update Quiz Visibility */
+    post: operations['backend/handlers.(*DBWrapper).HandleUpdateQuizVisibility'];
+    delete?: never;
     options?: never;
     head?: never;
     patch?: never;
@@ -340,6 +374,22 @@ export interface components {
     HandlersGetAlertsResponse: {
       alerts: components['schemas']['ModelsAlert'][];
     };
+    HandlersGetMyQuizzesResponse: {
+      quizzes: components['schemas']['HandlersGetMyQuizzesResponseQuiz'][];
+    };
+    HandlersGetMyQuizzesResponseQuiz: {
+      /** Format: date-time */
+      createdAt: string;
+      description: string | null;
+      imageUrl: string | null;
+      isPublished: boolean;
+      playCount: number;
+      questionCount: number;
+      title: string;
+      /** Format: date-time */
+      updatedAt: string;
+      uuid: string;
+    };
     HandlersGetMyUserProfileResponse: {
       quizStats: {
         totalQuizzesCreated: number;
@@ -375,14 +425,9 @@ export interface components {
     };
     HandlersGetQuizzesResponse: {
       meta: components['schemas']['ModelsMeta'];
-      quizzes: components['schemas']['HandlersQuiz'][];
+      quizzes: components['schemas']['HandlersGetQuizzesResponseQuiz'][];
     };
-    HandlersPlayQuizResponse: {
-      imageUrl: string | null;
-      questions: components['schemas']['ModelsQuestion'][];
-      title: string;
-    };
-    HandlersQuiz: {
+    HandlersGetQuizzesResponseQuiz: {
       /** Format: date-time */
       createdAt: string;
       description: string | null;
@@ -398,6 +443,11 @@ export interface components {
         uuid: string;
       };
       uuid: string;
+    };
+    HandlersPlayQuizResponse: {
+      imageUrl: string | null;
+      questions: components['schemas']['ModelsQuestion'][];
+      title: string;
     };
     HandlersRefreshTokenRequest: {
       refreshToken: string;
@@ -446,6 +496,9 @@ export interface components {
       imageUrl: string | null;
       title: string;
       uuid: string | null;
+    };
+    HandlersUpdateQuizVisibilityRequest: {
+      isPublished: boolean;
     };
     HandlersUpdateUserProfileImageRequest: {
       profileImageUrl: string | null;
@@ -559,6 +612,38 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['HandlersChangePasswordResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).HandleGetMyQuizzes': {
+    parameters: {
+      query: {
+        sortOption: 'createdAt' | 'playCount';
+        sortDirection: 'asc' | 'desc';
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HandlersGetMyQuizzesResponse'];
         };
       };
       /** @description Unauthorized */
@@ -737,6 +822,39 @@ export interface operations {
       cookie?: never;
     };
     requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).HandleUpdateQuizVisibility': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        uuid: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['HandlersUpdateQuizVisibilityRequest'];
+      };
+    };
     responses: {
       /** @description No Content */
       204: {
@@ -982,7 +1100,7 @@ export interface operations {
       query: {
         page: number;
         pageSize: number;
-        sort: 'createdAt' | 'playCount';
+        sortOption: 'createdAt' | 'playCount';
         sortDirection: 'asc' | 'desc';
       };
       header?: never;

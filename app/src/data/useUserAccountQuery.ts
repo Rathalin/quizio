@@ -1,4 +1,4 @@
-import { client, throwOnError } from '@/api-client';
+import { apiClient, throwOnError } from '@/api-client';
 import { AuthorizationHeader, useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
@@ -21,7 +21,7 @@ export function useUserAccountQuery() {
 }
 
 async function getUserAccount(authHeader: AuthorizationHeader) {
-  return client.GET('/a/user-account', {
+  return apiClient.GET('/a/user-account', {
     headers: authHeader,
   });
 }

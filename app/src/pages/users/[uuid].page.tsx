@@ -70,7 +70,7 @@ export default function UserIdPage({ uuid }: InferGetServerSidePropsType<typeof 
               {isPending && <UserProfilePlaceholder />}
               {isSuccess && (
                 <>
-                  <Typography variant="h1" sx={{ marginBlock: 0 }}>
+                  <Typography variant="h1">
                     <GradientText>{data.user.username}</GradientText>
                   </Typography>
                   {session?.user.uuid === data.user.uuid && (
