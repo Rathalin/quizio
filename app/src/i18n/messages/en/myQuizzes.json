@@ -1,21 +1,46 @@
 {
-  "heading": "<gradient>My</gradient> quizzes",
+  "breadcrumbs": {
+    "current": "My quizzes"
+  },
+  "heading": "<gradient>Manage</gradient> my quizzes",
   "meta": {
     "title": "My quizzes"
   },
   "table": {
     "column": {
+      "createdAt": {
+        "cell": {
+          "label": "Created"
+        },
+        "header": "Created at"
+      },
       "description": {
         "header": "Description"
       },
       "imageUrl": {
         "header": "Image"
       },
+      "isPublished": {
+        "header": "Visibility",
+        "option": {
+          "isPublished": "Public",
+          "notPublished": "Private"
+        }
+      },
       "quiz": {
-        "header": "Quiz"
+        "header": "Quiz",
+        "image": {
+          "alt": "Quiz image"
+        }
       },
       "title": {
         "header": "Title"
+      },
+      "updatedAt": {
+        "cell": {
+          "label": "Edited"
+        },
+        "header": "Edited at"
       }
     }
   }

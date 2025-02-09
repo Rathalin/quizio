@@ -1,21 +1,46 @@
 {
-  "heading": "<gradient>Meine</gradient> Quiz",
+  "breadcrumbs": {
+    "current": "Meine Quiz"
+  },
+  "heading": "Meine Quiz <gradient>verwalten</gradient>",
   "meta": {
     "title": "Meine Quiz"
   },
   "table": {
     "column": {
+      "createdAt": {
+        "cell": {
+          "label": "Erstellt"
+        },
+        "header": "Erstellt am"
+      },
       "description": {
         "header": "Beschreibung"
       },
       "imageUrl": {
         "header": "Bild"
       },
+      "isPublished": {
+        "header": "Sichtbarkeit",
+        "option": {
+          "isPublished": "Öffentlich",
+          "notPublished": "Privat"
+        }
+      },
       "quiz": {
-        "header": "Quiz"
+        "header": "Quiz",
+        "image": {
+          "alt": "Quiz-Bild"
+        }
       },
       "title": {
         "header": "Titel"
+      },
+      "updatedAt": {
+        "cell": {
+          "label": "Bearbeitet"
+        },
+        "header": "Bearbeitet am"
       }
     }
   }

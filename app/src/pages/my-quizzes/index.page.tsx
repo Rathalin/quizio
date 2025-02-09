@@ -11,13 +11,10 @@ import { getServerSession } from 'next-auth';
 import { useTranslations } from 'next-intl';
 import Head from 'next/head';
 import { authOptions } from '../api/auth/[...nextauth].page';
-import QuizOverviewCard from '@/components/QuizOverviewCard';
-import QuizOverviewPlaceholder from '@/components/QuizOverviewPlaceholder';
-import ScrollObserver from '@/components/ScrollObserver';
-import { useSession } from 'next-auth/react';
 import { useMemo } from 'react';
-import MyQuizCard from './MyQuizCard';
 import { MyQuizzesTable } from './MyQuizzesTable';
+import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
+import Link from 'next/link';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const messagesPromise = getMessages(ctx.locale, ['myQuizzes']);
@@ -52,15 +49,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 export default function MyQuizzesPage() {
   const t = useTranslations('myQuizzes');
-  const { data: session } = useSession();
-  const placeholderCount = 6;
   const quizzesMyQueryParams: Omit<GetMyQuizzesRequestQuery, 'page'> = {
     pageSize: 12,
     sortOption: 'createdAt',
     sortDirection: 'desc',
   };
-  const { data, isSuccess, isPending, fetchNextPage, isFetchingNextPage, hasNextPage } =
-    useMyQuizzesInfiniteQuery(quizzesMyQueryParams);
+  const { data } = useMyQuizzesInfiniteQuery(quizzesMyQueryParams);
   const quizzes = useMemo(() => data?.pages.map((page) => page.quizzes).flat() ?? [], [data?.pages]);
 
   return (
@@ -69,7 +63,12 @@ export default function MyQuizzesPage() {
         <title>{quizioTitle(t('meta.title'))}</title>
       </Head>
       <Box>
-        <Typography variant="h1" component="h1">
+        <QuizioBreadcrumbs>
+          <Link href="/my-quizzes" aria-current="page">
+            {t('breadcrumbs.current')}
+          </Link>
+        </QuizioBreadcrumbs>
+        <Typography variant="h3" component="h1">
           {t.rich('heading', {
             gradient: (chunks) => <GradientText>{chunks}</GradientText>,
           })}
