@@ -2,5 +2,21 @@
   "heading": "<gradient>Meine</gradient> Quiz",
   "meta": {
     "title": "Meine Quiz"
+  },
+  "table": {
+    "column": {
+      "description": {
+        "header": "Beschreibung"
+      },
+      "imageUrl": {
+        "header": "Bild"
+      },
+      "quiz": {
+        "header": "Quiz"
+      },
+      "title": {
+        "header": "Titel"
+      }
+    }
   }
 }

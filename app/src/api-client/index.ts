@@ -18,6 +18,7 @@ export type SignInResponse = ApiSchemas['HandlersSignInResponse'];
 export type ChangePasswordReqest = ApiSchemas['HandlersChangePasswordRequest'];
 export type UpdateQuizRequest = ApiSchemas['HandlersUpdateQuizRequest'];
 export type UpdateUserProfileImageRequest = ApiSchemas['HandlersUpdateUserProfileImageRequest'];
+export type GetMyQuizzesResponseQuiz = ApiSchemas['HandlersGetMyQuizzesResponseQuiz'];
 
 // Operations
 export type GetQuizzesRequestQuery =

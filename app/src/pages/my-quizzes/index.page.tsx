@@ -17,6 +17,7 @@ import ScrollObserver from '@/components/ScrollObserver';
 import { useSession } from 'next-auth/react';
 import { useMemo } from 'react';
 import MyQuizCard from './MyQuizCard';
+import { MyQuizzesTable } from './MyQuizzesTable';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const messagesPromise = getMessages(ctx.locale, ['myQuizzes']);
@@ -73,6 +74,8 @@ export default function MyQuizzesPage() {
             gradient: (chunks) => <GradientText>{chunks}</GradientText>,
           })}
         </Typography>
+
+        <MyQuizzesTable quizzes={quizzes} />
       </Box>
     </>
   );
