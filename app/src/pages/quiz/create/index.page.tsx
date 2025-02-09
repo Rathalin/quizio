@@ -120,6 +120,7 @@ export default function QuizCreatePage() {
       await createQuiz(mutationData);
 
       showSuccessToast(t('form.status.create.success'));
+      queryClient.invalidateQueries({ queryKey: ['getMyQuizzes'] });
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
       await router.push('/my-quizzes');
       resetQuizLocalStorage();
