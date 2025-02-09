@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/Rathalin/quizio/backend/auth"
 
@@ -19,7 +20,7 @@ func generateJWT(userID int64) (string, error) {
 	// Create claims with user ID and expiry time
 	claims := map[string]interface{}{
 		"userId": userID,
-		"exp":    auth.AccessTokenTTL,
+		"exp":    time.Now().Add(auth.AccessTokenTTL).Unix(),
 		"type":   "access",
 	}
 
@@ -37,7 +38,7 @@ func generateRefreshToken(userID int64) (string, error) {
 	// Create claims with user ID and longer expiry time (e.g., 7 days)
 	claims := map[string]interface{}{
 		"userId": userID,
-		"exp":    auth.RefreshTokenTTL,
+		"exp":    time.Now().Add(auth.RefreshTokenTTL).Unix(),
 		"type":   "refresh", // To differentiate from access tokens
 	}
 
