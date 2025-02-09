@@ -68,14 +68,7 @@ export default function MyQuizzesPage() {
             {t('breadcrumbs.current')}
           </Link>
         </QuizioBreadcrumbs>
-        <Typography
-          variant="h3"
-          component="h1"
-          sx={{
-            marginTop: 1,
-            marginBottom: 3,
-          }}
-        >
+        <Typography variant="h3" component="h1" sx={{ marginBlock: 2 }}>
           {t.rich('heading', {
             gradient: (chunks) => <GradientText>{chunks}</GradientText>,
           })}

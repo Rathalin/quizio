@@ -15,10 +15,17 @@ import Image from 'next/image';
 import ImageIcon from '@mui/icons-material/Image';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { dateFormatter, dateTimeFormatter } from '@/utilities/intlFormats';
+import { dateTimeFormatter } from '@/utilities/intlFormats';
 import Button from '@mui/material/Button';
 import PublicIcon from '@mui/icons-material/Public';
 import PublicOffIcon from '@mui/icons-material/PublicOff';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import LinkButton from '@/components/LinkButton';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 
 type Props = {
   quizzes: GetMyQuizzesResponseQuiz[];
@@ -52,6 +59,7 @@ export function MyQuizzesTable({ quizzes }: Props) {
                   objectFit: 'cover',
                   width: imageSize.width,
                   height: imageSize.height,
+                  minWidth: imageSize.width,
                   borderRadius: '4px',
                 }}
                 priority
@@ -62,6 +70,7 @@ export function MyQuizzesTable({ quizzes }: Props) {
                 sx={{
                   width: imageSize.width,
                   height: imageSize.height,
+                  minWidth: imageSize.width,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -75,9 +84,30 @@ export function MyQuizzesTable({ quizzes }: Props) {
                 <ImageIcon fontSize="large" />
               </Box>
             )}
-            <Stack gap={1} sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              <Typography variant="body1">{title}</Typography>
-              <Typography variant="body2" color="textSecondary">
+            <Stack gap={1} sx={{ maxWidth: '30ch' }}>
+              <Typography
+                variant="body1"
+                color="textPrimary"
+                sx={{
+                  overflow: 'hidden',
+                  whiteSpace: 'pre',
+                  textOverflow: 'ellipsis',
+                }}
+              >
+                {title}
+              </Typography>
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                sx={{
+                  overflow: 'hidden',
+                  whiteSpace: 'pre-line',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitBoxOrient: 'vertical',
+                  WebkitLineClamp: 2,
+                }}
+              >
                 {description}
               </Typography>
             </Stack>
@@ -85,16 +115,51 @@ export function MyQuizzesTable({ quizzes }: Props) {
         );
       },
     }),
+    columnHelper.accessor('uuid', {
+      header: () => t('column.actions.header'),
+      cell: () => (
+        <Stack direction="row" sx={{ marginTop: -1.5 }}>
+          <Tooltip title={t('column.actions.edit.label')} enterDelay={500} enterNextDelay={500} arrow>
+            <Box>
+              <IconButton color="inherit">
+                <EditIcon fontSize="small" />
+              </IconButton>
+            </Box>
+          </Tooltip>
+          <Tooltip title={t('column.actions.delete.label')} enterDelay={500} enterNextDelay={500} arrow>
+            <Box>
+              <IconButton color="inherit">
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            </Box>
+          </Tooltip>
+          <Tooltip title={t('column.actions.copyLink.label')} enterDelay={500} enterNextDelay={500} arrow>
+            <Box>
+              <IconButton color="inherit">
+                <ContentCopyIcon fontSize="small" />
+              </IconButton>
+            </Box>
+          </Tooltip>
+          <Tooltip title={t('column.actions.play.label')} enterDelay={500} enterNextDelay={500} arrow>
+            <Box>
+              <IconButton color="inherit">
+                <PlayArrowIcon fontSize="small" />
+              </IconButton>
+            </Box>
+          </Tooltip>
+        </Stack>
+      ),
+    }),
     columnHelper.accessor('isPublished', {
       header: () => t('column.isPublished.header'),
       cell: (props) => (
         <Box sx={{ marginTop: -1 }}>
           {props.getValue() ? (
-            <Button startIcon={<PublicIcon />} color="inherit">
+            <Button startIcon={<PublicIcon />} size="small" color="inherit">
               {t('column.isPublished.option.isPublished')}
             </Button>
           ) : (
-            <Button startIcon={<PublicIcon />} color="inherit">
+            <Button startIcon={<PublicOffIcon />} size="small" color="inherit">
               {t('column.isPublished.option.notPublished')}
             </Button>
           )}
@@ -119,6 +184,24 @@ export function MyQuizzesTable({ quizzes }: Props) {
           <Typography variant="body2">{dateTimeFormatter.format(new Date(props.getValue()))}</Typography>
           <Typography variant="body2" color="textSecondary">
             {t('column.updatedAt.cell.label')}
+          </Typography>
+        </Stack>
+      ),
+    }),
+    columnHelper.accessor('playCount', {
+      header: () => t('column.playCount.header'),
+      cell: (props) => (
+        <Stack>
+          <Typography variant="body2" noWrap>
+            {t.rich('column.playCount.label', {
+              count: props.getValue(),
+              span: (chunks) => <Box component="span">{chunks}</Box>,
+              spanSecondary: (chunks) => (
+                <Typography component="span" color="textSecondary" variant="body2" noWrap>
+                  {chunks}
+                </Typography>
+              ),
+            })}
           </Typography>
         </Stack>
       ),
@@ -149,7 +232,12 @@ export function MyQuizzesTable({ quizzes }: Props) {
           </TableHead>
           <TableBody>
             {table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id} sx={{ verticalAlign: 'top' }}>
+              <TableRow
+                key={row.id}
+                sx={{
+                  verticalAlign: 'top',
+                }}
+              >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                 ))}

@@ -333,7 +333,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
           variant="h3"
           component="h1"
           sx={{
-            marginTop: 1,
+            marginTop: 2,
             marginBottom: 3,
           }}
         >

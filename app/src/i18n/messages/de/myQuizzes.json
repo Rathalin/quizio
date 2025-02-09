@@ -8,6 +8,21 @@
   },
   "table": {
     "column": {
+      "actions": {
+        "copyLink": {
+          "label": "Link kopieren"
+        },
+        "delete": {
+          "label": "Löschen"
+        },
+        "edit": {
+          "label": "Bearbeiten"
+        },
+        "header": "Aktionen",
+        "play": {
+          "label": "Spielen"
+        }
+      },
       "createdAt": {
         "cell": {
           "label": "Erstellt"
@@ -26,6 +41,10 @@
           "isPublished": "Öffentlich",
           "notPublished": "Privat"
         }
+      },
+      "playCount": {
+        "header": "Gespielt",
+        "label": "<span>{count}</span><spanSecondary> mal gespielt</spanSecondary>"
       },
       "quiz": {
         "header": "Quiz",
