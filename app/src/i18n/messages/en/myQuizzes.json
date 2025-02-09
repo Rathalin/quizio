@@ -57,6 +57,21 @@
         "option": {
           "isPublished": "Public",
           "notPublished": "Private"
+        },
+        "popover": {
+          "footer": "Private quizzes can still be played per link.",
+          "heading": "Change visibility",
+          "save": {
+            "label": "Save"
+          }
+        },
+        "publish": {
+          "error": "Could not publish quiz!",
+          "success": "Changed quiz to \"Public\"."
+        },
+        "unpublish": {
+          "error": "Could not unpublish quiz!",
+          "success": "Changed quiz to \"Private\"."
         }
       },
       "playCount": {

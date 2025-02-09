@@ -75,6 +75,7 @@ func main() {
 			r.Method(http.MethodPost, "/quiz/create", nethttp.NewHandler((dbWrapper.HandleCreateQuiz())))
 			r.Method(http.MethodGet, "/quiz/{uuid}", nethttp.NewHandler(dbWrapper.HandleGetQuiz()))
 			r.Method(http.MethodPost, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.HandleUpdateQuiz())))
+			r.Method(http.MethodPost, "/quiz/{uuid}/visibility", nethttp.NewHandler((dbWrapper.HandleUpdateQuizVisibility())))
 			r.Method(http.MethodDelete, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.HandleDeleteQuiz())))
 			r.Method(http.MethodPost, "/play-protocol-entry", nethttp.NewHandler((dbWrapper.HandleCreatePlayProtocolEntryWithUser())))
 			r.Method(http.MethodGet, "/user-account", nethttp.NewHandler(dbWrapper.HandleGetUserAccount()))

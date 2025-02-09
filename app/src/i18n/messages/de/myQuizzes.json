@@ -57,6 +57,21 @@
         "option": {
           "isPublished": "Öffentlich",
           "notPublished": "Privat"
+        },
+        "popover": {
+          "footer": "Private Quiz können trotzdem per Link gespielt werden.",
+          "heading": "Sichtbarkeit ändern",
+          "save": {
+            "label": "Speichern"
+          }
+        },
+        "publish": {
+          "error": "Quiz konnte nicht auf \"Öffentlich\" geändert werden!",
+          "success": "Quiz auf \"Öffentlich\" geändert."
+        },
+        "unpublish": {
+          "error": "Quiz konnte nicht auf \"Privat\" geändert werden!",
+          "success": "Quiz auf \"Privat\" geändert."
         }
       },
       "playCount": {

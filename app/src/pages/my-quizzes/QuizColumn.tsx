@@ -54,8 +54,8 @@ export function QuizColumn({ uuid, title, description, imageUrl, isHovered }: Pr
       await deleteQuiz();
 
       showSuccessToast(t('column.action.delete.success'));
-      queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
       queryClient.invalidateQueries({ queryKey: ['getMyQuizzes'] });
+      queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
       setDialogOpen(false);
       await router.push('/my-quizzes');
     } catch (error) {

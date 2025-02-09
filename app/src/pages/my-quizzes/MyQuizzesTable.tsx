@@ -12,11 +12,9 @@ import { useTranslations } from 'next-intl';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { dateTimeFormatter } from '@/utilities/intlFormats';
-import Button from '@mui/material/Button';
-import PublicIcon from '@mui/icons-material/Public';
-import PublicOffIcon from '@mui/icons-material/PublicOff';
 import { useState } from 'react';
 import { QuizColumn } from './QuizColumn';
+import { VisibilityColumn } from './VisibilityColumn';
 
 type Props = {
   quizzes: GetMyQuizzesResponseQuiz[];
@@ -50,15 +48,7 @@ export function MyQuizzesTable({ quizzes }: Props) {
       header: () => t('table.column.isPublished.header'),
       cell: (props) => (
         <Box sx={{ marginTop: -1 }}>
-          {props.getValue() ? (
-            <Button startIcon={<PublicIcon />} size="small" color="inherit">
-              {t('table.column.isPublished.option.isPublished')}
-            </Button>
-          ) : (
-            <Button startIcon={<PublicOffIcon />} size="small" color="inherit">
-              {t('table.column.isPublished.option.notPublished')}
-            </Button>
-          )}
+          <VisibilityColumn uuid={props.row.original.uuid} isPublished={props.getValue()} />
         </Box>
       ),
     }),

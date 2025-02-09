@@ -79,6 +79,7 @@ func (dbw *DBWrapper) HandleGetQuizzes() usecase.Interactor {
 				ON qn.quiz_id = q.id
 			LEFT JOIN play_protocol_entry pe
 				ON pe.quiz_id = q.id
+			WHERE q.is_published
 			GROUP BY 
 				q.uuid, 
 				q.created_at, 

@@ -108,6 +108,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/a/quiz/{uuid}/visibility': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper Handle Update Quiz Visibility */
+    post: operations['backend/handlers.(*DBWrapper).HandleUpdateQuizVisibility'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/a/signout': {
     parameters: {
       query?: never;
@@ -480,6 +497,9 @@ export interface components {
       title: string;
       uuid: string | null;
     };
+    HandlersUpdateQuizVisibilityRequest: {
+      isPublished: boolean;
+    };
     HandlersUpdateUserProfileImageRequest: {
       profileImageUrl: string | null;
     };
@@ -802,6 +822,39 @@ export interface operations {
       cookie?: never;
     };
     requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).HandleUpdateQuizVisibility': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        uuid: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['HandlersUpdateQuizVisibilityRequest'];
+      };
+    };
     responses: {
       /** @description No Content */
       204: {
