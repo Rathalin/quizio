@@ -23,9 +23,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import LinkButton from '@/components/LinkButton';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
+import Link from 'next/link';
+import { useState } from 'react';
 
 type Props = {
   quizzes: GetMyQuizzesResponseQuiz[];
@@ -35,20 +36,22 @@ export function MyQuizzesTable({ quizzes }: Props) {
   const t = useTranslations('myQuizzes.table');
   const theme = useTheme();
   const { mode } = useColorMode();
+  const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
 
   const columnHelper = createColumnHelper<GetMyQuizzesResponseQuiz>();
 
   const columns = [
-    columnHelper.accessor('title', {
+    columnHelper.accessor('uuid', {
       header: () => t('column.quiz.header'),
       cell: (props) => {
+        const uuid = props.getValue();
         const { imageUrl, title, description } = props.row.original;
         const imageSize = {
           width: 112.5,
           height: 75,
         };
         return (
-          <Stack direction="row" gap={2}>
+          <Stack direction="row" gap={2} sx={{ width: '100%' }}>
             {imageUrl != null ? (
               <Image
                 src={prefixWithBackendUrl(imageUrl)}
@@ -96,59 +99,68 @@ export function MyQuizzesTable({ quizzes }: Props) {
               >
                 {title}
               </Typography>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                sx={{
-                  overflow: 'hidden',
-                  whiteSpace: 'pre-line',
-                  textOverflow: 'ellipsis',
-                  display: '-webkit-box',
-                  WebkitBoxOrient: 'vertical',
-                  WebkitLineClamp: 2,
-                }}
-              >
-                {description}
-              </Typography>
+              <Box sx={{ display: 'grid', flex: 1 }}>
+                <Stack
+                  direction="row"
+                  sx={{
+                    display: 'hidden',
+                    gridColumn: 1,
+                    gridRow: 1,
+                    visibility: hoveredRowId === uuid ? 'visible' : 'hidden',
+                    alignSelf: 'end',
+                  }}
+                >
+                  <Tooltip title={t('column.actions.edit.label')} enterDelay={500} enterNextDelay={500} arrow>
+                    <Link href={`/quiz/edit/${props.getValue()}`}>
+                      <IconButton color="inherit">
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+                    </Link>
+                  </Tooltip>
+                  <Tooltip title={t('column.actions.delete.label')} enterDelay={500} enterNextDelay={500} arrow>
+                    <Box>
+                      <IconButton color="inherit">
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </Box>
+                  </Tooltip>
+                  <Tooltip title={t('column.actions.copyLink.label')} enterDelay={500} enterNextDelay={500} arrow>
+                    <Box>
+                      <IconButton color="inherit">
+                        <ContentCopyIcon fontSize="small" />
+                      </IconButton>
+                    </Box>
+                  </Tooltip>
+                  <Tooltip title={t('column.actions.play.label')} enterDelay={500} enterNextDelay={500} arrow>
+                    <Box>
+                      <IconButton color="inherit">
+                        <PlayArrowIcon fontSize="small" />
+                      </IconButton>
+                    </Box>
+                  </Tooltip>
+                </Stack>
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  sx={{
+                    overflow: 'hidden',
+                    whiteSpace: 'pre-line',
+                    textOverflow: 'ellipsis',
+                    display: '-webkit-box',
+                    WebkitBoxOrient: 'vertical',
+                    WebkitLineClamp: 2,
+                    gridColumn: 1,
+                    gridRow: 1,
+                    visibility: hoveredRowId === uuid ? 'hidden' : 'visible',
+                  }}
+                >
+                  {description}
+                </Typography>
+              </Box>
             </Stack>
           </Stack>
         );
       },
-    }),
-    columnHelper.accessor('uuid', {
-      header: () => t('column.actions.header'),
-      cell: () => (
-        <Stack direction="row" sx={{ marginTop: -1.5 }}>
-          <Tooltip title={t('column.actions.edit.label')} enterDelay={500} enterNextDelay={500} arrow>
-            <Box>
-              <IconButton color="inherit">
-                <EditIcon fontSize="small" />
-              </IconButton>
-            </Box>
-          </Tooltip>
-          <Tooltip title={t('column.actions.delete.label')} enterDelay={500} enterNextDelay={500} arrow>
-            <Box>
-              <IconButton color="inherit">
-                <DeleteIcon fontSize="small" />
-              </IconButton>
-            </Box>
-          </Tooltip>
-          <Tooltip title={t('column.actions.copyLink.label')} enterDelay={500} enterNextDelay={500} arrow>
-            <Box>
-              <IconButton color="inherit">
-                <ContentCopyIcon fontSize="small" />
-              </IconButton>
-            </Box>
-          </Tooltip>
-          <Tooltip title={t('column.actions.play.label')} enterDelay={500} enterNextDelay={500} arrow>
-            <Box>
-              <IconButton color="inherit">
-                <PlayArrowIcon fontSize="small" />
-              </IconButton>
-            </Box>
-          </Tooltip>
-        </Stack>
-      ),
     }),
     columnHelper.accessor('isPublished', {
       header: () => t('column.isPublished.header'),
@@ -234,8 +246,13 @@ export function MyQuizzesTable({ quizzes }: Props) {
             {table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
+                onMouseEnter={() => setHoveredRowId(row.id)}
+                onMouseLeave={() => setHoveredRowId(null)}
                 sx={{
                   verticalAlign: 'top',
+                  ':hover': {
+                    backgroundColor: theme.palette.action.hover,
+                  },
                 }}
               >
                 {row.getVisibleCells().map((cell) => (

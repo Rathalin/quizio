@@ -1,6 +1,6 @@
 import { GetMyQuizzesRequestQuery, throwOnError } from '@/api-client';
 import GradientText from '@/components/GradientText';
-import { fetchMyQuizzes, useMyQuizzesInfiniteQuery } from '@/data/useMyQuizzesQuery';
+import { fetchMyQuizzes, useMyQuizzesQuery } from '@/data/useMyQuizzesQuery';
 import { getMessages } from '@/utilities/getMessages';
 import { quizioTitle } from '@/utilities/quizioTitle';
 import Box from '@mui/material/Box';
@@ -54,7 +54,7 @@ export default function MyQuizzesPage() {
     sortOption: 'createdAt',
     sortDirection: 'desc',
   };
-  const { data } = useMyQuizzesInfiniteQuery(quizzesMyQueryParams);
+  const { data } = useMyQuizzesQuery(quizzesMyQueryParams);
   const quizzes = useMemo(() => data?.pages.map((page) => page.quizzes).flat() ?? [], [data?.pages]);
 
   return (

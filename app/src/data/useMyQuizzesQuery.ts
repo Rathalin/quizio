@@ -4,7 +4,7 @@ import { seconds } from '@/utilities/time';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 
-export function useMyQuizzesInfiniteQuery(query: Omit<GetQuizzesRequestQuery, 'page'>) {
+export function useMyQuizzesQuery(query: Omit<GetQuizzesRequestQuery, 'page'>) {
   const { data: session } = useSession();
   const authHeader = useAuthHeader();
 

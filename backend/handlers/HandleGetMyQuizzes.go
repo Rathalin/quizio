@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"math"
 	"strings"
 	"time"
 
@@ -15,11 +14,8 @@ import (
 func (dbw *DBWrapper) HandleGetMyQuizzes() usecase.Interactor {
 
 	type getMyQuizzesRequest struct {
-		Page          int    `query:"page" required:"true" example:"0"`
-		PageSize      int    `query:"pageSize" required:"true" example:"5"`
 		SortOption    string `query:"sortOption" required:"true" enum:"createdAt,playCount" example:"createdAt"`
 		SortDirection string `query:"sortDirection" required:"true" enum:"asc,desc" example:"desc"`
-		// TODO Add published/unpublished filter
 	}
 
 	type getMyQuizzesResponseQuiz struct {
@@ -32,10 +28,6 @@ func (dbw *DBWrapper) HandleGetMyQuizzes() usecase.Interactor {
 		ImageUrl      *string   `json:"imageUrl" required:"true" nullable:"true"`
 		QuestionCount int       `json:"questionCount" required:"true"`
 		PlayCount     int       `json:"playCount" required:"true"`
-		User          struct {
-			UUID     string `json:"uuid" required:"true"`
-			Username string `json:"username" required:"true"`
-		} `json:"user" required:"true"`
 	}
 
 	type getMyQuizzesResponse struct {
@@ -58,22 +50,25 @@ func (dbw *DBWrapper) HandleGetMyQuizzes() usecase.Interactor {
 		if err != nil {
 			return logAndReturnError(err)
 		}
-		sort := "q.created_at"
+
+		sortOption := "q.created_at"
 		if input.SortOption == "playCount" {
-			sort = "play_count"
+			sortOption = "play_count"
+		}
+		sortDirection := "ASC"
+		if strings.ToUpper(input.SortDirection) == "DESC" {
+			sortDirection = "DESC"
 		}
 
 		rows, err := dbw.DB.Query(fmt.Sprintf(`
-			SELECT 
-				q.uuid, 
-				q.created_at, 
-				q.updated_at, 
-				q.title, 
-				q.description_text, 
-				q.is_published, 
-				q.image_url, 
-				u.uuid, 
-				u.username, 
+			SELECT
+				q.uuid,
+				q.created_at,
+				q.updated_at,
+				q.title,
+				q.description_text,
+				q.is_published,
+				q.image_url,
 				COUNT(DISTINCT qn.id) AS question_count,
 				COUNT(DISTINCT pe.id) AS play_count
 			FROM quiz q
@@ -84,32 +79,24 @@ func (dbw *DBWrapper) HandleGetMyQuizzes() usecase.Interactor {
 			LEFT JOIN play_protocol_entry pe
 				ON pe.quiz_id = q.id
 			WHERE q.user_account_id = $1
-			GROUP BY 
-				q.uuid, 
-				q.created_at, 
-				q.updated_at, 
-				q.title, 
-				q.description_text, 
-				q.is_published, 
-				q.image_url, 
-				u.uuid, 
+			GROUP BY
+				q.uuid,
+				q.created_at,
+				q.updated_at,
+				q.title,
+				q.description_text,
+				q.is_published,
+				q.image_url,
+				u.uuid,
 				u.username
 			ORDER BY %s %s
-			LIMIT $2
-			OFFSET $3
-		`, sort, strings.ToUpper(input.SortDirection)), userId, input.PageSize, input.Page*input.PageSize)
+		`, sortOption, sortDirection), userId)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 		defer rows.Close()
 
 		response := getMyQuizzesResponse{
-			Meta: models.Meta{
-				Page:       input.Page,
-				PageSize:   input.PageSize,
-				TotalItems: totalQuizCount,
-				TotalPages: int(math.Ceil(float64(totalQuizCount) / float64(input.PageSize))),
-			},
 			Quizzes: make([]getMyQuizzesResponseQuiz, 0),
 		}
 		var quizzes []getMyQuizzesResponseQuiz = make([]getMyQuizzesResponseQuiz, 0)
@@ -123,8 +110,6 @@ func (dbw *DBWrapper) HandleGetMyQuizzes() usecase.Interactor {
 				&q.Description,
 				&q.IsPublished,
 				&q.ImageUrl,
-				&q.User.UUID,
-				&q.User.Username,
 				&q.QuestionCount,
 				&q.PlayCount,
 			); err != nil {
