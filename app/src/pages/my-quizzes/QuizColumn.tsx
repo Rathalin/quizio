@@ -17,7 +17,7 @@ import DeleteQuizDialog from './DeleteQuizDialog';
 import { darken, lighten } from '@mui/material/styles';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import ShareIcon from '@mui/icons-material/Share';
 import ImageIcon from '@mui/icons-material/Image';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { useTranslations } from 'next-intl';
@@ -37,7 +37,7 @@ export function QuizColumn({ uuid, title, description, imageUrl, isHovered }: Pr
   const router = useRouter();
   const { mode } = useColorMode();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { showSuccessToast, showErrorToast } = useToastStore();
+  const { showSuccessToast, showErrorToast, showInfoToast } = useToastStore();
   const {
     mutateAsync: deleteQuiz,
     isPending: isDeletePending,
@@ -155,17 +155,23 @@ export function QuizColumn({ uuid, title, description, imageUrl, isHovered }: Pr
               </Tooltip>
               <Tooltip title={t('column.action.copyLink.tooltip')} enterDelay={500} enterNextDelay={500} arrow>
                 <Box>
-                  <IconButton color="inherit">
-                    <ContentCopyIcon fontSize="small" />
+                  <IconButton
+                    color="inherit"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${window.location.origin}/play/${uuid}`);
+                      showInfoToast(t('column.action.copyLink.toast'));
+                    }}
+                  >
+                    <ShareIcon fontSize="small" />
                   </IconButton>
                 </Box>
               </Tooltip>
               <Tooltip title={t('column.action.play.tooltip')} enterDelay={500} enterNextDelay={500} arrow>
-                <Box>
+                <Link href={`/play/${uuid}`}>
                   <IconButton color="inherit">
                     <PlayArrowIcon fontSize="small" />
                   </IconButton>
-                </Box>
+                </Link>
               </Tooltip>
             </Stack>
             <Typography

@@ -10,6 +10,7 @@
     "column": {
       "action": {
         "copyLink": {
+          "toast": "Link to quiz copied.",
           "tooltip": "Copy link"
         },
         "delete": {
