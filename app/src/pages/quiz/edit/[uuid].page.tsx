@@ -329,7 +329,14 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
               : t('breadcrumbs.edit.current.withoutTitle')}
           </Link>
         </QuizioBreadcrumbs>
-        <Typography variant="h3" component="h1">
+        <Typography
+          variant="h3"
+          component="h1"
+          sx={{
+            marginTop: 1,
+            marginBottom: 3,
+          }}
+        >
           <Stack direction="row" alignItems="center" flexWrap="wrap" gap={2}>
             <Box>
               {t.rich('heading.update', {

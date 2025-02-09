@@ -31,10 +31,10 @@ export default function ImprintPage() {
         <QuizioBreadcrumbs>
           <Link href="/imprint">{t('imprint.breadcrumbs.current')}</Link>
         </QuizioBreadcrumbs>
-        <Typography variant="h1">
+        <Typography variant="h1" sx={{ marginTop: 2, marginBottom: 4 }}>
           <GradientText>{t('imprint.title')}</GradientText>
         </Typography>
-        <Typography variant="h5" component="p">
+        <Typography variant="h5" component="p" sx={{ marginBlock: 2 }}>
           {t('imprint.fullname')}
         </Typography>
         <Typography>{t('imprint.address')}</Typography>

@@ -6,7 +6,6 @@ export default function LogoText() {
     <Typography
       variant="h1"
       sx={{
-        marginBlock: 0,
         transition: 'transform 0.1s linear',
         fontWeight: 600,
         letterSpacing: '-1px',

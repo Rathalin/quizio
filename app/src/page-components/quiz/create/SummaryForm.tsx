@@ -48,7 +48,14 @@ export default function SummaryForm({
   return (
     <Card>
       <CardContent>
-        <Typography variant="h3" component="h2">
+        <Typography
+          variant="h3"
+          component="h2"
+          sx={{
+            marginTop: 1,
+            marginBottom: 3,
+          }}
+        >
           {title}
         </Typography>
         <Typography variant="body1">{description}</Typography>
@@ -61,7 +68,7 @@ export default function SummaryForm({
                 <Box>
                   <Stack direction="row" alignItems="center" gap={2}>
                     <IndexAvatar index={qIndex + 1} />
-                    <Typography variant="h5" component="h3" sx={{ marginBlock: 0 }}>
+                    <Typography variant="h5" component="h3">
                       {question.title}
                     </Typography>
                   </Stack>

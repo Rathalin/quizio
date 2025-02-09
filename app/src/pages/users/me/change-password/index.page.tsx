@@ -111,7 +111,13 @@ export default function ChangePasswordPage() {
       </QuizioBreadcrumbs>
       <Card sx={{ marginTop: 2, padding: 2, maxWidth: theme.breakpoints.values.sm }} elevation={2}>
         <CardContent>
-          <Typography variant="h3" component="h1" sx={{ marginTop: 0 }}>
+          <Typography
+            variant="h3"
+            component="h1"
+            sx={{
+              marginBottom: 3,
+            }}
+          >
             {t.rich('heading', {
               gradient: (chunks) => <GradientText>{chunks}</GradientText>,
             })}

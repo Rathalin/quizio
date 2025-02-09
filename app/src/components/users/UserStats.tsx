@@ -15,7 +15,14 @@ export default function UserStats({ createdAt, quizCount, quizViewsTotal }: User
 
   return (
     <>
-      <Typography variant="h3" component="h2" sx={{ marginBottom: 2 }}>
+      <Typography
+        variant="h3"
+        component="h2"
+        sx={{
+          marginTop: 1,
+          marginBottom: 2,
+        }}
+      >
         {t('heading')}
       </Typography>
       <Stack spacing={1} alignItems="start">
@@ -24,7 +31,7 @@ export default function UserStats({ createdAt, quizCount, quizViewsTotal }: User
             <Typography variant="overline" color="textSecondary">
               {t('joinedAt.label')}
             </Typography>
-            <Typography variant="h3" component="div" sx={{ marginBlock: 0 }}>
+            <Typography variant="h3" component="div">
               {dateFormatter.format(new Date(createdAt))}
             </Typography>
           </Stack>
@@ -33,7 +40,7 @@ export default function UserStats({ createdAt, quizCount, quizViewsTotal }: User
             <Typography variant="overline" color="textSecondary">
               {t('created.label')}
             </Typography>
-            <Typography variant="h1" component="div" sx={{ marginBlock: 0, lineHeight: 1 }}>
+            <Typography variant="h1" component="div" sx={{ lineHeight: 1 }}>
               {quizCount}
             </Typography>
           </Stack>
@@ -42,7 +49,7 @@ export default function UserStats({ createdAt, quizCount, quizViewsTotal }: User
             <Typography variant="overline" color="textSecondary">
               {t('totalPlayCount.label')}
             </Typography>
-            <Typography variant="h1" component="div" sx={{ marginBlock: 0, lineHeight: 1 }}>
+            <Typography variant="h1" component="div" sx={{ lineHeight: 1 }}>
               {quizViewsTotal}
             </Typography>
           </Stack>

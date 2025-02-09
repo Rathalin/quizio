@@ -119,14 +119,7 @@ export default function QuestionInput({
           <DragHandleOutlined sx={{ marginRight: 2, color: 'action.disabled' }} />
           <Stack gap={0} sx={{ flex: 1 }}>
             <Stack direction="row" alignItems="center" columnGap={3} rowGap={1} flexWrap="wrap" sx={{ flex: 1 }}>
-              <Typography
-                variant="h5"
-                sx={{
-                  marginBlock: 0,
-                }}
-              >
-                {t('title', { count: index + 1 })}
-              </Typography>
+              <Typography variant="h5">{t('title', { count: index + 1 })}</Typography>
               <Tooltip title="Some inputs require your attention." arrow>
                 <Stack
                   direction="row"

@@ -119,6 +119,7 @@ export default function QuizOverviewCard({
                 variant="h3"
                 component="h2"
                 sx={{
+                  marginTop: 1,
                   marginBottom: {
                     xs: 2,
                     md: 3,

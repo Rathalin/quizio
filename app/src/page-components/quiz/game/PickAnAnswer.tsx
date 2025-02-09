@@ -50,7 +50,7 @@ export default function PickAnAnswer({
             <Stack sx={{ height: '100%' }}>
               <Stack direction="row" alignItems="center" gap={2}>
                 <IndexAvatar index={index} />
-                <Typography variant="h4" component="h1" sx={{ margin: 0 }}>
+                <Typography variant="h4" component="h1">
                   {title}
                 </Typography>
               </Stack>
