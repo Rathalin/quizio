@@ -17,6 +17,7 @@ import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
 import Link from 'next/link';
 import AddIcon from '@mui/icons-material/Add';
 import LinkButton from '@/components/LinkButton';
+import { MyQuizzesTablePlaceholder } from './MyQuizzesTablePlaceholder';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const messagesPromise = getMessages(ctx.locale, ['myQuizzes']);
@@ -53,7 +54,7 @@ export default function MyQuizzesPage() {
     sortOption: 'createdAt',
     sortDirection: 'desc',
   };
-  const { data } = useMyQuizzesQuery(quizzesMyQueryParams);
+  const { data, isPending } = useMyQuizzesQuery(quizzesMyQueryParams);
   const quizzes = useMemo(() => data?.quizzes ?? [], [data?.quizzes]);
 
   return (
@@ -90,7 +91,7 @@ export default function MyQuizzesPage() {
           </LinkButton>
         </Typography>
 
-        <MyQuizzesTable quizzes={quizzes} />
+        {isPending ? <MyQuizzesTablePlaceholder /> : <MyQuizzesTable quizzes={quizzes} />}
       </Box>
     </>
   );
