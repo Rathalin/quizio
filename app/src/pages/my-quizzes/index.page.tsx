@@ -12,12 +12,14 @@ import { useTranslations } from 'next-intl';
 import Head from 'next/head';
 import { authOptions } from '../api/auth/[...nextauth].page';
 import { useMemo } from 'react';
-import { MyQuizzesTable } from './MyQuizzesTable';
+import { MyQuizzesTable, MyQuizzesTableSkeleton } from './MyQuizzesTable';
 import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
 import Link from 'next/link';
 import AddIcon from '@mui/icons-material/Add';
 import LinkButton from '@/components/LinkButton';
-import { MyQuizzesTableSkeleton } from './MyQuizzesTableSkeleton';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
+import { MyQuizzesMobileTable } from './MyQuizzesMobileTable';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const messagesPromise = getMessages(ctx.locale, ['myQuizzes']);
@@ -50,6 +52,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 export default function MyQuizzesPage() {
   const t = useTranslations('myQuizzes');
+  const theme = useTheme();
+  const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
   const quizzesMyQueryParams: GetMyQuizzesRequestQuery = {
     sortOption: 'createdAt',
     sortDirection: 'desc',
@@ -91,7 +95,13 @@ export default function MyQuizzesPage() {
           </LinkButton>
         </Typography>
 
-        {isPending ? <MyQuizzesTableSkeleton /> : <MyQuizzesTable quizzes={quizzes} />}
+        {isPending ? (
+          <MyQuizzesTableSkeleton />
+        ) : isMediumScreen ? (
+          <MyQuizzesMobileTable quizzes={quizzes} />
+        ) : (
+          <MyQuizzesTable quizzes={quizzes} />
+        )}
       </Box>
     </>
   );

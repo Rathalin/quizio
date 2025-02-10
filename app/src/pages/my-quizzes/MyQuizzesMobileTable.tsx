@@ -1,9 +1,28 @@
+import { GetMyQuizzesResponseQuiz } from '@/api-client';
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import Skeleton from '@mui/material/Skeleton';
-import Stack from '@mui/material/Stack';
+import { MyQuizzesMobileRow } from './MyQuizzesMobileRow';
 
-export function MyQuizzesTableSkeleton() {
+type Props = {
+  quizzes: GetMyQuizzesResponseQuiz[];
+};
+
+export function MyQuizzesMobileTable({ quizzes }: Props) {
+  return (
+    <>
+      <Stack gap={4}>
+        <Divider />
+        {quizzes.map((quiz) => (
+          <MyQuizzesMobileRow key={quiz.uuid} {...quiz} />
+        ))}
+      </Stack>
+    </>
+  );
+}
+
+export function MyQuizzesMobileTableSkeleton() {
   return (
     <Box sx={{ overflowX: 'auto', overflowY: 'hidden' }}>
       <Stack sx={{ minWidth: '700px' }}>

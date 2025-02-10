@@ -1,27 +1,22 @@
 import LoadingCircle from '@/components/LoadingCircle';
 import { useDeleteQuizMutation } from '@/data/useDeleteQuizMutation';
 import { useToastStore } from '@/persistence/taost.store';
-import { theme } from '@/theme';
-import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import Image from 'next/image';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import DeleteQuizDialog from './DeleteQuizDialog';
-import { darken, lighten } from '@mui/material/styles';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ShareIcon from '@mui/icons-material/Share';
-import ImageIcon from '@mui/icons-material/Image';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { useTranslations } from 'next-intl';
-import { useColorMode } from '@/page-components/theme.context';
+import { PreviewImage } from './PreviewImage';
 
 type Props = {
   uuid: string;
@@ -35,7 +30,6 @@ export function QuizColumn({ uuid, title, description, imageUrl, isHovered }: Pr
   const t = useTranslations('myQuizzes.table');
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { mode } = useColorMode();
   const [dialogOpen, setDialogOpen] = useState(false);
   const { showSuccessToast, showErrorToast, showInfoToast } = useToastStore();
   const {
@@ -43,11 +37,6 @@ export function QuizColumn({ uuid, title, description, imageUrl, isHovered }: Pr
     isPending: isDeletePending,
     isSuccess: isDeleteSuccess,
   } = useDeleteQuizMutation(uuid);
-
-  const imageSize = {
-    width: 112.5,
-    height: 75,
-  };
 
   async function onDeleteDialogConfirm() {
     try {
@@ -75,41 +64,7 @@ export function QuizColumn({ uuid, title, description, imageUrl, isHovered }: Pr
         loading={isDeletePending}
       />
       <Stack direction="row" gap={2} sx={{ width: '100%' }}>
-        {imageUrl != null ? (
-          <Image
-            src={prefixWithBackendUrl(imageUrl)}
-            alt={t('column.quiz.image.alt')}
-            width={imageSize.width}
-            height={imageSize.height}
-            style={{
-              objectFit: 'cover',
-              width: imageSize.width,
-              height: imageSize.height,
-              minWidth: imageSize.width,
-              borderRadius: '4px',
-            }}
-            priority
-            unoptimized
-          />
-        ) : (
-          <Box
-            sx={{
-              width: imageSize.width,
-              height: imageSize.height,
-              minWidth: imageSize.width,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: '4px',
-              backgroundColor:
-                mode === 'light'
-                  ? lighten(theme.palette.secondary.light, 0.7)
-                  : darken(theme.palette.secondary.light, 0.7),
-            }}
-          >
-            <ImageIcon fontSize="large" />
-          </Box>
-        )}
+        <PreviewImage url={imageUrl} width={112.5} />
         <Stack gap={1} sx={{ maxWidth: '30ch' }}>
           <Typography
             variant="body1"
