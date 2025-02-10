@@ -53,7 +53,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 export default function MyQuizzesPage() {
   const t = useTranslations('myQuizzes');
   const theme = useTheme();
-  const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const quizzesMyQueryParams: GetMyQuizzesRequestQuery = {
     sortOption: 'createdAt',
     sortDirection: 'desc',
@@ -97,7 +97,7 @@ export default function MyQuizzesPage() {
 
         {isPending ? (
           <MyQuizzesTableSkeleton />
-        ) : isMediumScreen ? (
+        ) : isSmallScreen ? (
           <MyQuizzesMobileTable quizzes={quizzes} />
         ) : (
           <MyQuizzesTable quizzes={quizzes} />

@@ -71,87 +71,106 @@ export function MyQuizzesMobileRow({
         loading={isDeletePending}
       />
       <Box key={uuid}>
-        <Stack>
-          <PreviewImage url={imageUrl} width={150} />
-          <Typography
-            variant="body1"
-            color="textPrimary"
-            sx={{
-              overflow: 'hidden',
-              whiteSpace: 'pre',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            {title}
-          </Typography>
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            sx={{
-              overflow: 'hidden',
-              whiteSpace: 'pre-line',
-              textOverflow: 'ellipsis',
-              display: '-webkit-box',
-              WebkitBoxOrient: 'vertical',
-              WebkitLineClamp: 2,
-            }}
-          >
-            {description}
-          </Typography>
+        <Stack columnGap={4} rowGap={2}>
+          <Box>
+            <PreviewImage url={imageUrl} width={150} />
+          </Box>
+          <Box sx={{ maxWidth: '30ch' }}>
+            <Typography
+              variant="h4"
+              component="p"
+              color="textPrimary"
+              sx={{
+                overflow: 'hidden',
+                whiteSpace: 'pre',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {title}
+            </Typography>
+            <Typography
+              color="textSecondary"
+              sx={{
+                overflow: 'hidden',
+                whiteSpace: 'pre-line',
+                textOverflow: 'ellipsis',
+                display: '-webkit-box',
+                WebkitBoxOrient: 'vertical',
+                WebkitLineClamp: 2,
+                marginTop: 1,
+              }}
+            >
+              {description}
+            </Typography>
+          </Box>
         </Stack>
-        <Stack direction="row" sx={{ marginTop: 2 }}>
+        <Stack direction="row" gap={1} flexWrap="wrap" sx={{ marginTop: 2 }}>
           <Tooltip title={t('column.action.edit.tooltip')} enterDelay={500} enterNextDelay={500} arrow>
-            <Box>
+            <Stack alignItems="center">
               <Link href={`/quiz/edit/${uuid}`}>
-                <IconButton color="inherit">
-                  <EditIcon fontSize="small" />
+                <IconButton color="inherit" size="large">
+                  <EditIcon />
                 </IconButton>
               </Link>
-            </Box>
+              <Typography color="textSecondary" variant="caption">
+                {t('column.action.edit.label')}
+              </Typography>
+            </Stack>
           </Tooltip>
           <Tooltip title={t('column.action.delete.tooltip')} enterDelay={500} enterNextDelay={500} arrow>
-            <Box>
+            <Stack alignItems="center">
               <IconButton
                 color="inherit"
+                size="large"
                 onClick={() => {
                   setDialogOpen(true);
                 }}
                 disabled={isDeletePending || isDeleteSuccess}
               >
-                {isDeletePending ? <LoadingCircle /> : <DeleteIcon fontSize="small" />}
+                {isDeletePending ? <LoadingCircle /> : <DeleteIcon />}
               </IconButton>
-            </Box>
+              <Typography color="textSecondary" variant="caption">
+                {t('column.action.delete.label')}
+              </Typography>
+            </Stack>
           </Tooltip>
           <Tooltip title={t('column.action.copyLink.tooltip')} enterDelay={500} enterNextDelay={500} arrow>
-            <Box>
+            <Stack alignItems="center">
               <IconButton
                 color="inherit"
+                size="large"
                 onClick={() => {
                   navigator.clipboard.writeText(`${window.location.origin}/play/${uuid}`);
                   showInfoToast(t('column.action.copyLink.toast'));
                 }}
               >
-                <ShareIcon fontSize="small" />
+                <ShareIcon />
               </IconButton>
-            </Box>
+              <Typography color="textSecondary" variant="caption">
+                {t('column.action.copyLink.label')}
+              </Typography>
+            </Stack>
           </Tooltip>
           <Tooltip title={t('column.action.play.tooltip')} enterDelay={500} enterNextDelay={500} arrow>
-            <Box>
+            <Stack alignItems="center">
               <Link href={`/play/${uuid}`}>
-                <IconButton color="inherit">
-                  <PlayArrowIcon fontSize="small" />
+                <IconButton color="inherit" size="large">
+                  <PlayArrowIcon />
                 </IconButton>
               </Link>
-            </Box>
+              <Typography color="textSecondary" variant="caption">
+                {t('column.action.play.label')}
+              </Typography>
+            </Stack>
           </Tooltip>
         </Stack>
         <Box sx={{ marginBlock: 2 }}>
           <Typography color="textSecondary" sx={{ marginBottom: 0.5 }}>
             {t('column.isPublished.header')}
           </Typography>
-          <VisibilityColumn uuid={uuid} isPublished={isPublished} />
+          <VisibilityColumn uuid={uuid} isPublished={isPublished} size="medium" />
         </Box>
-        <Stack direction="column" columnGap={6} rowGap={2} flexWrap="wrap">
+        <Stack direction="row" columnGap={6} rowGap={2} flexWrap="wrap">
           <Stack>
             <Typography variant="body2" color="textSecondary">
               {t('column.createdAt.header')}
@@ -164,23 +183,23 @@ export function MyQuizzesMobileRow({
             </Typography>
             <Typography variant="body2">{dateTimeFormatter.format(new Date(updatedAt))}</Typography>
           </Stack>
-          <Stack>
-            <Typography noWrap>
-              {t.rich('column.playCount.label', {
-                count: playCount,
-                span: (chunks) => (
-                  <Typography component="span" variant="body1">
-                    {chunks}
-                  </Typography>
-                ),
-                spanSecondary: (chunks) => (
-                  <Typography component="span" color="textSecondary" variant="body2" noWrap>
-                    {chunks}
-                  </Typography>
-                ),
-              })}
-            </Typography>
-          </Stack>
+        </Stack>
+        <Stack sx={{ marginTop: 3 }}>
+          <Typography noWrap>
+            {t.rich('column.playCount.label', {
+              count: playCount,
+              span: (chunks) => (
+                <Typography component="span" variant="body1">
+                  {chunks}
+                </Typography>
+              ),
+              spanSecondary: (chunks) => (
+                <Typography component="span" color="textSecondary" variant="body2" noWrap>
+                  {chunks}
+                </Typography>
+              ),
+            })}
+          </Typography>
         </Stack>
         <Divider sx={{ marginTop: 2 }} />
       </Box>

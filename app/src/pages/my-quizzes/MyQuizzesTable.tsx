@@ -50,7 +50,7 @@ export function MyQuizzesTable({ quizzes }: Props) {
       header: () => t('table.column.isPublished.header'),
       cell: (props) => (
         <Box sx={{ marginTop: -1 }}>
-          <VisibilityColumn uuid={props.row.original.uuid} isPublished={props.getValue()} />
+          <VisibilityColumn uuid={props.row.original.uuid} isPublished={props.getValue()} size="small" />
         </Box>
       ),
     }),

@@ -13,6 +13,7 @@
     "column": {
       "action": {
         "copyLink": {
+          "label": "Copy link",
           "toast": "Link to quiz copied.",
           "tooltip": "Copy link"
         },
@@ -29,14 +30,17 @@
             "title": "Do you want to permanently delete the quiz \"{title}\"?"
           },
           "error": "Could not delete quiz!",
+          "label": "Delete",
           "success": "Quiz deleted.",
           "tooltip": "Delete"
         },
         "edit": {
+          "label": "Edit",
           "tooltip": "Edit"
         },
         "header": "Actions",
         "play": {
+          "label": "Play",
           "tooltip": "Play"
         }
       },
