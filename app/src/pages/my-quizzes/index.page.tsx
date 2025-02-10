@@ -17,7 +17,7 @@ import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
 import Link from 'next/link';
 import AddIcon from '@mui/icons-material/Add';
 import LinkButton from '@/components/LinkButton';
-import { MyQuizzesTablePlaceholder } from './MyQuizzesTablePlaceholder';
+import { MyQuizzesTableSkeleton } from './MyQuizzesTableSkeleton';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const messagesPromise = getMessages(ctx.locale, ['myQuizzes']);
@@ -91,7 +91,7 @@ export default function MyQuizzesPage() {
           </LinkButton>
         </Typography>
 
-        {isPending ? <MyQuizzesTablePlaceholder /> : <MyQuizzesTable quizzes={quizzes} />}
+        {isPending ? <MyQuizzesTableSkeleton /> : <MyQuizzesTable quizzes={quizzes} />}
       </Box>
     </>
   );

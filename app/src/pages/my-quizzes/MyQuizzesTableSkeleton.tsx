@@ -3,7 +3,7 @@ import Divider from '@mui/material/Divider';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 
-export function MyQuizzesTablePlaceholder() {
+export function MyQuizzesTableSkeleton() {
   return (
     <Box sx={{ overflowX: 'auto', overflowY: 'hidden' }}>
       <Stack sx={{ minWidth: '700px' }}>
