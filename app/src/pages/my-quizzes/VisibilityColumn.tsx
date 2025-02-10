@@ -1,4 +1,4 @@
-import Button from '@mui/material/Button';
+import Button, { ButtonProps } from '@mui/material/Button';
 import { useTranslations } from 'next-intl';
 import PublicIcon from '@mui/icons-material/Public';
 import PublicOffIcon from '@mui/icons-material/PublicOff';
@@ -24,9 +24,10 @@ import { useQueryClient } from '@tanstack/react-query';
 type Props = {
   uuid: string;
   isPublished: boolean;
+  size: Required<ButtonProps['size']>;
 };
 
-export function VisibilityColumn({ uuid, isPublished }: Props) {
+export function VisibilityColumn({ uuid, isPublished, size }: Props) {
   const t = useTranslations('myQuizzes.table.column.isPublished');
   const queryClient = useQueryClient();
   const theme = useTheme();
@@ -75,7 +76,7 @@ export function VisibilityColumn({ uuid, isPublished }: Props) {
     <>
       <Button
         aria-describedby={id}
-        size="small"
+        size={size}
         color="inherit"
         startIcon={isPublished ? <PublicIcon /> : <PublicOffIcon />}
         onClick={handleClick}

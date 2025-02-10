@@ -29,6 +29,7 @@ import { useTranslations } from 'next-intl';
 import { steps, useQuizFormSteps } from '../useQuizFormSteps';
 import Head from 'next/head';
 import { quizioTitle } from '@/utilities/quizioTitle';
+import { raise } from '@/utilities/errorHandling';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const messages = await getMessages(ctx.locale, ['quizForm']);
@@ -70,7 +71,7 @@ export default function QuizCreatePage() {
     }
   }
 
-  async function handleFinishQuizClick() {
+  async function handleCreateQuizClick(publish: boolean) {
     // Upload quiz image
     let imageUrls: {
       url: string | null;
@@ -93,7 +94,7 @@ export default function QuizCreatePage() {
     const mutationData = {
       title: overviewFormData.title,
       description: overviewFormData.description ?? null,
-      isPublished: true,
+      isPublished: publish,
       imageUrl: imageUrls.url,
       questions: questionsFormData.questions
         .map((q) => ({
@@ -120,6 +121,7 @@ export default function QuizCreatePage() {
       await createQuiz(mutationData);
 
       showSuccessToast(t('form.status.create.success'));
+      queryClient.invalidateQueries({ queryKey: ['getMyQuizzes'] });
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
       await router.push('/my-quizzes');
       resetQuizLocalStorage();
@@ -212,7 +214,8 @@ export default function QuizCreatePage() {
                 questionsFormData={questionsFormData}
                 backLabel={backLabel}
                 onBack={() => handleBack()}
-                onSubmit={() => handleFinishQuizClick()}
+                onCreate={(publish) => handleCreateQuizClick(publish)}
+                onUpdate={() => raise('onUpdate should not be called inside create quiz page.')}
                 isPending={isPending}
                 isDisabled={isPending || isSuccess}
                 editMode={false}

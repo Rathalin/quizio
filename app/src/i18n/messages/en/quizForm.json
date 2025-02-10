@@ -112,6 +112,29 @@
     "update": "<gradient>Edit</gradient> your quiz"
   },
   "summary": {
+    "create": {
+      "dialog": {
+        "content": "Do you also want to publish your quiz?",
+        "title": "Visibility"
+      },
+      "label": "Create quiz"
+    },
+    "createQuiz": {
+      "label": "Create quiz"
+    },
+    "dialog": {
+      "action": {
+        "cancel": {
+          "label": "Cancel"
+        },
+        "create": {
+          "label": "No, just save"
+        },
+        "publish": {
+          "label": "Yes, publish"
+        }
+      }
+    },
     "publishQuiz": {
       "label": "Publish quiz"
     },

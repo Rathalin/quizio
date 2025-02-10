@@ -190,7 +190,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
         title,
         description: description ?? '',
         imageUrl,
-        isPublished: true,
+        isPublished: quiz.isPublished,
         questions: [],
       };
 
@@ -358,7 +358,8 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
                     backLabel={backLabel}
                     onBack={() => handleBack()}
                     editMode={true}
-                    onSubmit={handleSaveClick}
+                    onCreate={() => raise('onCreate should not be called inside edit quiz page.')}
+                    onUpdate={handleSaveClick}
                     isPending={isPending}
                     isDisabled={isPending || isSuccess}
                   />

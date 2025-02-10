@@ -112,10 +112,27 @@
     "update": "<gradient>Bearbeite</gradient> dein Quiz"
   },
   "summary": {
-    "publishQuiz": {
-      "label": "Quiz veröffentlichen"
+    "create": {
+      "dialog": {
+        "content": "Möchtest du dein Quiz auch \"veröffentlichen\"?",
+        "title": "Sichtbarkeit"
+      },
+      "label": "Quiz erstellen"
     },
-    "updateQuiz": {
+    "dialog": {
+      "action": {
+        "cancel": {
+          "label": "Abbrechen"
+        },
+        "create": {
+          "label": "Nein, nur erstellen"
+        },
+        "publish": {
+          "label": "Ja, veröffentlichen"
+        }
+      }
+    },
+    "update": {
       "label": "Quiz speichern"
     }
   }
