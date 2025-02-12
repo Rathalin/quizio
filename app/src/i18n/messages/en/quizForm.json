@@ -62,6 +62,7 @@
         "tooltip": "Explain the correct answer or give some context. This input is optional."
       },
       "explanationImage": {
+        "alt": "Explanation image",
         "label": "Upload explanation image"
       },
       "image": {
@@ -69,6 +70,9 @@
         "remove": "Remove"
       },
       "label": "Question",
+      "questionImage": {
+        "alt": "Question image"
+      },
       "title": "Question {count}"
     },
     "schema": {
@@ -79,9 +83,7 @@
             "minLength": "Answer must be at least {count, plural, =1 {# character} other {# characters}} long."
           }
         },
-        "image": {
-          "fileType": "This file type is not supported."
-        },
+        "invalidFileType": "This file type is not supported.",
         "question": {
           "title": {
             "minLength": "Question must be at least {count, plural, =1 {# character} other {# characters}} long."

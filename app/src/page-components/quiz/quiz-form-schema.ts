@@ -37,18 +37,8 @@ export const constraints = {
 } as const;
 
 export function useQuizOverviewFormSchema() {
-  const { data: allowedFileTypes } = useAllowedFileTypesQuery();
   const t = useTranslations('quizForm.form.schema.errorMessage');
-
-  const validateFileType = useCallback(
-    (fileType?: string) => {
-      if (allowedFileTypes == null || fileType == null) {
-        return true;
-      }
-      return allowedFileTypes.allowedImageFileTypes.includes(fileType.replace('image/', ''));
-    },
-    [allowedFileTypes],
-  );
+  const validateFileType = useValidateFileType();
 
   return useMemo(
     () =>
@@ -66,7 +56,7 @@ export function useQuizOverviewFormSchema() {
               .any()
               .nullable()
               .refine((value) => validateFileType((value as File | null)?.type), {
-                message: t('image.fileType'),
+                message: t('invalidFileType'),
                 path: ['invalidImageFileType'],
               }),
           }),
@@ -89,6 +79,7 @@ export const maxAnswers = 12;
 
 export function useQuizQuestionsFormSchema() {
   const t = useTranslations('quizForm.form.schema.errorMessage');
+  const validateFileType = useValidateFileType();
 
   return useMemo(
     () =>
@@ -99,7 +90,13 @@ export function useQuizQuestionsFormSchema() {
               uuid: z.string().optional(),
               questionImage: z.object({
                 data: z.object({
-                  file: z.any().nullable(),
+                  file: z
+                    .any()
+                    .nullable()
+                    .refine((value) => validateFileType((value as File | null)?.type), {
+                      message: t('invalidFileType'),
+                      path: ['invalidImageFileType'],
+                    }),
                 }),
                 preview: z
                   .object({
@@ -139,7 +136,13 @@ export function useQuizQuestionsFormSchema() {
               explanation: z.string().trim().max(constraints.quiz.question.explanation.maxLength).optional(),
               explanationImage: z.object({
                 data: z.object({
-                  file: z.any().nullable(),
+                  file: z
+                    .any()
+                    .nullable()
+                    .refine((value) => validateFileType((value as File | null)?.type), {
+                      message: t('invalidFileType'),
+                      path: ['invalidImageFileType'],
+                    }),
                 }),
                 preview: z
                   .object({
@@ -152,8 +155,21 @@ export function useQuizQuestionsFormSchema() {
           .min(minQuestions)
           .max(maxQuestions),
       }),
-    [t],
+    [t, validateFileType],
   );
 }
 export type QuizQuestionsForm = z.infer<ReturnType<typeof useQuizQuestionsFormSchema>>;
 export type AnswerForm = QuizQuestionsForm['questions'][number]['answers'][number];
+
+function useValidateFileType() {
+  const { data: allowedFileTypes } = useAllowedFileTypesQuery();
+  return useCallback(
+    (fileType?: string) => {
+      if (allowedFileTypes == null || fileType == null) {
+        return true;
+      }
+      return allowedFileTypes.allowedImageFileTypes.includes(fileType.replace('image/', ''));
+    },
+    [allowedFileTypes],
+  );
+}

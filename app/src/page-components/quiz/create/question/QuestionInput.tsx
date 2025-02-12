@@ -58,6 +58,7 @@ export default function QuestionInput({
     formState: { errors: formErrors },
     watch,
     setValue,
+    trigger,
   } = useFormContext<QuizQuestionsForm>();
   const name = `questions.${index}` as const;
   const { fields, append, remove } = useFieldArray({
@@ -71,6 +72,10 @@ export default function QuestionInput({
   });
   const errors = formErrors as ZodFieldErrors<typeof formErrors>;
   const questionErrors = errors.questions?.[index] ?? null;
+  const invalidImageFileTypeError =
+    (
+      questionErrors?.questionImage?.data?.file as { invalidImageFileType?: { message?: string } }
+    )?.invalidImageFileType?.message?.toString() ?? '';
   const oneCorrectAnswerError =
     (
       questionErrors?.answers as {
@@ -79,6 +84,10 @@ export default function QuestionInput({
         };
       }
     )?.oneCorrectAnswer?.message?.toString() ?? '';
+  const invalidExplanationImageFileTypeError =
+    (
+      questionErrors?.explanationImage?.data?.file as { invalidImageFileType?: { message?: string } }
+    )?.invalidImageFileType?.message?.toString() ?? '';
 
   const questionImageFile = watch(`${name}.questionImage.data.file`) as File | null;
   const questionPreviewImage = watch(`${name}.questionImage.preview`);
@@ -158,6 +167,7 @@ export default function QuestionInput({
                   value={''}
                   onChange={(e) => {
                     setValue(`${name}.questionImage.data.file`, e.target.files != null ? e.target.files[0] : null);
+                    trigger(`${name}.questionImage.data.file`);
                   }}
                 />
                 <label
@@ -180,7 +190,7 @@ export default function QuestionInput({
                           src={questionImageUrl}
                           width={imageWidth}
                           height={imageHeight}
-                          alt={`${name}.questionImage.data.file input`}
+                          alt={field.value?.name ?? t('questionImage.alt')}
                           style={{
                             borderRadius: 2,
                             objectFit: 'cover',
@@ -197,6 +207,9 @@ export default function QuestionInput({
                     )}
                   </Button>
                 </label>
+                <FormHelperText sx={{ marginBlock: 1, marginLeft: 1 }} error>
+                  {invalidImageFileTypeError}
+                </FormHelperText>
               </Box>
             )}
             control={control}
@@ -208,6 +221,7 @@ export default function QuestionInput({
             onClick={() => {
               setValue(`${name}.questionImage.data.file`, null);
               setValue(`${name}.questionImage.preview`, undefined);
+              trigger(`${name}.questionImage.data.file`);
             }}
             sx={{ visibility: questionImageUrl != null ? 'visible' : 'hidden' }}
             disabled={questionImageUrl == null}
@@ -299,6 +313,7 @@ export default function QuestionInput({
                     value={''}
                     onChange={(e) => {
                       setValue(`${name}.explanationImage.data.file`, e.target.files != null ? e.target.files[0] : null);
+                      trigger(`${name}.explanationImage.data.file`);
                     }}
                   />
                   <label
@@ -321,7 +336,7 @@ export default function QuestionInput({
                             src={explanationImageUrl}
                             width={imageWidth}
                             height={imageHeight}
-                            alt={`${name}.explanationImage.data.file input`}
+                            alt={field.value?.name ?? t('explanationImage.alt')}
                             style={{
                               borderRadius: 2,
                               objectFit: 'cover',
@@ -338,6 +353,9 @@ export default function QuestionInput({
                       )}
                     </Button>
                   </label>
+                  <FormHelperText sx={{ marginBlock: 1, marginLeft: 1 }} error>
+                    {invalidExplanationImageFileTypeError}
+                  </FormHelperText>
                 </Box>
               )}
               control={control}
@@ -349,6 +367,7 @@ export default function QuestionInput({
               onClick={() => {
                 setValue(`${name}.explanationImage.data.file`, null);
                 setValue(`${name}.explanationImage.preview`, undefined);
+                trigger(`${name}.explanationImage.data.file`);
               }}
               sx={{ visibility: explanationImageUrl != null ? 'visible' : 'hidden' }}
               disabled={explanationImageUrl == null}
