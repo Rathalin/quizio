@@ -5,7 +5,7 @@ import { getMessages } from '@/utilities/getMessages';
 import { quizioTitle } from '@/utilities/quizioTitle';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { QueryClient } from '@tanstack/react-query';
+import { dehydrate, QueryClient } from '@tanstack/react-query';
 import { GetServerSideProps } from 'next';
 import { getServerSession } from 'next-auth';
 import { useTranslations } from 'next-intl';
@@ -30,15 +30,14 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     sortOption: 'createdAt',
     sortDirection: 'desc',
   };
-  const prefetchPromise = queryClient.prefetchInfiniteQuery({
-    queryKey: ['getQuizzesInfinite', defaultQueryParams.sortOption, defaultQueryParams.sortDirection],
+  const prefetchPromise = queryClient.prefetchQuery({
+    queryKey: ['getMyQuizzes', session?.user.uuid, defaultQueryParams.sortOption, defaultQueryParams.sortDirection],
     queryFn: async () =>
       throwOnError(() =>
         fetchMyQuizzes(defaultQueryParams, {
           Authorization: `Bearer ${session?.user.accessToken}`,
         }),
       ),
-    initialPageParam: 0,
   });
 
   const [messages] = await Promise.all([messagesPromise, prefetchPromise]);
@@ -46,6 +45,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return {
     props: {
       messages,
+      dehydratedState: dehydrate(queryClient),
     },
   };
 };
