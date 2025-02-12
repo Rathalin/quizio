@@ -259,6 +259,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
 
       // Refetch quiz
       showSuccessToast(t('form.status.update.success'));
+      queryClient.invalidateQueries({ queryKey: ['getMyQuizzes'] });
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
       await router.push('/my-quizzes');
       queryClient.invalidateQueries({ queryKey: ['quiz', uuid] });
