@@ -20,6 +20,7 @@ import CardActions from '@mui/material/CardActions';
 import { useTranslations } from 'next-intl';
 import ImageIcon from '@mui/icons-material/Image';
 import { useAllowedFileTypesQuery } from '@/data/useAllowedFileTypesQuery';
+import FormHelperText from '@mui/material/FormHelperText';
 
 type OverviewFormProps = {
   defaultData: QuizOverviewForm;
@@ -48,6 +49,7 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
     watch,
     handleSubmit,
     getValues,
+    trigger,
   } = methods;
 
   const getStorageItem = useCallback((): QuizOverviewForm | null => {
@@ -106,6 +108,11 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
   function handleFormSubmit(data: QuizOverviewForm) {
     onSubmit(data);
   }
+
+  const invalidImageFileTypeError =
+    (
+      errors.image?.data?.file as { invalidImageFileType?: { message?: string } }
+    )?.invalidImageFileType?.message?.toString() ?? '';
 
   return (
     <FormProvider {...methods}>
@@ -172,6 +179,7 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
                           value={''}
                           onChange={(e) => {
                             setValue('image.data.file', e.target.files != null ? e.target.files[0] : null);
+                            trigger('image.data.file');
                           }}
                         />
                         <label
@@ -194,7 +202,7 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
                                   src={imageUrl}
                                   width={imageWidth}
                                   height={imageHeight}
-                                  alt="Selected image from input"
+                                  alt={field.value?.name ?? t('image.alt')}
                                   style={{
                                     borderRadius: 2,
                                     objectFit: 'cover',
@@ -212,6 +220,9 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
                             )}
                           </Button>
                         </label>
+                        <FormHelperText sx={{ marginBlock: 1, marginLeft: 1 }} error>
+                          {invalidImageFileTypeError}
+                        </FormHelperText>
                       </Box>
                     )}
                     control={control}
@@ -223,6 +234,7 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
                     onClick={() => {
                       setValue('image.data.file', null);
                       setValue('image.preview', undefined);
+                      trigger('image.data.file');
                     }}
                     sx={{ visibility: imageUrl != null ? 'visible' : 'hidden' }}
                     disabled={imageUrl == null}

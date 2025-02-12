@@ -3,7 +3,7 @@ import OverviewForm from '@/page-components/quiz/create/OverviewForm';
 import SummaryForm from '@/page-components/quiz/create/SummaryForm';
 import { useState } from 'react';
 
-import { useQueryClient } from '@tanstack/react-query';
+import { QueryClient, useQueryClient } from '@tanstack/react-query';
 import { QuizOverviewForm, QuizQuestionsForm } from '@/page-components/quiz/quiz-form-schema';
 import QuestionsForm from '@/page-components/quiz/create/QuestionsForm';
 import { defaultOverviewFormData, defaultQuestionsFormData } from '@/page-components/quiz/quiz-form-data';
@@ -30,9 +30,19 @@ import { steps, useQuizFormSteps } from '../useQuizFormSteps';
 import Head from 'next/head';
 import { quizioTitle } from '@/utilities/quizioTitle';
 import { raise } from '@/utilities/errorHandling';
+import { throwOnError } from '@/api-client';
+import { fetchAllowedFileTypes } from '@/data/useAllowedFileTypesQuery';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const messages = await getMessages(ctx.locale, ['quizForm']);
+  const messagesPromise = getMessages(ctx.locale, ['quizForm']);
+
+  const queryClient = new QueryClient();
+  const prefetchAllowedFileTypesPromise = queryClient.prefetchQuery({
+    queryKey: ['getAllowedFileTypes'],
+    queryFn: () => throwOnError(() => fetchAllowedFileTypes()),
+  });
+
+  const [messages] = await Promise.all([messagesPromise, prefetchAllowedFileTypesPromise]);
 
   return {
     props: {

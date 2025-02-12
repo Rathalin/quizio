@@ -29,6 +29,7 @@
       "general": "Das Formular ist noch ungültig!"
     },
     "image": {
+      "alt": "Quiz Detailbild",
       "clear": "Entfernen",
       "label": "Bild hochladen"
     },
@@ -77,6 +78,9 @@
           "title": {
             "minLength": "Antwort muss mind. {count} Zeichen lang sein."
           }
+        },
+        "image": {
+          "fileType": "Dieses Dateiformat wird nicht unterstützt."
         },
         "question": {
           "title": {

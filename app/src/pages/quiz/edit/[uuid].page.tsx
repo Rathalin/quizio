@@ -37,6 +37,7 @@ import { useTranslations } from 'next-intl';
 import { steps, useQuizFormSteps } from '../useQuizFormSteps';
 import Head from 'next/head';
 import { quizioTitle } from '@/utilities/quizioTitle';
+import { fetchAllowedFileTypes } from '@/data/useAllowedFileTypesQuery';
 
 export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (ctx) => {
   const uuid = ctx.params?.uuid;
@@ -50,7 +51,7 @@ export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (c
 
   const session = await getServerSession(ctx.req, ctx.res, authOptions);
   const queryClient = new QueryClient();
-  const prefetchPromise = queryClient.prefetchQuery({
+  const prefetchQuizPromise = queryClient.prefetchQuery({
     queryKey: ['quiz', uuid],
     queryFn: () =>
       throwOnError(() =>
@@ -59,8 +60,12 @@ export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (c
         }),
       ),
   });
+  const prefetchAllowedFileTypesPromise = queryClient.prefetchQuery({
+    queryKey: ['getAllowedFileTypes'],
+    queryFn: () => throwOnError(() => fetchAllowedFileTypes()),
+  });
 
-  const [messages] = await Promise.all([messagesPromise, prefetchPromise]);
+  const [messages] = await Promise.all([messagesPromise, prefetchQuizPromise, prefetchAllowedFileTypesPromise]);
 
   return {
     props: {
@@ -239,14 +244,14 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
         }
 
         requestData.questions.push({
-          uuid: question.uuid ?? '',
+          uuid: question.uuid ?? null,
           title: question.title,
           description: '',
           imageUrl: questionImageUrl ?? null,
           explanation: question.explanation ?? '',
           explanationImageUrl: questionExplanationImageUrl ?? null,
           answers: question.answers.map((answer) => ({
-            uuid: answer.uuid ?? '',
+            uuid: answer.uuid ?? null,
             title: answer.title,
             description: '',
             isCorrect: answer.isCorrect,

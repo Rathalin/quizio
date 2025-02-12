@@ -9,6 +9,6 @@ export function useAllowedFileTypesQuery() {
   });
 }
 
-async function fetchAllowedFileTypes() {
+export async function fetchAllowedFileTypes() {
   return apiClient.GET('/allowed-file-types');
 }

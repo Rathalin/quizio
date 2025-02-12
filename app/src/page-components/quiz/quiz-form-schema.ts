@@ -1,5 +1,6 @@
+import { useAllowedFileTypesQuery } from '@/data/useAllowedFileTypesQuery';
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { z } from 'zod';
 
 export const constraints = {
@@ -36,7 +37,18 @@ export const constraints = {
 } as const;
 
 export function useQuizOverviewFormSchema() {
+  const { data: allowedFileTypes } = useAllowedFileTypesQuery();
   const t = useTranslations('quizForm.form.schema.errorMessage');
+
+  const validateFileType = useCallback(
+    (fileType?: string) => {
+      if (allowedFileTypes == null || fileType == null) {
+        return true;
+      }
+      return allowedFileTypes.allowedImageFileTypes.includes(fileType.replace('image/', ''));
+    },
+    [allowedFileTypes],
+  );
 
   return useMemo(
     () =>
@@ -50,7 +62,13 @@ export function useQuizOverviewFormSchema() {
         description: z.string().trim().max(constraints.quiz.description.maxLength).optional(),
         image: z.object({
           data: z.object({
-            file: z.any().nullable(),
+            file: z
+              .any()
+              .nullable()
+              .refine((value) => validateFileType((value as File | null)?.type), {
+                message: t('image.fileType'),
+                path: ['invalidImageFileType'],
+              }),
           }),
           preview: z
             .object({
@@ -59,7 +77,7 @@ export function useQuizOverviewFormSchema() {
             .optional(),
         }),
       }),
-    [t],
+    [t, validateFileType],
   );
 }
 export type QuizOverviewForm = z.infer<ReturnType<typeof useQuizOverviewFormSchema>>;

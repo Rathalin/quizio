@@ -29,6 +29,7 @@
       "general": "This form is still invalid!"
     },
     "image": {
+      "alt": "Quiz detail image",
       "clear": "Remove",
       "label": "Upload image"
     },
@@ -77,6 +78,9 @@
           "title": {
             "minLength": "Answer must be at least {count, plural, =1 {# character} other {# characters}} long."
           }
+        },
+        "image": {
+          "fileType": "This file type is not supported."
         },
         "question": {
           "title": {
