@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"slices"
 
 	"github.com/swaggest/usecase"
 )
@@ -31,6 +32,10 @@ func (dbw *DBWrapper) HandleUploadFile() usecase.Interactor {
 		userUuid, err := dbw.GetUserUuid(userId)
 		if err != nil {
 			return logAndReturnError(err)
+		}
+
+		if !slices.Contains(AllowedFileTypes, GetFileExtension(input.Filename)) {
+
 		}
 
 		// Define the upload directory

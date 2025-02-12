@@ -211,6 +211,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/allowed-file-types': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** DB Wrapper Handle Get Allowed File Types */
+    get: operations['backend/handlers.(*DBWrapper).HandleGetAllowedFileTypes'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/play-protocol-entry': {
     parameters: {
       query?: never;
@@ -373,6 +390,10 @@ export interface components {
     };
     HandlersGetAlertsResponse: {
       alerts: components['schemas']['ModelsAlert'][];
+    };
+    HandlersGetAllowedFileTypesResponse: {
+      allowedAudioFileTypes: string;
+      allowedImageFileTypes: string;
     };
     HandlersGetMyQuizzesResponse: {
       quizzes: components['schemas']['HandlersGetMyQuizzesResponseQuiz'][];
@@ -1047,6 +1068,26 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['HandlersGetAlertsResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).HandleGetAllowedFileTypes': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HandlersGetAllowedFileTypesResponse'];
         };
       };
     };

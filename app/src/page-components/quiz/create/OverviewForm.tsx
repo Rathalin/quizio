@@ -19,6 +19,7 @@ import Button from '@mui/material/Button';
 import CardActions from '@mui/material/CardActions';
 import { useTranslations } from 'next-intl';
 import ImageIcon from '@mui/icons-material/Image';
+import { useAllowedFileTypesQuery } from '@/data/useAllowedFileTypesQuery';
 
 type OverviewFormProps = {
   defaultData: QuizOverviewForm;
@@ -30,6 +31,9 @@ type OverviewFormProps = {
 
 export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLabel, editMode }: OverviewFormProps) {
   const t = useTranslations('quizForm.form');
+
+  const { data: allowedFileTypes } = useAllowedFileTypesQuery();
+
   const { width: imageWidth, height: imageHeight } = useOverviewImageInputDimensions();
   const quizOverviewFormSchema = useQuizOverviewFormSchema();
   const methods = useForm<QuizOverviewForm>({
@@ -163,7 +167,7 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
                           {...field}
                           id="image.data.file"
                           type="file"
-                          accept="image/*"
+                          accept={allowedFileTypes?.allowedImageFileTypes ?? 'image/*'}
                           style={{ display: 'none' }}
                           value={''}
                           onChange={(e) => {
