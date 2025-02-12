@@ -179,6 +179,7 @@ export default function QuestionInput({
                   <Button
                     variant="outlined"
                     component="span"
+                    color={invalidImageFileTypeError ? 'error' : 'primary'}
                     sx={{
                       minWidth: imageWidth + 2 * 1,
                       minHeight: imageHeight + 2 * 1,
@@ -325,6 +326,7 @@ export default function QuestionInput({
                     <Button
                       variant="outlined"
                       component="span"
+                      color={invalidExplanationImageFileTypeError ? 'error' : 'primary'}
                       sx={{
                         minWidth: imageWidth + 2 * 1, // Account for button border width
                         minHeight: imageHeight + 2 * 1,
