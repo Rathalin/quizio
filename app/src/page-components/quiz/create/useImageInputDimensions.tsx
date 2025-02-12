@@ -13,14 +13,10 @@ export function useOverviewImageInputDimensions() {
 
   return useMemo(
     () => ({
-      width: isMobile
-        ? overviewImageInputDimensions.width * mobileDownscale
-        : overviewImageInputDimensions.width,
-      height: isMobile
-        ? overviewImageInputDimensions.height * mobileDownscale
-        : overviewImageInputDimensions.height,
+      width: isMobile ? overviewImageInputDimensions.width * mobileDownscale : overviewImageInputDimensions.width,
+      height: isMobile ? overviewImageInputDimensions.height * mobileDownscale : overviewImageInputDimensions.height,
     }),
-    [isMobile]
+    [isMobile],
   );
 }
 
@@ -34,13 +30,9 @@ export function useGameImageInputDimensions() {
 
   return useMemo(
     () => ({
-      width: isMobile
-        ? gameImageInputDimensions.width * mobileDownscale
-        : gameImageInputDimensions.width,
-      height: isMobile
-        ? gameImageInputDimensions.height * mobileDownscale
-        : gameImageInputDimensions.height,
+      width: isMobile ? gameImageInputDimensions.width * mobileDownscale : gameImageInputDimensions.width,
+      height: isMobile ? gameImageInputDimensions.height * mobileDownscale : gameImageInputDimensions.height,
     }),
-    [isMobile]
+    [isMobile],
   );
 }
