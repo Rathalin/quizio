@@ -8,7 +8,7 @@ export function useMyQuizzesQuery(query: Omit<GetMyQuizzesRequestQuery, 'page'>)
   const { data: session } = useSession();
   const authHeader = useAuthHeader();
 
-  const queryKey = ['getMyQuizzes', session?.user.uuid, query.sortDirection, query.sortOption];
+  const queryKey = ['getMyQuizzes', session?.user.uuid, query.sortOption, query.sortDirection];
 
   return {
     queryKey,
@@ -16,6 +16,7 @@ export function useMyQuizzesQuery(query: Omit<GetMyQuizzesRequestQuery, 'page'>)
       queryKey,
       queryFn: () => throwOnError(() => fetchMyQuizzes(query, authHeader)),
       staleTime: seconds(30),
+      enabled: authHeader != null,
     }),
   };
 }
