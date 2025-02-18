@@ -38,7 +38,6 @@
           "label": "Edit",
           "tooltip": "Edit"
         },
-        "header": "Actions",
         "play": {
           "label": "Play",
           "tooltip": "Play"
@@ -49,12 +48,6 @@
           "label": "Created"
         },
         "header": "Created at"
-      },
-      "description": {
-        "header": "Description"
-      },
-      "imageUrl": {
-        "header": "Image"
       },
       "isPublished": {
         "header": "Visibility",
@@ -87,9 +80,6 @@
         "image": {
           "alt": "Quiz image"
         }
-      },
-      "title": {
-        "header": "Title"
       },
       "updatedAt": {
         "cell": {

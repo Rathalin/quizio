@@ -3,7 +3,6 @@
     "menu": {
       "item": {
         "changePassword": "Change Password",
-        "createQuiz": "Create a new quiz",
         "myQuizzes": "My quizzes",
         "profile": "Profile",
         "signOut": "Sign out"

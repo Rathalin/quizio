@@ -76,7 +76,7 @@ export default function QuestionsForm({
       localStorage.setItem(storageKeys.quizQuestionsDraft, JSON.stringify(value));
     }
   }, []);
-  const [lastFieldsAction, setLastFieldsAction] = useState<'append' | 'remove' | null>(null);
+  const [lastFieldsAction, setLastFieldsAction] = useState<'append' | 'move' | 'remove' | null>(null);
 
   useEffect(() => {
     if (editMode) return;
@@ -138,6 +138,7 @@ export default function QuestionsForm({
     }
 
     move(result.source.index, result.destination.index);
+    setLastFieldsAction('move');
   }
 
   function handleFormSubmit(data: QuizQuestionsForm) {
@@ -155,7 +156,12 @@ export default function QuestionsForm({
                   {(provided) => (
                     <Box {...provided.droppableProps} ref={provided.innerRef}>
                       {fields.map((field, index) => (
-                        <Draggable key={field.formUuid} draggableId={field.formUuid} index={index}>
+                        <Draggable
+                          key={field.formUuid}
+                          draggableId={field.formUuid}
+                          index={index}
+                          isDragDisabled={expanded === field.formUuid}
+                        >
                           {(provided, snapshot) => (
                             <QuestionIndexContext.Provider value={index}>
                               <QuestionInput
@@ -169,6 +175,7 @@ export default function QuestionsForm({
                                 deletable={fields.length > minQuestions}
                                 expanded={expanded === field.formUuid}
                                 onExpand={() => setExpanded(expanded === field.formUuid ? null : field.formUuid)}
+                                draggable={expanded === field.formUuid}
                                 isDragging={snapshot.isDragging}
                               />
                             </QuestionIndexContext.Provider>
