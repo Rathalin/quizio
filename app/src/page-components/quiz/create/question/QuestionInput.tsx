@@ -36,6 +36,7 @@ type QuestionInputProps = {
   onDelete: () => void;
   expanded: boolean;
   onExpand: () => void;
+  draggable: boolean;
   isDragging: boolean;
 } & Omit<AccordionProps, 'children'>;
 
@@ -44,6 +45,7 @@ export default function QuestionInput({
   onDelete,
   expanded,
   onExpand,
+  draggable,
   isDragging,
   sx,
   slotProps,
@@ -116,7 +118,7 @@ export default function QuestionInput({
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />} component="div">
         <Stack direction="row" alignItems="center" sx={{ flex: 1 }}>
-          <DragHandleOutlined sx={{ marginRight: 2, color: 'action.disabled' }} />
+          <DragHandleOutlined sx={{ marginRight: 2, color: draggable ? 'action.hover' : 'action.disabled' }} />
           <Stack gap={0} sx={{ flex: 1 }}>
             <Stack direction="row" alignItems="center" columnGap={3} rowGap={1} flexWrap="wrap" sx={{ flex: 1 }}>
               <Typography variant="h5">{t('title', { count: index + 1 })}</Typography>
