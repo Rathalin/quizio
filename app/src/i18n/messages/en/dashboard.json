@@ -15,7 +15,6 @@
         "label": "Play"
       }
     },
-    "editTooltip": "Edit quiz",
     "playCount": "{count} times played",
     "questionCount": "{count, plural, =1 {# question} other {# questions}}",
     "share": {

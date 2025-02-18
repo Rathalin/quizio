@@ -313,7 +313,9 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
                 <Stepper orientation="vertical" activeStep={activeStep}>
                   {steps.map((step) => (
                     <Step key={step.title}>
-                      <StepLabel>{t(`form.steps.${step.title}`)}</StepLabel>
+                      {step.title === 'details' && <StepLabel>{t('form.steps.details')}</StepLabel>}
+                      {step.title === 'questions' && <StepLabel>{t('form.steps.questions')}</StepLabel>}
+                      {step.title === 'review' && <StepLabel>{t('form.steps.review')}</StepLabel>}
                     </Step>
                   ))}
                 </Stepper>

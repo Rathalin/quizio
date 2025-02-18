@@ -3,7 +3,6 @@
     "menu": {
       "item": {
         "changePassword": "Password ändern",
-        "createQuiz": "Neuen Quiz erstellen",
         "myQuizzes": "Meine Quiz",
         "profile": "Profil",
         "signOut": "Abmelden"

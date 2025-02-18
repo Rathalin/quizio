@@ -95,7 +95,7 @@
       },
       "update": {
         "error": "Could not save quiz!",
-        "success": "Quiz zsaved."
+        "success": "Quiz saved."
       }
     },
     "steps": {
@@ -119,9 +119,6 @@
       },
       "label": "Create quiz"
     },
-    "createQuiz": {
-      "label": "Create quiz"
-    },
     "dialog": {
       "action": {
         "cancel": {
@@ -135,10 +132,7 @@
         }
       }
     },
-    "publishQuiz": {
-      "label": "Publish quiz"
-    },
-    "updateQuiz": {
+    "update": {
       "label": "Save quiz"
     }
   }

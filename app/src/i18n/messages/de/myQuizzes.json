@@ -38,7 +38,6 @@
           "label": "Bearbeiten",
           "tooltip": "Bearbeiten"
         },
-        "header": "Aktionen",
         "play": {
           "label": "Spielen",
           "tooltip": "Spielen"
@@ -49,12 +48,6 @@
           "label": "Erstellt"
         },
         "header": "Erstellt am"
-      },
-      "description": {
-        "header": "Beschreibung"
-      },
-      "imageUrl": {
-        "header": "Bild"
       },
       "isPublished": {
         "header": "Sichtbarkeit",
@@ -87,9 +80,6 @@
         "image": {
           "alt": "Quiz-Bild"
         }
-      },
-      "title": {
-        "header": "Titel"
       },
       "updatedAt": {
         "cell": {

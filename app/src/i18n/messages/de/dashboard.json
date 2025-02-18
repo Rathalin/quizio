@@ -15,7 +15,6 @@
         "label": "Spielen"
       }
     },
-    "editTooltip": "Quiz bearbeiten",
     "playCount": "{count}x gespielt",
     "questionCount": "{count, plural, =1 {# Frage} other {# Fragen}}",
     "share": {
