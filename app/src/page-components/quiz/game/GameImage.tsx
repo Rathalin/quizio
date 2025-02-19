@@ -1,10 +1,10 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { useImageDimensions } from './useImageDimensions';
-import { useColorMode } from '@/page-components/theme.context';
 import Backdrop from '@mui/material/Backdrop';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { useColorScheme } from '@mui/material/styles';
 
 type GameImageProps = {
   src: string;
@@ -12,7 +12,7 @@ type GameImageProps = {
 };
 
 export function GameImage({ src, alt }: GameImageProps) {
-  const { mode } = useColorMode();
+  const { mode } = useColorScheme();
   const { width, height } = useImageDimensions();
   const [open, setOpen] = useState(false);
   const dropShadowFilter = `drop-shadow(3px 3px 8px #7d7d7d)`;

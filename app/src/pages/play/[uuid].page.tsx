@@ -15,7 +15,6 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useCreatePlayProtocolEntryMutation } from '../../data/useCreatePlayProtocolEntryMutation';
-import { throwOnError } from '@/api-client';
 import { useSession } from 'next-auth/react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -50,15 +49,17 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
 
-  const messagesPromise = getMessages(ctx.locale, ['play']);
+  const { data, response } = await playQuiz(uuid);
+  if (response.status === 404) {
+    return {
+      notFound: true,
+    };
+  }
 
   const queryClient = new QueryClient();
-  const prefetchPromise = queryClient.prefetchQuery({
-    queryKey: ['getQuiz', uuid],
-    queryFn: async () => throwOnError(() => playQuiz(uuid)),
-  });
+  queryClient.setQueryData(['getQuiz', uuid], data);
 
-  const [messages] = await Promise.all([messagesPromise, prefetchPromise]);
+  const messages = await getMessages(ctx.locale, ['play']);
 
   return {
     props: {

@@ -1,5 +1,5 @@
 import QuizOverviewCard from '@/components/QuizOverviewCard';
-import QuizOverviewPlaceholder from '@/components/QuizOverviewPlaceholder';
+import QuizOverviewSkeleton from '@/components/QuizOverviewSkeleton';
 import { useMemo, useState } from 'react';
 import { SortProvider, defaultSort } from './sort.context';
 import FilterBar from './filter-bar/FilterBar';
@@ -90,7 +90,7 @@ export default function QuizzesOverview() {
                 ),
               )}
             {(isPending || isFetchingNextPage) &&
-              Array.from({ length: placeholderCount }).map((_, index) => <QuizOverviewPlaceholder key={index} />)}
+              Array.from({ length: placeholderCount }).map((_, index) => <QuizOverviewSkeleton key={index} />)}
           </Box>
           {isSuccess && searchedQuizzes.length === 0 && <Typography>{t('noResults')}</Typography>}
           {isError && <GenericLoadingErrorMessage />}

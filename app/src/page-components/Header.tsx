@@ -1,14 +1,14 @@
 import LogoButton from '@/components/buttons/LogoButton';
 import AccountMenu from '../components/AccountMenu';
 import { ThemeSwitch } from '@/components/buttons/ThemeSwitch';
-import { useColorMode } from './theme.context';
 import AppBar from '@mui/material/AppBar';
 import Container from '@mui/material/Container';
 import Toolbar from '@mui/material/Toolbar';
 import Grid from '@mui/material/Grid';
+import { useColorScheme } from '@mui/material/styles';
 
 export default function Header() {
-  const { mode } = useColorMode();
+  const { mode } = useColorScheme();
   return (
     <AppBar
       position="sticky"

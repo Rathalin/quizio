@@ -1,0 +1,34 @@
+name: Go Backend - Build and Push Docker Image
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "backend/**"
+      - "infra/**"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "backend/**"
+      - "infra/**"
+  workflow_dispatch:
+
+jobs:
+  build-go-backend:
+    name: Build & Push Go Backend Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build and Push Go Backend Image
+        run: |
+          docker build -t ghcr.io/rathalin/quizio/go-backend:latest ./backend
+          docker push ghcr.io/rathalin/quizio/go-backend:latest

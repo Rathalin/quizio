@@ -1,8 +1,7 @@
 import GradientText from '@/components/GradientText';
 import { AnsweredState } from '@/pages/play/[uuid].page';
-import { useColorMode } from '@/page-components/theme.context';
 import CheckIcon from '@mui/icons-material/Check';
-import { darken, lighten, useTheme } from '@mui/material/styles';
+import { darken, lighten, useColorScheme, useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
@@ -28,7 +27,7 @@ type GameSummaryProps = {
 
 export default function GameSummary({ questions, answeredProgress }: GameSummaryProps) {
   const theme = useTheme();
-  const { mode } = useColorMode();
+  const { mode } = useColorScheme();
   return (
     <>
       <Typography variant="h1" sx={{ marginTop: 2, marginBottom: 4 }}>
