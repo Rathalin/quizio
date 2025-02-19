@@ -104,13 +104,6 @@ export const theme = responsiveFontSizes(
         textTransform: 'none',
       },
     },
-    components: {
-      MuiSkeleton: {
-        defaultProps: {
-          animation: 'wave',
-        },
-      },
-    },
   }),
 );
 
