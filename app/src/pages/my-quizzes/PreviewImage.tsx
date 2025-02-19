@@ -1,8 +1,7 @@
-import { useColorMode } from '@/page-components/theme.context';
 import { theme } from '@/theme';
 import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import Box from '@mui/material/Box';
-import { darken, lighten } from '@mui/material/styles';
+import { darken, lighten, useColorScheme } from '@mui/material/styles';
 import Image from 'next/image';
 import ImageIcon from '@mui/icons-material/Image';
 import { useTranslations } from 'next-intl';
@@ -15,7 +14,7 @@ type Props = {
 export function PreviewImage({ url, width }: Props) {
   const height = width * (2 / 3);
   const t = useTranslations('myQuizzes.table');
-  const { mode } = useColorMode();
+  const { mode } = useColorScheme();
 
   return url != null ? (
     <Image
