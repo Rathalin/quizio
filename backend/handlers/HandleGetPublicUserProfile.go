@@ -28,7 +28,7 @@ func (dbw *DBWrapper) HandleGetPublicUserProfile() usecase.Interactor {
 
 	return usecase.NewInteractor(func(ctx context.Context, input getPublicUserProfileRequest, output *getPublicUserProfileResponse) error {
 		if !isValidUUID(input.UUID) {
-			return status.Wrap(logAndReturnErrorMessage("user does not exists"), status.NotFound)
+			return status.Wrap(logAndReturnErrorMessage("user does not exists (invalid uuid)"), status.NotFound)
 		}
 
 		userExists, err := dbw.UserExists(input.UUID)

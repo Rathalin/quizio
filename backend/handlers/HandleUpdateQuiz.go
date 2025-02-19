@@ -46,7 +46,7 @@ func (dbw *DBWrapper) HandleUpdateQuiz() usecase.Interactor {
 		}
 
 		if !isValidUUID(input.UUID) {
-			return status.Wrap(logAndReturnErrorMessage("quiz does not exists"), status.NotFound)
+			return status.Wrap(logAndReturnErrorMessage("quiz does not exists (invalid uuid)"), status.NotFound)
 		}
 
 		quizExists, err := dbw.QuizExistsForUser(input.UUID, userId)

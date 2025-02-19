@@ -22,7 +22,7 @@ func (dbw *DBWrapper) HandleDeleteQuiz() usecase.Interactor {
 		}
 
 		if !isValidUUID(input.QuizUUID) {
-			return status.Wrap(logAndReturnErrorMessage("quiz does not exists"), status.NotFound)
+			return status.Wrap(logAndReturnErrorMessage("quiz does not exists (invalid uuid)"), status.NotFound)
 		}
 
 		quizExists, err := dbw.QuizExistsForUser(input.QuizUUID, userId)
