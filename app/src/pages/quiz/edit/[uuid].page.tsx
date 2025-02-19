@@ -13,7 +13,7 @@ import QuestionsForm from '@/page-components/quiz/create/QuestionsForm';
 import { authOptions } from '@/pages/api/auth/[...nextauth].page';
 import { getServerSession } from 'next-auth';
 import { fetchQuiz, useQuizQuery } from '@/data/useQuizQuery';
-import { throwOnError, UpdateQuizRequest } from '@/api-client';
+import { UpdateQuizRequest } from '@/api-client';
 import { useUpdateQuizMutation } from '@/data/useUpdateQuizMutation';
 import { useToastStore } from '@/persistence/taost.store';
 import { getImageName, prefixWithBackendUrl } from '@/utilities/urlUtils';
@@ -46,21 +46,20 @@ export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (c
     };
   }
 
-  const messagesPromise = getMessages(ctx.locale, ['quizForm']);
-
   const session = await getServerSession(ctx.req, ctx.res, authOptions);
-  const queryClient = new QueryClient();
-  const prefetchPromise = queryClient.prefetchQuery({
-    queryKey: ['quiz', uuid],
-    queryFn: () =>
-      throwOnError(() =>
-        fetchQuiz(uuid, {
-          Authorization: `Bearer ${session?.user?.accessToken}`,
-        }),
-      ),
+  const { data, response } = await fetchQuiz(uuid, {
+    Authorization: `Bearer ${session?.user?.accessToken}`,
   });
+  if (response.status === 404) {
+    return {
+      notFound: true,
+    };
+  }
 
-  const [messages] = await Promise.all([messagesPromise, prefetchPromise]);
+  const queryClient = new QueryClient();
+  queryClient.setQueryData(['quiz', uuid], data);
+
+  const messages = await getMessages(ctx.locale, ['quizForm']);
 
   return {
     props: {
