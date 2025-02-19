@@ -1,6 +1,10 @@
 package handlers
 
-import "regexp"
+import (
+	"regexp"
+
+	"github.com/google/uuid"
+)
 
 // Helper function to validate password complexity
 func isValidPassword(password string) bool {
@@ -19,4 +23,9 @@ func isValidPassword(password string) bool {
 	hasSpecial := regexp.MustCompile(`[!@#$%^&*(),.?":{}|<>]`).MatchString(password)
 
 	return hasLower && hasUpper && hasDigit && hasSpecial
+}
+
+func isValidUUID(u string) bool {
+	_, err := uuid.Parse(u)
+	return err == nil
 }

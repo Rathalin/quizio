@@ -22,6 +22,10 @@ func (dbw *DBWrapper) HandleUpdateQuizVisibility() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
+		if !isValidUUID(input.UUID) {
+			return status.Wrap(logAndReturnErrorMessage("quiz does not exists"), status.NotFound)
+		}
+
 		quizExists, err := dbw.QuizExistsForUser(input.UUID, userId)
 		if err != nil {
 			return logAndReturnError(err)

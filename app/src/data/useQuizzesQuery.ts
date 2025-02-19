@@ -3,7 +3,7 @@ import { seconds } from '@/utilities/time';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 export function useQuizzesInfiniteQuery(query: Omit<GetQuizzesRequestQuery, 'page'>) {
-  const queryKey = ['getQuizzesInfinite', query.sortDirection, query.sortOption];
+  const queryKey = ['getQuizzesInfinite', query.sortOption, query.sortDirection];
 
   return {
     queryKey,
