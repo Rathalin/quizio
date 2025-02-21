@@ -80,46 +80,53 @@ export function MyQuizzesMobileRow({
             },
           }}
         >
-          <Stack columnGap={4} rowGap={2}>
-            <Box>
-              <PreviewImage url={imageUrl} width={150} />
+          <Box
+            marginBottom={4}
+            sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', columnGap: 2 }}
+          >
+            <Stack columnGap={4} rowGap={2}>
+              <Box>
+                <PreviewImage url={imageUrl} width={150} />
+              </Box>
+              <Box sx={{ maxWidth: '30ch' }}>
+                <Typography
+                  variant="h4"
+                  component="p"
+                  color="textPrimary"
+                  sx={{
+                    overflow: 'hidden',
+                    whiteSpace: 'pre',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {title}
+                </Typography>
+                <Typography
+                  color="textSecondary"
+                  sx={{
+                    maxWidth: 'max-content',
+                    overflow: 'hidden',
+                    whiteSpace: 'pre-line',
+                    textOverflow: 'ellipsis',
+                    display: '-webkit-box',
+                    WebkitBoxOrient: 'vertical',
+                    WebkitLineClamp: 5,
+                    marginTop: 1,
+                  }}
+                >
+                  {description}
+                </Typography>
+              </Box>
+            </Stack>
+            <Box marginTop={2} flex={1}>
+              <ActionButtons
+                uuid={uuid}
+                setDialogOpen={setDialogOpen}
+                isDeletePending={isDeletePending}
+                isDeleteSuccess={isDeleteSuccess}
+              />
             </Box>
-            <Box sx={{ maxWidth: '30ch' }}>
-              <Typography
-                variant="h4"
-                component="p"
-                color="textPrimary"
-                sx={{
-                  overflow: 'hidden',
-                  whiteSpace: 'pre',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                {title}
-              </Typography>
-              <Typography
-                color="textSecondary"
-                sx={{
-                  maxWidth: 'max-content',
-                  overflow: 'hidden',
-                  whiteSpace: 'pre-line',
-                  textOverflow: 'ellipsis',
-                  display: '-webkit-box',
-                  WebkitBoxOrient: 'vertical',
-                  WebkitLineClamp: 2,
-                  marginTop: 1,
-                }}
-              >
-                {description}
-              </Typography>
-            </Box>
-          </Stack>
-          <ActionButtons
-            uuid={uuid}
-            setDialogOpen={setDialogOpen}
-            isDeletePending={isDeletePending}
-            isDeleteSuccess={isDeleteSuccess}
-          />
+          </Box>
         </Box>
         <Box sx={{ marginBlock: 2 }}>
           <Typography color="textSecondary" sx={{ marginBottom: 0.5 }}>
@@ -175,7 +182,13 @@ function ActionButtons({ uuid, setDialogOpen, isDeletePending, isDeleteSuccess }
   const { showInfoToast } = useToastStore();
   const t = useTranslations('myQuizzes.table');
   return (
-    <Stack direction="row" gap={1} flexWrap="wrap">
+    <Box
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(70px, 1fr))',
+        gap: 1,
+      }}
+    >
       <ActionButton
         title={t('column.action.edit.tooltip')}
         icon={<EditIcon />}
@@ -206,7 +219,7 @@ function ActionButtons({ uuid, setDialogOpen, isDeletePending, isDeleteSuccess }
         label={t('column.action.play.label')}
         href={`/play/${uuid}`}
       />
-    </Stack>
+    </Box>
   );
 }
 
@@ -234,7 +247,7 @@ function ActionButton({ title, href, onClick, disabled, icon, label }: ActionBut
             {icon}
           </IconButton>
         )}
-        <Typography color="textSecondary" variant="caption">
+        <Typography color="textSecondary" variant="caption" textAlign="center">
           {label}
         </Typography>
       </Stack>
