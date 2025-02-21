@@ -33,8 +33,6 @@ import Link from 'next/link';
 import { getMessages } from '@/utilities/getMessages';
 import { useTranslations } from 'next-intl';
 import { quizioTitle } from '@/utilities/quizioTitle';
-import { throwOnError } from '@/api-client';
-import { fetchAllowedFileTypes } from '@/data/useAllowedFileTypesQuery';
 
 export type AnsweredState = {
   correctAnswerId: string;
@@ -61,14 +59,7 @@ export const getServerSideProps: GetServerSideProps<{
   const queryClient = new QueryClient();
   queryClient.setQueryData(['getQuiz', uuid], data);
 
-  const prefetchAllowedFileTypesPromise = queryClient.prefetchQuery({
-    queryKey: ['getAllowedFileTypes'],
-    queryFn: () => throwOnError(() => fetchAllowedFileTypes()),
-  });
-
-  const messagesPromise = getMessages(ctx.locale, ['play']);
-
-  const [messages] = await Promise.all([messagesPromise, prefetchAllowedFileTypesPromise]);
+  const messages = await getMessages(ctx.locale, ['play']);
 
   return {
     props: {

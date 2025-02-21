@@ -13,7 +13,7 @@ import QuestionsForm from '@/page-components/quiz/create/QuestionsForm';
 import { authOptions } from '@/pages/api/auth/[...nextauth].page';
 import { getServerSession } from 'next-auth';
 import { fetchQuiz, useQuizQuery } from '@/data/useQuizQuery';
-import { UpdateQuizRequest } from '@/api-client';
+import { throwOnError, UpdateQuizRequest } from '@/api-client';
 import { useUpdateQuizMutation } from '@/data/useUpdateQuizMutation';
 import { useToastStore } from '@/persistence/taost.store';
 import { getImageName, prefixWithBackendUrl } from '@/utilities/urlUtils';
@@ -60,7 +60,14 @@ export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (c
   const queryClient = new QueryClient();
   queryClient.setQueryData(['quiz', uuid], data);
 
-  const messages = await getMessages(ctx.locale, ['quizForm']);
+  const prefetchAllowedFileTypesPromise = queryClient.prefetchQuery({
+    queryKey: ['getAllowedFileTypes'],
+    queryFn: () => throwOnError(() => fetchAllowedFileTypes()),
+  });
+
+  const messagesPromise = getMessages(ctx.locale, ['quizForm']);
+
+  const [messages] = await Promise.all([messagesPromise, prefetchAllowedFileTypesPromise]);
 
   return {
     props: {
