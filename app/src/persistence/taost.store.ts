@@ -29,7 +29,7 @@ export const useToastStore = create<ToastStore>((set) => ({
           key: new Date().getTime(),
           content: message.content,
           severity: message.severity,
-          variant: message.variant ?? 'filled',
+          variant: message.variant,
         },
       ],
     })),

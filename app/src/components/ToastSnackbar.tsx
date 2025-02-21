@@ -51,8 +51,8 @@ export default function ToastSnackbar() {
     >
       <Alert
         onClose={handleClose}
-        severity={messageInfo?.severity}
-        variant={messageInfo?.variant}
+        severity={messageInfo?.severity ?? 'info'}
+        variant={messageInfo?.variant ?? 'filled'}
         sx={{ width: '100%' }}
       >
         {messageInfo?.content}
