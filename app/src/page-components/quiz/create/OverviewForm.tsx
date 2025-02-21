@@ -19,6 +19,8 @@ import Button from '@mui/material/Button';
 import CardActions from '@mui/material/CardActions';
 import { useTranslations } from 'next-intl';
 import ImageIcon from '@mui/icons-material/Image';
+import { useAllowedFileTypesQuery } from '@/data/useAllowedFileTypesQuery';
+import FormHelperText from '@mui/material/FormHelperText';
 
 type OverviewFormProps = {
   defaultData: QuizOverviewForm;
@@ -30,6 +32,9 @@ type OverviewFormProps = {
 
 export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLabel, editMode }: OverviewFormProps) {
   const t = useTranslations('quizForm.form');
+
+  const { data: allowedFileTypes } = useAllowedFileTypesQuery();
+
   const { width: imageWidth, height: imageHeight } = useOverviewImageInputDimensions();
   const quizOverviewFormSchema = useQuizOverviewFormSchema();
   const methods = useForm<QuizOverviewForm>({
@@ -44,6 +49,7 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
     watch,
     handleSubmit,
     getValues,
+    trigger,
   } = methods;
 
   const getStorageItem = useCallback((): QuizOverviewForm | null => {
@@ -102,6 +108,11 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
   function handleFormSubmit(data: QuizOverviewForm) {
     onSubmit(data);
   }
+
+  const invalidImageFileTypeError =
+    (
+      errors.image?.data?.file as { invalidImageFileType?: { message?: string } }
+    )?.invalidImageFileType?.message?.toString() ?? '';
 
   return (
     <FormProvider {...methods}>
@@ -163,11 +174,12 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
                           {...field}
                           id="image.data.file"
                           type="file"
-                          accept="image/*"
+                          accept={allowedFileTypes?.allowedImageFileTypes ?? 'image/*'}
                           style={{ display: 'none' }}
                           value={''}
                           onChange={(e) => {
                             setValue('image.data.file', e.target.files != null ? e.target.files[0] : null);
+                            trigger('image.data.file');
                           }}
                         />
                         <label
@@ -179,6 +191,7 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
                           <Button
                             variant="outlined"
                             component="span"
+                            color={invalidImageFileTypeError ? 'error' : 'primary'}
                             sx={{
                               minWidth: imageWidth + 2 * 1, // Account for button border width
                               minHeight: imageHeight + 2 * 1,
@@ -190,7 +203,7 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
                                   src={imageUrl}
                                   width={imageWidth}
                                   height={imageHeight}
-                                  alt="Selected image from input"
+                                  alt={field.value?.name ?? t('image.alt')}
                                   style={{
                                     borderRadius: 2,
                                     objectFit: 'cover',
@@ -208,6 +221,9 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
                             )}
                           </Button>
                         </label>
+                        <FormHelperText sx={{ marginBlock: 1, marginLeft: 1 }} error>
+                          {invalidImageFileTypeError}
+                        </FormHelperText>
                       </Box>
                     )}
                     control={control}
@@ -219,6 +235,7 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
                     onClick={() => {
                       setValue('image.data.file', null);
                       setValue('image.preview', undefined);
+                      trigger('image.data.file');
                     }}
                     sx={{ visibility: imageUrl != null ? 'visible' : 'hidden' }}
                     disabled={imageUrl == null}

@@ -29,6 +29,7 @@
       "general": "Das Formular ist noch ungültig!"
     },
     "image": {
+      "alt": "Quiz Detailbild",
       "clear": "Entfernen",
       "label": "Bild hochladen"
     },
@@ -61,13 +62,17 @@
         "tooltip": "Erkläre die Antwort oder gib zusätzlichen Kontext. Diese Eingabe ist optional."
       },
       "explanationImage": {
-        "label": "Antwortbild hochladen"
+        "alt": "Erklärbild",
+        "label": "Erklärbild hochladen"
       },
       "image": {
         "label": "Fragebild hochladen",
         "remove": "Entfernen"
       },
       "label": "Frage",
+      "questionImage": {
+        "alt": "Fragebild"
+      },
       "title": "Frage {count}"
     },
     "schema": {
@@ -78,6 +83,7 @@
             "minLength": "Antwort muss mind. {count} Zeichen lang sein."
           }
         },
+        "invalidFileType": "Dieses Dateiformat wird nicht unterstützt.",
         "question": {
           "title": {
             "minLength": "Frage muss mind. {count} Zeichen lang sein."

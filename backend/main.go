@@ -52,6 +52,7 @@ func main() {
 		r.Method(http.MethodPost, "/register", nethttp.NewHandler(dbWrapper.HandleRegister()))
 		r.Method(http.MethodPost, "/refresh-token", nethttp.NewHandler(dbWrapper.HandleRefreshToken()))
 		r.Method(http.MethodPost, "/signin", nethttp.NewHandler(dbWrapper.HandleSignIn()))
+		r.Method(http.MethodGet, "/allowed-file-types", nethttp.NewHandler(dbWrapper.HandleGetAllowedFileTypes()))
 		r.Method(http.MethodGet, "/quizzes", nethttp.NewHandler(dbWrapper.HandleGetQuizzes()))
 		r.Method(http.MethodGet, "/play/{uuid}", nethttp.NewHandler(dbWrapper.HandleHandlePlayQuiz()))
 		r.Method(http.MethodGet, "/user-profile/{uuid}", nethttp.NewHandler(dbWrapper.HandleGetPublicUserProfile()))

@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 )
 
 type paths struct {
@@ -45,4 +46,30 @@ func DeleteFile(filename string, userUuid string) bool {
 		log.Printf("Deleted file %v for user %v\n", filename, userUuid)
 		return true
 	}
+}
+
+var AllowedImageTypes = []string{
+	"jpg",
+	"jpeg",
+	"png",
+	"webp",
+	"svg",
+	"gif",
+}
+var AllowedAudioTypes = []string{
+	"mp3",
+	"acc",
+	"ogg",
+	"wav",
+	"flac",
+	"m4a",
+}
+var AllowedFileTypes = append(AllowedImageTypes, AllowedAudioTypes...)
+
+func GetFileExtension(filename string) string {
+	ext := filepath.Ext(filename)
+	if len(ext) > 0 {
+		return strings.TrimPrefix(ext, ".") // Remove the leading dot
+	}
+	return ""
 }

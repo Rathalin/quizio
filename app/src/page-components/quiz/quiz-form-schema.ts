@@ -1,5 +1,6 @@
+import { useAllowedFileTypesQuery } from '@/data/useAllowedFileTypesQuery';
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { z } from 'zod';
 
 export const constraints = {
@@ -37,6 +38,7 @@ export const constraints = {
 
 export function useQuizOverviewFormSchema() {
   const t = useTranslations('quizForm.form.schema.errorMessage');
+  const validateFileType = useValidateFileType();
 
   return useMemo(
     () =>
@@ -50,7 +52,13 @@ export function useQuizOverviewFormSchema() {
         description: z.string().trim().max(constraints.quiz.description.maxLength).optional(),
         image: z.object({
           data: z.object({
-            file: z.any().nullable(),
+            file: z
+              .any()
+              .nullable()
+              .refine((value) => validateFileType((value as File | null)?.type), {
+                message: t('invalidFileType'),
+                path: ['invalidImageFileType'],
+              }),
           }),
           preview: z
             .object({
@@ -59,7 +67,7 @@ export function useQuizOverviewFormSchema() {
             .optional(),
         }),
       }),
-    [t],
+    [t, validateFileType],
   );
 }
 export type QuizOverviewForm = z.infer<ReturnType<typeof useQuizOverviewFormSchema>>;
@@ -71,6 +79,7 @@ export const maxAnswers = 12;
 
 export function useQuizQuestionsFormSchema() {
   const t = useTranslations('quizForm.form.schema.errorMessage');
+  const validateFileType = useValidateFileType();
 
   return useMemo(
     () =>
@@ -81,7 +90,13 @@ export function useQuizQuestionsFormSchema() {
               uuid: z.string().optional(),
               questionImage: z.object({
                 data: z.object({
-                  file: z.any().nullable(),
+                  file: z
+                    .any()
+                    .nullable()
+                    .refine((value) => validateFileType((value as File | null)?.type), {
+                      message: t('invalidFileType'),
+                      path: ['invalidImageFileType'],
+                    }),
                 }),
                 preview: z
                   .object({
@@ -121,7 +136,13 @@ export function useQuizQuestionsFormSchema() {
               explanation: z.string().trim().max(constraints.quiz.question.explanation.maxLength).optional(),
               explanationImage: z.object({
                 data: z.object({
-                  file: z.any().nullable(),
+                  file: z
+                    .any()
+                    .nullable()
+                    .refine((value) => validateFileType((value as File | null)?.type), {
+                      message: t('invalidFileType'),
+                      path: ['invalidImageFileType'],
+                    }),
                 }),
                 preview: z
                   .object({
@@ -134,8 +155,21 @@ export function useQuizQuestionsFormSchema() {
           .min(minQuestions)
           .max(maxQuestions),
       }),
-    [t],
+    [t, validateFileType],
   );
 }
 export type QuizQuestionsForm = z.infer<ReturnType<typeof useQuizQuestionsFormSchema>>;
 export type AnswerForm = QuizQuestionsForm['questions'][number]['answers'][number];
+
+function useValidateFileType() {
+  const { data: allowedFileTypes } = useAllowedFileTypesQuery();
+  return useCallback(
+    (fileType?: string) => {
+      if (allowedFileTypes == null || fileType == null) {
+        return true;
+      }
+      return allowedFileTypes.allowedImageFileTypes.includes(fileType.replace('image/', ''));
+    },
+    [allowedFileTypes],
+  );
+}

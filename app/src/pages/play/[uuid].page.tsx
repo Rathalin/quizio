@@ -33,6 +33,8 @@ import Link from 'next/link';
 import { getMessages } from '@/utilities/getMessages';
 import { useTranslations } from 'next-intl';
 import { quizioTitle } from '@/utilities/quizioTitle';
+import { throwOnError } from '@/api-client';
+import { fetchAllowedFileTypes } from '@/data/useAllowedFileTypesQuery';
 
 export type AnsweredState = {
   correctAnswerId: string;
@@ -59,7 +61,14 @@ export const getServerSideProps: GetServerSideProps<{
   const queryClient = new QueryClient();
   queryClient.setQueryData(['getQuiz', uuid], data);
 
-  const messages = await getMessages(ctx.locale, ['play']);
+  const prefetchAllowedFileTypesPromise = queryClient.prefetchQuery({
+    queryKey: ['getAllowedFileTypes'],
+    queryFn: () => throwOnError(() => fetchAllowedFileTypes()),
+  });
+
+  const messagesPromise = getMessages(ctx.locale, ['play']);
+
+  const [messages] = await Promise.all([messagesPromise, prefetchAllowedFileTypesPromise]);
 
   return {
     props: {
@@ -123,6 +132,7 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
           quizUuid: uuid,
         });
 
+        queryClient.invalidateQueries({ queryKey: ['getMyQuizzes'] });
         queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
         setPlayCountIncreased(true);
       } catch (error) {
