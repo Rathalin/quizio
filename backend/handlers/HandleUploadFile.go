@@ -8,8 +8,10 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"slices"
 
 	"github.com/swaggest/usecase"
+	"github.com/swaggest/usecase/status"
 )
 
 func (dbw *DBWrapper) HandleUploadFile() usecase.Interactor {
@@ -31,6 +33,10 @@ func (dbw *DBWrapper) HandleUploadFile() usecase.Interactor {
 		userUuid, err := dbw.GetUserUuid(userId)
 		if err != nil {
 			return logAndReturnError(err)
+		}
+
+		if slices.Contains(AllowedFileTypes, GetFileExtension(input.Filename)) {
+			return status.Wrap(fmt.Errorf("invalid file type"), status.InvalidArgument)
 		}
 
 		// Define the upload directory

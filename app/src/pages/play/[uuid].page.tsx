@@ -123,6 +123,7 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
           quizUuid: uuid,
         });
 
+        queryClient.invalidateQueries({ queryKey: ['getMyQuizzes'] });
         queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
         setPlayCountIncreased(true);
       } catch (error) {

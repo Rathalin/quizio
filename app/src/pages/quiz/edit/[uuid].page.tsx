@@ -13,7 +13,7 @@ import QuestionsForm from '@/page-components/quiz/create/QuestionsForm';
 import { authOptions } from '@/pages/api/auth/[...nextauth].page';
 import { getServerSession } from 'next-auth';
 import { fetchQuiz, useQuizQuery } from '@/data/useQuizQuery';
-import { UpdateQuizRequest } from '@/api-client';
+import { throwOnError, UpdateQuizRequest } from '@/api-client';
 import { useUpdateQuizMutation } from '@/data/useUpdateQuizMutation';
 import { useToastStore } from '@/persistence/taost.store';
 import { getImageName, prefixWithBackendUrl } from '@/utilities/urlUtils';
@@ -37,6 +37,7 @@ import { useTranslations } from 'next-intl';
 import { steps, useQuizFormSteps } from '../useQuizFormSteps';
 import Head from 'next/head';
 import { quizioTitle } from '@/utilities/quizioTitle';
+import { fetchAllowedFileTypes } from '@/data/useAllowedFileTypesQuery';
 
 export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (ctx) => {
   const uuid = ctx.params?.uuid;
@@ -59,7 +60,14 @@ export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (c
   const queryClient = new QueryClient();
   queryClient.setQueryData(['quiz', uuid], data);
 
-  const messages = await getMessages(ctx.locale, ['quizForm']);
+  const prefetchAllowedFileTypesPromise = queryClient.prefetchQuery({
+    queryKey: ['getAllowedFileTypes'],
+    queryFn: () => throwOnError(() => fetchAllowedFileTypes()),
+  });
+
+  const messagesPromise = getMessages(ctx.locale, ['quizForm']);
+
+  const [messages] = await Promise.all([messagesPromise, prefetchAllowedFileTypesPromise]);
 
   return {
     props: {
@@ -238,14 +246,14 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
         }
 
         requestData.questions.push({
-          uuid: question.uuid ?? '',
+          uuid: question.uuid ?? null,
           title: question.title,
           description: '',
           imageUrl: questionImageUrl ?? null,
           explanation: question.explanation ?? '',
           explanationImageUrl: questionExplanationImageUrl ?? null,
           answers: question.answers.map((answer) => ({
-            uuid: answer.uuid ?? '',
+            uuid: answer.uuid ?? null,
             title: answer.title,
             description: '',
             isCorrect: answer.isCorrect,
@@ -258,6 +266,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
 
       // Refetch quiz
       showSuccessToast(t('form.status.update.success'));
+      queryClient.invalidateQueries({ queryKey: ['getMyQuizzes'] });
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
       await router.push('/my-quizzes');
       queryClient.invalidateQueries({ queryKey: ['quiz', uuid] });

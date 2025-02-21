@@ -13,7 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import DeleteQuizDialog from './DeleteQuizDialog';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { useToastStore } from '@/persistence/taost.store';
 import { useDeleteQuizMutation } from '@/data/useDeleteQuizMutation';
 import EditIcon from '@mui/icons-material/Edit';
@@ -38,7 +38,7 @@ export function MyQuizzesMobileRow({
   const queryClient = useQueryClient();
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { showSuccessToast, showErrorToast, showInfoToast } = useToastStore();
+  const { showSuccessToast, showErrorToast } = useToastStore();
   const {
     mutateAsync: deleteQuiz,
     isPending: isDeletePending,
@@ -71,99 +71,63 @@ export function MyQuizzesMobileRow({
         loading={isDeletePending}
       />
       <Box key={uuid}>
-        <Stack columnGap={4} rowGap={2}>
-          <Box>
-            <PreviewImage url={imageUrl} width={150} />
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: '1fr 2fr',
+            },
+          }}
+        >
+          <Box
+            marginBottom={4}
+            sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', columnGap: 2 }}
+          >
+            <Stack columnGap={4} rowGap={2}>
+              <Box>
+                <PreviewImage url={imageUrl} width={150} />
+              </Box>
+              <Box sx={{ maxWidth: '30ch' }}>
+                <Typography
+                  variant="h4"
+                  component="p"
+                  color="textPrimary"
+                  sx={{
+                    overflow: 'hidden',
+                    whiteSpace: 'pre',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {title}
+                </Typography>
+                <Typography
+                  color="textSecondary"
+                  sx={{
+                    maxWidth: 'max-content',
+                    overflow: 'hidden',
+                    whiteSpace: 'pre-line',
+                    textOverflow: 'ellipsis',
+                    display: '-webkit-box',
+                    WebkitBoxOrient: 'vertical',
+                    WebkitLineClamp: 5,
+                    marginTop: 1,
+                  }}
+                >
+                  {description}
+                </Typography>
+              </Box>
+            </Stack>
+            <Box marginTop={2} flex={1}>
+              <ActionButtons
+                uuid={uuid}
+                setDialogOpen={setDialogOpen}
+                isDeletePending={isDeletePending}
+                isDeleteSuccess={isDeleteSuccess}
+              />
+            </Box>
           </Box>
-          <Box sx={{ maxWidth: '30ch' }}>
-            <Typography
-              variant="h4"
-              component="p"
-              color="textPrimary"
-              sx={{
-                overflow: 'hidden',
-                whiteSpace: 'pre',
-                textOverflow: 'ellipsis',
-              }}
-            >
-              {title}
-            </Typography>
-            <Typography
-              color="textSecondary"
-              sx={{
-                overflow: 'hidden',
-                whiteSpace: 'pre-line',
-                textOverflow: 'ellipsis',
-                display: '-webkit-box',
-                WebkitBoxOrient: 'vertical',
-                WebkitLineClamp: 2,
-                marginTop: 1,
-              }}
-            >
-              {description}
-            </Typography>
-          </Box>
-        </Stack>
-        <Stack direction="row" gap={1} flexWrap="wrap" sx={{ marginTop: 2 }}>
-          <Tooltip title={t('column.action.edit.tooltip')} enterDelay={500} enterNextDelay={500} arrow>
-            <Stack alignItems="center">
-              <Link href={`/quiz/edit/${uuid}`}>
-                <IconButton color="inherit" size="large">
-                  <EditIcon />
-                </IconButton>
-              </Link>
-              <Typography color="textSecondary" variant="caption">
-                {t('column.action.edit.label')}
-              </Typography>
-            </Stack>
-          </Tooltip>
-          <Tooltip title={t('column.action.delete.tooltip')} enterDelay={500} enterNextDelay={500} arrow>
-            <Stack alignItems="center">
-              <IconButton
-                color="inherit"
-                size="large"
-                onClick={() => {
-                  setDialogOpen(true);
-                }}
-                disabled={isDeletePending || isDeleteSuccess}
-              >
-                {isDeletePending ? <LoadingCircle /> : <DeleteIcon />}
-              </IconButton>
-              <Typography color="textSecondary" variant="caption">
-                {t('column.action.delete.label')}
-              </Typography>
-            </Stack>
-          </Tooltip>
-          <Tooltip title={t('column.action.copyLink.tooltip')} enterDelay={500} enterNextDelay={500} arrow>
-            <Stack alignItems="center">
-              <IconButton
-                color="inherit"
-                size="large"
-                onClick={() => {
-                  navigator.clipboard.writeText(`${window.location.origin}/play/${uuid}`);
-                  showInfoToast(t('column.action.copyLink.toast'));
-                }}
-              >
-                <ShareIcon />
-              </IconButton>
-              <Typography color="textSecondary" variant="caption">
-                {t('column.action.copyLink.label')}
-              </Typography>
-            </Stack>
-          </Tooltip>
-          <Tooltip title={t('column.action.play.tooltip')} enterDelay={500} enterNextDelay={500} arrow>
-            <Stack alignItems="center">
-              <Link href={`/play/${uuid}`}>
-                <IconButton color="inherit" size="large">
-                  <PlayArrowIcon />
-                </IconButton>
-              </Link>
-              <Typography color="textSecondary" variant="caption">
-                {t('column.action.play.label')}
-              </Typography>
-            </Stack>
-          </Tooltip>
-        </Stack>
+        </Box>
         <Box sx={{ marginBlock: 2 }}>
           <Typography color="textSecondary" sx={{ marginBottom: 0.5 }}>
             {t('column.isPublished.header')}
@@ -204,5 +168,89 @@ export function MyQuizzesMobileRow({
         <Divider sx={{ marginTop: 2 }} />
       </Box>
     </>
+  );
+}
+
+type ActionButtonsProps = {
+  uuid: string;
+  setDialogOpen: (open: boolean) => void;
+  isDeletePending: boolean;
+  isDeleteSuccess: boolean;
+};
+
+function ActionButtons({ uuid, setDialogOpen, isDeletePending, isDeleteSuccess }: ActionButtonsProps) {
+  const { showInfoToast } = useToastStore();
+  const t = useTranslations('myQuizzes.table');
+  return (
+    <Box
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(70px, 1fr))',
+        gap: 1,
+      }}
+    >
+      <ActionButton
+        title={t('column.action.edit.tooltip')}
+        icon={<EditIcon />}
+        label={t('column.action.edit.label')}
+        href={`/quiz/edit/${uuid}`}
+      />
+      <ActionButton
+        title={t('column.action.delete.tooltip')}
+        onClick={() => {
+          setDialogOpen(true);
+        }}
+        icon={isDeletePending ? <LoadingCircle /> : <DeleteIcon />}
+        disabled={isDeletePending || isDeleteSuccess}
+        label={t('column.action.delete.label')}
+      />
+      <ActionButton
+        title={t('column.action.copyLink.tooltip')}
+        icon={<ShareIcon />}
+        label={t('column.action.copyLink.label')}
+        onClick={() => {
+          navigator.clipboard.writeText(`${window.location.origin}/play/${uuid}`);
+          showInfoToast(t('column.action.copyLink.toast'));
+        }}
+      />
+      <ActionButton
+        title={t('column.action.play.tooltip')}
+        icon={<PlayArrowIcon />}
+        label={t('column.action.play.label')}
+        href={`/play/${uuid}`}
+      />
+    </Box>
+  );
+}
+
+type ActionButtonProps = {
+  title: string;
+  href?: string;
+  onClick?: () => void;
+  disabled?: boolean;
+  icon: ReactNode;
+  label: string;
+};
+
+function ActionButton({ title, href, onClick, disabled, icon, label }: ActionButtonProps) {
+  return (
+    <Tooltip title={title} enterDelay={500} enterNextDelay={500} arrow>
+      <Stack alignItems="center">
+        {href != null ? (
+          <Link href={href}>
+            <IconButton color="inherit" size="large">
+              {icon}
+            </IconButton>
+          </Link>
+        ) : (
+          <IconButton color="inherit" size="large" onClick={onClick} disabled={disabled}>
+            {icon}
+          </IconButton>
+        )}
+        <Typography color="textSecondary" variant="caption" textAlign="center">
+          {label}
+        </Typography>
+      </Stack>
+    </Tooltip>
   );
 }
