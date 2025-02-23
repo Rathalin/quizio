@@ -4,6 +4,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import { SnackbarMessage, useToastStore } from '@/persistence/taost.store';
 import Alert from '@mui/material/Alert';
 import Snackbar, { type SnackbarCloseReason } from '@mui/material/Snackbar';
+import Slide, { SlideProps } from '@mui/material/Slide';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 export default function ToastSnackbar() {
   const { snackPack, removeToast } = useToastStore();
@@ -40,6 +43,7 @@ export default function ToastSnackbar() {
       autoHideDuration={4000}
       onClose={handleClose}
       TransitionProps={{ onExited: handleExited }}
+      TransitionComponent={SlideTransition}
       action={
         <>
           <IconButton aria-label="close" color="inherit" sx={{ p: 0.5 }} onClick={handleClose}>
@@ -47,16 +51,25 @@ export default function ToastSnackbar() {
           </IconButton>
         </>
       }
-      anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+      anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
     >
       <Alert
         onClose={handleClose}
         severity={messageInfo?.severity ?? 'info'}
         variant={messageInfo?.variant ?? 'filled'}
-        sx={{ width: '100%' }}
+        sx={{
+          width: '100%',
+        }}
       >
         {messageInfo?.content}
       </Alert>
     </Snackbar>
   );
+}
+
+function SlideTransition(props: SlideProps) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  return <Slide {...props} direction={isMobile ? 'up' : 'right'} />;
 }
