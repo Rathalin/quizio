@@ -5,7 +5,7 @@ import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
-
+import NextLink from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import ReactMarkdown from 'react-markdown';
@@ -54,7 +54,13 @@ export default function AlertsViewer() {
                   },
                 }}
               >
-                <ReactMarkdown>{locale === 'de' ? alert.markdownDe : alert.markdownEn}</ReactMarkdown>
+                <ReactMarkdown
+                  components={{
+                    a: ({ href, ...other }) => <NextLink href={href ?? '#'} {...other} />,
+                  }}
+                >
+                  {locale === 'de' ? alert.markdownDe : alert.markdownEn}
+                </ReactMarkdown>
               </Grid>
               <Grid item xs={12} sm={12} md={4}>
                 <Stack justifyContent="center" alignItems="center" sx={{ height: '100%' }}>

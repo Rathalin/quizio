@@ -21,6 +21,7 @@ services:
       resources:
         limits:
           memory: 2G
+          cpus: "1"
 
   postgres-db:
     image: postgres
@@ -36,9 +37,7 @@ services:
       resources:
         limits:
           memory: 1G
-        reservations:
-          cpus: "0.125"
-          memory: 128M
+          cpus: "1"
 
   adminer:
     image: ghcr.io/rathalin/quizio/adminer:latest
