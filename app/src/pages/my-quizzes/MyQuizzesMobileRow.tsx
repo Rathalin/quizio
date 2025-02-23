@@ -7,7 +7,6 @@ import { dateTimeFormatter } from '@/utilities/intlFormats';
 import Divider from '@mui/material/Divider';
 import { PreviewImage } from './PreviewImage';
 import { VisibilityColumn } from './VisibilityColumn';
-import Tooltip from '@mui/material/Tooltip';
 import Link from 'next/link';
 import IconButton from '@mui/material/IconButton';
 import DeleteQuizDialog from './DeleteQuizDialog';
@@ -234,23 +233,21 @@ type ActionButtonProps = {
 
 function ActionButton({ title, href, onClick, disabled, icon, label }: ActionButtonProps) {
   return (
-    <Tooltip title={title} enterDelay={500} enterNextDelay={500} arrow>
-      <Stack alignItems="center">
-        {href != null ? (
-          <Link href={href}>
-            <IconButton color="inherit" size="large">
-              {icon}
-            </IconButton>
-          </Link>
-        ) : (
-          <IconButton color="inherit" size="large" onClick={onClick} disabled={disabled}>
+    <Stack alignItems="center">
+      {href != null ? (
+        <Link href={href}>
+          <IconButton color="inherit" size="large">
             {icon}
           </IconButton>
-        )}
-        <Typography color="textSecondary" variant="caption" textAlign="center">
-          {label}
-        </Typography>
-      </Stack>
-    </Tooltip>
+        </Link>
+      ) : (
+        <IconButton color="inherit" size="large" onClick={onClick} disabled={disabled}>
+          {icon}
+        </IconButton>
+      )}
+      <Typography color="textSecondary" variant="caption" textAlign="center">
+        {label}
+      </Typography>
+    </Stack>
   );
 }
