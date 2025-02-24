@@ -81,6 +81,9 @@
           "alt": "Quiz image"
         }
       },
+      "trend": {
+        "header": "Trend over 12 Months"
+      },
       "updatedAt": {
         "cell": {
           "label": "Edited"

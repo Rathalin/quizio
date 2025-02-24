@@ -7,7 +7,6 @@ import { dateTimeFormatter } from '@/utilities/intlFormats';
 import Divider from '@mui/material/Divider';
 import { PreviewImage } from './PreviewImage';
 import { VisibilityColumn } from './VisibilityColumn';
-import Tooltip from '@mui/material/Tooltip';
 import Link from 'next/link';
 import IconButton from '@mui/material/IconButton';
 import DeleteQuizDialog from './DeleteQuizDialog';
@@ -21,6 +20,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ShareIcon from '@mui/icons-material/Share';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import LoadingCircle from '@/components/LoadingCircle';
+import { TrendPreview } from './TrendPreview';
 
 type Props = GetMyQuizzesResponseQuiz;
 
@@ -33,6 +33,7 @@ export function MyQuizzesMobileRow({
   updatedAt,
   isPublished,
   playCount,
+  monthlyPlays,
 }: Props) {
   const t = useTranslations('myQuizzes.table');
   const queryClient = useQueryClient();
@@ -148,7 +149,11 @@ export function MyQuizzesMobileRow({
             <Typography variant="body2">{dateTimeFormatter.format(new Date(updatedAt))}</Typography>
           </Stack>
         </Stack>
-        <Stack sx={{ marginTop: 3 }}>
+        <Stack sx={{ marginTop: 4 }} gap={1}>
+          <Typography variant="body2" color="textSecondary">
+            {t('column.trend.header')}
+          </Typography>
+          <TrendPreview monthlyPlays={monthlyPlays} />
           <Typography noWrap>
             {t.rich('column.playCount.label', {
               count: playCount,
@@ -234,23 +239,21 @@ type ActionButtonProps = {
 
 function ActionButton({ title, href, onClick, disabled, icon, label }: ActionButtonProps) {
   return (
-    <Tooltip title={title} enterDelay={500} enterNextDelay={500} arrow>
-      <Stack alignItems="center">
-        {href != null ? (
-          <Link href={href}>
-            <IconButton color="inherit" size="large">
-              {icon}
-            </IconButton>
-          </Link>
-        ) : (
-          <IconButton color="inherit" size="large" onClick={onClick} disabled={disabled}>
+    <Stack alignItems="center">
+      {href != null ? (
+        <Link href={href}>
+          <IconButton color="inherit" size="large">
             {icon}
           </IconButton>
-        )}
-        <Typography color="textSecondary" variant="caption" textAlign="center">
-          {label}
-        </Typography>
-      </Stack>
-    </Tooltip>
+        </Link>
+      ) : (
+        <IconButton color="inherit" size="large" onClick={onClick} disabled={disabled}>
+          {icon}
+        </IconButton>
+      )}
+      <Typography color="textSecondary" variant="caption" textAlign="center">
+        {label}
+      </Typography>
+    </Stack>
   );
 }

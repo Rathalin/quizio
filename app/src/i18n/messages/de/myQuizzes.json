@@ -81,6 +81,9 @@
           "alt": "Quiz-Bild"
         }
       },
+      "trend": {
+        "header": "Trend über 12 Monate"
+      },
       "updatedAt": {
         "cell": {
           "label": "Bearbeitet"
