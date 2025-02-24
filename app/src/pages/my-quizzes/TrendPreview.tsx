@@ -20,7 +20,7 @@ export function TrendPreview({ monthlyPlays }: Props) {
           </linearGradient>
         </defs>
         <CartesianGrid strokeOpacity={0.2} />
-        <YAxis dataKey="plays" />
+        <YAxis dataKey="plays" domain={[0, 100]} />
         <Area
           type="bump"
           dataKey="plays"
