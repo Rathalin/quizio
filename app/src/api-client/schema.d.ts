@@ -404,6 +404,7 @@ export interface components {
       description: string | null;
       imageUrl: string | null;
       isPublished: boolean;
+      monthlyPlays: components['schemas']['HandlersMonthlyPlayCount'][];
       playCount: number;
       questionCount: number;
       title: string;
@@ -464,6 +465,10 @@ export interface components {
         uuid: string;
       };
       uuid: string;
+    };
+    HandlersMonthlyPlayCount: {
+      month: number;
+      plays: number;
     };
     HandlersPlayQuizResponse: {
       imageUrl: string | null;

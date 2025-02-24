@@ -17,14 +17,15 @@ import { QuizColumn } from './QuizColumn';
 import { VisibilityColumn } from './VisibilityColumn';
 import Divider from '@mui/material/Divider';
 import Skeleton from '@mui/material/Skeleton';
+import { TrendPreview } from './TrendPreview';
 
 type Props = {
   quizzes: GetMyQuizzesResponseQuiz[];
 };
 
 export function MyQuizzesTable({ quizzes }: Props) {
-  const t = useTranslations('myQuizzes');
   const theme = useTheme();
+  const t = useTranslations('myQuizzes');
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
 
   const columnHelper = createColumnHelper<GetMyQuizzesResponseQuiz>();
@@ -97,6 +98,10 @@ export function MyQuizzesTable({ quizzes }: Props) {
           </Typography>
         </Stack>
       ),
+    }),
+    columnHelper.accessor('monthlyPlays', {
+      header: () => t('table.column.trend.header'),
+      cell: (props) => <TrendPreview monthlyPlays={props.getValue()} />,
     }),
   ];
 
