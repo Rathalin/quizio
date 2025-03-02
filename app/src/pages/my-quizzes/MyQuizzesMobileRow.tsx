@@ -20,7 +20,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ShareIcon from '@mui/icons-material/Share';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import LoadingCircle from '@/components/LoadingCircle';
-import { TrendPreview } from './TrendPreview';
 
 type Props = GetMyQuizzesResponseQuiz;
 
@@ -33,7 +32,6 @@ export function MyQuizzesMobileRow({
   updatedAt,
   isPublished,
   playCount,
-  monthlyPlays,
 }: Props) {
   const t = useTranslations('myQuizzes.table');
   const queryClient = useQueryClient();
@@ -150,10 +148,6 @@ export function MyQuizzesMobileRow({
           </Stack>
         </Stack>
         <Stack sx={{ marginTop: 4 }} gap={1}>
-          <Typography variant="body2" color="textSecondary">
-            {t('column.trend.header')}
-          </Typography>
-          <TrendPreview monthlyPlays={monthlyPlays} />
           <Typography noWrap>
             {t.rich('column.playCount.label', {
               count: playCount,

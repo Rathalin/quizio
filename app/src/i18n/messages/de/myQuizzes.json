@@ -73,7 +73,10 @@
       },
       "playCount": {
         "header": "Gespielt",
-        "label": "<span>{count}</span><spanSecondary> mal gespielt</spanSecondary>"
+        "label": "<b>{count}</b><secondary> mal gespielt</secondary>",
+        "trendsButton": {
+          "label": "Trends"
+        }
       },
       "quiz": {
         "header": "Quiz",

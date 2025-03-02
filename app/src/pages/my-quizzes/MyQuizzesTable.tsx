@@ -17,7 +17,8 @@ import { QuizColumn } from './QuizColumn';
 import { VisibilityColumn } from './VisibilityColumn';
 import Divider from '@mui/material/Divider';
 import Skeleton from '@mui/material/Skeleton';
-import { TrendPreview } from './TrendPreview';
+import LinkButton from '@/components/LinkButton';
+import TimelineIcon from '@mui/icons-material/Timeline';
 
 type Props = {
   quizzes: GetMyQuizzesResponseQuiz[];
@@ -84,24 +85,27 @@ export function MyQuizzesTable({ quizzes }: Props) {
           <Typography noWrap>
             {t.rich('table.column.playCount.label', {
               count: props.getValue(),
-              span: (chunks) => (
+              b: (chunks) => (
                 <Typography component="span" variant="body1">
                   {chunks}
                 </Typography>
               ),
-              spanSecondary: (chunks) => (
+              secondary: (chunks) => (
                 <Typography component="span" color="textSecondary" variant="body2" noWrap>
                   {chunks}
                 </Typography>
               ),
             })}
           </Typography>
+          <LinkButton
+            hrefObserver={`/quiz/${props.row.original.uuid}/details`}
+            navigateOnClick
+            startIcon={<TimelineIcon />}
+          >
+            {t('table.column.playCount.trendsButton.label')}
+          </LinkButton>
         </Stack>
       ),
-    }),
-    columnHelper.accessor('monthlyPlays', {
-      header: () => t('table.column.trend.header'),
-      cell: (props) => <TrendPreview monthlyPlays={props.getValue()} />,
     }),
   ];
 

@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"slices"
 	"strings"
 	"time"
 
@@ -17,22 +16,16 @@ func (dbw *DBWrapper) HandleGetMyQuizzes() usecase.Interactor {
 		SortDirection string `query:"sortDirection" required:"true" enum:"asc,desc" example:"desc"`
 	}
 
-	type MonthlyPlayCount struct {
-		Month int `json:"month" required:"true"`
-		Plays int `json:"plays" required:"true"`
-	}
-
 	type getMyQuizzesResponseQuiz struct {
-		UUID          string             `json:"uuid" required:"true"`
-		CreatedAt     time.Time          `json:"createdAt" required:"true"`
-		UpdatedAt     time.Time          `json:"updatedAt" required:"true"`
-		Title         string             `json:"title" required:"true"`
-		Description   *string            `json:"description" required:"true" nullable:"true"`
-		IsPublished   bool               `json:"isPublished" required:"true"`
-		ImageUrl      *string            `json:"imageUrl" required:"true" nullable:"true"`
-		QuestionCount int                `json:"questionCount" required:"true"`
-		PlayCount     int                `json:"playCount" required:"true"`
-		MonthlyPlays  []MonthlyPlayCount `json:"monthlyPlays" required:"true" nullable:"false"`
+		UUID          string    `json:"uuid" required:"true"`
+		CreatedAt     time.Time `json:"createdAt" required:"true"`
+		UpdatedAt     time.Time `json:"updatedAt" required:"true"`
+		Title         string    `json:"title" required:"true"`
+		Description   *string   `json:"description" required:"true" nullable:"true"`
+		IsPublished   bool      `json:"isPublished" required:"true"`
+		ImageUrl      *string   `json:"imageUrl" required:"true" nullable:"true"`
+		QuestionCount int       `json:"questionCount" required:"true"`
+		PlayCount     int       `json:"playCount" required:"true"`
 	}
 
 	type getMyQuizzesResponse struct {
@@ -41,16 +34,6 @@ func (dbw *DBWrapper) HandleGetMyQuizzes() usecase.Interactor {
 
 	return usecase.NewInteractor(func(ctx context.Context, input getMyQuizzesRequest, output *getMyQuizzesResponse) error {
 		userId, err := getUserIdFromContext(ctx)
-		if err != nil {
-			return logAndReturnError(err)
-		}
-
-		totalQuizCount := 0
-		err = dbw.DB.QueryRow(`
-			SELECT COUNT(*)
-			FROM quiz
-			WHERE user_account_id = $1
-		`, userId).Scan(&totalQuizCount)
 		if err != nil {
 			return logAndReturnError(err)
 		}
@@ -124,44 +107,6 @@ func (dbw *DBWrapper) HandleGetMyQuizzes() usecase.Interactor {
 				return logAndReturnError(err)
 			}
 
-			monthlyRows, err := dbw.DB.QueryContext(ctx, `
-				SELECT EXTRACT(MONTH FROM played_at) AS month, COUNT(*) AS play_count
-				FROM play_protocol_entry
-				WHERE played_at >= NOW() - INTERVAL '1 year' AND quiz_id = $1
-				GROUP BY month
-				ORDER BY month
-			`, quizId)
-			if err != nil {
-				return logAndReturnError(err)
-			}
-			currentMonth := time.Now().Month()
-
-			// Initialize map for play counts
-			playCounts := make(map[int]int)
-
-			// Fetch and store database results
-			for monthlyRows.Next() {
-				var month, count int
-				err := monthlyRows.Scan(&month, &count)
-				if err != nil {
-					return logAndReturnError(err)
-				}
-				playCounts[month] = count
-			}
-			monthlyRows.Close()
-
-			// Ensure all 12 months are present and sorted chronologically
-			var monthlyPlays []MonthlyPlayCount
-			for i := range 12 { // Start from 0 and go up to 11
-				month := ((int(currentMonth) - i - 1 + 12) % 12) + 1 // Wrap around correctly
-				monthlyPlays = append(monthlyPlays, MonthlyPlayCount{
-					Month: month,
-					Plays: playCounts[month], // Default to 0 if missing
-				})
-			}
-			slices.Reverse(monthlyPlays)
-
-			q.MonthlyPlays = monthlyPlays
 			quizzes = append(quizzes, q)
 		}
 		response.Quizzes = quizzes

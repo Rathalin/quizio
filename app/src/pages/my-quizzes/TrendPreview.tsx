@@ -1,10 +1,12 @@
-import { MonthlyPlayCount } from '@/api-client';
+import { MonthlyPlays } from '@/api-client';
 import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
 import { AreaChart, Area, CartesianGrid, YAxis } from 'recharts';
 
+const yMax = 25;
+
 type Props = {
-  monthlyPlays: MonthlyPlayCount[];
+  monthlyPlays: MonthlyPlays[];
 };
 
 export function TrendPreview({ monthlyPlays }: Props) {
@@ -20,13 +22,21 @@ export function TrendPreview({ monthlyPlays }: Props) {
           </linearGradient>
         </defs>
         <CartesianGrid strokeOpacity={0.2} />
-        <YAxis dataKey="plays" domain={[0, 100]} />
+        <YAxis dataKey="plays" domain={[0, yMax]} />
         <Area
           type="bump"
           dataKey="plays"
           stroke={theme.palette.secondary.light}
           fill="url(#colorPlayCount)"
           isAnimationActive={false}
+        />
+        <Area
+          type="bump"
+          dataKey="migratedPlays"
+          stroke={theme.palette.secondary.light}
+          fill="url(#colorPlayCount)"
+          isAnimationActive={false}
+          strokeDasharray="4"
         />
       </AreaChart>
     </Stack>
