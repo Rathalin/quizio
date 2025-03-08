@@ -22,6 +22,8 @@ import dePlay from '@messages/de/play.json';
 import enPlay from '@messages/en/play.json';
 import deMyQuizzes from '@messages/de/myQuizzes.json';
 import enMyQuizzes from '@messages/en/myQuizzes.json';
+import deMyQuizzesTrends from '@messages/de/myQuizzesTrends.json';
+import enMyQuizzesTrends from '@messages/en/myQuizzesTrends.json';
 
 type Messages = {
   common: typeof deCommon & typeof enCommon;
@@ -37,6 +39,7 @@ type Messages = {
   signIn: typeof deSignIn & typeof enSignIn;
   play: typeof dePlay & typeof enPlay;
   myQuizzes: typeof deMyQuizzes & typeof enMyQuizzes;
+  myQuizzesTrends: typeof deMyQuizzesTrends & typeof enMyQuizzesTrends;
 };
 
 declare global {

@@ -418,6 +418,8 @@ export interface components {
       description: string | null;
       imageUrl: string | null;
       isPublished: boolean;
+      /** Format: date-time */
+      migrationDate: string;
       monthlyPlays: components['schemas']['HandlersGetMyQuizTrendsResponseMonthlyPlays'][];
       playCount: number;
       questionCount: number;

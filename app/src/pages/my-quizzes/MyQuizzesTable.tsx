@@ -98,7 +98,7 @@ export function MyQuizzesTable({ quizzes }: Props) {
             })}
           </Typography>
           <LinkButton
-            hrefObserver={`/quiz/${props.row.original.uuid}/details`}
+            hrefObserver={`/my-quizzes/${props.row.original.uuid}/trends`}
             navigateOnClick
             startIcon={<TimelineIcon />}
           >

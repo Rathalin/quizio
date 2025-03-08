@@ -20,6 +20,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ShareIcon from '@mui/icons-material/Share';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import LoadingCircle from '@/components/LoadingCircle';
+import LinkButton from '@/components/LinkButton';
+import TimelineIcon from '@mui/icons-material/Timeline';
 
 type Props = GetMyQuizzesResponseQuiz;
 
@@ -71,60 +73,50 @@ export function MyQuizzesMobileRow({
       />
       <Box key={uuid}>
         <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: {
-              xs: '1fr',
-              sm: '1fr 2fr',
-            },
-          }}
+          marginBottom={4}
+          sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', columnGap: 2 }}
         >
-          <Box
-            marginBottom={4}
-            sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', columnGap: 2 }}
-          >
-            <Stack columnGap={4} rowGap={2}>
-              <Box>
-                <PreviewImage url={imageUrl} width={150} />
-              </Box>
-              <Box sx={{ maxWidth: '30ch' }}>
-                <Typography
-                  variant="h4"
-                  component="p"
-                  color="textPrimary"
-                  sx={{
-                    overflow: 'hidden',
-                    whiteSpace: 'pre',
-                    textOverflow: 'ellipsis',
-                  }}
-                >
-                  {title}
-                </Typography>
-                <Typography
-                  color="textSecondary"
-                  sx={{
-                    maxWidth: 'max-content',
-                    overflow: 'hidden',
-                    whiteSpace: 'pre-line',
-                    textOverflow: 'ellipsis',
-                    display: '-webkit-box',
-                    WebkitBoxOrient: 'vertical',
-                    WebkitLineClamp: 5,
-                    marginTop: 1,
-                  }}
-                >
-                  {description}
-                </Typography>
-              </Box>
-            </Stack>
-            <Box marginTop={2} flex={1}>
-              <ActionButtons
-                uuid={uuid}
-                setDialogOpen={setDialogOpen}
-                isDeletePending={isDeletePending}
-                isDeleteSuccess={isDeleteSuccess}
-              />
+          <Stack columnGap={4} rowGap={2}>
+            <Box>
+              <PreviewImage url={imageUrl} width={150} />
             </Box>
+            <Box sx={{ maxWidth: '30ch' }}>
+              <Typography
+                variant="h4"
+                component="p"
+                color="textPrimary"
+                sx={{
+                  overflow: 'hidden',
+                  whiteSpace: 'pre',
+                  textOverflow: 'ellipsis',
+                }}
+              >
+                {title}
+              </Typography>
+              <Typography
+                color="textSecondary"
+                sx={{
+                  maxWidth: 'max-content',
+                  overflow: 'hidden',
+                  whiteSpace: 'pre-line',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitBoxOrient: 'vertical',
+                  WebkitLineClamp: 5,
+                  marginTop: 1,
+                }}
+              >
+                {description}
+              </Typography>
+            </Box>
+          </Stack>
+          <Box marginTop={2} flex={1}>
+            <ActionButtons
+              uuid={uuid}
+              setDialogOpen={setDialogOpen}
+              isDeletePending={isDeletePending}
+              isDeleteSuccess={isDeleteSuccess}
+            />
           </Box>
         </Box>
         <Box sx={{ marginBlock: 2 }}>
@@ -151,18 +143,21 @@ export function MyQuizzesMobileRow({
           <Typography noWrap>
             {t.rich('column.playCount.label', {
               count: playCount,
-              span: (chunks) => (
+              b: (chunks) => (
                 <Typography component="span" variant="body1">
                   {chunks}
                 </Typography>
               ),
-              spanSecondary: (chunks) => (
+              secondary: (chunks) => (
                 <Typography component="span" color="textSecondary" variant="body2" noWrap>
                   {chunks}
                 </Typography>
               ),
             })}
           </Typography>
+          <LinkButton hrefObserver={`/my-quizzes/${uuid}/trends`} navigateOnClick startIcon={<TimelineIcon />}>
+            {t('column.playCount.trendsButton.label')}
+          </LinkButton>
         </Stack>
         <Divider sx={{ marginTop: 2 }} />
       </Box>

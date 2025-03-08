@@ -9,8 +9,8 @@ export const theme = responsiveFontSizes(
       dark: {
         palette: {
           text: {
-            primary: '#ffffff',
-            secondary: '#afafaf',
+            primary: 'rgba(255, 255, 255, 0.9)',
+            secondary: 'rgba(255, 255, 255, 0.6)',
           },
           primary: {
             main: '#d0c15c',
@@ -45,8 +45,8 @@ export const theme = responsiveFontSizes(
       light: {
         palette: {
           text: {
-            primary: '#000000',
-            secondary: '#434343',
+            primary: 'rgba(0, 0, 0, 0.87);',
+            secondary: 'rgba(0, 0, 0, 0.6);',
           },
           primary: {
             main: '#cc9200',

@@ -32,6 +32,7 @@ func (dbw *DBWrapper) HandleGetMyQuizTrends() usecase.Interactor {
 		ImageUrl      *string                               `json:"imageUrl" required:"true" nullable:"true"`
 		QuestionCount int                                   `json:"questionCount" required:"true"`
 		PlayCount     int                                   `json:"playCount" required:"true"`
+		MigrationDate time.Time                             `json:"migrationDate" required:"true"`
 		MonthlyPlays  []getMyQuizTrendsResponseMonthlyPlays `json:"monthlyPlays" required:"true" nullable:"false"`
 	}
 
@@ -54,8 +55,16 @@ func (dbw *DBWrapper) HandleGetMyQuizTrends() usecase.Interactor {
 		}
 
 		quizId, err := dbw.GetQuizId(input.QuizUUID)
+		if err != nil {
+			return logAndReturnError(err)
+		}
 
-		response := getMyQuizTrendsResponse{}
+		// Query entries which where not migrated
+		var migrationDate = time.Date(2025, 1, 27, 0, 0, 0, 0, time.UTC)
+		response := getMyQuizTrendsResponse{
+			UUID:          input.QuizUUID,
+			MigrationDate: migrationDate,
+		}
 		err = dbw.DB.QueryRowContext(ctx, `
 			SELECT
 				q.created_at,
@@ -99,8 +108,6 @@ func (dbw *DBWrapper) HandleGetMyQuizTrends() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
-		// Query entries which where not migrated
-		var migrationDate = time.Date(2025, 1, 27, 0, 0, 0, 0, time.UTC)
 		monthlyRows, err := dbw.DB.QueryContext(ctx, `
 				SELECT TO_CHAR(DATE_TRUNC('month', played_at), 'YYYY-MM') AS month, COUNT(*) AS play_count
 				FROM play_protocol_entry
@@ -173,6 +180,7 @@ func (dbw *DBWrapper) HandleGetMyQuizTrends() usecase.Interactor {
 			monthlyPlays = append(monthlyPlays, monthlyPlayCount)
 		}
 
+		response.MonthlyPlays = monthlyPlays
 		*output = response
 		return nil
 	})
