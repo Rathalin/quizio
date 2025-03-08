@@ -18,6 +18,6 @@
   "meta": {
     "title": "Trends"
   },
-  "migratedInfo": "The exakte Statistik ist erst ab {migrationDate} verfügbar.",
+  "migratedInfo": "The exakte Statistik ist erst ab dem {migrationDate} verfügbar.",
   "text": "Der Graph zeigt wie oft das Quiz in den letzten {count} Monaten gespielt wurde."
 }
