@@ -26,7 +26,6 @@
     "@tanstack/react-table": "^8.21.2",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
-    "eslint": "^9.21.0",
     "eslint-plugin-react": "^7.37.4",
     "jwt-decode": "^4.0.0",
     "next": "15.1.7",
@@ -43,10 +42,12 @@
   },
   "devDependencies": {
     "@hookform/devtools": "^4.3.3",
+    "@next/eslint-plugin-next": "^15.2.1",
     "@total-typescript/ts-reset": "^0.6.1",
     "@types/node": "^22.13.9",
     "@types/react": "19.0.7",
     "@types/react-dom": "19.0.3",
+    "eslint": "^8.57.1",
     "eslint-config-next": "15.1.7",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-react-hooks": "^5.2.0",
@@ -63,7 +64,11 @@
       "@types/react-dom": "19.0.3"
     },
     "onlyBuiltDependencies": [
-      "@vercel/speed-insights"
+      "@vercel/speed-insights",
+      "sharp"
+    ],
+    "ignoredBuiltDependencies": [
+      "sharp"
     ]
   },
   "engines": {

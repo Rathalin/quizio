@@ -10,5 +10,6 @@
   "i18n-ally.extract.ignored": [
     "repeat(auto-fill, minmax(280px, 1fr))",
     "border-radius 0.2s ease-in-out"
-  ]
+  ],
+  "vs-code-prettier-eslint.prettierLast": true
 }
