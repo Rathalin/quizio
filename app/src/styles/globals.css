@@ -20,7 +20,13 @@ a {
 }
 
 a:hover {
-  font-weight: 500;
+  color: black;
+}
+
+@media (prefers-color-scheme: dark) {
+  a:hover {
+    color: white;
+  }
 }
 
 a.no-underline {

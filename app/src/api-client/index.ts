@@ -19,7 +19,8 @@ export type ChangePasswordReqest = ApiSchemas['HandlersChangePasswordRequest'];
 export type UpdateQuizRequest = ApiSchemas['HandlersUpdateQuizRequest'];
 export type UpdateUserProfileImageRequest = ApiSchemas['HandlersUpdateUserProfileImageRequest'];
 export type GetMyQuizzesResponseQuiz = ApiSchemas['HandlersGetMyQuizzesResponseQuiz'];
-export type MonthlyPlayCount = ApiSchemas['HandlersMonthlyPlayCount'];
+export type PlayProtocolStatistic = ApiSchemas['HandlersGetMyQuizTrendsResponsePlayProtocolStatistic'];
+export type PlayProtocolEntry = ApiSchemas['HandlersGetMyQuizTrendsResponsePlayProtocolEntry'];
 
 // Operations
 export type GetQuizzesRequestQuery =

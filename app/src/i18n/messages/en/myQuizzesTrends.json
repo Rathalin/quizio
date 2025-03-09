@@ -1,0 +1,23 @@
+{
+  "breadcrumbs": {
+    "edit": {
+      "current": {
+        "withTitle": "Trends: {title}",
+        "withoutTitle": "Trends"
+      }
+    },
+    "myQuizzes": "My quizzes"
+  },
+  "graph": {
+    "dataKey": {
+      "migratedPlays": "Plays (migrated)",
+      "plays": "Plays"
+    }
+  },
+  "heading": "<gradient>Trends</gradient>",
+  "meta": {
+    "title": "Trends"
+  },
+  "migratedInfo": "The exact statistic is only available after {migrationDate}.",
+  "text": "This graph shows how many times the quiz has been played over the last {count} days."
+}

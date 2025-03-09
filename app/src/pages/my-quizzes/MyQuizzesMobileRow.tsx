@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import { useTranslations } from 'next-intl';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { dateTimeFormatter } from '@/utilities/intlFormats';
 import Divider from '@mui/material/Divider';
 import { PreviewImage } from './PreviewImage';
 import { VisibilityColumn } from './VisibilityColumn';
@@ -20,7 +19,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ShareIcon from '@mui/icons-material/Share';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import LoadingCircle from '@/components/LoadingCircle';
-import { TrendPreview } from './TrendPreview';
+import LinkButton from '@/components/LinkButton';
+import TimelineIcon from '@mui/icons-material/Timeline';
+import { useDateTimeFormatter } from '@/utilities/useDateFormatter';
 
 type Props = GetMyQuizzesResponseQuiz;
 
@@ -32,18 +33,18 @@ export function MyQuizzesMobileRow({
   createdAt,
   updatedAt,
   isPublished,
-  playCount,
-  monthlyPlays,
+  playCount
 }: Props) {
   const t = useTranslations('myQuizzes.table');
   const queryClient = useQueryClient();
   const router = useRouter();
+  const dateTimeFormatter = useDateTimeFormatter();
   const [dialogOpen, setDialogOpen] = useState(false);
   const { showSuccessToast, showErrorToast } = useToastStore();
   const {
     mutateAsync: deleteQuiz,
     isPending: isDeletePending,
-    isSuccess: isDeleteSuccess,
+    isSuccess: isDeleteSuccess
   } = useDeleteQuizMutation(uuid);
 
   async function onDeleteDialogConfirm() {
@@ -73,60 +74,50 @@ export function MyQuizzesMobileRow({
       />
       <Box key={uuid}>
         <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: {
-              xs: '1fr',
-              sm: '1fr 2fr',
-            },
-          }}
+          marginBottom={4}
+          sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', columnGap: 2 }}
         >
-          <Box
-            marginBottom={4}
-            sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', columnGap: 2 }}
-          >
-            <Stack columnGap={4} rowGap={2}>
-              <Box>
-                <PreviewImage url={imageUrl} width={150} />
-              </Box>
-              <Box sx={{ maxWidth: '30ch' }}>
-                <Typography
-                  variant="h4"
-                  component="p"
-                  color="textPrimary"
-                  sx={{
-                    overflow: 'hidden',
-                    whiteSpace: 'pre',
-                    textOverflow: 'ellipsis',
-                  }}
-                >
-                  {title}
-                </Typography>
-                <Typography
-                  color="textSecondary"
-                  sx={{
-                    maxWidth: 'max-content',
-                    overflow: 'hidden',
-                    whiteSpace: 'pre-line',
-                    textOverflow: 'ellipsis',
-                    display: '-webkit-box',
-                    WebkitBoxOrient: 'vertical',
-                    WebkitLineClamp: 5,
-                    marginTop: 1,
-                  }}
-                >
-                  {description}
-                </Typography>
-              </Box>
-            </Stack>
-            <Box marginTop={2} flex={1}>
-              <ActionButtons
-                uuid={uuid}
-                setDialogOpen={setDialogOpen}
-                isDeletePending={isDeletePending}
-                isDeleteSuccess={isDeleteSuccess}
-              />
+          <Stack columnGap={4} rowGap={2}>
+            <Box>
+              <PreviewImage url={imageUrl} width={150} />
             </Box>
+            <Box sx={{ maxWidth: '30ch' }}>
+              <Typography
+                variant="h4"
+                component="p"
+                color="textPrimary"
+                sx={{
+                  overflow: 'hidden',
+                  whiteSpace: 'pre',
+                  textOverflow: 'ellipsis'
+                }}
+              >
+                {title}
+              </Typography>
+              <Typography
+                color="textSecondary"
+                sx={{
+                  maxWidth: 'max-content',
+                  overflow: 'hidden',
+                  whiteSpace: 'pre-line',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitBoxOrient: 'vertical',
+                  WebkitLineClamp: 5,
+                  marginTop: 1
+                }}
+              >
+                {description}
+              </Typography>
+            </Box>
+          </Stack>
+          <Box marginTop={2} flex={1}>
+            <ActionButtons
+              uuid={uuid}
+              setDialogOpen={setDialogOpen}
+              isDeletePending={isDeletePending}
+              isDeleteSuccess={isDeleteSuccess}
+            />
           </Box>
         </Box>
         <Box sx={{ marginBlock: 2 }}>
@@ -150,25 +141,24 @@ export function MyQuizzesMobileRow({
           </Stack>
         </Stack>
         <Stack sx={{ marginTop: 4 }} gap={1}>
-          <Typography variant="body2" color="textSecondary">
-            {t('column.trend.header')}
-          </Typography>
-          <TrendPreview monthlyPlays={monthlyPlays} />
           <Typography noWrap>
             {t.rich('column.playCount.label', {
               count: playCount,
-              span: (chunks) => (
+              b: (chunks) => (
                 <Typography component="span" variant="body1">
                   {chunks}
                 </Typography>
               ),
-              spanSecondary: (chunks) => (
+              secondary: (chunks) => (
                 <Typography component="span" color="textSecondary" variant="body2" noWrap>
                   {chunks}
                 </Typography>
-              ),
+              )
             })}
           </Typography>
+          <LinkButton hrefObserver={`/my-quizzes/${uuid}/trends`} navigateOnClick startIcon={<TimelineIcon />}>
+            {t('column.playCount.trendsButton.label')}
+          </LinkButton>
         </Stack>
         <Divider sx={{ marginTop: 2 }} />
       </Box>
@@ -191,7 +181,7 @@ function ActionButtons({ uuid, setDialogOpen, isDeletePending, isDeleteSuccess }
       sx={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(70px, 1fr))',
-        gap: 1,
+        gap: 1
       }}
     >
       <ActionButton
