@@ -13,7 +13,7 @@ import Link from 'next/link';
 import Typography from '@mui/material/Typography';
 import GradientText from '@/components/GradientText';
 import { TrendPreview } from '../../TrendPreview';
-import { dateFormatter } from '@/utilities/intlFormats';
+import { useDateFormatter } from '@/utilities/useDateFormatter';
 
 export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (ctx) => {
   const uuid = ctx.params?.uuid;
@@ -50,6 +50,7 @@ export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (c
 
 export default function MyQuizzesPage({ uuid }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const t = useTranslations('myQuizzesTrends');
+  const dateFormatter = useDateFormatter();
 
   const { data: quiz } = useMyQuizTrendsQuery(uuid);
 
@@ -81,11 +82,13 @@ export default function MyQuizzesPage({ uuid }: InferGetServerSidePropsType<type
       </Typography>
       {quiz != null && (
         <>
-          <Typography>{t('text', { count: quiz.monthlyPlays.length })}</Typography>
+          <Typography>{t('text', { count: quiz.playProtocolStatistic.entriesPerDay.length })}</Typography>
           <Typography color="textSecondary">
-            {t('migratedInfo', { migrationDate: dateFormatter.format(new Date(quiz.migrationDate)) })}
+            {t('migratedInfo', {
+              migrationDate: dateFormatter.format(new Date(quiz.playProtocolStatistic.migrationDate))
+            })}
           </Typography>
-          <TrendPreview quizUuid={uuid} monthlyPlays={quiz.monthlyPlays} />
+          <TrendPreview quizUuid={uuid} statistic={quiz.playProtocolStatistic} />
         </>
       )}
     </>

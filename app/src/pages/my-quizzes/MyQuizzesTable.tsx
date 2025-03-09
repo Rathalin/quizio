@@ -11,7 +11,6 @@ import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '
 import { useTranslations } from 'next-intl';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { dateTimeFormatter } from '@/utilities/intlFormats';
 import { useState } from 'react';
 import { QuizColumn } from './QuizColumn';
 import { VisibilityColumn } from './VisibilityColumn';
@@ -19,6 +18,7 @@ import Divider from '@mui/material/Divider';
 import Skeleton from '@mui/material/Skeleton';
 import LinkButton from '@/components/LinkButton';
 import TimelineIcon from '@mui/icons-material/Timeline';
+import { useDateTimeFormatter } from '@/utilities/useDateFormatter';
 
 type Props = {
   quizzes: GetMyQuizzesResponseQuiz[];
@@ -27,6 +27,7 @@ type Props = {
 export function MyQuizzesTable({ quizzes }: Props) {
   const theme = useTheme();
   const t = useTranslations('myQuizzes');
+  const dateTimeFormatter = useDateTimeFormatter();
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
 
   const columnHelper = createColumnHelper<GetMyQuizzesResponseQuiz>();
@@ -46,7 +47,7 @@ export function MyQuizzesTable({ quizzes }: Props) {
             isHovered={hoveredRowId === uuid}
           />
         );
-      },
+      }
     }),
     columnHelper.accessor('isPublished', {
       header: () => t('table.column.isPublished.header'),
@@ -54,7 +55,7 @@ export function MyQuizzesTable({ quizzes }: Props) {
         <Box sx={{ marginTop: -1 }}>
           <VisibilityColumn uuid={props.row.original.uuid} isPublished={props.getValue()} size="small" />
         </Box>
-      ),
+      )
     }),
     columnHelper.accessor('createdAt', {
       header: () => t('table.column.createdAt.header'),
@@ -65,7 +66,7 @@ export function MyQuizzesTable({ quizzes }: Props) {
             {t('table.column.createdAt.cell.label')}
           </Typography>
         </Stack>
-      ),
+      )
     }),
     columnHelper.accessor('updatedAt', {
       header: () => t('table.column.updatedAt.header'),
@@ -76,7 +77,7 @@ export function MyQuizzesTable({ quizzes }: Props) {
             {t('table.column.updatedAt.cell.label')}
           </Typography>
         </Stack>
-      ),
+      )
     }),
     columnHelper.accessor('playCount', {
       header: () => t('table.column.playCount.header'),
@@ -94,7 +95,7 @@ export function MyQuizzesTable({ quizzes }: Props) {
                 <Typography component="span" color="textSecondary" variant="body2" noWrap>
                   {chunks}
                 </Typography>
-              ),
+              )
             })}
           </Typography>
           <LinkButton
@@ -105,15 +106,15 @@ export function MyQuizzesTable({ quizzes }: Props) {
             {t('table.column.playCount.trendsButton.label')}
           </LinkButton>
         </Stack>
-      ),
-    }),
+      )
+    })
   ];
 
   const table = useReactTable({
     data: quizzes,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getRowId: (originalRow) => originalRow.uuid,
+    getRowId: (originalRow) => originalRow.uuid
   });
 
   return (
@@ -140,8 +141,8 @@ export function MyQuizzesTable({ quizzes }: Props) {
                 sx={{
                   verticalAlign: 'top',
                   ':hover': {
-                    backgroundColor: theme.palette.action.hover,
-                  },
+                    backgroundColor: theme.palette.action.hover
+                  }
                 }}
               >
                 {row.getVisibleCells().map((cell) => (

@@ -16,24 +16,28 @@ func (dbw *DBWrapper) HandleGetMyQuizTrends() usecase.Interactor {
 		QuizUUID string `path:"uuid" required:"true"`
 	}
 
-	type getMyQuizTrendsResponseMonthlyPlays struct {
-		MonthDate     string `json:"month" required:"true" example:"2025-01"`
-		Plays         *int   `json:"plays" required:"true" nullable:"true"`
-		MigratedPlays *int   `json:"migratedPlays" required:"true" nullable:"true"`
+	type getMyQuizTrendsResponsePlayProtocolEntry struct {
+		PlayedAt          time.Time `json:"playedAt" required:"true"`
+		PlayCount         *int      `json:"playCount" required:"true" nullable:"true"`
+		MigratedPlayCount *int      `json:"migratedPlayCount" required:"true" nullable:"true"`
+	}
+
+	type getMyQuizTrendsResponsePlayProtocolStatistic struct {
+		PlayCountTotal int                                        `json:"playCount" required:"true"`
+		MigrationDate  time.Time                                  `json:"migrationDate" required:"true"`
+		EntriesByDay   []getMyQuizTrendsResponsePlayProtocolEntry `json:"entriesPerDay" required:"true" nullable:"false"`
 	}
 
 	type getMyQuizTrendsResponse struct {
-		UUID          string                                `json:"uuid" required:"true"`
-		CreatedAt     time.Time                             `json:"createdAt" required:"true"`
-		UpdatedAt     time.Time                             `json:"updatedAt" required:"true"`
-		Title         string                                `json:"title" required:"true"`
-		Description   *string                               `json:"description" required:"true" nullable:"true"`
-		IsPublished   bool                                  `json:"isPublished" required:"true"`
-		ImageUrl      *string                               `json:"imageUrl" required:"true" nullable:"true"`
-		QuestionCount int                                   `json:"questionCount" required:"true"`
-		PlayCount     int                                   `json:"playCount" required:"true"`
-		MigrationDate time.Time                             `json:"migrationDate" required:"true"`
-		MonthlyPlays  []getMyQuizTrendsResponseMonthlyPlays `json:"monthlyPlays" required:"true" nullable:"false"`
+		UUID                  string                                       `json:"uuid" required:"true"`
+		CreatedAt             time.Time                                    `json:"createdAt" required:"true"`
+		UpdatedAt             time.Time                                    `json:"updatedAt" required:"true"`
+		Title                 string                                       `json:"title" required:"true"`
+		Description           *string                                      `json:"description" required:"true" nullable:"true"`
+		IsPublished           bool                                         `json:"isPublished" required:"true"`
+		ImageUrl              *string                                      `json:"imageUrl" required:"true" nullable:"true"`
+		QuestionCount         int                                          `json:"questionCount" required:"true"`
+		PlayProtocolStatistic getMyQuizTrendsResponsePlayProtocolStatistic `json:"playProtocolStatistic" required:"true"`
 	}
 
 	return usecase.NewInteractor(func(ctx context.Context, input getMyQuizTrendsRequest, output *getMyQuizTrendsResponse) error {
@@ -59,12 +63,19 @@ func (dbw *DBWrapper) HandleGetMyQuizTrends() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
-		// Query entries which where not migrated
+		endDate := time.Now().Truncate(24 * time.Hour) // Today at midnight
+		startDate := endDate.AddDate(-1, 0, 0)         // One year ago
+		// Date on which the migration from Strapi to Postgres happened
 		var migrationDate = time.Date(2025, 1, 27, 0, 0, 0, 0, time.UTC)
+
 		response := getMyQuizTrendsResponse{
-			UUID:          input.QuizUUID,
-			MigrationDate: migrationDate,
+			UUID: input.QuizUUID,
+			PlayProtocolStatistic: getMyQuizTrendsResponsePlayProtocolStatistic{
+				MigrationDate: migrationDate,
+			},
 		}
+
+		// Select quiz details
 		err = dbw.DB.QueryRowContext(ctx, `
 			SELECT
 				q.created_at,
@@ -102,26 +113,26 @@ func (dbw *DBWrapper) HandleGetMyQuizTrends() usecase.Interactor {
 			&response.IsPublished,
 			&response.ImageUrl,
 			&response.QuestionCount,
-			&response.PlayCount,
+			&response.PlayProtocolStatistic.PlayCountTotal,
 		)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
-		monthlyRows, err := dbw.DB.QueryContext(ctx, `
-				SELECT TO_CHAR(DATE_TRUNC('month', played_at), 'YYYY-MM') AS month, COUNT(*) AS play_count
-				FROM play_protocol_entry
-				WHERE played_at >= NOW() - INTERVAL '1 year' 
-					AND quiz_id = $1 
-					AND NOT played_at = $2
-				GROUP BY month
-				ORDER BY month
+		// Select protocol entries
+		entriesPerDayRows, err := dbw.DB.QueryContext(ctx, `
+			SELECT TO_CHAR(played_at, 'YYYY-MM-DD') AS date, COUNT(*) AS play_count
+			FROM play_protocol_entry
+			WHERE played_at >= NOW() - INTERVAL '1 year' 
+				AND quiz_id = $1 
+				AND played_at != $2
+			GROUP BY date
+			ORDER BY date
 			`, quizId, migrationDate)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
-		// Query migrated entries (those artificially assigned to "2025-01-27")
 		var migratedPlayCount *int
 		err = dbw.DB.QueryRowContext(ctx, `
 				SELECT COUNT(*)
@@ -131,65 +142,62 @@ func (dbw *DBWrapper) HandleGetMyQuizTrends() usecase.Interactor {
 		if err != nil {
 			return logAndReturnError(err)
 		}
-		var averageDailyPlays *int
-		monthsBeforeMigration := monthsBetween(response.CreatedAt, migrationDate)
-		if monthsBeforeMigration > 0 && migratedPlayCount != nil {
-			avg := int(math.Ceil(float64(*migratedPlayCount) / float64(monthsBeforeMigration)))
-			averageDailyPlays = &avg
-			fmt.Printf("%d / %d -> %d\n", migratedPlayCount, monthsBeforeMigration, averageDailyPlays)
-		}
+		var averageDailyMigratedPlayCount *int
+		daysBetween := int(endDate.Sub(startDate).Hours() / 24)
+		avg := int(math.Round(float64(*migratedPlayCount) / float64(daysBetween)))
+		averageDailyMigratedPlayCount = &avg
 
-		playCounts := make(map[string]int)
-
-		for monthlyRows.Next() {
-			var month = ""
-			var count = 0
-			err := monthlyRows.Scan(&month, &count)
+		entriesPerDayMap := make(map[string]int)
+		for entriesPerDayRows.Next() {
+			var dateString string
+			var playCount int
+			err := entriesPerDayRows.Scan(&dateString, &playCount)
 			if err != nil {
 				return logAndReturnError(err)
 			}
-			fmt.Printf("playCounts[%s] -> %d\n", month, count)
-			playCounts[month] = count
-		}
-		monthlyRows.Close()
 
-		var monthlyPlays []getMyQuizTrendsResponseMonthlyPlays
-		now := time.Now()
-		for i := 11; i >= 0; i-- {
-			monthDate := now.AddDate(0, -i, 0)
-			monthDateString := monthDate.Format("2006-01")
-			fmt.Printf("%s\n", monthDateString)
-			monthlyPlayCount := getMyQuizTrendsResponseMonthlyPlays{
-				MonthDate: monthDateString,
+			date, err := time.Parse("2006-01-02", dateString)
+			if err != nil {
+				return logAndReturnError(err)
 			}
-			if monthDate.Year() < 2025 {
-				monthlyPlayCount.MigratedPlays = averageDailyPlays
-				fmt.Printf("%d (year) < 2025 -> %d (averageDailyPlays)\n", monthDate.Year(), averageDailyPlays)
+			entriesPerDayMap[date.Format("2006-01-02")] = playCount
+		}
+		entriesPerDayRows.Close()
+
+		var entriesPerDay []getMyQuizTrendsResponsePlayProtocolEntry
+		// Iterate through all days in the range and fill missing days
+		for d := startDate; !d.After(endDate); d = d.AddDate(0, 0, 1) {
+			var playCount *int
+			var migratedPlayCount *int
+			zero := 0
+
+			// Special case to connect two entries
+			if d.Equal(migrationDate) {
+				migratedPlayCount = &zero
+			}
+
+			if d.Before(migrationDate) {
+				migratedPlayCount = averageDailyMigratedPlayCount
 			} else {
-				playCountsOfMonth := playCounts[monthDateString]
-				monthlyPlayCount.Plays = &playCountsOfMonth
-				fmt.Printf("%d (year) >= 2025 -> %d (playCounts[monthDate])\n", monthDate.Year(), playCounts[monthDateString])
+				dateStr := d.Format("2006-01-02")
+				count, exists := entriesPerDayMap[dateStr]
+
+				if !exists {
+					playCount = &zero
+				} else {
+					playCount = &count
+				}
 			}
 
-			// Add a 0 to 2025-01 to connect lines
-			if monthDate.Year() == 2025 && monthDate.Month() == 1 {
-				zero := 0
-				monthlyPlayCount.MigratedPlays = &zero
-			}
-
-			monthlyPlays = append(monthlyPlays, monthlyPlayCount)
+			entriesPerDay = append(entriesPerDay, getMyQuizTrendsResponsePlayProtocolEntry{
+				PlayedAt:          d,
+				PlayCount:         playCount,
+				MigratedPlayCount: migratedPlayCount,
+			})
 		}
 
-		response.MonthlyPlays = monthlyPlays
+		response.PlayProtocolStatistic.EntriesByDay = entriesPerDay
 		*output = response
 		return nil
 	})
-}
-
-func monthsBetween(start, end time.Time) int {
-	// Calculate the total number of months between the two dates
-	yearsDiff := end.Year() - start.Year()
-	monthsDiff := int(end.Month()) - int(start.Month())
-
-	return yearsDiff*12 + monthsDiff
 }

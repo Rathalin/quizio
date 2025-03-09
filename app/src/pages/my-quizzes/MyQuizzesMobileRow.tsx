@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import { useTranslations } from 'next-intl';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { dateTimeFormatter } from '@/utilities/intlFormats';
 import Divider from '@mui/material/Divider';
 import { PreviewImage } from './PreviewImage';
 import { VisibilityColumn } from './VisibilityColumn';
@@ -22,6 +21,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import LoadingCircle from '@/components/LoadingCircle';
 import LinkButton from '@/components/LinkButton';
 import TimelineIcon from '@mui/icons-material/Timeline';
+import { useDateTimeFormatter } from '@/utilities/useDateFormatter';
 
 type Props = GetMyQuizzesResponseQuiz;
 
@@ -33,17 +33,18 @@ export function MyQuizzesMobileRow({
   createdAt,
   updatedAt,
   isPublished,
-  playCount,
+  playCount
 }: Props) {
   const t = useTranslations('myQuizzes.table');
   const queryClient = useQueryClient();
   const router = useRouter();
+  const dateTimeFormatter = useDateTimeFormatter();
   const [dialogOpen, setDialogOpen] = useState(false);
   const { showSuccessToast, showErrorToast } = useToastStore();
   const {
     mutateAsync: deleteQuiz,
     isPending: isDeletePending,
-    isSuccess: isDeleteSuccess,
+    isSuccess: isDeleteSuccess
   } = useDeleteQuizMutation(uuid);
 
   async function onDeleteDialogConfirm() {
@@ -88,7 +89,7 @@ export function MyQuizzesMobileRow({
                 sx={{
                   overflow: 'hidden',
                   whiteSpace: 'pre',
-                  textOverflow: 'ellipsis',
+                  textOverflow: 'ellipsis'
                 }}
               >
                 {title}
@@ -103,7 +104,7 @@ export function MyQuizzesMobileRow({
                   display: '-webkit-box',
                   WebkitBoxOrient: 'vertical',
                   WebkitLineClamp: 5,
-                  marginTop: 1,
+                  marginTop: 1
                 }}
               >
                 {description}
@@ -152,7 +153,7 @@ export function MyQuizzesMobileRow({
                 <Typography component="span" color="textSecondary" variant="body2" noWrap>
                   {chunks}
                 </Typography>
-              ),
+              )
             })}
           </Typography>
           <LinkButton hrefObserver={`/my-quizzes/${uuid}/trends`} navigateOnClick startIcon={<TimelineIcon />}>
@@ -180,7 +181,7 @@ function ActionButtons({ uuid, setDialogOpen, isDeletePending, isDeleteSuccess }
       sx={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(70px, 1fr))',
-        gap: 1,
+        gap: 1
       }}
     >
       <ActionButton

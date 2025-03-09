@@ -418,21 +418,24 @@ export interface components {
       description: string | null;
       imageUrl: string | null;
       isPublished: boolean;
-      /** Format: date-time */
-      migrationDate: string;
-      monthlyPlays: components['schemas']['HandlersGetMyQuizTrendsResponseMonthlyPlays'][];
-      playCount: number;
+      playProtocolStatistic: components['schemas']['HandlersGetMyQuizTrendsResponsePlayProtocolStatistic'];
       questionCount: number;
       title: string;
       /** Format: date-time */
       updatedAt: string;
       uuid: string;
     };
-    HandlersGetMyQuizTrendsResponseMonthlyPlays: {
-      migratedPlays: number | null;
-      /** @example 2025-01 */
-      month: string;
-      plays: number | null;
+    HandlersGetMyQuizTrendsResponsePlayProtocolEntry: {
+      migratedPlayCount: number | null;
+      playCount: number | null;
+      /** Format: date-time */
+      playedAt: string;
+    };
+    HandlersGetMyQuizTrendsResponsePlayProtocolStatistic: {
+      entriesPerDay: components['schemas']['HandlersGetMyQuizTrendsResponsePlayProtocolEntry'][];
+      /** Format: date-time */
+      migrationDate: string;
+      playCount: number;
     };
     HandlersGetMyQuizzesResponse: {
       quizzes: components['schemas']['HandlersGetMyQuizzesResponseQuiz'][];

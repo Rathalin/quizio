@@ -73,7 +73,7 @@
       },
       "playCount": {
         "header": "Played",
-        "label": "<span>{count}</span> <spanSecondary>times played</spanSecondary>",
+        "label": "<b>{count}</b> <secondary>times played</secondary>",
         "trendsButton": {
           "label": "Trends"
         }

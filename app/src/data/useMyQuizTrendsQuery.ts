@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 export function useMyQuizTrendsQuery(uuid: string) {
   const authHeader = useAuthHeader();
 
-  const queryKey = ['getMyQuizTrends'];
+  const queryKey = ['getMyQuizTrends', uuid];
 
   return {
     queryKey,

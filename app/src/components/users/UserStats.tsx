@@ -1,6 +1,6 @@
+import { useDateFormatter } from '@/utilities/useDateFormatter';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { dateFormatter } from '@/utilities/intlFormats';
 import { useTranslations } from 'next-intl';
 
 type UserProfileProps = {
@@ -12,6 +12,7 @@ type UserProfileProps = {
 
 export default function UserStats({ createdAt, quizCount, quizViewsTotal }: UserProfileProps) {
   const t = useTranslations('users.stats');
+  const dateFormatter = useDateFormatter();
 
   return (
     <>
@@ -20,7 +21,7 @@ export default function UserStats({ createdAt, quizCount, quizViewsTotal }: User
         component="h2"
         sx={{
           marginTop: 1,
-          marginBottom: 2,
+          marginBottom: 2
         }}
       >
         {t('heading')}

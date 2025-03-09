@@ -18,8 +18,8 @@ import { usePageTransition } from '@/persistence/page-transition.store';
 import LoadingCircle from './LoadingCircle';
 import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import { useToastStore } from '@/persistence/taost.store';
-import { dateFormatter } from '@/utilities/intlFormats';
 import { useTranslations } from 'next-intl';
+import { useDateFormatter } from '@/utilities/useDateFormatter';
 
 type QuizOverviewCardProps = {
   uuid: string;
@@ -43,13 +43,14 @@ export default function QuizOverviewCard({
   createdAt,
   questionCount,
   playCount,
-  imageUrl,
+  imageUrl
 }: QuizOverviewCardProps) {
   const t = useTranslations('dashboard.quizCard');
   const theme = useTheme();
   const { mode } = useColorScheme();
   const { showInfoToast } = useToastStore();
   const { transitionHref } = usePageTransition();
+  const dateFormatter = useDateFormatter();
 
   const copiedText = useMemo(() => {
     const titleLimit = 30;
@@ -68,7 +69,7 @@ export default function QuizOverviewCard({
         elevation={2}
         sx={{
           display: 'flex',
-          flexDirection: 'column',
+          flexDirection: 'column'
         }}
       >
         {imageUrl != null ? (
@@ -80,7 +81,7 @@ export default function QuizOverviewCard({
             style={{
               objectFit: 'cover',
               width: '100%',
-              minHeight: '180px',
+              minHeight: '180px'
             }}
             priority
             unoptimized
@@ -95,7 +96,7 @@ export default function QuizOverviewCard({
               backgroundColor:
                 mode === 'light'
                   ? lighten(theme.palette.secondary.light, 0.7)
-                  : darken(theme.palette.secondary.light, 0.7),
+                  : darken(theme.palette.secondary.light, 0.7)
             }}
           >
             <ImageIcon fontSize="large" />
@@ -106,7 +107,7 @@ export default function QuizOverviewCard({
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'space-between',
+            justifyContent: 'space-between'
           }}
         >
           <Box>
@@ -118,17 +119,17 @@ export default function QuizOverviewCard({
                   marginTop: 1,
                   marginBottom: {
                     xs: 2,
-                    md: 3,
+                    md: 3
                   },
                   display: 'flex',
                   alignItems: 'start',
-                  justifyContent: 'space-between',
+                  justifyContent: 'space-between'
                 }}
               >
                 <Box
                   sx={{
                     flex: 1,
-                    overflowWrap: 'anywhere',
+                    overflowWrap: 'anywhere'
                   }}
                 >
                   {title}
@@ -148,7 +149,7 @@ export default function QuizOverviewCard({
                   marginBottom: '.8rem',
                   whiteSpace: 'break-spaces',
                   overflow: 'auto',
-                  maxHeight: '8rem',
+                  maxHeight: '8rem'
                 }}
               >
                 {description}
@@ -166,8 +167,8 @@ export default function QuizOverviewCard({
                     sx={{
                       cursor: 'pointer',
                       '&:hover': {
-                        textDecoration: 'underline',
-                      },
+                        textDecoration: 'underline'
+                      }
                     }}
                   />
                 </Link>
@@ -181,7 +182,7 @@ export default function QuizOverviewCard({
             sx={{
               marginTop: 4,
               display: 'flex',
-              justifyContent: 'center',
+              justifyContent: 'center'
             }}
           >
             <LinkButton
