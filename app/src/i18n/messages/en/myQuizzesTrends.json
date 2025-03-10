@@ -8,6 +8,17 @@
     },
     "myQuizzes": "My quizzes"
   },
+  "filter": {
+    "lastMonth": {
+      "label": "Last Month"
+    },
+    "lastWeek": {
+      "label": "Last week"
+    },
+    "lastYear": {
+      "label": "Last Year"
+    }
+  },
   "graph": {
     "dataKey": {
       "migratedPlays": "Plays (migrated)",

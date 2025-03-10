@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 
-function useLocale() {
+export function useLocale() {
   const { locale } = useRouter();
   return locale === 'de' ? 'de-AT' : 'en-GB';
 }

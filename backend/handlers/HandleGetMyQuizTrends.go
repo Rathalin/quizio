@@ -13,7 +13,9 @@ import (
 func (dbw *DBWrapper) HandleGetMyQuizTrends() usecase.Interactor {
 
 	type getMyQuizTrendsRequest struct {
-		QuizUUID string `path:"uuid" required:"true"`
+		QuizUUID  string    `path:"uuid" required:"true"`
+		StartDate time.Time `query:"from" required:"true"`
+		EndDate   time.Time `query:"to" required:"true"`
 	}
 
 	type getMyQuizTrendsResponsePlayProtocolEntry struct {
@@ -63,8 +65,10 @@ func (dbw *DBWrapper) HandleGetMyQuizTrends() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
-		endDate := time.Now().Truncate(24 * time.Hour) // Today at midnight
-		startDate := endDate.AddDate(-1, 0, 0)         // One year ago
+		if input.EndDate.Before(input.StartDate) {
+			return status.Wrap(logAndReturnErrorMessage("from date has to be before to date"), status.InvalidArgument)
+		}
+
 		// Date on which the migration from Strapi to Postgres happened
 		var migrationDate = time.Date(2025, 1, 27, 0, 0, 0, 0, time.UTC)
 
@@ -143,7 +147,7 @@ func (dbw *DBWrapper) HandleGetMyQuizTrends() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 		var averageDailyMigratedPlayCount *int
-		daysBetween := int(endDate.Sub(startDate).Hours() / 24)
+		daysBetween := int(input.EndDate.Sub(input.StartDate).Hours() / 24)
 		avg := int(math.Round(float64(*migratedPlayCount) / float64(daysBetween)))
 		averageDailyMigratedPlayCount = &avg
 
@@ -166,7 +170,7 @@ func (dbw *DBWrapper) HandleGetMyQuizTrends() usecase.Interactor {
 
 		var entriesPerDay []getMyQuizTrendsResponsePlayProtocolEntry
 		// Iterate through all days in the range and fill missing days
-		for d := startDate; !d.After(endDate); d = d.AddDate(0, 0, 1) {
+		for d := input.StartDate; !d.After(input.EndDate); d = d.AddDate(0, 0, 1) {
 			var playCount *int
 			var migratedPlayCount *int
 			zero := 0

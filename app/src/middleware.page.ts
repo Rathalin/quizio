@@ -12,5 +12,13 @@ export default function middleware(req: NextRequestWithAuth, res: NextFetchEvent
 }
 
 export const config = {
-  matcher: ['/users/me', '/users/me/change-password', '/my-quizzes', '/quiz/create', '/quiz/edit/:path'],
+  matcher: [
+    '/users/me',
+    '/users/me/change-password',
+    '/my-quizzes',
+    '/quiz/my-quizzes/:path/trends',
+    '/quiz/create',
+    '/quiz/edit/:path',
+    '/quiz/my-quizzes/:path/trends',
+  ],
 };

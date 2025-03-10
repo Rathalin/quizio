@@ -39,7 +39,7 @@ export function TrendPreview({ quizUuid, statistic }: Props) {
 
   return (
     <ResponsiveContainer height={340}>
-      <AreaChart key={quizUuid} data={statistic.entriesPerDay} margin={{ top: 20, right: 30, left: -20, bottom: 40 }}>
+      <AreaChart key={quizUuid} data={statistic.entriesPerDay} margin={{ top: 20, right: 60, left: -30, bottom: 40 }}>
         <defs>
           <linearGradient id="colorPlays" x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor={theme.palette.secondary.main} stopOpacity={0.8} />
