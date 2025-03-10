@@ -906,7 +906,10 @@ export interface operations {
   };
   'backend/handlers.(*DBWrapper).HandleGetMyQuizTrends': {
     parameters: {
-      query?: never;
+      query: {
+        from: string;
+        to: string;
+      };
       header?: never;
       path: {
         uuid: string;

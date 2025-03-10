@@ -12,26 +12,50 @@ import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
 import Link from 'next/link';
 import Typography from '@mui/material/Typography';
 import GradientText from '@/components/GradientText';
-import { TrendPreview } from '../../TrendPreview';
+import { TrendPreview } from './TrendPreview';
 import { useDateFormatter } from '@/utilities/useDateFormatter';
+import dayjs, { Dayjs } from 'dayjs';
+import Stack from '@mui/material/Stack';
+import { useRouter } from 'next/router';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import ToggleButton from '@mui/material/ToggleButton';
+import { useMemo } from 'react';
 
-export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (ctx) => {
-  const uuid = ctx.params?.uuid;
+const intervalFilterOptions = ['lastWeek', 'lastMonth', 'lastYear'] as const;
+export type IntervalFilterOption = (typeof intervalFilterOptions)[number];
+
+export const getServerSideProps: GetServerSideProps<{
+  uuid: string;
+  interval: {
+    value: IntervalFilterOption;
+    from: string;
+    to: string;
+  };
+}> = async (ctx) => {
+  const { uuid, interval: intervalParam } = ctx.query;
   if (typeof uuid !== 'string') {
     return {
       notFound: true
     };
   }
 
+  const interval: IntervalFilterOption =
+    typeof intervalParam === 'string' && intervalFilterOptions.includes(intervalParam)
+      ? (intervalParam as IntervalFilterOption)
+      : 'lastMonth';
+  const today = dayjs(new Date()).startOf('day');
+  const fromDate = getDayjsFromInterval(interval, today).toISOString();
+  const toDate = today.toISOString();
+
   const messagesPromise = getMessages(ctx.locale, ['myQuizzesTrends']);
 
   const session = await getServerSession(ctx.req, ctx.res, authOptions);
   const queryClient = new QueryClient();
   const prefetchPromise = queryClient.prefetchQuery({
-    queryKey: ['getMyQuizTrends', uuid],
+    queryKey: ['getMyQuizTrends', uuid, fromDate, toDate],
     queryFn: () =>
       throwOnError(() =>
-        fetchMyQuizTrends(uuid, {
+        fetchMyQuizTrends(uuid, fromDate, toDate, {
           Authorization: `Bearer ${session?.user.accessToken}`
         })
       )
@@ -42,17 +66,24 @@ export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (c
   return {
     props: {
       uuid,
+      interval: {
+        value: interval,
+        from: fromDate,
+        to: toDate
+      },
       messages,
       dehydratedState: dehydrate(queryClient)
     }
   };
 };
 
-export default function MyQuizzesPage({ uuid }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function MyQuizzesPage({ uuid, interval }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const t = useTranslations('myQuizzesTrends');
   const dateFormatter = useDateFormatter();
-
-  const { data: quiz } = useMyQuizTrendsQuery(uuid);
+  const router = useRouter();
+  const fromDayjs = useMemo(() => dayjs(interval.from), [interval.from]);
+  const toDayjs = useMemo(() => dayjs(interval.to), [interval.to]);
+  const { data: quiz } = useMyQuizTrendsQuery(uuid, fromDayjs.toISOString(), toDayjs.toISOString());
 
   return (
     <>
@@ -88,9 +119,46 @@ export default function MyQuizzesPage({ uuid }: InferGetServerSidePropsType<type
               migrationDate: dateFormatter.format(new Date(quiz.playProtocolStatistic.migrationDate))
             })}
           </Typography>
-          <TrendPreview quizUuid={uuid} statistic={quiz.playProtocolStatistic} />
+          <Stack direction="row" gap={2} flexWrap="wrap" marginTop={4} justifyContent="center">
+            <ToggleButtonGroup
+              value={interval.value}
+              color="primary"
+              onChange={(_, nextInterval) =>
+                router.replace({
+                  query: {
+                    uuid,
+                    ...(nextInterval != null ? { interval: nextInterval } : { interval: interval.value })
+                  }
+                })
+              }
+              exclusive
+            >
+              <ToggleButton value="lastYear">{t('filter.lastYear.label')}</ToggleButton>
+              <ToggleButton value="lastMonth">{t('filter.lastMonth.label')}</ToggleButton>
+              <ToggleButton value="lastWeek">{t('filter.lastWeek.label')}</ToggleButton>
+            </ToggleButtonGroup>
+          </Stack>
+          <TrendPreview quizUuid={uuid} statistic={quiz.playProtocolStatistic} intervalFilter={interval.value} />
         </>
       )}
     </>
   );
+}
+
+function getDayjsFromInterval(interval: IntervalFilterOption, today: Dayjs): Dayjs {
+  switch (interval) {
+    case 'lastWeek': {
+      return today.subtract(6, 'days');
+    }
+    case 'lastMonth': {
+      return today.subtract(29, 'days');
+    }
+    case 'lastYear': {
+      return today.subtract(364, 'days');
+    }
+    default: {
+      interval satisfies never;
+      return today;
+    }
+  }
 }

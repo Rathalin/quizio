@@ -8,10 +8,22 @@
     },
     "myQuizzes": "Meine Quiz"
   },
+  "filter": {
+    "lastMonth": {
+      "label": "Letzer Monat"
+    },
+    "lastWeek": {
+      "label": "Letzte Woche"
+    },
+    "lastYear": {
+      "label": "Letztes Jahr"
+    }
+  },
   "graph": {
     "dataKey": {
       "migratedPlays": "Gespielt (migriert)",
-      "plays": "Gespielt"
+      "plays": "Gespielt",
+      "times": "{count} mal"
     }
   },
   "heading": "<gradient>Trends</gradient>",
