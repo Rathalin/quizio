@@ -141,8 +141,9 @@ func (dbw *DBWrapper) HandleGetMyQuizTrends() usecase.Interactor {
 		err = dbw.DB.QueryRowContext(ctx, `
 				SELECT COUNT(*)
 				FROM play_protocol_entry
-				WHERE played_at = $1
-			`, migrationDate).Scan(&migratedPlayCount)
+				WHERE quiz_id = $1
+					AND played_at = $2
+			`, quizId, migrationDate).Scan(&migratedPlayCount)
 		if err != nil {
 			return logAndReturnError(err)
 		}
