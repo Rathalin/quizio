@@ -127,7 +127,7 @@ export default function MyQuizzesPage({ uuid, interval }: InferGetServerSideProp
                 router.replace({
                   query: {
                     uuid,
-                    ...(nextInterval != null ? { interval: nextInterval } : {})
+                    ...(nextInterval != null ? { interval: nextInterval } : { interval: interval.value })
                   }
                 })
               }
