@@ -20,8 +20,8 @@ func (dbw *DBWrapper) HandleGetMyQuizTrends() usecase.Interactor {
 
 	type getMyQuizTrendsResponsePlayProtocolEntry struct {
 		PlayedAt          time.Time `json:"playedAt" required:"true"`
-		PlayCount         *int      `json:"playCount" required:"true" nullable:"true"`
-		MigratedPlayCount *int      `json:"migratedPlayCount" required:"true" nullable:"true"`
+		PlayCount         *float64  `json:"playCount" required:"true" nullable:"true"`
+		MigratedPlayCount *float64  `json:"migratedPlayCount" required:"true" nullable:"true"`
 	}
 
 	type getMyQuizTrendsResponsePlayProtocolStatistic struct {
@@ -137,7 +137,7 @@ func (dbw *DBWrapper) HandleGetMyQuizTrends() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
-		var migratedPlayCount *int
+		var migratedPlayCount *float64
 		err = dbw.DB.QueryRowContext(ctx, `
 				SELECT COUNT(*)
 				FROM play_protocol_entry
@@ -146,15 +146,17 @@ func (dbw *DBWrapper) HandleGetMyQuizTrends() usecase.Interactor {
 		if err != nil {
 			return logAndReturnError(err)
 		}
-		var averageDailyMigratedPlayCount *int
-		daysBetween := int(input.EndDate.Sub(input.StartDate).Hours() / 24)
-		avg := int(math.Round(float64(*migratedPlayCount) / float64(daysBetween)))
-		averageDailyMigratedPlayCount = &avg
+		var averageDailyMigratedPlayCount *float64
+		daysBetween := input.EndDate.Sub(input.StartDate).Hours() / 24
+		avg := *migratedPlayCount / daysBetween
+		roundDigits := float64(3)
+		roundedAvg := math.Round(avg*math.Pow(10, roundDigits)) / math.Pow(10, roundDigits)
+		averageDailyMigratedPlayCount = &roundedAvg
 
-		entriesPerDayMap := make(map[string]int)
+		entriesPerDayMap := make(map[string]float64)
 		for entriesPerDayRows.Next() {
 			var dateString string
-			var playCount int
+			var playCount float64
 			err := entriesPerDayRows.Scan(&dateString, &playCount)
 			if err != nil {
 				return logAndReturnError(err)
@@ -171,9 +173,9 @@ func (dbw *DBWrapper) HandleGetMyQuizTrends() usecase.Interactor {
 		var entriesPerDay []getMyQuizTrendsResponsePlayProtocolEntry
 		// Iterate through all days in the range and fill missing days
 		for d := input.StartDate; !d.After(input.EndDate); d = d.AddDate(0, 0, 1) {
-			var playCount *int
-			var migratedPlayCount *int
-			zero := 0
+			var playCount *float64
+			var migratedPlayCount *float64
+			var zero float64 = 0
 
 			// Special case to connect two entries
 			if d.Equal(migrationDate) {
