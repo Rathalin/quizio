@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { AreaChart, Area, CartesianGrid, YAxis, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
+import { IntervalFilterOption } from './index.page';
 
 type DataKey = keyof PlayProtocolStatistic['entriesPerDay'][number];
 type DataLabel = Exclude<DataKey, 'playedAt'>;
@@ -12,9 +13,10 @@ type DataLabel = Exclude<DataKey, 'playedAt'>;
 type Props = {
   quizUuid: string;
   statistic: PlayProtocolStatistic;
+  intervalFilter: IntervalFilterOption;
 };
 
-export function TrendPreview({ quizUuid, statistic }: Props) {
+export function TrendPreview({ quizUuid, statistic, intervalFilter }: Props) {
   const theme = useTheme();
   const t = useTranslations('myQuizzesTrends.graph');
   const { locale } = useRouter();
@@ -37,9 +39,24 @@ export function TrendPreview({ quizUuid, statistic }: Props) {
     [statistic]
   );
 
+  const ticks = useMemo<string[]>(() => {
+    const dates = statistic.entriesPerDay.map((d) => d.playedAt);
+    if (intervalFilter === 'lastYear') {
+      return dates.filter((dateStr) => new Date(dateStr).getDate() === 1);
+    }
+    return dates;
+  }, [intervalFilter, statistic.entriesPerDay]);
+
+  const tickFormatter = useMemo(() => {
+    if (intervalFilter === 'lastYear') {
+      return (dateStr: string) => monthYearFormatter.format(new Date(dateStr));
+    }
+    return (dateStr: string) => dateFormatter.format(new Date(dateStr));
+  }, [dateFormatter, intervalFilter, monthYearFormatter]);
+
   return (
-    <ResponsiveContainer height={340}>
-      <AreaChart key={quizUuid} data={statistic.entriesPerDay} margin={{ top: 20, right: 60, left: -30, bottom: 40 }}>
+    <ResponsiveContainer height={400}>
+      <AreaChart key={quizUuid} data={statistic.entriesPerDay} margin={{ top: 20, right: 60, left: -30, bottom: 50 }}>
         <defs>
           <linearGradient id="colorPlays" x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor={theme.palette.secondary.main} stopOpacity={0.8} />
@@ -53,8 +70,8 @@ export function TrendPreview({ quizUuid, statistic }: Props) {
         <CartesianGrid strokeOpacity={0.2} />
         <XAxis
           dataKey={'playedAt' satisfies DataKey}
-          ticks={statistic.entriesPerDay.map((d) => d.playedAt).filter((dateStr) => new Date(dateStr).getDate() === 1)}
-          tickFormatter={(dateStr) => monthYearFormatter.format(new Date(dateStr))}
+          ticks={ticks}
+          tickFormatter={tickFormatter}
           angle={45}
           textAnchor="start"
         />
@@ -75,7 +92,7 @@ export function TrendPreview({ quizUuid, statistic }: Props) {
         <Tooltip
           labelFormatter={(label: DataLabel) => dateFormatter.format(new Date(label))}
           formatter={(value, label: DataLabel) => [
-            value,
+            t('dataKey.times', { count: value as number }),
             label === 'migratedPlayCount' ? t('dataKey.migratedPlays') : t('dataKey.plays')
           ]}
           contentStyle={{

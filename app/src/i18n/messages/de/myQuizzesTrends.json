@@ -22,7 +22,8 @@
   "graph": {
     "dataKey": {
       "migratedPlays": "Gespielt (migriert)",
-      "plays": "Gespielt"
+      "plays": "Gespielt",
+      "times": "{count} mal"
     }
   },
   "heading": "<gradient>Trends</gradient>",
