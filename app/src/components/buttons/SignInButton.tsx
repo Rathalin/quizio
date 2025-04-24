@@ -1,11 +1,13 @@
 import LoginIcon from '@mui/icons-material/Login';
-import Button, { type ButtonProps } from '@mui/material/Button';
+import { type ButtonProps } from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { signIn } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import LinkButton from '../LinkButton';
 
 type SignInButtonProps = {
   variant?: ButtonProps['variant'];
@@ -16,25 +18,26 @@ type SignInButtonProps = {
 export default function SignInButton({ variant, color, sx }: SignInButtonProps) {
   const t = useTranslations('header');
   const theme = useTheme();
+  const router = useRouter();
+
+  const href = `/auth/signin?callbackUrl=${encodeURIComponent(router.asPath)}`;
 
   const isSmScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-  if (isSmScreen) {
-    return (
-      <IconButton color={color ?? 'primary'} onClick={() => signIn()} sx={sx}>
-        <LoginIcon />
-      </IconButton>
-    );
-  }
-  return (
-    <Button
+  return isSmScreen ? (
+    <IconButton color={color ?? 'primary'} LinkComponent={Link} href={href} sx={sx}>
+      <LoginIcon />
+    </IconButton>
+  ) : (
+    <LinkButton
       variant={variant ?? 'outlined'}
       color={color ?? 'primary'}
       startIcon={<LoginIcon />}
-      onClick={() => signIn()}
+      hrefObserver={href}
+      navigateOnClick
       sx={sx}
     >
       {t('signInButton.label')}
-    </Button>
+    </LinkButton>
   );
 }
