@@ -1,7 +1,6 @@
 import IndexAvatar from '../../quiz/game/IndexAvatar';
 import SearchInput from './SearchInput';
 import { useSearch } from '../search.context';
-import { useTheme } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
 import { SortMenu } from './SortMenu';
 
@@ -10,14 +9,13 @@ type FilterBarProps = {
 };
 
 export default function FilterBar({ quizzesCount }: FilterBarProps) {
-  const theme = useTheme();
   const { searchText } = useSearch();
 
   return (
     <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
       <IndexAvatar
         variant={searchText.trim().length === 0 ? 'rounded' : 'circular'}
-        color={theme.palette.primary.main}
+        color="primary.main"
         index={quizzesCount}
         sx={{
           width: '2.4rem',
