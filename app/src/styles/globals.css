@@ -23,7 +23,7 @@ a:hover {
   color: black;
 }
 
-@media (prefers-color-scheme: dark) {
+html.dark {
   a:hover {
     color: white;
   }
