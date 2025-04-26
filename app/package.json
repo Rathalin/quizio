@@ -6,8 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "check-types": "tsc --noemit",
-    "lint": "npm run check-types && next lint",
+    "lint": "next lint",
+    "check-types": "tsc --noEmit",
+    "check": "pnpm lint && pnpm check-types",
     "api-types": "npx openapi-typescript http://localhost:8080/docs/openapi.json -o ./src/api-client/schema.d.ts && npx prettier --write ./src/api-client/schema.d.ts"
   },
   "dependencies": {
@@ -32,7 +33,7 @@
     "jwt-decode": "^4.0.0",
     "next": "^15.3.1",
     "next-auth": "^4.24.11",
-    "next-intl": "^3.26.5",
+    "next-intl": "^4.1.0",
     "openapi-fetch": "^0.13.5",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
