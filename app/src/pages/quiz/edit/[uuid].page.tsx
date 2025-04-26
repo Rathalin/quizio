@@ -24,7 +24,7 @@ import { getBase64 } from '@/data/getBase64';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/Grid2';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Stepper from '@mui/material/Stepper';
@@ -315,7 +315,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
           </Stack>
         </Typography>
         <Grid container spacing={4}>
-          <Grid item xs={12} md={3} sx={{ display: { xs: 'none', md: 'block' } }}>
+          <Grid size={{ xs: 12, md: 3 }} sx={{ display: { xs: 'none', md: 'block' } }}>
             <Card>
               <CardContent>
                 <Stepper orientation="vertical" activeStep={activeStep}>
@@ -330,7 +330,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={9}>
+          <Grid size={{ xs: 12, md: 9 }}>
             {quiz != null ? (
               <>
                 {steps[activeStep].title === 'details' && (

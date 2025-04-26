@@ -4,7 +4,7 @@ import { ThemeSwitch } from '@/components/buttons/ThemeSwitch';
 import AppBar from '@mui/material/AppBar';
 import Container from '@mui/material/Container';
 import Toolbar from '@mui/material/Toolbar';
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/Grid2';
 import { useColorScheme } from '@mui/material/styles';
 
 export default function Header() {
@@ -19,10 +19,9 @@ export default function Header() {
     >
       <Container maxWidth="lg">
         <Toolbar disableGutters>
-          <Grid container>
+          <Grid container width="100%">
             <Grid
-              item
-              xs={4}
+              size={4}
               sx={{
                 display: 'flex',
                 justifyContent: 'start',
@@ -32,8 +31,7 @@ export default function Header() {
               <LogoButton />
             </Grid>
             <Grid
-              item
-              xs={4}
+              size={4}
               sx={{
                 display: 'flex',
                 justifyContent: 'center',
@@ -41,8 +39,7 @@ export default function Header() {
               }}
             ></Grid>
             <Grid
-              item
-              xs={4}
+              size={4}
               sx={{
                 display: 'flex',
                 justifyContent: 'end',
