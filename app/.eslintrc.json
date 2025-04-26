@@ -3,6 +3,7 @@
   "plugins": ["unused-imports", "react"],
   "ignorePatterns": ["temp.js", "**/generated/*", "env.d.ts"],
   "rules": {
+    "@next/next/no-html-link-for-pages": "off", // The rule was causing issues with ESLint server in VS Code
     "unused-imports/no-unused-imports": "error",
     "no-unused-vars": ["error", { "args": "none", "argsIgnorePattern": "^_", "caughtErrors": "none" }],
     "no-console": ["error", { "allow": ["info", "warn", "error"] }],
