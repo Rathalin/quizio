@@ -7,3 +7,11 @@ CREATE TABLE IF NOT EXISTS passkey (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS passkey_session (
+  id BIGSERIAL PRIMARY KEY,
+  user_account_id INTEGER NOT NULL REFERENCES user_account(id),
+  session_data JSONB NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),  
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

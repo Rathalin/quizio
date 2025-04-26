@@ -24,12 +24,11 @@ import (
 
 func main() {
 	env.Init()
-
 	auth.InitTokenAuth(env.Vars.JWTSecret)
+	auth.InitPasskeyAuth()
 
 	db.Connect()
 	defer db.Close()
-
 	dbWrapper := &handlers.DBWrapper{DB: db.DB}
 
 	response.DefaultErrorResponseContentType = "application/problem+json"
@@ -58,6 +57,10 @@ func main() {
 		r.Method(http.MethodGet, "/user-profile/{uuid}", nethttp.NewHandler(dbWrapper.HandleGetPublicUserProfile()))
 		r.Method(http.MethodGet, "/alerts", nethttp.NewHandler(dbWrapper.HandleGetAlerts()))
 		r.Method(http.MethodPost, "/play-protocol-entry", nethttp.NewHandler((dbWrapper.HandleCreatePlayProtocolEntry())))
+		r.Group(func(r chi.Router) {
+			r.Method(http.MethodGet, "/passkey/generate-registration-options", nethttp.NewHandler(dbWrapper.HandlePasskeyRegistrationOptions()))
+			r.Method(http.MethodPost, "/passkey/verify-registration", nethttp.NewHandler(dbWrapper.HandlePasskeyRegistrationVerify()))
+		})
 	})
 
 	// Auth routes
