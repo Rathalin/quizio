@@ -7,7 +7,7 @@ import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import { GameImage } from './GameImage';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';

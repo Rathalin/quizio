@@ -3,7 +3,7 @@ import { useDismissedAlertIds } from '@/persistence/dismissed-alert-ids.store';
 import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import NextLink from 'next/link';
 import Image from 'next/image';
