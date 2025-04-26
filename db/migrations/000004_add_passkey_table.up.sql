@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS passkey (
+  id BIGSERIAL PRIMARY KEY,
+  user_account_id INTEGER NOT NULL REFERENCES user_account(id),
+  credential_id BYTEA NOT NULL UNIQUE,
+  public_key BYTEA NOT NULL,
+  sign_count INTEGER NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
