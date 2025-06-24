@@ -33,7 +33,7 @@ export function MyQuizzesMobileRow({
   createdAt,
   updatedAt,
   isPublished,
-  playCount
+  playCount,
 }: Props) {
   const t = useTranslations('myQuizzes.table');
   const queryClient = useQueryClient();
@@ -44,7 +44,7 @@ export function MyQuizzesMobileRow({
   const {
     mutateAsync: deleteQuiz,
     isPending: isDeletePending,
-    isSuccess: isDeleteSuccess
+    isSuccess: isDeleteSuccess,
   } = useDeleteQuizMutation(uuid);
 
   async function onDeleteDialogConfirm() {
@@ -89,7 +89,7 @@ export function MyQuizzesMobileRow({
                 sx={{
                   overflow: 'hidden',
                   whiteSpace: 'pre',
-                  textOverflow: 'ellipsis'
+                  textOverflow: 'ellipsis',
                 }}
               >
                 {title}
@@ -104,7 +104,7 @@ export function MyQuizzesMobileRow({
                   display: '-webkit-box',
                   WebkitBoxOrient: 'vertical',
                   WebkitLineClamp: 5,
-                  marginTop: 1
+                  marginTop: 1,
                 }}
               >
                 {description}
@@ -153,7 +153,7 @@ export function MyQuizzesMobileRow({
                 <Typography component="span" color="textSecondary" variant="body2" noWrap>
                   {chunks}
                 </Typography>
-              )
+              ),
             })}
           </Typography>
           <LinkButton hrefObserver={`/my-quizzes/${uuid}/trends`} navigateOnClick startIcon={<TimelineIcon />}>
@@ -181,7 +181,7 @@ function ActionButtons({ uuid, setDialogOpen, isDeletePending, isDeleteSuccess }
       sx={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(70px, 1fr))',
-        gap: 1
+        gap: 1,
       }}
     >
       <ActionButton
@@ -227,7 +227,7 @@ type ActionButtonProps = {
   label: string;
 };
 
-function ActionButton({ title, href, onClick, disabled, icon, label }: ActionButtonProps) {
+function ActionButton({ href, onClick, disabled, icon, label }: ActionButtonProps) {
   return (
     <Stack alignItems="center">
       {href != null ? (

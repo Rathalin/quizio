@@ -75,7 +75,7 @@ export default function App(props: MyAppProps & DocumentHeadTagsProps) {
   const { startTransitioning, stopTransitioning } = usePageTransition();
 
   useEffect(() => {
-    function handleRouteChange(url: any, { shallow }: { shallow: boolean }) {
+    function handleRouteChange(url: any, _: { shallow: boolean }) {
       startTransitioning(url);
       return;
     }

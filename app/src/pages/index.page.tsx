@@ -1,15 +1,16 @@
 import Head from 'next/head';
 import AlertsViewer from '@/components/AlertsViewer';
 import QuizzesOverview from '@/page-components/dashboard/QuizzesOverview';
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { dehydrate, QueryClient } from '@tanstack/react-query';
 import { GetQuizzesRequestQuery, throwOnError } from '@/api-client';
 import { fetchQuizzes } from '@/data/useQuizzesQuery';
 import Box from '@mui/material/Box';
 import { getMessages } from '@/utilities/getMessages';
 import { useTranslations } from 'next-intl';
+import { canonicalUrl, SeoMeta } from '../../types/seo';
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps<SeoMeta> = async (ctx) => {
   const messagesPromise = getMessages(ctx.locale, ['dashboard']);
 
   const queryClient = new QueryClient();
@@ -31,11 +32,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     props: {
       messages,
       dehydratedState: dehydrate(queryClient),
+      canonicalUrl: canonicalUrl('', ctx.locale),
     },
   };
 };
 
-export default function DashboardPage() {
+export default function DashboardPage({ canonicalUrl }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const t = useTranslations('dashboard');
 
   return (
@@ -44,10 +46,10 @@ export default function DashboardPage() {
         <title>{t('meta.title')}</title>
         <meta name="description" content={t('meta.description')} />
         <meta name="robots" content="index,follow" />
-        <link rel="canonical" href="https://quizio.flockert.at" />
         <meta property="og:title" content={t('meta.og.title')} />
         <meta property="og:description" content={t('meta.og.description')} />
         <meta property="og:image" content="public/favicion" />
+        <link rel="canonical" href={canonicalUrl} />
       </Head>
       <Box sx={{ marginTop: 2 }}>
         <AlertsViewer />
