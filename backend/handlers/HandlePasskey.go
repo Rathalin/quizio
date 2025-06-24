@@ -64,7 +64,7 @@ func (dbw *DBWrapper) HandlePasskeyRegistrationOptions() usecase.Interactor {
 			&user.Username,
 		)
 		if err != nil {
-			return logAndReturnError(fmt.Errorf("failed to find user: %w", err))
+			return logAndReturnError(err)
 		}
 
 		// Step 3: Create a simple adapter to satisfy the WebAuthn User interface
@@ -101,31 +101,62 @@ func (dbw *DBWrapper) HandlePasskeyRegistrationOptions() usecase.Interactor {
 	})
 }
 
-// func (dbw *DBWrapper) HandlePasskeyRegistrationVerify() usecase.Interactor {
-// 	type Input struct {
-// 		Credential protocol.ParsedCredentialCreationData `json:"credential"`
-// 	}
+func (dbw *DBWrapper) HandlePasskeyRegistrationVerify() usecase.Interactor {
+	type passkeyRegistrationVerifyRequest struct {
+		Credential protocol.ParsedCredentialCreationData `json:"credential"`
+	}
 
-// 	type Output struct {
-// 		Message string `json:"message"`
-// 	}
+	type passkeyRegistrationVerifyResponse struct {
+		Message string `json:"message"`
+	}
 
-// 	return usecase.NewInteractor(func(ctx context.Context, input Input, output *Output) error {
-// 		user := YourUserLookupSomehow(ctx)
+	return usecase.NewInteractor(func(ctx context.Context, input passkeyRegistrationVerifyRequest, output *passkeyRegistrationVerifyResponse) error {
+		userID, err := getUserIdFromContext(ctx)
+		if err != nil {
+			return logAndReturnError(err)
+		}
 
-// 		sessionData := LoadSessionDataFromCache(user.ID)
+		var user struct {
+			ID       int
+			Username string
+		}
+		err = dbw.DB.QueryRowContext(ctx, `
+			SELECT id, username
+			FROM user_account
+			WHERE id = $1
+		`, userID).Scan(
+			&user.ID,
+			&user.Username,
+		)
+		if err != nil {
+			return logAndReturnError(err)
+		}
 
-// 		credential, err := auth.WebAuthn.FinishRegistration(user, sessionData, input.Credential)
-// 		if err != nil {
-// 			return err
-// 		}
+		var sessionData struct {
+		}
+		err = dbw.DB.QueryRowContext(ctx, `
+			SELECT id, username
+			FROM user_account
+			WHERE id = $1
+		`, userID).Scan(
+			&user.ID,
+			&user.Username,
+		)
+		if err != nil {
+			return logAndReturnError(fmt.Errorf("failed to find user: %w", err))
+		}
 
-// 		err = dbw.StoreCredentialInDB(user.ID, credential)
-// 		if err != nil {
-// 			return err
-// 		}
+		credential, err := auth.WebAuthn.FinishRegistration(user, sessionData, input.Credential)
+		if err != nil {
+			return err
+		}
 
-// 		output.Message = "Passkey registered successfully"
-// 		return nil
-// 	})
-// }
+		err = dbw.StoreCredentialInDB(user.ID, credential)
+		if err != nil {
+			return err
+		}
+
+		output.Message = "Passkey registered successfully"
+		return nil
+	})
+}

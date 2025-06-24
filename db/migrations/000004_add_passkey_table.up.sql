@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS passkey (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS passkey_session (
+CREATE TABLE IF NOT EXISTS lp (
   id BIGSERIAL PRIMARY KEY,
   user_account_id INTEGER NOT NULL REFERENCES user_account(id),
   session_data JSONB NOT NULL,

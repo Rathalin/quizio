@@ -55,6 +55,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/a/passkey/generate-registration-options': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** DB Wrapper Handle Passkey Registration Options */
+    get: operations['backend/handlers.(*DBWrapper).HandlePasskeyRegistrationOptions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/a/play-protocol-entry': {
     parameters: {
       query?: never;
@@ -507,6 +524,10 @@ export interface components {
       };
       uuid: string;
     };
+    HandlersPasskeyRegistrationOptionsResponse: {
+      mediation?: string;
+      publicKey?: components['schemas']['ProtocolPublicKeyCredentialCreationOptions'];
+    };
     HandlersPlayQuizResponse: {
       imageUrl: string | null;
       questions: components['schemas']['ModelsQuestion'][];
@@ -634,6 +655,47 @@ export interface components {
       username: string;
       uuid: string;
     };
+    ProtocolAuthenticationExtensions: {
+      [key: string]: unknown;
+    };
+    ProtocolAuthenticatorSelection: {
+      authenticatorAttachment?: string;
+      requireResidentKey?: boolean | null;
+      residentKey?: string;
+      userVerification?: string;
+    };
+    ProtocolCredentialDescriptor: {
+      id?: components['schemas']['ProtocolURLEncodedBase64'];
+      transports?: string[];
+      type?: string;
+    };
+    ProtocolCredentialParameter: {
+      alg?: number;
+      type?: string;
+    };
+    ProtocolPublicKeyCredentialCreationOptions: {
+      attestation?: string;
+      attestationFormats?: string[];
+      authenticatorSelection?: components['schemas']['ProtocolAuthenticatorSelection'];
+      challenge?: components['schemas']['ProtocolURLEncodedBase64'];
+      excludeCredentials?: components['schemas']['ProtocolCredentialDescriptor'][];
+      extensions?: components['schemas']['ProtocolAuthenticationExtensions'];
+      hints?: string[];
+      pubKeyCredParams?: components['schemas']['ProtocolCredentialParameter'][];
+      rp?: components['schemas']['ProtocolRelyingPartyEntity'];
+      timeout?: number;
+      user?: components['schemas']['ProtocolUserEntity'];
+    };
+    ProtocolRelyingPartyEntity: {
+      id?: string;
+      name?: string;
+    };
+    ProtocolURLEncodedBase64: number[] | null;
+    ProtocolUserEntity: {
+      displayName?: string;
+      id?: unknown;
+      name?: string;
+    };
     RestErrResponse: {
       /** @description Application-specific error code. */
       code?: number;
@@ -736,6 +798,35 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['HandlersGetMyUserProfileResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).HandlePasskeyRegistrationOptions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HandlersPasskeyRegistrationOptionsResponse'];
         };
       };
       /** @description Unauthorized */

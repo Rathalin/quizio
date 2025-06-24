@@ -57,10 +57,6 @@ func main() {
 		r.Method(http.MethodGet, "/user-profile/{uuid}", nethttp.NewHandler(dbWrapper.HandleGetPublicUserProfile()))
 		r.Method(http.MethodGet, "/alerts", nethttp.NewHandler(dbWrapper.HandleGetAlerts()))
 		r.Method(http.MethodPost, "/play-protocol-entry", nethttp.NewHandler((dbWrapper.HandleCreatePlayProtocolEntry())))
-		r.Group(func(r chi.Router) {
-			r.Method(http.MethodGet, "/passkey/generate-registration-options", nethttp.NewHandler(dbWrapper.HandlePasskeyRegistrationOptions()))
-			r.Method(http.MethodPost, "/passkey/verify-registration", nethttp.NewHandler(dbWrapper.HandlePasskeyRegistrationVerify()))
-		})
 	})
 
 	// Auth routes
@@ -87,6 +83,10 @@ func main() {
 			r.Method(http.MethodGet, "/my-user-profile", nethttp.NewHandler(dbWrapper.HandleGetMyUserProfile()))
 			r.Method(http.MethodPost, "/change-password", nethttp.NewHandler(dbWrapper.HandleChangePassword()))
 			r.Method(http.MethodPost, "/update-profile-image", nethttp.NewHandler(dbWrapper.HandleUpdateUserProfileImage()))
+			r.Group(func(r chi.Router) {
+				r.Method(http.MethodGet, "/passkey/generate-registration-options", nethttp.NewHandler(dbWrapper.HandlePasskeyRegistrationOptions()))
+				// r.Method(http.MethodPost, "/passkey/verify-registration", nethttp.NewHandler(dbWrapper.HandlePasskeyRegistrationVerify()))
+			})
 		})
 	})
 
