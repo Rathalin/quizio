@@ -44,10 +44,7 @@ export default function AlertsViewer() {
           >
             <Grid container spacing={2}>
               <Grid
-                item
-                xs={12}
-                sm={12}
-                md={8}
+                size={{ xs: 12, sm: 12, md: 8 }}
                 sx={{
                   '& a': {
                     textDecoration: 'underline',
@@ -62,7 +59,7 @@ export default function AlertsViewer() {
                   {locale === 'de' ? alert.markdownDe : alert.markdownEn}
                 </ReactMarkdown>
               </Grid>
-              <Grid item xs={12} sm={12} md={4}>
+              <Grid size={{ xs: 12, sm: 12, md: 4 }}>
                 <Stack justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
                   {alert.imageUrl != null && (
                     <Image

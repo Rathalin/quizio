@@ -10,3 +10,19 @@ tasks:
     desc: Run the Go application
     cmds:
       - go run .
+  
+  outdated:
+    desc: Show outdated packages
+    cmds:
+      - go list -u -m all
+
+  audit:
+    desc: Security audit of dependencies
+    cmds:
+      - govulncheck ./...
+
+  update:
+    desc: Update all dependencies (minor and patch versions)
+    cmds:
+      - go get -u ./...
+      - go mod tidy
