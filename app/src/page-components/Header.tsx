@@ -19,10 +19,9 @@ export default function Header() {
     >
       <Container maxWidth="lg">
         <Toolbar disableGutters>
-          <Grid container>
+          <Grid container width="100%">
             <Grid
-              item
-              xs={4}
+              size={4}
               sx={{
                 display: 'flex',
                 justifyContent: 'start',
@@ -32,8 +31,7 @@ export default function Header() {
               <LogoButton />
             </Grid>
             <Grid
-              item
-              xs={4}
+              size={4}
               sx={{
                 display: 'flex',
                 justifyContent: 'center',
@@ -41,8 +39,7 @@ export default function Header() {
               }}
             ></Grid>
             <Grid
-              item
-              xs={4}
+              size={4}
               sx={{
                 display: 'flex',
                 justifyContent: 'end',

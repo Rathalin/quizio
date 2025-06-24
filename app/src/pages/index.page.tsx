@@ -43,6 +43,8 @@ export default function DashboardPage() {
       <Head>
         <title>{t('meta.title')}</title>
         <meta name="description" content={t('meta.description')} />
+        <meta name="robots" content="index,follow" />
+        <link rel="canonical" href="https://quizio.flockert.at" />
         <meta property="og:title" content={t('meta.og.title')} />
         <meta property="og:description" content={t('meta.og.description')} />
         <meta property="og:image" content="public/favicion" />

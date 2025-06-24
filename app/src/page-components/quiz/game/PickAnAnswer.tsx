@@ -46,7 +46,7 @@ export default function PickAnAnswer({
           </Stack>
         )}
         <Grid container spacing={4} wrap="wrap-reverse" sx={{ paddingBottom: 2 }}>
-          <Grid item xs={12} md={8}>
+          <Grid size={{ xs: 12, md: 8 }}>
             <Stack sx={{ height: '100%' }}>
               <Stack direction="row" alignItems="center" gap={2}>
                 <IndexAvatar index={index} />
@@ -56,7 +56,7 @@ export default function PickAnAnswer({
               </Stack>
             </Stack>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Stack direction="row" justifyContent="end">
               <AnsweredProgress answeredProgress={answeredProgress} />
             </Stack>

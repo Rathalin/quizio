@@ -176,7 +176,7 @@ export default function QuizCreatePage() {
           })}
         </Typography>
         <Grid container spacing={4}>
-          <Grid item xs={12} md={3} sx={{ display: { xs: 'none', md: 'block' } }}>
+          <Grid size={{ xs: 12, md: 3 }} sx={{ display: { xs: 'none', md: 'block' } }}>
             <Card>
               <CardContent>
                 <Stepper orientation="vertical" activeStep={activeStep}>
@@ -191,7 +191,7 @@ export default function QuizCreatePage() {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={9}>
+          <Grid size={{ xs: 12, md: 9 }}>
             {steps[activeStep].title === 'details' && (
               <OverviewForm
                 defaultData={overviewFormData}
