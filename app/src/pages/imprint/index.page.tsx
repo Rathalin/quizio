@@ -28,7 +28,7 @@ export default function ImprintPage({ canonicalUrl }: InferGetStaticPropsType<ty
     <>
       <Head>
         <title>{quizioTitle(t('imprint.meta.title'))}</title>
-        <meta name="description">{t('imprint.meta.description')}</meta>
+        <meta name="description" content={t('imprint.meta.description')} />
         <meta property="og:title" content={t('imprint.meta.title')} />
         <link rel="canonical" href={canonicalUrl} />
         <meta property="og:description" content={t('imprint.meta.description')} />
