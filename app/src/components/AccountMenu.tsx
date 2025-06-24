@@ -11,7 +11,7 @@ import IconButton from '@mui/material/IconButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { lighten, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import { signOut, useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
@@ -95,7 +95,8 @@ export default function AccountMenu() {
                 right: 24,
                 width: 10,
                 height: 10,
-                backgroundColor: lighten(theme.palette.background.paper, 0.13),
+                backgroundColor: 'inherit',
+                backgroundImage: 'inherit',
                 transform: 'translateY(-50%) rotate(45deg)',
                 zIndex: 0,
               },
