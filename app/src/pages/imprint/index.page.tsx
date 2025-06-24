@@ -4,28 +4,35 @@ import { getMessages } from '@/utilities/getMessages';
 import { quizioTitle } from '@/utilities/quizioTitle';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { GetStaticProps } from 'next';
+import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { useTranslations } from 'next-intl';
 import Head from 'next/head';
 import Link from 'next/link';
+import { canonicalUrl, SeoMeta } from '../../../types/seo';
 
-export const getStaticProps: GetStaticProps = async (ctx) => {
+export const getStaticProps: GetStaticProps<SeoMeta> = async (ctx) => {
   const messages = await getMessages(ctx.locale, ['imprint']);
 
   return {
     props: {
       messages,
+      canonicalUrl: canonicalUrl('/imprint', ctx.locale),
     },
   };
 };
 
-export default function ImprintPage() {
+export default function ImprintPage({ canonicalUrl }: InferGetStaticPropsType<typeof getStaticProps>) {
   const t = useTranslations();
 
   return (
     <>
       <Head>
         <title>{quizioTitle(t('imprint.meta.title'))}</title>
+        <meta name="description" content={t('imprint.meta.description')} />
+        <meta property="og:title" content={t('imprint.meta.title')} />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:description" content={t('imprint.meta.description')} />
+        <meta property="og:image" content="public/favicion" />
       </Head>
       <Box>
         <QuizioBreadcrumbs>

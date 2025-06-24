@@ -33,15 +33,18 @@ import Link from 'next/link';
 import { getMessages } from '@/utilities/getMessages';
 import { useTranslations } from 'next-intl';
 import { quizioTitle } from '@/utilities/quizioTitle';
+import { canonicalUrl, SeoMeta } from '../../../types/seo';
 
 export type AnsweredState = {
   correctAnswerId: string;
   selectedAnswerId: string | null;
 };
 
-export const getServerSideProps: GetServerSideProps<{
-  uuid: string;
-}> = async (ctx) => {
+export const getServerSideProps: GetServerSideProps<
+  {
+    uuid: string;
+  } & SeoMeta
+> = async (ctx) => {
   const uuid = ctx.params?.uuid;
   if (typeof uuid !== 'string') {
     return {
@@ -66,11 +69,12 @@ export const getServerSideProps: GetServerSideProps<{
       uuid,
       messages,
       dehydratedState: dehydrate(queryClient),
+      canonicalUrl: canonicalUrl(`/play/${uuid}`, ctx.locale),
     },
   };
 };
 
-export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function PlayIdPage({ uuid, canonicalUrl }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const t = useTranslations('play');
   const theme = useTheme();
   const router = useRouter();
@@ -198,9 +202,11 @@ export default function PlayIdPage({ uuid }: InferGetServerSidePropsType<typeof 
     <>
       <Head>
         <title>{quizioTitle(t('meta.title', { title: quiz?.title ?? '' }))}</title>
+        <meta property="description" content={t('meta.description')} />
         <meta property="og:title" content={t('meta.og.title')} />
         <meta property="og:description" content={quiz?.title} />
         <meta property="og:image" content={quiz?.imageUrl ? prefixWithBackendUrl(quiz.imageUrl) : undefined} />
+        <link rel="canonical" href={canonicalUrl} />
       </Head>
       <Box>
         {quizQuery.isPending && <PickAnAnswerPlaceholder />}
