@@ -26,7 +26,6 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
 import Divider from '@mui/material/Divider';
-import { useTheme } from '@mui/material/styles';
 import DragHandleOutlined from '@mui/icons-material/DragHandleOutlined';
 import { useTranslations } from 'next-intl';
 import ImageIcon from '@mui/icons-material/Image';
@@ -52,7 +51,6 @@ export default function QuestionInput({
   ...other
 }: QuestionInputProps) {
   const t = useTranslations('quizForm.form.question');
-  const theme = useTheme();
   const index = useQuestionIndex();
   const { width: imageWidth, height: imageHeight } = useGameImageInputDimensions();
   const {
@@ -147,7 +145,7 @@ export default function QuestionInput({
                 </Stack>
               </Tooltip>
             </Stack>
-            <Typography variant="body2" sx={{ color: theme.palette.text.disabled }}>
+            <Typography variant="body2" color="textSecondary">
               {watch(`${name}.title`)}
             </Typography>
           </Stack>
