@@ -28,6 +28,7 @@ export default {
     '/en/quiz/my-quizzes/*',
   ],
   additionalPaths: async () => {
+    const locales = ['', '/en'];
     const publicQuizUuids = [
       'c9931e11-e35c-4ced-8383-0fcdaac707cf',
       'a6ce3c38-afbf-4c85-95b5-da8e9238a3ec',
@@ -54,10 +55,12 @@ export default {
       '3dd238e4-b434-42e3-a386-a22de56e1b25',
       '92495c90-07b8-43e2-9336-e9a0e0456b36',
     ];
-    return publicQuizUuids.map((uuid) => ({
-      loc: `/play/${uuid}`,
-      changefreq: 'weekly',
-      priority: 0.8,
-    }));
+    return publicQuizUuids.flatMap((uuid) =>
+      locales.map((l) => ({
+        loc: `${l}/play/${uuid}`,
+        changefreq: 'weekly',
+        priority: 0.8,
+      })),
+    );
   },
 };
