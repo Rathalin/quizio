@@ -19,6 +19,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - OPENAPI_DOCS_USER=${OPENAPI_DOCS_USER}
       - OPENAPI_DOCS_PASSWORD=${OPENAPI_DOCS_PASSWORD}
+      - SEO_API_KEY=${SEO_API_KEY}
 
   postgres-db:
     image: postgres
