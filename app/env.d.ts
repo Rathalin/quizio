@@ -4,5 +4,6 @@ namespace NodeJS {
     NEXTAUTH_URL: string;
     NEXTAUTH_SECRET: string;
     DOMAIN_URL: string;
+    SEO_API_KEY: string;
   }
 }
