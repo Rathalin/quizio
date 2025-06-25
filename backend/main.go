@@ -20,6 +20,7 @@ import (
 	"github.com/Rathalin/quizio/backend/db"
 	"github.com/Rathalin/quizio/backend/env"
 	"github.com/Rathalin/quizio/backend/handlers"
+	"github.com/Rathalin/quizio/backend/middlewares"
 )
 
 func main() {
@@ -63,7 +64,7 @@ func main() {
 	// Auth routes
 	s.Route("/a", func(r chi.Router) {
 		r.With(
-			nethttp.HTTPBearerSecurityMiddleware(s.OpenAPICollector, "JWT token", "baerer", "format idk"),
+			nethttp.HTTPBearerSecurityMiddleware(s.OpenAPICollector, "JWT token", "baerer", "string"),
 		).Group(func(r chi.Router) {
 			r.Use(
 				jwtauth.Verifier(auth.TokenAuth),
@@ -84,6 +85,13 @@ func main() {
 			r.Method(http.MethodGet, "/my-user-profile", nethttp.NewHandler(dbWrapper.HandleGetMyUserProfile()))
 			r.Method(http.MethodPost, "/change-password", nethttp.NewHandler(dbWrapper.HandleChangePassword()))
 			r.Method(http.MethodPost, "/update-profile-image", nethttp.NewHandler(dbWrapper.HandleUpdateUserProfileImage()))
+		})
+	})
+
+	s.Route("/seo", func(r chi.Router) {
+		r.With(nethttp.HTTPBearerSecurityMiddleware(s.OpenAPICollector, "SEO API Key", "baerer", "string")).Group(func(r chi.Router) {
+			r.Use(middlewares.APIKeyMiddleware(env.Vars.SEOAPIKey))
+			r.Method(http.MethodGet, "/published-quizzes-uuids", nethttp.NewHandler(dbWrapper.HandlePublishedQuizzesUuids()))
 		})
 	})
 
