@@ -10,7 +10,6 @@ import (
 )
 
 func (dbw *DBWrapper) HandleGetMyQuizzes() usecase.Interactor {
-
 	type getMyQuizzesRequest struct {
 		SortOption    string `query:"sortOption" required:"true" enum:"createdAt,playCount" example:"createdAt"`
 		SortDirection string `query:"sortDirection" required:"true" enum:"asc,desc" example:"desc"`

@@ -17,6 +17,7 @@ type EnvVars struct {
 	PostgresPassword    string
 	OpenAPIDocsUser     string
 	OpenAPIDocsPassword string
+	SEOAPIKey           string
 }
 
 var Vars *EnvVars
@@ -49,6 +50,7 @@ func Init() {
 		PostgresPassword:    os.Getenv("POSTGRES_PASSWORD"),
 		OpenAPIDocsUser:     os.Getenv("OPENAPI_DOCS_USER"),
 		OpenAPIDocsPassword: os.Getenv("OPENAPI_DOCS_PASSWORD"),
+		SEOAPIKey:           os.Getenv("SEO_API_KEY"),
 	}
 
 	if Vars.JWTSecret == "" {
@@ -72,6 +74,9 @@ func Init() {
 	if Vars.OpenAPIDocsPassword == "" {
 		log.Fatal("Environment variable OPENAPI_DOCS_PASSWORD is not set\n")
 	}
+	if Vars.SEOAPIKey == "" {
+		log.Fatal("Environment variable SEO_API_KEY is not set\n")
+	}
 
 	log.Printf("GO_ENV: %s\n", env)
 	log.Printf("JWT_SECRET: %s\n", "(hidden)")
@@ -81,5 +86,6 @@ func Init() {
 	log.Printf("POSTGRES_PASSWORD: %s\n", "(hidden)")
 	log.Printf("OPENAPI_DOCS_USER: %s\n", Vars.OpenAPIDocsUser)
 	log.Printf("OPENAPI_DOCS_PASSWORD: %s\n", "(hidden)")
+	log.Printf("SEO_API_KEY: %s\n", "(hidden)")
 	log.Printf("\n")
 }
