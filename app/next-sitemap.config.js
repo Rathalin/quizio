@@ -33,9 +33,7 @@ export default {
     '/en/quiz/my-quizzes/*',
   ],
   additionalPaths: async () => {
-    console.log('SEO_API_KEY', process.env.SEO_API_KEY);
     const locales = ['', '/en'];
-
     const publicQuizUuids = await fetch('https://go.quizio.flockert.at/seo/published-quizzes-uuids', {
       headers: {
         Authorization: `Bearer ${process.env.SEO_API_KEY}`,
