@@ -16,7 +16,7 @@ import { signOut, useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState, type MouseEvent } from 'react';
+import { useEffect, useState, type MouseEvent } from 'react';
 import ViewAgendaIcon from '@mui/icons-material/ViewAgenda';
 
 export default function AccountMenu() {
@@ -24,7 +24,7 @@ export default function AccountMenu() {
   const theme = useTheme();
   const router = useRouter();
   const { data: session, status } = useSession();
-  const { data: user, isSuccess: isUserSuccess } = useUserAccountQuery();
+  const { data: user, isSuccess: isUserSuccess, isError: isUserError } = useUserAccountQuery();
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = anchorEl != null;
@@ -36,6 +36,13 @@ export default function AccountMenu() {
   function handleClose() {
     setAnchorEl(null);
   }
+
+  useEffect(() => {
+    // If session is exists but user errors -> sign out
+    if (status === 'authenticated' && isUserError) {
+      signOut();
+    }
+  }, [isUserError, status]);
 
   if (status == 'loading' || (router.pathname === '/auth/signin' && status == 'unauthenticated')) {
     return null;
