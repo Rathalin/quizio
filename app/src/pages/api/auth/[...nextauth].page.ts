@@ -71,7 +71,6 @@ export const authOptions: AuthOptions = {
             });
 
             if (error != null) {
-              console.error('Error refreshing token:', error);
               throw new Error('Failed to refresh access token');
             }
 
@@ -80,8 +79,7 @@ export const authOptions: AuthOptions = {
               accessToken: data.accessToken,
             };
           } catch (err) {
-            console.error('Token refresh failed:', err);
-            throw err;
+            throw new Error('Token refresh failed');
           }
         }
 
