@@ -24,6 +24,11 @@
   "result": {
     "score": "Ergebnis: {correctCount}/{count, plural, =1 {# Antwort} other {# Antworten}} korrekt"
   },
+  "summary": {
+    "description": "Du hast {count} von {questions} {questions, plural, one {Frage} other {Fragen}} richtig beantwortet.",
+    "explanation": "Erklärung:",
+    "heading": "Zusammenfassung"
+  },
   "toast": {
     "copiedToClipboard": "In die Zwischenablage kopiert"
   }

@@ -13,7 +13,6 @@ import Radio from '@mui/material/Radio';
 import Stack from '@mui/material/Stack';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import SaveIcon from '@mui/icons-material/Save';
-import { useTheme } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
@@ -30,7 +29,6 @@ type Props = {
 export function VisibilityColumn({ uuid, isPublished, size }: Props) {
   const t = useTranslations('myQuizzes.table.column.isPublished');
   const queryClient = useQueryClient();
-  const theme = useTheme();
   const { showSuccessToast, showErrorToast } = useToastStore();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [isPublishedSelected, setIsPublishSelected] = useState(isPublished);
@@ -107,8 +105,8 @@ export function VisibilityColumn({ uuid, isPublished, size }: Props) {
               </RadioGroup>
             </FormControl>
             <Stack direction="row" alignItems="center" gap={1} sx={{ marginTop: 2 }}>
-              <InfoOutlinedIcon fontSize="small" sx={{ color: theme.palette.text.secondary }} />
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant="body2" color="textSecondary" sx={{ display: 'flex', gap: 0.5 }}>
+                <InfoOutlinedIcon fontSize="small" />
                 {t('popover.footer')}
               </Typography>
             </Stack>
