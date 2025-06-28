@@ -35,7 +35,7 @@ func (dbw *DBWrapper) HandleUploadFile() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
-		if slices.Contains(AllowedFileTypes, GetFileExtension(input.Filename)) {
+		if !slices.Contains(AllowedFileTypes, GetFileExtension(input.Filename)) {
 			return status.Wrap(fmt.Errorf("invalid file type"), status.InvalidArgument)
 		}
 
