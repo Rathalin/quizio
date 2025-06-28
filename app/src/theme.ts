@@ -1,4 +1,6 @@
 import { createTheme, responsiveFontSizes } from '@mui/material/styles';
+// https://mui.com/material-ui/customization/css-theme-variables/usage/#typescript
+import type {} from '@mui/material/themeCssVarsAugmentation';
 
 export const theme = responsiveFontSizes(
   createTheme({

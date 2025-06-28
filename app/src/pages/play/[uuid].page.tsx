@@ -105,10 +105,10 @@ export default function PlayIdPage({ uuid, canonicalUrl }: InferGetServerSidePro
       return 'transparent';
     }
     if (questionAnsweredCorrectly) {
-      return theme.palette.success.main;
+      return theme.vars.palette.success.main;
     }
-    return theme.palette.error.main;
-  }, [questionAnsweredCorrectly, theme.palette.error.main, theme.palette.success.main]);
+    return theme.vars.palette.error.main;
+  }, [questionAnsweredCorrectly, theme.vars.palette.error.main, theme.vars.palette.success.main]);
 
   useEffect(() => {
     setQuestionIndex(0);

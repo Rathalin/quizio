@@ -73,8 +73,8 @@ export default function AccountMenu() {
         ) : (
           <Avatar
             sx={{
-              backgroundColor: theme.palette.primary.main,
-              color: theme.palette.primary.contrastText,
+              backgroundColor: theme.vars.palette.primary.main,
+              color: theme.vars.palette.primary.contrastText,
               fontWeight: '600',
             }}
           >
