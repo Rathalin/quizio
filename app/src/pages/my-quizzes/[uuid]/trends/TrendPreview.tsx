@@ -24,7 +24,7 @@ export function TrendPreview({ quizUuid, statistic, intervalFilter }: Props) {
 
   const monthYearFormatter = useMemo(
     () => new Intl.DateTimeFormat(locale === 'de' ? 'de-AT' : 'en-GB', { month: 'short', year: 'numeric' }),
-    [locale]
+    [locale],
   );
 
   function roundUpToNextMultipleOfFive(n: number): number {
@@ -36,7 +36,7 @@ export function TrendPreview({ quizUuid, statistic, intervalFilter }: Props) {
 
   const yMax = useMemo(
     () => roundUpToNextMultipleOfFive(Math.max(...statistic.entriesPerDay.map((entry) => entry.playCount ?? 0))),
-    [statistic]
+    [statistic],
   );
 
   const ticks = useMemo<string[]>(() => {
@@ -59,12 +59,12 @@ export function TrendPreview({ quizUuid, statistic, intervalFilter }: Props) {
       <AreaChart key={quizUuid} data={statistic.entriesPerDay} margin={{ top: 20, right: 60, left: -30, bottom: 50 }}>
         <defs>
           <linearGradient id="colorPlays" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor={theme.palette.secondary.main} stopOpacity={0.8} />
-            <stop offset="95%" stopColor={theme.palette.secondary.dark} stopOpacity={0} />
+            <stop offset="5%" stopColor={theme.vars.palette.secondary.main} stopOpacity={0.8} />
+            <stop offset="95%" stopColor={theme.vars.palette.secondary.dark} stopOpacity={0} />
           </linearGradient>
           <linearGradient id="colorMigratedPlays" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor={theme.palette.secondary.main} stopOpacity={0.2} />
-            <stop offset="95%" stopColor={theme.palette.secondary.dark} stopOpacity={0} />
+            <stop offset="5%" stopColor={theme.vars.palette.secondary.main} stopOpacity={0.2} />
+            <stop offset="95%" stopColor={theme.vars.palette.secondary.dark} stopOpacity={0} />
           </linearGradient>
         </defs>
         <CartesianGrid strokeOpacity={0.2} />
@@ -79,13 +79,13 @@ export function TrendPreview({ quizUuid, statistic, intervalFilter }: Props) {
         <Area
           type="monotone"
           dataKey={'playCount' satisfies DataKey}
-          stroke={theme.palette.secondary.light}
+          stroke={theme.vars.palette.secondary.light}
           fill="url(#colorPlays)"
         />
         <Area
           type="monotone"
           dataKey={'migratedPlayCount' satisfies DataKey}
-          stroke={theme.palette.secondary.light}
+          stroke={theme.vars.palette.secondary.light}
           fill="url(#colorMigratedPlays)"
           strokeDasharray="4"
         />
@@ -93,12 +93,12 @@ export function TrendPreview({ quizUuid, statistic, intervalFilter }: Props) {
           labelFormatter={(label: DataLabel) => dateFormatter.format(new Date(label))}
           formatter={(value, label: DataLabel) => [
             t('dataKey.times', { count: value as number }),
-            label === 'migratedPlayCount' ? t('dataKey.migratedPlays') : t('dataKey.plays')
+            label === 'migratedPlayCount' ? t('dataKey.migratedPlays') : t('dataKey.plays'),
           ]}
           contentStyle={{
-            backgroundColor: theme.palette.background.default,
-            borderColor: theme.palette.secondary.main,
-            borderRadius: theme.shape.borderRadius
+            backgroundColor: theme.vars.palette.background.paper,
+            borderColor: theme.vars.palette.secondary.main,
+            borderRadius: theme.vars.shape.borderRadius,
           }}
         />
       </AreaChart>

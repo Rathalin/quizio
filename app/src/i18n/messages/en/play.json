@@ -22,7 +22,12 @@
     "title": "{title}"
   },
   "result": {
-    "score": "Score: {correctCount}/{count, plural, =1 {# answer} other {# answers}} correct"
+    "score": "Score: {correctCount}/{count, plural, =1 {# question} other {# questions}} correct"
+  },
+  "summary": {
+    "description": "You got {count} out of {questions} {questions, plural, one {question} other {questions}} correct.",
+    "explanation": "Explanation:",
+    "heading": "Summary"
   },
   "toast": {
     "copiedToClipboard": "Copied to clipboard"

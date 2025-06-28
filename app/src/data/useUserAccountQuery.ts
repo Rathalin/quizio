@@ -14,7 +14,7 @@ export function useUserAccountQuery() {
       queryKey,
       queryFn: () => throwOnError(() => getUserAccount(authHeader)),
       staleTime: Infinity,
-      enabled: authHeader != null,
+      enabled: session != null,
     }),
     queryKey,
   };

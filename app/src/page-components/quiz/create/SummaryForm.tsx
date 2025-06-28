@@ -133,7 +133,7 @@ export default function SummaryForm({
                     </List>
                     {question.explanation != null && question.explanation.length > 0 && (
                       <Box sx={{ marginBottom: 2 }}>
-                        <Typography component="span" color={theme.palette.primary.main}>
+                        <Typography component="span" color={theme.vars.palette.primary.main}>
                           Explanation:
                         </Typography>
                         <Typography component="span" sx={{ marginLeft: 1 }}>

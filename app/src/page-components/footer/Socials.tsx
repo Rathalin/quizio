@@ -29,7 +29,7 @@ export default function Socials() {
 
 function SocialIcon({ href, children }: PropsWithChildren<{ href: string }>) {
   const theme = useTheme();
-  const hoverColor = theme.palette.primary.main;
+  const hoverColor = theme.vars.palette.primary.main;
 
   return (
     <Link href={href}>

@@ -22,6 +22,7 @@ import { useTranslations } from 'next-intl';
 import LoginIcon from '@mui/icons-material/Login';
 import Head from 'next/head';
 import { quizioTitle } from '@/utilities/quizioTitle';
+import { useMediaQuery } from '@mui/material';
 
 export const getServerSideProps: GetServerSideProps<{
   callbackUrl: string | null;
@@ -51,6 +52,7 @@ export const getServerSideProps: GetServerSideProps<{
 export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const t = useTranslations();
   const router = useRouter();
+  const isScreenAsSmallAsInputs = useMediaQuery(`(max-width: 442px)`);
   const { showSuccessToast, showErrorToast } = useToastStore();
 
   const {
@@ -99,7 +101,6 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
         <Box
           sx={{
             marginInline: 'auto',
-            maxWidth: '60ch',
             marginTop: {
               sx: 4,
               lg: 6,
@@ -110,78 +111,79 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
             variant="h1"
             sx={{
               marginTop: 2,
-              marginBottom: 4,
-              textAlign: {
-                xs: 'start',
-                md: 'center',
-              },
+              marginBottom: 6,
+              textAlign: isScreenAsSmallAsInputs ? 'start' : 'center',
             }}
           >
             {t.rich('signIn.heading', { gradient: (chunks) => <GradientText>{chunks}</GradientText> })}
           </Typography>
-          <form onSubmit={onSubmit}>
-            <Card
-              sx={{
-                marginBottom: 2,
-              }}
-            >
-              <CardContent>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 2,
-                  }}
-                >
-                  <TextField
-                    id="identifier"
-                    label={t('signIn.form.username.label')}
-                    type="text"
-                    fullWidth
-                    required
-                    value={identifier}
-                    onChange={(e) => setIdentifier(e.target.value)}
-                  />
-                  <TextField
-                    id="password"
-                    label={t('signIn.form.password.label')}
-                    type="password"
-                    fullWidth
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </Box>
-                {errorStatus === 401 && (
-                  <Typography sx={{ marginTop: 2 }} variant="body2" color="error">
-                    {t('signIn.form.invalidCredentials')}
-                  </Typography>
-                )}
-              </CardContent>
-            </Card>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: {
-                  xs: 'end',
-                  md: 'center',
-                },
-              }}
-            >
-              <Button
-                variant="contained"
-                color="primary"
-                type="submit"
-                startIcon={isPending ? <LoadingCircle /> : <LoginIcon />}
-                disabled={isPending || (isSuccess && errorStatus == null)}
-                size="large"
-                sx={{ minWidth: '16ch' }}
+          <Box
+            sx={{
+              margin: 'auto',
+              maxWidth: '40ch',
+            }}
+          >
+            <form onSubmit={onSubmit}>
+              <Card
+                sx={{
+                  marginBottom: 2,
+                }}
               >
-                {t('signIn.form.button.label')}
-              </Button>
-            </Box>
-          </form>
-          <Alert severity="info" sx={{ marginTop: 10 }}>
+                <CardContent>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 2,
+                    }}
+                  >
+                    <TextField
+                      id="identifier"
+                      label={t('signIn.form.username.label')}
+                      type="text"
+                      fullWidth
+                      required
+                      value={identifier}
+                      onChange={(e) => setIdentifier(e.target.value)}
+                    />
+                    <TextField
+                      id="password"
+                      label={t('signIn.form.password.label')}
+                      type="password"
+                      fullWidth
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </Box>
+                  {errorStatus === 401 && (
+                    <Typography sx={{ marginTop: 2 }} variant="body2" color="error">
+                      {t('signIn.form.invalidCredentials')}
+                    </Typography>
+                  )}
+                </CardContent>
+              </Card>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <Button
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  startIcon={isPending ? <LoadingCircle /> : <LoginIcon />}
+                  disabled={isPending || (isSuccess && errorStatus == null)}
+                  size="large"
+                  sx={{ minWidth: '16ch' }}
+                >
+                  {t('signIn.form.button.label')}
+                </Button>
+              </Box>
+            </form>
+          </Box>
+          <Alert severity="info" sx={{ marginTop: 10, marginInline: 'auto', maxWidth: '60ch' }}>
             <Typography>
               <span>
                 {t.rich('signIn.helpAlert', {

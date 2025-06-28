@@ -10,6 +10,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import { useTranslations } from 'next-intl';
 
 type GameSummaryProps = {
   questions: {
@@ -26,17 +27,19 @@ type GameSummaryProps = {
 };
 
 export default function GameSummary({ questions, answeredProgress }: GameSummaryProps) {
+  const t = useTranslations('play.summary');
   const theme = useTheme();
   const { mode } = useColorScheme();
   return (
     <>
       <Typography variant="h1" sx={{ marginTop: 2, marginBottom: 4 }}>
-        <GradientText>Summary</GradientText>
+        <GradientText>{t('heading')}</GradientText>
       </Typography>
       <Typography>
-        {`You got ${
-          answeredProgress.filter((score) => score.correctAnswerId === score.selectedAnswerId).length
-        } out of ${questions.length} answers correct!`}
+        {t('description', {
+          count: answeredProgress.filter((score) => score.correctAnswerId === score.selectedAnswerId).length,
+          questions: questions.length,
+        })}
       </Typography>
       <Box sx={{ marginTop: 4 }}>
         {questions.map((question, qIndex) => (
@@ -75,8 +78,8 @@ export default function GameSummary({ questions, answeredProgress }: GameSummary
             </List>
             {question.explanation != null && question.explanation.length > 0 && (
               <Box sx={{ marginBottom: 2 }}>
-                <Typography component="span" color={theme.palette.primary.main}>
-                  Explanation:
+                <Typography component="span" color={theme.vars.palette.primary.main}>
+                  {t('explanation')}
                 </Typography>
                 <Typography component="span" sx={{ marginLeft: 1 }}>
                   {question.explanation}

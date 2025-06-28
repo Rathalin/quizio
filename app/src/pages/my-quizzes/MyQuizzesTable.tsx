@@ -47,7 +47,7 @@ export function MyQuizzesTable({ quizzes }: Props) {
             isHovered={hoveredRowId === uuid}
           />
         );
-      }
+      },
     }),
     columnHelper.accessor('isPublished', {
       header: () => t('table.column.isPublished.header'),
@@ -55,7 +55,7 @@ export function MyQuizzesTable({ quizzes }: Props) {
         <Box sx={{ marginTop: -1 }}>
           <VisibilityColumn uuid={props.row.original.uuid} isPublished={props.getValue()} size="small" />
         </Box>
-      )
+      ),
     }),
     columnHelper.accessor('createdAt', {
       header: () => t('table.column.createdAt.header'),
@@ -66,7 +66,7 @@ export function MyQuizzesTable({ quizzes }: Props) {
             {t('table.column.createdAt.cell.label')}
           </Typography>
         </Stack>
-      )
+      ),
     }),
     columnHelper.accessor('updatedAt', {
       header: () => t('table.column.updatedAt.header'),
@@ -77,7 +77,7 @@ export function MyQuizzesTable({ quizzes }: Props) {
             {t('table.column.updatedAt.cell.label')}
           </Typography>
         </Stack>
-      )
+      ),
     }),
     columnHelper.accessor('playCount', {
       header: () => t('table.column.playCount.header'),
@@ -95,7 +95,7 @@ export function MyQuizzesTable({ quizzes }: Props) {
                 <Typography component="span" color="textSecondary" variant="body2" noWrap>
                   {chunks}
                 </Typography>
-              )
+              ),
             })}
           </Typography>
           <LinkButton
@@ -106,15 +106,15 @@ export function MyQuizzesTable({ quizzes }: Props) {
             {t('table.column.playCount.trendsButton.label')}
           </LinkButton>
         </Stack>
-      )
-    })
+      ),
+    }),
   ];
 
   const table = useReactTable({
     data: quizzes,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getRowId: (originalRow) => originalRow.uuid
+    getRowId: (originalRow) => originalRow.uuid,
   });
 
   return (
@@ -141,8 +141,8 @@ export function MyQuizzesTable({ quizzes }: Props) {
                 sx={{
                   verticalAlign: 'top',
                   ':hover': {
-                    backgroundColor: theme.palette.action.hover
-                  }
+                    backgroundColor: theme.vars.palette.action.hover,
+                  },
                 }}
               >
                 {row.getVisibleCells().map((cell) => (
