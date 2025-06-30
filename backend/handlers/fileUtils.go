@@ -55,6 +55,7 @@ var AllowedImageTypes = []string{
 	"webp",
 	"svg",
 	"gif",
+	"avif",
 }
 var AllowedAudioTypes = []string{
 	"mp3",
