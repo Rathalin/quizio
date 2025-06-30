@@ -21,7 +21,7 @@ func (dbw *DBWrapper) HandleCreateQuiz() usecase.Interactor {
 		ImageUrl            *string                   `json:"imageUrl" required:"true" nullable:"true"`
 		Explanation         *string                   `json:"explanation" required:"true" nullable:"true" validation:"max=400"`
 		ExplanationImageUrl *string                   `json:"explanationImageUrl" required:"true" nullable:"true"`
-		Answers             []createQuizRequestAnswer `json:"answers" required:"true" nullable:"false" validate:"required,min=1,max=10"`
+		Answers             []createQuizRequestAnswer `json:"answers" required:"true" nullable:"false" validate:"required,min=2,max=10"`
 	}
 
 	type createQuizRequest struct {
