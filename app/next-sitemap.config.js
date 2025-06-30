@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 export default {
-  siteUrl: 'https://quizio.flockert.at',
+  siteUrl: process.env.DOMAIN_URL,
   generateRobotsTxt: true,
   robotsTxtOptions: {
     policies: [
@@ -34,7 +34,7 @@ export default {
   ],
   additionalPaths: async () => {
     const locales = ['', '/en'];
-    const publicQuizUuids = await fetch('https://go.quizio.flockert.at/seo/published-quizzes-uuids', {
+    const publicQuizUuids = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/seo/published-quizzes-uuids`, {
       headers: {
         Authorization: `Bearer ${process.env.SEO_API_KEY}`,
       },
