@@ -12,8 +12,8 @@ import (
 
 func (dbw *DBWrapper) HandleChangePassword() usecase.Interactor {
 	type changePasswordRequest struct {
-		CurrentPassword string `json:"currentPassword" required:"true"`
-		NewPassword     string `json:"newPassword" required:"true"`
+		CurrentPassword string `json:"currentPassword" required:"true" validate:"required"`
+		NewPassword     string `json:"newPassword" required:"true" validate:"required,min=6,max=50"`
 	}
 
 	type changePasswordResponse struct {
@@ -26,8 +26,8 @@ func (dbw *DBWrapper) HandleChangePassword() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
-		if len(input.NewPassword) < 8 {
-			return errors.New("new password must be at least 8 characters long")
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 		if !isValidPassword(input.NewPassword) {
 			return errors.New("new password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character")

@@ -4,31 +4,32 @@ import (
 	"context"
 
 	"github.com/swaggest/usecase"
+	"github.com/swaggest/usecase/status"
 )
 
 func (dbw *DBWrapper) HandleCreateQuiz() usecase.Interactor {
 	type createQuizRequestAnswer struct {
-		Title       string  `json:"title" required:"true"`
-		Description *string `json:"description" required:"true" nullable:"true"`
+		Title       string  `json:"title" required:"true" validate:"required,min=1,max=100"`
+		Description *string `json:"description" required:"true" nullable:"true" validate:"max=200"`
 		ImageUrl    *string `json:"imageUrl" required:"true" nullable:"true"`
-		IsCorrect   bool    `json:"isCorrect" required:"true"`
+		IsCorrect   bool    `json:"isCorrect" required:"true" validate:"required"`
 	}
 
 	type createQuizRequestQuestion struct {
-		Title               string                    `json:"title" required:"true"`
-		Description         *string                   `json:"description" required:"true" nullable:"true"`
+		Title               string                    `json:"title" required:"true" validate:"required,min=1,max=100"`
+		Description         *string                   `json:"description" required:"true" nullable:"true" validate:"max=200"`
 		ImageUrl            *string                   `json:"imageUrl" required:"true" nullable:"true"`
-		Explanation         *string                   `json:"explanation" required:"true" nullable:"true"`
+		Explanation         *string                   `json:"explanation" required:"true" nullable:"true" validation:"max=400"`
 		ExplanationImageUrl *string                   `json:"explanationImageUrl" required:"true" nullable:"true"`
-		Answers             []createQuizRequestAnswer `json:"answers" required:"true" nullable:"false"`
+		Answers             []createQuizRequestAnswer `json:"answers" required:"true" nullable:"false" validate:"required,min=1,max=10"`
 	}
 
 	type createQuizRequest struct {
-		Title       string                      `json:"title" required:"true"`
-		Description *string                     `json:"description" required:"true" nullable:"true"`
+		Title       string                      `json:"title" required:"true" validate:"required,min=1,max=50"`
+		Description *string                     `json:"description" required:"true" nullable:"true" validate:"max=200"`
 		IsPublished bool                        `json:"isPublished" required:"true"`
 		ImageUrl    *string                     `json:"imageUrl" required:"true" nullable:"true"`
-		Questions   []createQuizRequestQuestion `json:"questions" required:"true"`
+		Questions   []createQuizRequestQuestion `json:"questions" required:"true" validate:"required,min=1,max=20"`
 	}
 
 	type createQuizResponse struct{}
@@ -37,6 +38,10 @@ func (dbw *DBWrapper) HandleCreateQuiz() usecase.Interactor {
 		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
 			return logAndReturnError(err)
+		}
+
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
 		tx, err := dbw.DB.BeginTx(ctx, nil)

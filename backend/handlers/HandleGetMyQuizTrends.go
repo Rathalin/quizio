@@ -11,7 +11,6 @@ import (
 )
 
 func (dbw *DBWrapper) HandleGetMyQuizTrends() usecase.Interactor {
-
 	type getMyQuizTrendsRequest struct {
 		QuizUUID  string    `path:"uuid" required:"true"`
 		StartDate time.Time `query:"from" required:"true"`
@@ -47,7 +46,7 @@ func (dbw *DBWrapper) HandleGetMyQuizTrends() usecase.Interactor {
 		if err != nil {
 			return logAndReturnError(err)
 		}
-
+		
 		if !isValidUUID(input.QuizUUID) {
 			return status.Wrap(logAndReturnErrorMessage("quiz does not exists (invalid uuid)"), status.NotFound)
 		}

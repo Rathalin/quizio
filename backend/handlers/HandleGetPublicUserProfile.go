@@ -31,6 +31,10 @@ func (dbw *DBWrapper) HandleGetPublicUserProfile() usecase.Interactor {
 			return status.Wrap(logAndReturnErrorMessage("user does not exists (invalid uuid)"), status.NotFound)
 		}
 
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
+		}
+
 		userExists, err := dbw.UserExists(input.UUID)
 		if err != nil {
 			return logAndReturnError(err)

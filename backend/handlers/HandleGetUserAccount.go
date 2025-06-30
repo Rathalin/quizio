@@ -5,6 +5,7 @@ import (
 
 	"github.com/Rathalin/quizio/backend/models"
 	"github.com/swaggest/usecase"
+	"github.com/swaggest/usecase/status"
 )
 
 func (dbw *DBWrapper) HandleGetUserAccount() usecase.Interactor {
@@ -14,6 +15,10 @@ func (dbw *DBWrapper) HandleGetUserAccount() usecase.Interactor {
 		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
 			return logAndReturnError(err)
+		}
+
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
 		response := models.UserAccount{}

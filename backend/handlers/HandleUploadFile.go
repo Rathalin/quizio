@@ -30,6 +30,10 @@ func (dbw *DBWrapper) HandleUploadFile() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
+		}
+
 		userUuid, err := dbw.GetUserUuid(userId)
 		if err != nil {
 			return logAndReturnError(err)

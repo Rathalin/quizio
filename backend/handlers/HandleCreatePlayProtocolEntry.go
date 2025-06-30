@@ -4,11 +4,12 @@ import (
 	"context"
 
 	"github.com/swaggest/usecase"
+	"github.com/swaggest/usecase/status"
 )
 
 func (dbw *DBWrapper) HandleCreatePlayProtocolEntryWithUser() usecase.Interactor {
 	type createPlayProtocolEntryWithUserRequest struct {
-		QuizUuid string `json:"quizUuid" required:"true"`
+		QuizUuid string `json:"quizUuid" required:"true" validate:"required,uuid4"`
 	}
 
 	type createPlayProtocolEntryWithUserResponse struct{}
@@ -17,6 +18,10 @@ func (dbw *DBWrapper) HandleCreatePlayProtocolEntryWithUser() usecase.Interactor
 		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
 			return logAndReturnError(err)
+		}
+
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
 		quizId, err := dbw.GetQuizId(input.QuizUuid)

@@ -23,6 +23,10 @@ func (dbw *DBWrapper) HandleSignIn() usecase.Interactor {
 	}
 
 	return usecase.NewInteractor(func(ctx context.Context, input signInRequest, output *signInResponse) error {
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
+		}
+
 		trimmedUsername := strings.TrimSpace(input.Username)
 
 		usernameExists, err := dbw.UsernameExists(trimmedUsername)

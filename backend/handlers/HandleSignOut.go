@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/swaggest/usecase"
+	"github.com/swaggest/usecase/status"
 )
 
 func (dbw *DBWrapper) HandleSignOut() usecase.Interactor {
@@ -14,6 +15,10 @@ func (dbw *DBWrapper) HandleSignOut() usecase.Interactor {
 	type signOutResponse struct{}
 
 	return usecase.NewInteractor(func(ctx context.Context, input signOutRequest, output *signOutResponse) error {
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
+		}
+		
 		_, err := dbw.DB.Exec(`
 			DELETE FROM refresh_token
 			WHERE token = $1

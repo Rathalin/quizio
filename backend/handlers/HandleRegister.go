@@ -21,6 +21,10 @@ func (dbw *DBWrapper) HandleRegister() usecase.Interactor {
 	}
 
 	return usecase.NewInteractor(func(ctx context.Context, input registerRequest, output *registerResponse) error {
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
+		}
+		
 		// Validate username and password
 		if len(input.Username) < 3 {
 			return logAndReturnErrorMessage("username must be at least 3 characters long")

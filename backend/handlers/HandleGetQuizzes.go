@@ -10,6 +10,7 @@ import (
 	"github.com/Rathalin/quizio/backend/models"
 
 	"github.com/swaggest/usecase"
+	"github.com/swaggest/usecase/status"
 )
 
 func (dbw *DBWrapper) HandleGetQuizzes() usecase.Interactor {
@@ -42,6 +43,10 @@ func (dbw *DBWrapper) HandleGetQuizzes() usecase.Interactor {
 	}
 
 	return usecase.NewInteractor(func(ctx context.Context, input getQuizzesRequest, output *getQuizzesResponse) error {
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
+		}
+		
 		totalQuizCount := 0
 		err := dbw.DB.QueryRow(`
 			SELECT COUNT(*)

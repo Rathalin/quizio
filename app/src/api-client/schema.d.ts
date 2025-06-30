@@ -330,6 +330,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/seo/published-quizzes-uuids': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** DB Wrapper Handle Published Quizzes Uuids */
+    get: operations['backend/handlers.(*DBWrapper).HandlePublishedQuizzesUuids'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/signin': {
     parameters: {
       query?: never;
@@ -369,8 +386,8 @@ export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
     HandlersChangePasswordRequest: {
-      currentPassword: string;
-      newPassword: string;
+      currentPassword?: string;
+      newPassword?: string;
     };
     HandlersChangePasswordResponse: {
       message?: string;
@@ -1281,6 +1298,35 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['HandlersRegisterResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).HandlePublishedQuizzesUuids': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': string[];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
         };
       };
     };

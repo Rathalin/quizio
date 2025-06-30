@@ -11,30 +11,30 @@ import (
 
 func (dbw *DBWrapper) HandleUpdateQuiz() usecase.Interactor {
 	type updateQuizRequestAnswer struct {
-		UUID        *string `json:"uuid" required:"true" nullable:"true"`
-		Title       string  `json:"title" required:"true"`
-		Description *string `json:"description" required:"true" nullable:"true"`
+		UUID        *string `json:"uuid" required:"true" nullable:"true" validate:"required,uuid4"`
+		Title       string  `json:"title" required:"true" validate:"required,min=1,max=100"`
+		Description *string `json:"description" required:"true" nullable:"true" validate:"max=200"`
 		ImageUrl    *string `json:"imageUrl" required:"true" nullable:"true"`
 		IsCorrect   bool    `json:"isCorrect" required:"true"`
 	}
 
 	type updateQuizRequestQuestion struct {
-		UUID                *string                   `json:"uuid" required:"true" nullable:"true"`
-		Title               string                    `json:"title" required:"true"`
-		Description         *string                   `json:"description" required:"true" nullable:"true"`
+		UUID                *string                   `json:"uuid" required:"true" nullable:"true" validate:"required,uuid4"`
+		Title               string                    `json:"title" required:"true" validate:"required,min=1,max=100"`
+		Description         *string                   `json:"description" required:"true" nullable:"true" validate:"max=200"`
 		ImageUrl            *string                   `json:"imageUrl" required:"true" nullable:"true"`
-		Explanation         *string                   `json:"explanation" required:"true" nullable:"true"`
+		Explanation         *string                   `json:"explanation" required:"true" nullable:"true" validation:"max=400"`
 		ExplanationImageUrl *string                   `json:"explanationImageUrl" required:"true" nullable:"true"`
-		Answers             []updateQuizRequestAnswer `json:"answers" required:"true" nullable:"false"`
+		Answers             []updateQuizRequestAnswer `json:"answers" required:"true" nullable:"false" validate:"required,min=1,max=10"`
 	}
 
 	type updateQuizRequest struct {
-		UUID        string                      `path:"uuid" required:"true"`
-		Title       string                      `json:"title" required:"true"`
-		Description *string                     `json:"description" required:"true" nullable:"true"`
+		UUID        string                      `path:"uuid" required:"true" validate:"required,uuid4"`
+		Title       string                      `json:"title" required:"true" validate:"required,min=1,max=50"`
+		Description *string                     `json:"description" required:"true" nullable:"true" validate:"max=200"`
 		IsPublished bool                        `json:"isPublished" required:"true"`
 		ImageUrl    *string                     `json:"imageUrl" required:"true" nullable:"true"`
-		Questions   []updateQuizRequestQuestion `json:"questions" required:"true" nullable:"false"`
+		Questions   []updateQuizRequestQuestion `json:"questions" required:"true" nullable:"false" validate:"required,min=1,max=20"`
 	}
 
 	type updateQuizResponse struct{}
@@ -43,6 +43,10 @@ func (dbw *DBWrapper) HandleUpdateQuiz() usecase.Interactor {
 		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
 			return logAndReturnError(err)
+		}
+
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
 		if !isValidUUID(input.UUID) {

@@ -65,6 +65,10 @@ func (dbw *DBWrapper) HandleGetQuiz() usecase.Interactor {
 			return status.Wrap(logAndReturnErrorMessage("quiz does not exists (invalid uuid)"), status.NotFound)
 		}
 
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
+		}
+
 		quizExists, err := dbw.QuizExistsForUser(input.UUID, userId)
 		if err != nil {
 			return logAndReturnError(err)
