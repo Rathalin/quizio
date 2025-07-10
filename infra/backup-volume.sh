@@ -1,13 +1,17 @@
 #!/bin/bash
 
-VOLUME=$1
-DATE=$(date +%Y-%m-%d)
-BACKUP_FILE="${VOLUME}_backup_${DATE}.tar.gz"
+# Set this to your desired backup path
+BACKUP_DIR="$HOME/docker-backups"
+TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)
+mkdir -p "$BACKUP_DIR"
 
-docker run --rm \
-  -v ${VOLUME}:/volume \
-  -v $(pwd):/backup \
-  alpine \
-  tar czf /backup/${BACKUP_FILE} -C /volume .
+# List volumes to back up (you can hardcode them instead)
+VOLUMES=$(docker volume ls -q | grep quizio)
 
-echo "Backup saved to ${BACKUP_FILE}"
+for VOL in $VOLUMES; do
+  docker run --rm \
+    -v ${VOL}:/volume \
+    -v $BACKUP_DIR:/backup \
+    alpine \
+    sh -c "tar czf /backup/${VOL}_${TIMESTAMP}.tar.gz -C /volume ."
+done
