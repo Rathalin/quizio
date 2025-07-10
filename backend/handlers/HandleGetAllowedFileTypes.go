@@ -16,7 +16,7 @@ func (dbw *DBWrapper) HandleGetAllowedFileTypes() usecase.Interactor {
 		AllowedAudioFileTypes string `json:"allowedAudioFileTypes" required:"true"`
 	}
 
-	return usecase.NewInteractor(func(ctx context.Context, input getAllowedFileTypesRequest, output *getAllowedFileTypesResponse) error {	
+	return usecase.NewInteractor(func(ctx context.Context, input getAllowedFileTypesRequest, output *getAllowedFileTypesResponse) error {
 		// Append dot ("png" -> ".png")
 		allowedImageTypesWithDots := []string{}
 		for i := range AllowedImageTypes {
