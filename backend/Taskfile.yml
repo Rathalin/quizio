@@ -14,7 +14,7 @@ tasks:
   dev:
     desc: Run the Go application with hot reload
     cmds:
-      - air
+      - air -c .air.toml
   
   outdated:
     desc: Show outdated packages
