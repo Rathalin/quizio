@@ -46,7 +46,7 @@ func (dbw *DBWrapper) HandleGetQuizzes() usecase.Interactor {
 		if err := validate.Struct(input); err != nil {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
-		
+
 		totalQuizCount := 0
 		err := dbw.DB.QueryRow(`
 			SELECT COUNT(*)
