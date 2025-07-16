@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"github.com/swaggest/usecase"
@@ -24,7 +23,7 @@ func (dbw *DBWrapper) HandleRegister() usecase.Interactor {
 		if err := validate.Struct(input); err != nil {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
-		
+
 		// Validate username and password
 		if len(input.Username) < 3 {
 			return logAndReturnErrorMessage("username must be at least 3 characters long")
@@ -63,7 +62,6 @@ func (dbw *DBWrapper) HandleRegister() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
-		fmt.Printf("New user: %v - %v", trimmedUsername, input.Password)
 		*output = registerResponse{Message: "Registration successful"}
 		return nil
 	})

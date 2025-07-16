@@ -34,8 +34,10 @@ func (dbw *DBWrapper) HandleSignIn() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
+		unauthenticatedMessage := "invalid username or password"
+
 		if !usernameExists {
-			return status.Wrap(logAndReturnErrorMessage("username does not exist"), status.NotFound)
+			return status.Wrap(logAndReturnErrorMessage(unauthenticatedMessage), status.Unauthenticated)
 		}
 
 		response := signInResponse{}
@@ -61,7 +63,7 @@ func (dbw *DBWrapper) HandleSignIn() usecase.Interactor {
 		// Validate password
 		err = bcrypt.CompareHashAndPassword([]byte(row.PasswordHash), []byte(input.Password))
 		if err != nil {
-			return logAndReturnErrorMessage("invalid username or password")
+			return status.Wrap(logAndReturnErrorMessage(unauthenticatedMessage), status.Unauthenticated)
 		}
 
 		// Generate access token
