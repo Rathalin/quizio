@@ -7,7 +7,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandlePublishedQuizzesUuids() usecase.Interactor {
+func (dbw *DBWrapper) PublishedQuizzesUuids() usecase.Interactor {
 	type publishedQuizzesUuidsRequest struct{}
 
 	type publishedQuizzesUuidsResponse = []string
@@ -16,7 +16,7 @@ func (dbw *DBWrapper) HandlePublishedQuizzesUuids() usecase.Interactor {
 		if err := validate.Struct(input); err != nil {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
-		
+
 		publishedQuizesUuids := []string{}
 		rows, err := dbw.DB.QueryContext(ctx, `
 			SELECT uuid

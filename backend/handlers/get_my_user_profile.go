@@ -8,7 +8,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandleGetMyUserProfile() usecase.Interactor {
+func (dbw *DBWrapper) GetMyUserProfile() usecase.Interactor {
 	type getMyUserProfileRequest struct{}
 
 	type getMyUserProfileResponse struct {

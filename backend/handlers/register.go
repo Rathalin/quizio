@@ -9,7 +9,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (dbw *DBWrapper) HandleRegister() usecase.Interactor {
+func (dbw *DBWrapper) Register() usecase.Interactor {
 	type registerRequest struct {
 		Username string `json:"username" required:"true"`
 		Password string `json:"password" required:"true"`

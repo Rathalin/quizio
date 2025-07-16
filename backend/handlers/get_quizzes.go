@@ -13,7 +13,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandleGetQuizzes() usecase.Interactor {
+func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 	type getQuizzesRequest struct {
 		Page          int    `query:"page" required:"true" example:"0"`
 		PageSize      int    `query:"pageSize" required:"true" example:"5"`

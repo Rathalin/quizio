@@ -9,7 +9,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandleGetAlerts() usecase.Interactor {
+func (dbw *DBWrapper) GetAlerts() usecase.Interactor {
 	type getAlertsRequest struct {
 		VisibleTo string `query:"visibleTo" required:"true" enum:"everyone,authorized" validate:"required"`
 	}
@@ -22,7 +22,7 @@ func (dbw *DBWrapper) HandleGetAlerts() usecase.Interactor {
 		if err := validate.Struct(input); err != nil {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
-		
+
 		response := getAlertsResponse{
 			Alerts: make([]models.Alert, 0),
 		}

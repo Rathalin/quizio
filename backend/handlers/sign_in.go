@@ -10,7 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (dbw *DBWrapper) HandleSignIn() usecase.Interactor {
+func (dbw *DBWrapper) SignIn() usecase.Interactor {
 	type signInRequest struct {
 		Username string `json:"username" required:"true"`
 		Password string `json:"password" required:"true"`

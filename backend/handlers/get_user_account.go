@@ -8,7 +8,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandleGetUserAccount() usecase.Interactor {
+func (dbw *DBWrapper) GetUserAccount() usecase.Interactor {
 	type getUserAccountRequest struct{}
 
 	return usecase.NewInteractor(func(ctx context.Context, input getUserAccountRequest, output *models.UserAccount) error {

@@ -11,7 +11,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandleGetQuiz() usecase.Interactor {
+func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 	type getQuizRequest struct {
 		UUID string `path:"uuid" required:"true" example:"c1508211-6aab-4090-8727-94de0d40c808"`
 	}

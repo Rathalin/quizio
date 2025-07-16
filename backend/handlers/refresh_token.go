@@ -8,7 +8,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandleRefreshToken() usecase.Interactor {
+func (dbw *DBWrapper) RefreshToken() usecase.Interactor {
 	type refreshTokenRequest struct {
 		RefreshToken string `json:"refreshToken" required:"true"`
 	}

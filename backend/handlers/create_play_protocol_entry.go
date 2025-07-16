@@ -7,7 +7,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandleCreatePlayProtocolEntryWithUser() usecase.Interactor {
+func (dbw *DBWrapper) CreatePlayProtocolEntryWithUser() usecase.Interactor {
 	type createPlayProtocolEntryWithUserRequest struct {
 		QuizUuid string `json:"quizUuid" required:"true" validate:"required,uuid4"`
 	}
@@ -42,7 +42,7 @@ func (dbw *DBWrapper) HandleCreatePlayProtocolEntryWithUser() usecase.Interactor
 	})
 }
 
-func (dbw *DBWrapper) HandleCreatePlayProtocolEntry() usecase.Interactor {
+func (dbw *DBWrapper) CreatePlayProtocolEntry() usecase.Interactor {
 	type createPlayProtocolEntryRequest struct {
 		QuizUuid string `json:"quizUuid" required:"true"`
 	}

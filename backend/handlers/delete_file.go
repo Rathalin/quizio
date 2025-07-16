@@ -10,7 +10,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandleDeleteFile() usecase.Interactor {
+func (dbw *DBWrapper) DeleteFile() usecase.Interactor {
 	type deleteFileRequest struct {
 		Filename string `query:"filename" required:"true" validate:"required,min=1"`
 	}

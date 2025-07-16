@@ -8,7 +8,7 @@ import (
 	"github.com/swaggest/usecase"
 )
 
-func (dbw *DBWrapper) HandleGetAllowedFileTypes() usecase.Interactor {
+func (dbw *DBWrapper) GetAllowedFileTypes() usecase.Interactor {
 	type getAllowedFileTypesRequest struct{}
 
 	type getAllowedFileTypesResponse struct {

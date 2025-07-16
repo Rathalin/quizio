@@ -7,7 +7,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandleCreateQuiz() usecase.Interactor {
+func (dbw *DBWrapper) CreateQuiz() usecase.Interactor {
 	type createQuizRequestAnswer struct {
 		Title       string  `json:"title" required:"true" validate:"required,min=1,max=100"`
 		Description *string `json:"description" required:"true" nullable:"true" validate:"max=200"`
