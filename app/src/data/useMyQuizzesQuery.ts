@@ -22,7 +22,7 @@ export function useMyQuizzesQuery(query: Omit<GetMyQuizzesRequestQuery, 'page'>)
 }
 
 export async function fetchMyQuizzes(query: GetMyQuizzesRequestQuery, authHeader: AuthorizationHeader) {
-  return apiClient.GET('/a/my-quizzes', {
+  return apiClient.GET('/me/quizzes/', {
     params: {
       query,
     },

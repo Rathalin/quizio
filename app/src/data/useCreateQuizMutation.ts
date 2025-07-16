@@ -11,7 +11,7 @@ export function useCreateQuizMutation() {
 }
 
 async function createQuiz(data: CreateQuizRequestData, authHeader: AuthorizationHeader) {
-  return apiClient.POST('/a/quiz/create', {
+  return apiClient.POST('/me/quizzes/create', {
     body: data,
     headers: authHeader,
   });

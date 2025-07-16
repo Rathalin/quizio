@@ -21,7 +21,7 @@ export function useUserAccountQuery() {
 }
 
 async function getUserAccount(authHeader: AuthorizationHeader) {
-  return apiClient.GET('/a/user-account', {
+  return apiClient.GET('/me/account', {
     headers: authHeader,
   });
 }

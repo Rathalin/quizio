@@ -14,7 +14,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) UploadFile() usecase.Interactor {
+func (dbw *DBWrapper) UploadMyFile() usecase.Interactor {
 	type uploadFileRequest struct {
 		Filename string `json:"filename" required:"true"`
 		File     []byte `json:"file" required:"true" nullable:"false"`

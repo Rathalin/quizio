@@ -8,7 +8,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) GetPublicUserProfile() usecase.Interactor {
+func (dbw *DBWrapper) GetUserProfile() usecase.Interactor {
 	type getPublicUserProfileRequest struct {
 		UUID string `path:"uuid" required:"true" example:"9dfd2a83-b8be-4c35-90ec-0acda6df26d0"`
 	}

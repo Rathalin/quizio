@@ -23,11 +23,9 @@ export type PlayProtocolStatistic = ApiSchemas['HandlersGetMyQuizTrendsResponseP
 export type PlayProtocolEntry = ApiSchemas['HandlersGetMyQuizTrendsResponsePlayProtocolEntry'];
 
 // Operations
-export type GetQuizzesRequestQuery =
-  operations['backend/handlers.(*DBWrapper).HandleGetQuizzes']['parameters']['query'];
-export type GetMyQuizzesRequestQuery =
-  operations['backend/handlers.(*DBWrapper).HandleGetMyQuizzes']['parameters']['query'];
-export type GetAlertsRequestQuery = operations['backend/handlers.(*DBWrapper).HandleGetAlerts']['parameters']['query'];
+export type GetQuizzesRequestQuery = operations['backend/handlers.(*DBWrapper).GetQuizzes']['parameters']['query'];
+export type GetMyQuizzesRequestQuery = operations['backend/handlers.(*DBWrapper).GetMyQuizzes']['parameters']['query'];
+export type GetAlertsRequestQuery = operations['backend/handlers.(*DBWrapper).GetAlerts']['parameters']['query'];
 
 type WithResponse<T> = T & { response: Response };
 type ApiCall = (...args: any[]) => Promise<WithResponse<{ data: any; error?: never } | { data?: never; error: any }>>;

@@ -11,7 +11,7 @@ export function useDeleteQuizMutation(uuid: string) {
 }
 
 async function deleteQuiz(uuid: string, authHeader: AuthorizationHeader) {
-  return apiClient.DELETE('/a/quiz/{uuid}', {
+  return apiClient.DELETE('/me/quizzes/{uuid}', {
     params: {
       path: {
         uuid,

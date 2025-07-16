@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/Rathalin/quizio/backend/models"
@@ -10,22 +11,26 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) PlayQuiz() usecase.Interactor {
-	type playQuizRequest struct {
+func (dbw *DBWrapper) GetMyQuiz() usecase.Interactor {
+	type getQuizRequest struct {
 		UUID string `path:"uuid" required:"true" example:"c1508211-6aab-4090-8727-94de0d40c808"`
 	}
 
-	type playQuizResponse struct {
-		Title     string            `json:"title" required:"true"`
-		ImageUrl  *string           `json:"imageUrl" required:"true" nullable:"true"`
-		Questions []models.Question `json:"questions" required:"true" nullable:"false"`
+	type getQuizResponse struct {
+		Title       string            `json:"title" required:"true"`
+		Description string            `json:"description" required:"true"`
+		IsPublished bool              `json:"isPublished" required:"true"`
+		ImageUrl    *string           `json:"imageUrl" required:"true" nullable:"true"`
+		Questions   []models.Question `json:"questions" required:"true" nullable:"false"`
 	}
 
 	type row struct {
-		ID       string
-		Title    string
-		ImageUrl *string
-		Question struct {
+		ID          string
+		Title       string
+		Description string
+		IsPublished bool
+		ImageUrl    *string
+		Question    struct {
 			ID                  string
 			UUID                string
 			CreatedAt           time.Time
@@ -50,7 +55,12 @@ func (dbw *DBWrapper) PlayQuiz() usecase.Interactor {
 		}
 	}
 
-	return usecase.NewInteractor(func(_ context.Context, input playQuizRequest, output *playQuizResponse) error {
+	return usecase.NewInteractor(func(ctx context.Context, input getQuizRequest, output *getQuizResponse) error {
+		userId, err := getUserIdFromContext(ctx)
+		if err != nil {
+			return logAndReturnError(err)
+		}
+
 		if !isValidUUID(input.UUID) {
 			return status.Wrap(logAndReturnErrorMessage("quiz does not exists (invalid uuid)"), status.NotFound)
 		}
@@ -59,18 +69,20 @@ func (dbw *DBWrapper) PlayQuiz() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
-		quizExists, err := dbw.QuizExists(input.UUID)
+		quizExists, err := dbw.QuizExistsForUser(input.UUID, userId)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 		if !quizExists {
-			return status.Wrap(logAndReturnErrorMessage("quiz does not exists"), status.NotFound)
+			return status.Wrap(logAndReturnErrorMessage(fmt.Sprintf("quiz wtih uuid %v does not exists for this user", input.UUID)), status.NotFound)
 		}
 
 		rows, err := dbw.DB.Query(`
 			SELECT
 				q.id,
 				q.title,
+				q.description_text,
+				q.is_published,
 				q.image_url,
 				qn.id,
 				qn.uuid,
@@ -105,7 +117,7 @@ func (dbw *DBWrapper) PlayQuiz() usecase.Interactor {
 		defer rows.Close()
 
 		var row row
-		response := playQuizResponse{
+		response := getQuizResponse{
 			Questions: make([]models.Question, 0),
 		}
 		lastQuizId := ""
@@ -115,6 +127,8 @@ func (dbw *DBWrapper) PlayQuiz() usecase.Interactor {
 			if err := rows.Scan(
 				&row.ID,
 				&row.Title,
+				&row.Description,
+				&row.IsPublished,
 				&row.ImageUrl,
 				&row.Question.ID,
 				&row.Question.UUID,
@@ -142,6 +156,8 @@ func (dbw *DBWrapper) PlayQuiz() usecase.Interactor {
 			if lastQuizId != row.ID {
 				lastQuizId = row.ID
 				response.Title = row.Title
+				response.Description = row.Description
+				response.IsPublished = row.IsPublished
 				response.ImageUrl = row.ImageUrl
 			}
 
@@ -162,7 +178,7 @@ func (dbw *DBWrapper) PlayQuiz() usecase.Interactor {
 			response.Questions[len(response.Questions)-1].Answers = append(response.Questions[len(response.Questions)-1].Answers, models.Answer{
 				UUID:        row.Answer.UUID,
 				CreatedAt:   row.Answer.CreatedAt,
-				UpdatedAt:   row.Question.UpdatedAt,
+				UpdatedAt:   row.Answer.UpdatedAt,
 				Title:       row.Answer.Title,
 				Description: row.Answer.Description,
 				ImageUrl:    row.Answer.ImageUrl,

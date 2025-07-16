@@ -23,7 +23,7 @@ export function useQuizzesInfiniteQuery(query: Omit<GetQuizzesRequestQuery, 'pag
 }
 
 export async function fetchQuizzes(query: GetQuizzesRequestQuery) {
-  return apiClient.GET('/quizzes', {
+  return apiClient.GET('/quizzes/', {
     params: {
       query,
     },

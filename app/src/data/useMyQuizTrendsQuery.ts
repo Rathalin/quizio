@@ -23,7 +23,7 @@ export async function fetchMyQuizTrends(
   toDate: string,
   authHeader: AuthorizationHeader,
 ) {
-  return apiClient.GET('/a/quiz/{uuid}/trends', {
+  return apiClient.GET('/me/quizzes/{uuid}/trends', {
     params: {
       path: {
         uuid,

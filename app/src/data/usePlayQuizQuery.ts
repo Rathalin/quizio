@@ -10,7 +10,7 @@ export function usePlayQuizQuery(uuid: string) {
 }
 
 export function playQuiz(uuid: string) {
-  return apiClient.GET('/play/{uuid}', {
+  return apiClient.GET('/quizzes/{uuid}', {
     params: {
       path: {
         uuid,

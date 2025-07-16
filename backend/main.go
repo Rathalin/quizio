@@ -52,18 +52,20 @@ func main() {
 		router.Handle("/public/*", http.StripPrefix("/public/", http.FileServer(http.Dir("./public"))))
 
 		router.Method(http.MethodPost, "/register", nethttp.NewHandler(dbWrapper.Register()))
+		router.Method(http.MethodPost, "/sign-in", nethttp.NewHandler(dbWrapper.SignIn()))
 		router.Method(http.MethodPost, "/refresh-token", nethttp.NewHandler(dbWrapper.RefreshToken()))
-		router.Method(http.MethodPost, "/signin", nethttp.NewHandler(dbWrapper.SignIn()))
-		router.Method(http.MethodGet, "/allowed-file-types", nethttp.NewHandler(dbWrapper.GetAllowedFileTypes()))
-		router.Method(http.MethodGet, "/quizzes", nethttp.NewHandler(dbWrapper.GetQuizzes()))
-		router.Method(http.MethodGet, "/play/{uuid}", nethttp.NewHandler(dbWrapper.PlayQuiz()))
-		router.Method(http.MethodGet, "/user-profile/{uuid}", nethttp.NewHandler(dbWrapper.GetPublicUserProfile()))
+		router.Method(http.MethodGet, "/user/{uuid}/profile", nethttp.NewHandler(dbWrapper.GetUserProfile()))
 		router.Method(http.MethodGet, "/alerts", nethttp.NewHandler(dbWrapper.GetAlerts()))
-		router.Method(http.MethodPost, "/play-protocol-entry", nethttp.NewHandler((dbWrapper.CreatePlayProtocolEntry())))
+		router.Method(http.MethodPost, "/create-play-protocol-entry", nethttp.NewHandler((dbWrapper.CreatePublicPlayProtocolEntry())))
+
+		router.Route("/quizzes", func(router chi.Router) {
+			router.Method(http.MethodGet, "/", nethttp.NewHandler(dbWrapper.GetQuizzes()))
+			router.Method(http.MethodGet, "/{uuid}", nethttp.NewHandler(dbWrapper.GetQuiz()))
+		})
 	})
 
 	// Auth routes
-	service.Route("/user", func(router chi.Router) {
+	service.Route("/me", func(router chi.Router) {
 		router.With(
 			nethttp.HTTPBearerSecurityMiddleware(service.OpenAPICollector, "JWT token", "baerer", "string"),
 		).Group(func(router chi.Router) {
@@ -71,28 +73,36 @@ func main() {
 				jwtauth.Verifier(auth.TokenAuth),
 				jwtauth.Authenticator(auth.TokenAuth),
 			)
-			router.Method(http.MethodPost, "/upload", nethttp.NewHandler((dbWrapper.UploadFile())))
-			router.Method(http.MethodDelete, "/upload", nethttp.NewHandler((dbWrapper.DeleteFile())))
-			router.Method(http.MethodPost, "/signout", nethttp.NewHandler(dbWrapper.HandleSignOut()))
-			router.Method(http.MethodGet, "/my-quizzes", nethttp.NewHandler((dbWrapper.GetMyQuizzes())))
-			router.Method(http.MethodGet, "/quiz/{uuid}/trends", nethttp.NewHandler((dbWrapper.GetMyQuizTrends())))
-			router.Method(http.MethodPost, "/quiz/create", nethttp.NewHandler((dbWrapper.CreateQuiz())))
-			router.Method(http.MethodGet, "/quiz/{uuid}", nethttp.NewHandler(dbWrapper.GetQuiz()))
-			router.Method(http.MethodPost, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.UpdateQuiz())))
-			router.Method(http.MethodPost, "/quiz/{uuid}/visibility", nethttp.NewHandler((dbWrapper.UpdateQuizVisibility())))
-			router.Method(http.MethodDelete, "/quiz/{uuid}", nethttp.NewHandler((dbWrapper.DeleteQuiz())))
-			router.Method(http.MethodPost, "/play-protocol-entry", nethttp.NewHandler((dbWrapper.CreatePlayProtocolEntryWithUser())))
-			router.Method(http.MethodGet, "/user-account", nethttp.NewHandler(dbWrapper.GetUserAccount()))
-			router.Method(http.MethodGet, "/my-user-profile", nethttp.NewHandler(dbWrapper.GetMyUserProfile()))
-			router.Method(http.MethodPost, "/change-password", nethttp.NewHandler(dbWrapper.ChangePassword()))
-			router.Method(http.MethodPost, "/update-profile-image", nethttp.NewHandler(dbWrapper.UpdateUserProfileImage()))
+
+			router.Method(http.MethodPost, "/signout", nethttp.NewHandler(dbWrapper.SignOut()))
+			router.Method(http.MethodGet, "/account", nethttp.NewHandler(dbWrapper.GetMyAccount()))
+			router.Method(http.MethodGet, "/profile", nethttp.NewHandler(dbWrapper.GetMyUserProfile()))
+			router.Method(http.MethodPost, "/change-password", nethttp.NewHandler(dbWrapper.ChangeMyPassword()))
+			router.Method(http.MethodPost, "/update-image", nethttp.NewHandler(dbWrapper.UpdateMyUserProfileImage()))
+			router.Method(http.MethodPost, "/create-play-protocol-entry", nethttp.NewHandler((dbWrapper.CreateMyPlayProtocolEntry())))
+
+			router.Route("/upload", func(router chi.Router) {
+				router.Method(http.MethodPost, "/", nethttp.NewHandler((dbWrapper.UploadMyFile())))
+				router.Method(http.MethodDelete, "/", nethttp.NewHandler((dbWrapper.DeleteMyFile())))
+			})
+
+			router.Route("/quizzes", func(router chi.Router) {
+				router.Method(http.MethodGet, "/", nethttp.NewHandler((dbWrapper.GetMyQuizzes())))
+				router.Method(http.MethodPost, "/create", nethttp.NewHandler((dbWrapper.CreateMyQuiz())))
+				router.Method(http.MethodGet, "/{uuid}", nethttp.NewHandler(dbWrapper.GetMyQuiz()))
+				router.Method(http.MethodPost, "/{uuid}", nethttp.NewHandler((dbWrapper.UpdateMyQuiz())))
+				router.Method(http.MethodDelete, "/{uuid}", nethttp.NewHandler((dbWrapper.DeleteMyQuiz())))
+				router.Method(http.MethodPost, "/{uuid}/visibility", nethttp.NewHandler((dbWrapper.UpdateMyQuizVisibility())))
+				router.Method(http.MethodGet, "/{uuid}/trends", nethttp.NewHandler((dbWrapper.GetMyQuizTrends())))
+				router.Method(http.MethodGet, "/allowed-file-types", nethttp.NewHandler(dbWrapper.GetMyQuizzesAllowedFileTypes()))
+			})
 		})
 	})
 
 	service.Route("/seo", func(router chi.Router) {
 		router.With(nethttp.HTTPBearerSecurityMiddleware(service.OpenAPICollector, "SEO API Key", "baerer", "string")).Group(func(r chi.Router) {
 			r.Use(middlewares.APIKeyMiddleware(env.Config.SEOAPIKey))
-			r.Method(http.MethodGet, "/published-quizzes-uuids", nethttp.NewHandler(dbWrapper.PublishedQuizzesUuids()))
+			r.Method(http.MethodGet, "/published-quizzes-uuids", nethttp.NewHandler(dbWrapper.GetSeoPublishedQuizzesUuids()))
 		})
 	})
 

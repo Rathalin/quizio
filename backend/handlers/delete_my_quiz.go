@@ -8,7 +8,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) DeleteQuiz() usecase.Interactor {
+func (dbw *DBWrapper) DeleteMyQuiz() usecase.Interactor {
 	type deleteQuizRequest struct {
 		QuizUUID string `path:"uuid" required:"true" validate:"required,uuid4"`
 	}

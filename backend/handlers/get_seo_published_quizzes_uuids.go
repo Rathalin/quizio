@@ -7,7 +7,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) PublishedQuizzesUuids() usecase.Interactor {
+func (dbw *DBWrapper) GetSeoPublishedQuizzesUuids() usecase.Interactor {
 	type publishedQuizzesUuidsRequest struct{}
 
 	type publishedQuizzesUuidsResponse = []string

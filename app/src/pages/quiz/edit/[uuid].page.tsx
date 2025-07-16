@@ -38,6 +38,7 @@ import { steps, useQuizFormSteps } from '../useQuizFormSteps';
 import Head from 'next/head';
 import { quizioTitle } from '@/utilities/quizioTitle';
 import { fetchAllowedFileTypes } from '@/data/useAllowedFileTypesQuery';
+import { AuthorizationHeader } from '@/custom-hooks/useAuthHeader';
 
 export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (ctx) => {
   const uuid = ctx.params?.uuid;
@@ -48,9 +49,10 @@ export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (c
   }
 
   const session = await getServerSession(ctx.req, ctx.res, authOptions);
-  const { data, response } = await fetchQuiz(uuid, {
+  const authHeader = {
     Authorization: `Bearer ${session?.user?.accessToken}`,
-  });
+  } satisfies AuthorizationHeader
+  const { data, response } = await fetchQuiz(uuid, authHeader);
   if (response.status === 404) {
     return {
       notFound: true,
@@ -62,7 +64,7 @@ export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (c
 
   const prefetchAllowedFileTypesPromise = queryClient.prefetchQuery({
     queryKey: ['getAllowedFileTypes'],
-    queryFn: () => throwOnError(() => fetchAllowedFileTypes()),
+    queryFn: () => throwOnError(() => fetchAllowedFileTypes(authHeader)),
   });
 
   const messagesPromise = getMessages(ctx.locale, ['quizForm']);

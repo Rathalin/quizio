@@ -16,7 +16,7 @@ export function useChangePasswordMutation() {
 }
 
 async function changePassword(data: ChangePasswordReqest, authHeader: AuthorizationHeader) {
-  return apiClient.POST('/a/change-password', {
+  return apiClient.POST('/me/change-password', {
     body: data,
     headers: authHeader,
   });

@@ -8,7 +8,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) UpdateQuizVisibility() usecase.Interactor {
+func (dbw *DBWrapper) UpdateMyQuizVisibility() usecase.Interactor {
 	type updateQuizVisibilityRequest struct {
 		UUID        string `path:"uuid" required:"true"`
 		IsPublished bool   `json:"isPublished" required:"true"`

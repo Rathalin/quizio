@@ -8,7 +8,7 @@ import (
 	"github.com/swaggest/usecase"
 )
 
-func (dbw *DBWrapper) GetAllowedFileTypes() usecase.Interactor {
+func (dbw *DBWrapper) GetMyQuizzesAllowedFileTypes() usecase.Interactor {
 	type getAllowedFileTypesRequest struct{}
 
 	type getAllowedFileTypesResponse struct {

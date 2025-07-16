@@ -7,7 +7,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandleSignOut() usecase.Interactor {
+func (dbw *DBWrapper) SignOut() usecase.Interactor {
 	type signOutRequest struct {
 		RefreshToken string `json:"refreshToken" required:"true"`
 	}
@@ -18,7 +18,7 @@ func (dbw *DBWrapper) HandleSignOut() usecase.Interactor {
 		if err := validate.Struct(input); err != nil {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
-		
+
 		_, err := dbw.DB.Exec(`
 			DELETE FROM refresh_token
 			WHERE token = $1

@@ -15,7 +15,7 @@ export function useDeleteFileMutation() {
 }
 
 async function deleteFile(filename: string, authHeader: AuthorizationHeader) {
-  return apiClient.DELETE('/a/upload', {
+  return apiClient.DELETE('/me/upload/', {
     params: {
       query: {
         filename,

@@ -14,7 +14,7 @@ export function useMyUserProfileQuery() {
 }
 
 export async function fetchMyUserProfile(authHeader: AuthorizationHeader) {
-  return apiClient.GET('/a/my-user-profile', {
+  return apiClient.GET('/me/profile', {
     headers: authHeader,
   });
 }

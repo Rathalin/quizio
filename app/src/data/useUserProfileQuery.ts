@@ -9,7 +9,7 @@ export function useUserProfileQuery(uuid: string) {
 }
 
 export async function fetchUserProfile(uuid: string) {
-  return apiClient.GET('/user-profile/{uuid}', {
+  return apiClient.GET('/user/{uuid}/profile', {
     params: {
       path: {
         uuid,
