@@ -24,9 +24,9 @@ import (
 )
 
 func main() {
-	env.Init()
+	env.Load()
 
-	auth.InitTokenAuth(env.Vars.JWTSecret)
+	auth.Init(env.Config.JWTSecret)
 
 	db.Connect()
 	defer db.Close()
@@ -50,6 +50,7 @@ func main() {
 	// Public routes
 	s.Group(func(r chi.Router) {
 		r.Handle("/public/*", http.StripPrefix("/public/", http.FileServer(http.Dir("./public"))))
+
 		r.Method(http.MethodPost, "/register", nethttp.NewHandler(dbWrapper.Register()))
 		r.Method(http.MethodPost, "/refresh-token", nethttp.NewHandler(dbWrapper.RefreshToken()))
 		r.Method(http.MethodPost, "/signin", nethttp.NewHandler(dbWrapper.SignIn()))
@@ -62,7 +63,7 @@ func main() {
 	})
 
 	// Auth routes
-	s.Route("/a", func(r chi.Router) {
+	s.Route("/user", func(r chi.Router) {
 		r.With(
 			nethttp.HTTPBearerSecurityMiddleware(s.OpenAPICollector, "JWT token", "baerer", "string"),
 		).Group(func(r chi.Router) {
@@ -90,17 +91,17 @@ func main() {
 
 	s.Route("/seo", func(r chi.Router) {
 		r.With(nethttp.HTTPBearerSecurityMiddleware(s.OpenAPICollector, "SEO API Key", "baerer", "string")).Group(func(r chi.Router) {
-			r.Use(middlewares.APIKeyMiddleware(env.Vars.SEOAPIKey))
+			r.Use(middlewares.APIKeyMiddleware(env.Config.SEOAPIKey))
 			r.Method(http.MethodGet, "/published-quizzes-uuids", nethttp.NewHandler(dbWrapper.PublishedQuizzesUuids()))
 		})
 	})
 
-	docsAuth := middleware.BasicAuth("Docs Access", map[string]string{env.Vars.OpenAPIDocsUser: env.Vars.OpenAPIDocsPassword})
+	docsAuth := middleware.BasicAuth("Docs Access", map[string]string{env.Config.OpenAPIDocsUser: env.Config.OpenAPIDocsPassword})
 	docsSecuritySchema := nethttp.HTTPBasicSecurityMiddleware(s.OpenAPICollector, "Docs Access", "Basic authentication for accessing the OpenAPI docs")
 	s.Route("/docs", func(r chi.Router) {
 		r.Group(func(r chi.Router) {
 			r.Use(docsAuth, docsSecuritySchema)
-			if env.Vars.GoEnv != "local" {
+			if env.Config.GoEnv != "local" {
 				r.Method(http.MethodGet, "/openapi.json", s.OpenAPICollector)
 			}
 			// Serve the Swagger UI
@@ -112,7 +113,7 @@ func main() {
 		})
 	})
 
-	if env.Vars.GoEnv == "local" {
+	if env.Config.GoEnv == "local" {
 		s.Method(http.MethodGet, "/docs/openapi.json", s.OpenAPICollector)
 	}
 

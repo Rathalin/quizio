@@ -12,7 +12,7 @@ var DB *sql.DB
 
 func Connect() {
 	var err error
-	DB, err = sql.Open("postgres", fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", env.Vars.PostgresHost, env.Vars.PostgresUser, env.Vars.PostgresPassword, env.Vars.PostgresDB))
+	DB, err = sql.Open("postgres", fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", env.Config.PostgresHost, env.Config.PostgresUser, env.Config.PostgresPassword, env.Config.PostgresDB))
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v\n", err)
 	}

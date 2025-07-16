@@ -20,15 +20,15 @@ type EnvVars struct {
 	SEOAPIKey           string
 }
 
-var Vars *EnvVars
+var Config *EnvVars
 
-func Init() {
-	env := os.Getenv("GO_ENV")
-	if env == "" {
-		env = "local"
+func Load() {
+	goEnv := os.Getenv("GO_ENV")
+	if goEnv == "" {
+		goEnv = "local"
 	}
 
-	envFile := fmt.Sprintf(".env.%s", env)
+	envFile := fmt.Sprintf(".env.%s", goEnv)
 	// Check if the file exists
 	if _, err := os.Stat(envFile); err == nil {
 		err := godotenv.Load(envFile)
@@ -37,12 +37,12 @@ func Init() {
 		}
 		log.Printf("Loaded environment variables from %s", envFile)
 	} else {
-		log.Printf("No .env.%s file found, relying on system environment variables", env)
+		log.Printf("No .env.%s file found, relying on system environment variables", goEnv)
 	}
 
 	// Access environment variables
-	Vars = &EnvVars{
-		GoEnv:               env,
+	Config = &EnvVars{
+		GoEnv:               goEnv,
 		JWTSecret:           os.Getenv("JWT_SECRET"),
 		PostgresDB:          os.Getenv("POSTGRES_DB"),
 		PostgresHost:        os.Getenv("POSTGRES_HOST"),
@@ -53,38 +53,38 @@ func Init() {
 		SEOAPIKey:           os.Getenv("SEO_API_KEY"),
 	}
 
-	if Vars.JWTSecret == "" {
+	if Config.JWTSecret == "" {
 		log.Fatal("Environment variable JWT_SECRET is not set\n")
 	}
-	if Vars.PostgresDB == "" {
+	if Config.PostgresDB == "" {
 		log.Fatal("Environment variable POSTGRES_DB is not set\n")
 	}
-	if Vars.PostgresHost == "" {
+	if Config.PostgresHost == "" {
 		log.Fatal("Environment variable POSTGRES_HOST is not set\n")
 	}
-	if Vars.PostgresUser == "" {
+	if Config.PostgresUser == "" {
 		log.Fatal("Environment variable POSTGRES_USER is not set\n")
 	}
-	if Vars.PostgresPassword == "" {
+	if Config.PostgresPassword == "" {
 		log.Fatal("Environment variable POSTGRES_PW is not set\n")
 	}
-	if Vars.OpenAPIDocsUser == "" {
+	if Config.OpenAPIDocsUser == "" {
 		log.Fatal("Environment variable OPENAPI_DOCS_USER is not set\n")
 	}
-	if Vars.OpenAPIDocsPassword == "" {
+	if Config.OpenAPIDocsPassword == "" {
 		log.Fatal("Environment variable OPENAPI_DOCS_PASSWORD is not set\n")
 	}
-	if Vars.SEOAPIKey == "" {
+	if Config.SEOAPIKey == "" {
 		log.Fatal("Environment variable SEO_API_KEY is not set\n")
 	}
 
-	log.Printf("GO_ENV: %s\n", env)
+	log.Printf("GO_ENV: %s\n", goEnv)
 	log.Printf("JWT_SECRET: %s\n", "(hidden)")
-	log.Printf("POSTGRES_DB: %s\n", Vars.PostgresDB)
-	log.Printf("POSTGRES_HOST: %s\n", Vars.PostgresHost)
-	log.Printf("POSTGRES_USER: %s\n", Vars.PostgresUser)
+	log.Printf("POSTGRES_DB: %s\n", Config.PostgresDB)
+	log.Printf("POSTGRES_HOST: %s\n", Config.PostgresHost)
+	log.Printf("POSTGRES_USER: %s\n", Config.PostgresUser)
 	log.Printf("POSTGRES_PASSWORD: %s\n", "(hidden)")
-	log.Printf("OPENAPI_DOCS_USER: %s\n", Vars.OpenAPIDocsUser)
+	log.Printf("OPENAPI_DOCS_USER: %s\n", Config.OpenAPIDocsUser)
 	log.Printf("OPENAPI_DOCS_PASSWORD: %s\n", "(hidden)")
 	log.Printf("SEO_API_KEY: %s\n", "(hidden)")
 	log.Printf("\n")
