@@ -3,17 +3,18 @@ package handlers
 import (
 	"errors"
 	"fmt"
-	"log"
 	"os"
+
+	"github.com/rs/zerolog/log"
 )
 
 func logAndReturnError(err error) error {
-	log.Println(err.Error())
+	log.Error().Err(err).Send()
 	return err
 }
 
 func logAndReturnErrorMessage(message string) error {
-	log.Println(message)
+	log.Error().Msg(message)
 	return errors.New(message)
 }
 
