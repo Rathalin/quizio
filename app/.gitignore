@@ -38,3 +38,7 @@ next-env.d.ts
 
 # pages
 /src/pages/debug*
+
+# seo
+sitemap.xml
+sitemap-0.xml

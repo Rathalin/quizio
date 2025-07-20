@@ -8,7 +8,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandleGetPublicUserProfile() usecase.Interactor {
+func (dbw *DBWrapper) GetUserProfile() usecase.Interactor {
 	type getPublicUserProfileRequest struct {
 		UUID string `path:"uuid" required:"true" example:"9dfd2a83-b8be-4c35-90ec-0acda6df26d0"`
 	}
@@ -29,6 +29,10 @@ func (dbw *DBWrapper) HandleGetPublicUserProfile() usecase.Interactor {
 	return usecase.NewInteractor(func(ctx context.Context, input getPublicUserProfileRequest, output *getPublicUserProfileResponse) error {
 		if !isValidUUID(input.UUID) {
 			return status.Wrap(logAndReturnErrorMessage("user does not exists (invalid uuid)"), status.NotFound)
+		}
+
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
 		userExists, err := dbw.UserExists(input.UUID)

@@ -10,8 +10,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandleGetMyQuizTrends() usecase.Interactor {
-
+func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 	type getMyQuizTrendsRequest struct {
 		QuizUUID  string    `path:"uuid" required:"true"`
 		StartDate time.Time `query:"from" required:"true"`

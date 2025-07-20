@@ -21,14 +21,14 @@ export function useCreatePlayProtocolEntryMutation() {
 
 function pushPlayProtocolEntry(quizUuid: string, authHeader: AuthorizationHeader) {
   if (authHeader != null) {
-    return apiClient.POST('/a/play-protocol-entry', {
+    return apiClient.POST('/me/create-play-protocol-entry', {
       body: {
         quizUuid,
       },
       headers: authHeader,
     });
   }
-  return apiClient.POST('/play-protocol-entry', {
+  return apiClient.POST('/create-play-protocol-entry', {
     body: {
       quizUuid,
     },

@@ -13,7 +13,7 @@ export function useQuizQuery(uuid: string) {
 }
 
 export function fetchQuiz(uuid: string, authHeader: AuthorizationHeader) {
-  return apiClient.GET('/a/quiz/{uuid}', {
+  return apiClient.GET('/me/quizzes/{uuid}', {
     params: {
       path: {
         uuid,

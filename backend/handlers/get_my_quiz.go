@@ -11,7 +11,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandleGetQuiz() usecase.Interactor {
+func (dbw *DBWrapper) GetMyQuiz() usecase.Interactor {
 	type getQuizRequest struct {
 		UUID string `path:"uuid" required:"true" example:"c1508211-6aab-4090-8727-94de0d40c808"`
 	}
@@ -63,6 +63,10 @@ func (dbw *DBWrapper) HandleGetQuiz() usecase.Interactor {
 
 		if !isValidUUID(input.UUID) {
 			return status.Wrap(logAndReturnErrorMessage("quiz does not exists (invalid uuid)"), status.NotFound)
+		}
+
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
 		quizExists, err := dbw.QuizExistsForUser(input.UUID, userId)

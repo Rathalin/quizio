@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"github.com/swaggest/usecase"
@@ -10,7 +9,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (dbw *DBWrapper) HandleRegister() usecase.Interactor {
+func (dbw *DBWrapper) Register() usecase.Interactor {
 	type registerRequest struct {
 		Username string `json:"username" required:"true"`
 		Password string `json:"password" required:"true"`
@@ -21,6 +20,10 @@ func (dbw *DBWrapper) HandleRegister() usecase.Interactor {
 	}
 
 	return usecase.NewInteractor(func(ctx context.Context, input registerRequest, output *registerResponse) error {
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
+		}
+
 		// Validate username and password
 		if len(input.Username) < 3 {
 			return logAndReturnErrorMessage("username must be at least 3 characters long")
@@ -59,7 +62,6 @@ func (dbw *DBWrapper) HandleRegister() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
-		fmt.Printf("New user: %v - %v", trimmedUsername, input.Password)
 		*output = registerResponse{Message: "Registration successful"}
 		return nil
 	})

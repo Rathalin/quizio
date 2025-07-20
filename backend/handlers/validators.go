@@ -3,8 +3,11 @@ package handlers
 import (
 	"regexp"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 )
+
+var validate = validator.New(validator.WithRequiredStructEnabled())
 
 // Helper function to validate password complexity
 func isValidPassword(password string) bool {

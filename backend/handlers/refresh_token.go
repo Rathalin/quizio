@@ -5,9 +5,10 @@ import (
 	"errors"
 
 	"github.com/swaggest/usecase"
+	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandleRefreshToken() usecase.Interactor {
+func (dbw *DBWrapper) RefreshToken() usecase.Interactor {
 	type refreshTokenRequest struct {
 		RefreshToken string `json:"refreshToken" required:"true"`
 	}
@@ -17,6 +18,10 @@ func (dbw *DBWrapper) HandleRefreshToken() usecase.Interactor {
 	}
 
 	return usecase.NewInteractor(func(ctx context.Context, input refreshTokenRequest, output *refreshTokenResponse) error {
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
+		}
+
 		var userID int64
 
 		// Validate refresh token

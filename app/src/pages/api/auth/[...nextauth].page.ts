@@ -27,7 +27,7 @@ export const authOptions: AuthOptions = {
           return null;
         }
         const { username, password } = credentials;
-        const { data, error } = await apiClient.POST('/signin', {
+        const { data, error } = await apiClient.POST('/sign-in', {
           body: {
             username,
             password,

@@ -8,9 +8,9 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandleDeleteQuiz() usecase.Interactor {
+func (dbw *DBWrapper) DeleteMyQuiz() usecase.Interactor {
 	type deleteQuizRequest struct {
-		QuizUUID string `path:"uuid" required:"true"`
+		QuizUUID string `path:"uuid" required:"true" validate:"required,uuid4"`
 	}
 
 	type deleteQuizResponse struct{}
@@ -23,6 +23,10 @@ func (dbw *DBWrapper) HandleDeleteQuiz() usecase.Interactor {
 
 		if !isValidUUID(input.QuizUUID) {
 			return status.Wrap(logAndReturnErrorMessage("quiz does not exists (invalid uuid)"), status.NotFound)
+		}
+
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
 		quizExists, err := dbw.QuizExistsForUser(input.QuizUUID, userId)

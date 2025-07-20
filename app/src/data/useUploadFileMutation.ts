@@ -11,7 +11,7 @@ export function useUploadFileMutation() {
 }
 
 function uploadFile(data: UploadFileRequestData, authHeader: AuthorizationHeader) {
-  return apiClient.POST('/a/upload', {
+  return apiClient.POST('/me/upload/', {
     body: data,
     headers: authHeader,
   });

@@ -4,213 +4,6 @@
  */
 
 export interface paths {
-  '/a/change-password': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** DB Wrapper Handle Change Password */
-    post: operations['backend/handlers.(*DBWrapper).HandleChangePassword'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/a/my-quizzes': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** DB Wrapper Handle Get My Quizzes */
-    get: operations['backend/handlers.(*DBWrapper).HandleGetMyQuizzes'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/a/my-user-profile': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** DB Wrapper Handle Get My User Profile */
-    get: operations['backend/handlers.(*DBWrapper).HandleGetMyUserProfile'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/a/play-protocol-entry': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** DB Wrapper Handle Create Play Protocol Entry With User */
-    post: operations['backend/handlers.(*DBWrapper).HandleCreatePlayProtocolEntryWithUser'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/a/quiz/create': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** DB Wrapper Handle Create Quiz */
-    post: operations['backend/handlers.(*DBWrapper).HandleCreateQuiz'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/a/quiz/{uuid}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** DB Wrapper Handle Get Quiz */
-    get: operations['backend/handlers.(*DBWrapper).HandleGetQuiz'];
-    put?: never;
-    /** DB Wrapper Handle Update Quiz */
-    post: operations['backend/handlers.(*DBWrapper).HandleUpdateQuiz'];
-    /** DB Wrapper Handle Delete Quiz */
-    delete: operations['backend/handlers.(*DBWrapper).HandleDeleteQuiz'];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/a/quiz/{uuid}/trends': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** DB Wrapper Handle Get My Quiz Trends */
-    get: operations['backend/handlers.(*DBWrapper).HandleGetMyQuizTrends'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/a/quiz/{uuid}/visibility': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** DB Wrapper Handle Update Quiz Visibility */
-    post: operations['backend/handlers.(*DBWrapper).HandleUpdateQuizVisibility'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/a/signout': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** DB Wrapper Handle Sign Out */
-    post: operations['backend/handlers.(*DBWrapper).HandleSignOut'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/a/update-profile-image': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** DB Wrapper Handle Update User Profile Image */
-    post: operations['backend/handlers.(*DBWrapper).HandleUpdateUserProfileImage'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/a/upload': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** DB Wrapper Handle Upload File */
-    post: operations['backend/handlers.(*DBWrapper).HandleUploadFile'];
-    /** DB Wrapper Handle Delete File */
-    delete: operations['backend/handlers.(*DBWrapper).HandleDeleteFile'];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/a/user-account': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** DB Wrapper Handle Get User Account */
-    get: operations['backend/handlers.(*DBWrapper).HandleGetUserAccount'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/alerts': {
     parameters: {
       query?: never;
@@ -218,8 +11,8 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** DB Wrapper Handle Get Alerts */
-    get: operations['backend/handlers.(*DBWrapper).HandleGetAlerts'];
+    /** DB Wrapper Get Alerts */
+    get: operations['backend/handlers.(*DBWrapper).GetAlerts'];
     put?: never;
     post?: never;
     delete?: never;
@@ -228,24 +21,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/allowed-file-types': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** DB Wrapper Handle Get Allowed File Types */
-    get: operations['backend/handlers.(*DBWrapper).HandleGetAllowedFileTypes'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/play-protocol-entry': {
+  '/create-play-protocol-entry': {
     parameters: {
       query?: never;
       header?: never;
@@ -254,23 +30,23 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** DB Wrapper Handle Create Play Protocol Entry */
-    post: operations['backend/handlers.(*DBWrapper).HandleCreatePlayProtocolEntry'];
+    /** DB Wrapper Create Public Play Protocol Entry */
+    post: operations['backend/handlers.(*DBWrapper).CreatePublicPlayProtocolEntry'];
     delete?: never;
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  '/play/{uuid}': {
+  '/me/account': {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** DB Wrapper Handle Handle Play Quiz */
-    get: operations['backend/handlers.(*DBWrapper).HandleHandlePlayQuiz'];
+    /** DB Wrapper Get My Account */
+    get: operations['backend/handlers.(*DBWrapper).GetMyAccount'];
     put?: never;
     post?: never;
     delete?: never;
@@ -279,15 +55,239 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/quizzes': {
+  '/me/change-password': {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** DB Wrapper Handle Get Quizzes */
-    get: operations['backend/handlers.(*DBWrapper).HandleGetQuizzes'];
+    get?: never;
+    put?: never;
+    /** DB Wrapper Change My Password */
+    post: operations['backend/handlers.(*DBWrapper).ChangeMyPassword'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/me/create-play-protocol-entry': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper Create My Play Protocol Entry */
+    post: operations['backend/handlers.(*DBWrapper).CreateMyPlayProtocolEntry'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/me/profile': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** DB Wrapper Get My User Profile */
+    get: operations['backend/handlers.(*DBWrapper).GetMyUserProfile'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/me/quizzes/': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** DB Wrapper Get My Quizzes */
+    get: operations['backend/handlers.(*DBWrapper).GetMyQuizzes'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/me/quizzes/allowed-file-types': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** DB Wrapper Get My Quizzes Allowed File Types */
+    get: operations['backend/handlers.(*DBWrapper).GetMyQuizzesAllowedFileTypes'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/me/quizzes/create': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper Create My Quiz */
+    post: operations['backend/handlers.(*DBWrapper).CreateMyQuiz'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/me/quizzes/{uuid}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** DB Wrapper Get My Quiz */
+    get: operations['backend/handlers.(*DBWrapper).GetMyQuiz'];
+    put?: never;
+    /** DB Wrapper Update My Quiz */
+    post: operations['backend/handlers.(*DBWrapper).UpdateMyQuiz'];
+    /** DB Wrapper Delete My Quiz */
+    delete: operations['backend/handlers.(*DBWrapper).DeleteMyQuiz'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/me/quizzes/{uuid}/trends': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** DB Wrapper Get My Quiz Trends */
+    get: operations['backend/handlers.(*DBWrapper).GetMyQuizTrends'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/me/quizzes/{uuid}/visibility': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper Update My Quiz Visibility */
+    post: operations['backend/handlers.(*DBWrapper).UpdateMyQuizVisibility'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/me/signout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper Sign Out */
+    post: operations['backend/handlers.(*DBWrapper).SignOut'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/me/update-image': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper Update My User Profile Image */
+    post: operations['backend/handlers.(*DBWrapper).UpdateMyUserProfileImage'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/me/upload/': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper Upload My File */
+    post: operations['backend/handlers.(*DBWrapper).UploadMyFile'];
+    /** DB Wrapper Delete My File */
+    delete: operations['backend/handlers.(*DBWrapper).DeleteMyFile'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/quizzes/': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** DB Wrapper Get Quizzes */
+    get: operations['backend/handlers.(*DBWrapper).GetQuizzes'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/quizzes/{uuid}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** DB Wrapper Get Quiz */
+    get: operations['backend/handlers.(*DBWrapper).GetQuiz'];
     put?: never;
     post?: never;
     delete?: never;
@@ -305,8 +305,8 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** DB Wrapper Handle Refresh Token */
-    post: operations['backend/handlers.(*DBWrapper).HandleRefreshToken'];
+    /** DB Wrapper Refresh Token */
+    post: operations['backend/handlers.(*DBWrapper).RefreshToken'];
     delete?: never;
     options?: never;
     head?: never;
@@ -322,15 +322,32 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** DB Wrapper Handle Register */
-    post: operations['backend/handlers.(*DBWrapper).HandleRegister'];
+    /** DB Wrapper Register */
+    post: operations['backend/handlers.(*DBWrapper).Register'];
     delete?: never;
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  '/signin': {
+  '/seo/published-quizzes-uuids': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** DB Wrapper Get Seo Published Quizzes Uuids */
+    get: operations['backend/handlers.(*DBWrapper).GetSeoPublishedQuizzesUuids'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/sign-in': {
     parameters: {
       query?: never;
       header?: never;
@@ -339,23 +356,23 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** DB Wrapper Handle Sign In */
-    post: operations['backend/handlers.(*DBWrapper).HandleSignIn'];
+    /** DB Wrapper Sign In */
+    post: operations['backend/handlers.(*DBWrapper).SignIn'];
     delete?: never;
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  '/user-profile/{uuid}': {
+  '/user/{uuid}/profile': {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** DB Wrapper Handle Get Public User Profile */
-    get: operations['backend/handlers.(*DBWrapper).HandleGetPublicUserProfile'];
+    /** DB Wrapper Get User Profile */
+    get: operations['backend/handlers.(*DBWrapper).GetUserProfile'];
     put?: never;
     post?: never;
     delete?: never;
@@ -655,7 +672,80 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-  'backend/handlers.(*DBWrapper).HandleChangePassword': {
+  'backend/handlers.(*DBWrapper).GetAlerts': {
+    parameters: {
+      query: {
+        visibleTo: 'everyone' | 'authorized';
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HandlersGetAlertsResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).CreatePublicPlayProtocolEntry': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['HandlersCreatePlayProtocolEntryRequest'];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).GetMyAccount': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ModelsUserAccount'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).ChangeMyPassword': {
     parameters: {
       query?: never;
       header?: never;
@@ -688,7 +778,67 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).HandleGetMyQuizzes': {
+  'backend/handlers.(*DBWrapper).CreateMyPlayProtocolEntry': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['HandlersCreatePlayProtocolEntryWithUserRequest'];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).GetMyUserProfile': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HandlersGetMyUserProfileResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).GetMyQuizzes': {
     parameters: {
       query: {
         sortOption: 'createdAt' | 'playCount';
@@ -720,7 +870,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).HandleGetMyUserProfile': {
+  'backend/handlers.(*DBWrapper).GetMyQuizzesAllowedFileTypes': {
     parameters: {
       query?: never;
       header?: never;
@@ -735,7 +885,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['HandlersGetMyUserProfileResponse'];
+          'application/json': components['schemas']['HandlersGetAllowedFileTypesResponse'];
         };
       };
       /** @description Unauthorized */
@@ -749,38 +899,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).HandleCreatePlayProtocolEntryWithUser': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: {
-      content: {
-        'application/json': components['schemas']['HandlersCreatePlayProtocolEntryWithUserRequest'];
-      };
-    };
-    responses: {
-      /** @description No Content */
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['RestErrResponse'];
-        };
-      };
-    };
-  };
-  'backend/handlers.(*DBWrapper).HandleCreateQuiz': {
+  'backend/handlers.(*DBWrapper).CreateMyQuiz': {
     parameters: {
       query?: never;
       header?: never;
@@ -811,7 +930,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).HandleGetQuiz': {
+  'backend/handlers.(*DBWrapper).GetMyQuiz': {
     parameters: {
       query?: never;
       header?: never;
@@ -842,7 +961,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).HandleUpdateQuiz': {
+  'backend/handlers.(*DBWrapper).UpdateMyQuiz': {
     parameters: {
       query?: never;
       header?: never;
@@ -875,7 +994,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).HandleDeleteQuiz': {
+  'backend/handlers.(*DBWrapper).DeleteMyQuiz': {
     parameters: {
       query?: never;
       header?: never;
@@ -904,7 +1023,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).HandleGetMyQuizTrends': {
+  'backend/handlers.(*DBWrapper).GetMyQuizTrends': {
     parameters: {
       query: {
         from: string;
@@ -938,7 +1057,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).HandleUpdateQuizVisibility': {
+  'backend/handlers.(*DBWrapper).UpdateMyQuizVisibility': {
     parameters: {
       query?: never;
       header?: never;
@@ -971,7 +1090,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).HandleSignOut': {
+  'backend/handlers.(*DBWrapper).SignOut': {
     parameters: {
       query?: never;
       header?: never;
@@ -1002,7 +1121,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).HandleUpdateUserProfileImage': {
+  'backend/handlers.(*DBWrapper).UpdateMyUserProfileImage': {
     parameters: {
       query?: never;
       header?: never;
@@ -1033,7 +1152,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).HandleUploadFile': {
+  'backend/handlers.(*DBWrapper).UploadMyFile': {
     parameters: {
       query?: never;
       header?: never;
@@ -1066,7 +1185,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).HandleDeleteFile': {
+  'backend/handlers.(*DBWrapper).DeleteMyFile': {
     parameters: {
       query: {
         filename: string;
@@ -1097,122 +1216,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).HandleGetUserAccount': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['ModelsUserAccount'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['RestErrResponse'];
-        };
-      };
-    };
-  };
-  'backend/handlers.(*DBWrapper).HandleGetAlerts': {
-    parameters: {
-      query: {
-        visibleTo: 'everyone' | 'authorized';
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['HandlersGetAlertsResponse'];
-        };
-      };
-    };
-  };
-  'backend/handlers.(*DBWrapper).HandleGetAllowedFileTypes': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['HandlersGetAllowedFileTypesResponse'];
-        };
-      };
-    };
-  };
-  'backend/handlers.(*DBWrapper).HandleCreatePlayProtocolEntry': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: {
-      content: {
-        'application/json': components['schemas']['HandlersCreatePlayProtocolEntryRequest'];
-      };
-    };
-    responses: {
-      /** @description No Content */
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  'backend/handlers.(*DBWrapper).HandleHandlePlayQuiz': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        uuid: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['HandlersPlayQuizResponse'];
-        };
-      };
-    };
-  };
-  'backend/handlers.(*DBWrapper).HandleGetQuizzes': {
+  'backend/handlers.(*DBWrapper).GetQuizzes': {
     parameters: {
       query: {
         page: number;
@@ -1237,7 +1241,29 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).HandleRefreshToken': {
+  'backend/handlers.(*DBWrapper).GetQuiz': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        uuid: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HandlersPlayQuizResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).RefreshToken': {
     parameters: {
       query?: never;
       header?: never;
@@ -1261,7 +1287,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).HandleRegister': {
+  'backend/handlers.(*DBWrapper).Register': {
     parameters: {
       query?: never;
       header?: never;
@@ -1285,7 +1311,36 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).HandleSignIn': {
+  'backend/handlers.(*DBWrapper).GetSeoPublishedQuizzesUuids': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': string[];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).SignIn': {
     parameters: {
       query?: never;
       header?: never;
@@ -1309,7 +1364,7 @@ export interface operations {
       };
     };
   };
-  'backend/handlers.(*DBWrapper).HandleGetPublicUserProfile': {
+  'backend/handlers.(*DBWrapper).GetUserProfile': {
     parameters: {
       query?: never;
       header?: never;

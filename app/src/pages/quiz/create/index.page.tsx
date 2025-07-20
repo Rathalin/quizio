@@ -32,14 +32,21 @@ import { quizioTitle } from '@/utilities/quizioTitle';
 import { raise } from '@/utilities/errorHandling';
 import { throwOnError } from '@/api-client';
 import { fetchAllowedFileTypes } from '@/data/useAllowedFileTypesQuery';
+import { AuthorizationHeader } from '@/custom-hooks/useAuthHeader';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/pages/api/auth/[...nextauth].page';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const messagesPromise = getMessages(ctx.locale, ['quizForm']);
+    const session = await getServerSession(ctx.req, ctx.res, authOptions);
+    const authHeader = {
+      Authorization: `Bearer ${session?.user?.accessToken}`,
+    } satisfies AuthorizationHeader
 
   const queryClient = new QueryClient();
   const prefetchAllowedFileTypesPromise = queryClient.prefetchQuery({
     queryKey: ['getAllowedFileTypes'],
-    queryFn: () => throwOnError(() => fetchAllowedFileTypes()),
+    queryFn: () => throwOnError(() => fetchAllowedFileTypes(authHeader)),
   });
 
   const [messages] = await Promise.all([messagesPromise, prefetchAllowedFileTypesPromise]);

@@ -11,7 +11,7 @@ export function useUpdateProfileImageMutation() {
 }
 
 async function updateUserProfileImage(data: UpdateUserProfileImageRequest, authHeader: AuthorizationHeader) {
-  return apiClient.POST('/a/update-profile-image', {
+  return apiClient.POST('/me/update-image', {
     body: data,
     headers: authHeader,
   });

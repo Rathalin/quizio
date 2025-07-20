@@ -9,7 +9,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandleUpdateUserProfileImage() usecase.Interactor {
+func (dbw *DBWrapper) UpdateMyUserProfileImage() usecase.Interactor {
 	type updateUserProfileImageRequest struct {
 		ProfileImageUrl *string `json:"profileImageUrl" required:"true" nullable:"true"`
 	}
@@ -20,6 +20,10 @@ func (dbw *DBWrapper) HandleUpdateUserProfileImage() usecase.Interactor {
 		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
 			return logAndReturnError(err)
+		}
+
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
 		if input.ProfileImageUrl != nil {

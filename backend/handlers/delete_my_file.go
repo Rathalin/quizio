@@ -7,11 +7,12 @@ import (
 	"os"
 
 	"github.com/swaggest/usecase"
+	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandleDeleteFile() usecase.Interactor {
+func (dbw *DBWrapper) DeleteMyFile() usecase.Interactor {
 	type deleteFileRequest struct {
-		Filename string `query:"filename" required:"true"`
+		Filename string `query:"filename" required:"true" validate:"required,min=1"`
 	}
 
 	type deleteFileResponse struct {
@@ -22,6 +23,10 @@ func (dbw *DBWrapper) HandleDeleteFile() usecase.Interactor {
 		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
 			return logAndReturnError(err)
+		}
+
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
 		userUuid, err := dbw.GetUserUuid(userId)

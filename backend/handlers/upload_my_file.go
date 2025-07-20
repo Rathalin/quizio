@@ -14,7 +14,7 @@ import (
 	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandleUploadFile() usecase.Interactor {
+func (dbw *DBWrapper) UploadMyFile() usecase.Interactor {
 	type uploadFileRequest struct {
 		Filename string `json:"filename" required:"true"`
 		File     []byte `json:"file" required:"true" nullable:"false"`
@@ -28,6 +28,10 @@ func (dbw *DBWrapper) HandleUploadFile() usecase.Interactor {
 		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
 			return logAndReturnError(err)
+		}
+
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
 		userUuid, err := dbw.GetUserUuid(userId)

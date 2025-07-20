@@ -11,7 +11,7 @@ export function useUpdateQuizMutation(uuid: string) {
 }
 
 async function updateQuiz(uuid: string, data: UpdateQuizRequestData, authHeader: AuthorizationHeader) {
-  return apiClient.POST('/a/quiz/{uuid}', {
+  return apiClient.POST('/me/quizzes/{uuid}', {
     params: {
       path: {
         uuid,

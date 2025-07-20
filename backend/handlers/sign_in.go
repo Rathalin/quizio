@@ -10,7 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (dbw *DBWrapper) HandleSignIn() usecase.Interactor {
+func (dbw *DBWrapper) SignIn() usecase.Interactor {
 	type signInRequest struct {
 		Username string `json:"username" required:"true"`
 		Password string `json:"password" required:"true"`
@@ -23,6 +23,10 @@ func (dbw *DBWrapper) HandleSignIn() usecase.Interactor {
 	}
 
 	return usecase.NewInteractor(func(ctx context.Context, input signInRequest, output *signInResponse) error {
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
+		}
+
 		trimmedUsername := strings.TrimSpace(input.Username)
 
 		usernameExists, err := dbw.UsernameExists(trimmedUsername)
@@ -30,8 +34,10 @@ func (dbw *DBWrapper) HandleSignIn() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
+		unauthenticatedMessage := "invalid username or password"
+
 		if !usernameExists {
-			return status.Wrap(logAndReturnErrorMessage("username does not exist"), status.NotFound)
+			return status.Wrap(logAndReturnErrorMessage(unauthenticatedMessage), status.Unauthenticated)
 		}
 
 		response := signInResponse{}
@@ -57,7 +63,7 @@ func (dbw *DBWrapper) HandleSignIn() usecase.Interactor {
 		// Validate password
 		err = bcrypt.CompareHashAndPassword([]byte(row.PasswordHash), []byte(input.Password))
 		if err != nil {
-			return logAndReturnErrorMessage("invalid username or password")
+			return status.Wrap(logAndReturnErrorMessage(unauthenticatedMessage), status.Unauthenticated)
 		}
 
 		// Generate access token

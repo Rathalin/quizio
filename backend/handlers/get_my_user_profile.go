@@ -5,9 +5,10 @@ import (
 	"time"
 
 	"github.com/swaggest/usecase"
+	"github.com/swaggest/usecase/status"
 )
 
-func (dbw *DBWrapper) HandleGetMyUserProfile() usecase.Interactor {
+func (dbw *DBWrapper) GetMyUserProfile() usecase.Interactor {
 	type getMyUserProfileRequest struct{}
 
 	type getMyUserProfileResponse struct {
@@ -27,6 +28,10 @@ func (dbw *DBWrapper) HandleGetMyUserProfile() usecase.Interactor {
 		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
 			return logAndReturnError(err)
+		}
+
+		if err := validate.Struct(input); err != nil {
+			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
 		response := getMyUserProfileResponse{}

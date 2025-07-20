@@ -20,7 +20,7 @@ export function useUpdateQuizVisibilityMutation(uuid: string) {
 }
 
 async function updateQuizVisibility(uuid: string, isPublished: boolean, authHeader: AuthorizationHeader) {
-  return apiClient.POST('/a/quiz/{uuid}/visibility', {
+  return apiClient.POST('/me/quizzes/{uuid}/visibility', {
     params: {
       path: {
         uuid,
