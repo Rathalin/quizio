@@ -1,9 +1,0 @@
-# *
-User-agent: *
-Disallow: /users/
-
-# Host
-Host: https://quizio.flockert.at
-
-# Sitemaps
-Sitemap: https://quizio.flockert.at/sitemap.xml

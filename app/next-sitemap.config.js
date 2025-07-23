@@ -6,7 +6,7 @@ export default {
     policies: [
       {
         userAgent: '*',
-        disallow: ['/users/'],
+        disallow: ['/users/', '/auth/*', '/public/uploads/*'],
       },
     ],
   },
@@ -31,6 +31,7 @@ export default {
     '/en/quiz/edit/*',
     '/quiz/my-quizzes/*',
     '/en/quiz/my-quizzes/*',
+    '/public/uploads/*',
   ],
   additionalPaths: async () => {
     const locales = ['', '/en'];
