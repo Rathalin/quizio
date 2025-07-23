@@ -6,7 +6,7 @@ export default {
     policies: [
       {
         userAgent: '*',
-        disallow: ['/users/'],
+        disallow: ['/users/', '/auth/*', '/public/uploads/*'],
       },
     ],
   },
