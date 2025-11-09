@@ -24,6 +24,7 @@ import LoadingCircle from '@/components/LoadingCircle';
 import { useToastStore } from '@/persistence/taost.store';
 import Head from 'next/head';
 import { quizioTitle } from '@/utilities/quizioTitle';
+import { RuleCheck } from './RuleCheck';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const messages = await getMessages(ctx.locale, ['changePassword']);
@@ -37,6 +38,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const passwordMinLength = 8;
 const passwordMaxLength = 50;
+const capitalRegex = /[A-Z]/;
+const lowercaseRegex = /[a-z]/;
+const digitRegex = /\d/;
+const specialCharacterRegex = /[^A-Za-z0-9]/;
+
 function useChangePasswordSchema() {
   const t = useTranslations('changePassword.form.schema.errorMessage');
   return useMemo(
@@ -47,10 +53,10 @@ function useChangePasswordSchema() {
           password: z
             .string()
             .min(passwordMinLength, t('newPassword.minLength', { count: passwordMinLength }))
-            .regex(/[A-Z]/, t('passwordComplexity')) // At least one uppercase letter
-            .regex(/[a-z]/, t('passwordComplexity')) // At least one lowercase letter
-            .regex(/\d/, t('passwordComplexity')) // At least one digit
-            .regex(/[^A-Za-z0-9]/, t('passwordComplexity')), // At least one special character
+            .regex(capitalRegex, t('passwordComplexity')) // At least one uppercase letter
+            .regex(lowercaseRegex, t('passwordComplexity')) // At least one lowercase letter
+            .regex(digitRegex, t('passwordComplexity')) // At least one digit
+            .regex(specialCharacterRegex, t('passwordComplexity')), // At least one special character
           passwordConfirmation: z
             .string()
             .min(passwordMinLength, t('newPasswordConfirm.minLength', { count: passwordMinLength })),
@@ -78,7 +84,7 @@ export default function ChangePasswordPage() {
   const theme = useTheme();
   const { showSuccessToast, showErrorToast } = useToastStore();
   const schema = useChangePasswordSchema();
-  const { control, handleSubmit, formState, reset } = useForm<ChangePaswordForm>({
+  const { control, handleSubmit, formState, reset, watch } = useForm<ChangePaswordForm>({
     defaultValues,
     resolver: zodResolver(schema),
   });
@@ -196,6 +202,25 @@ export default function ChangePasswordPage() {
             <Stack sx={{ marginLeft: 1 }}>
               <FormHelperText error>{errors.global?.passwordMatch?.message}</FormHelperText>
               <FormHelperText error>{errors.global?.passwordDifferent?.message}</FormHelperText>
+            </Stack>
+            <Stack>
+              <RuleCheck
+                valid={watch('password').match(lowercaseRegex) != null}
+                label={t('form.check.atLeastOneLowercaseLetter')}
+              />
+              <RuleCheck
+                valid={watch('password').match(capitalRegex) != null}
+                label={t('form.check.atLeastOneCapitalLetter')}
+              />
+              <RuleCheck valid={watch('password').match(digitRegex) != null} label={t('form.check.atLeastOneDigit')} />
+              <RuleCheck
+                valid={watch('password').match(specialCharacterRegex) != null}
+                label={t('form.check.atLeastOneSpecialCharacter')}
+              />
+              <RuleCheck
+                valid={watch('password').length > passwordMinLength}
+                label={t('form.check.minCharacters', { count: passwordMinLength })}
+              />
             </Stack>
             <Stack sx={{ marginTop: 2 }} direction="row" justifyContent="end">
               <Button
