@@ -2,7 +2,7 @@
 
 The modern quiz building app. This side project of mine might never be finished.
 
-[https://quizio.site](https://quizio.site)
+[https://quizio.flockert.at](https://quizio.flockert.at)
 
 ## Demo
 
