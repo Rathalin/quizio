@@ -1,7 +1,10 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
   pageExtensions: ['page.tsx', 'page.ts'],
   reactStrictMode: true,
+  reactCompiler: true,
+  typedRoutes: true,
   i18n: {
     locales: ['de', 'en'],
     defaultLocale: 'de',
@@ -14,6 +17,10 @@ const nextConfig = {
         pathname: '/uploads',
       },
     ],
+  },
+  experimental: {
+    turbopackFileSystemCacheForDev: true,
+    typedEnv: true,
   },
 };
 

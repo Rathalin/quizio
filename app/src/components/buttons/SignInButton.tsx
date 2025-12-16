@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import LinkButton from '../LinkButton';
+import { Route } from 'next';
 
 type SignInButtonProps = {
   variant?: ButtonProps['variant'];
@@ -33,7 +34,7 @@ export default function SignInButton({ variant, color, sx }: SignInButtonProps) 
       variant={variant ?? 'outlined'}
       color={color ?? 'primary'}
       startIcon={<LoginIcon />}
-      hrefObserver={href}
+      hrefObserver={href as Route}
       navigateOnClick
       sx={sx}
     >

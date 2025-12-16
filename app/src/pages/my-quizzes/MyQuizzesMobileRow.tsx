@@ -22,6 +22,7 @@ import LoadingCircle from '@/components/LoadingCircle';
 import LinkButton from '@/components/LinkButton';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import { useDateTimeFormatter } from '@/utilities/useDateFormatter';
+import { Route } from 'next';
 
 type Props = GetMyQuizzesResponseQuiz;
 
@@ -156,7 +157,7 @@ export function MyQuizzesMobileRow({
               ),
             })}
           </Typography>
-          <LinkButton hrefObserver={`/my-quizzes/${uuid}/trends`} navigateOnClick startIcon={<TimelineIcon />}>
+          <LinkButton hrefObserver={`/my-quizzes/${uuid}/trends` as Route} navigateOnClick startIcon={<TimelineIcon />}>
             {t('column.playCount.trendsButton.label')}
           </LinkButton>
         </Stack>
@@ -188,7 +189,7 @@ function ActionButtons({ uuid, setDialogOpen, isDeletePending, isDeleteSuccess }
         title={t('column.action.edit.tooltip')}
         icon={<EditIcon />}
         label={t('column.action.edit.label')}
-        href={`/quiz/edit/${uuid}`}
+        href={`/quiz/edit/${uuid}` as Route}
       />
       <ActionButton
         title={t('column.action.delete.tooltip')}
@@ -212,7 +213,7 @@ function ActionButtons({ uuid, setDialogOpen, isDeletePending, isDeleteSuccess }
         title={t('column.action.play.tooltip')}
         icon={<PlayArrowIcon />}
         label={t('column.action.play.label')}
-        href={`/play/${uuid}`}
+        href={`/play/${uuid}` as Route}
       />
     </Box>
   );
@@ -220,7 +221,7 @@ function ActionButtons({ uuid, setDialogOpen, isDeletePending, isDeleteSuccess }
 
 type ActionButtonProps = {
   title: string;
-  href?: string;
+  href?: Route;
   onClick?: () => void;
   disabled?: boolean;
   icon: ReactNode;

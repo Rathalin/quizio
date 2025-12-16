@@ -53,7 +53,7 @@ export default function AlertsViewer() {
               >
                 <ReactMarkdown
                   components={{
-                    a: ({ href, ...other }) => <NextLink href={href ?? '#'} {...other} />,
+                    a: ({ href, ...other }) => <NextLink href={'/'} {...other} />,
                   }}
                 >
                   {locale === 'de' ? alert.markdownDe : alert.markdownEn}

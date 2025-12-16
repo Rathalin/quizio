@@ -19,6 +19,6 @@
       "@messages/*": ["./src/i18n/messages/*"]
     }
   },
-  "include": ["next-env.d.ts", "next-auth.d.ts", "**/*.ts", "**/*.tsx", "env.d.ts"],
+  "include": ["next-env.d.ts", ".next/types/**/*.ts", "next-auth.d.ts", "**/*.ts", "**/*.tsx", "env.d.ts"],
   "exclude": ["node_modules"]
 }

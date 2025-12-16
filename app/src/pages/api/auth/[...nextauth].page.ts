@@ -4,6 +4,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { apiClient } from '@/api-client';
 import { jwtDecode } from 'jwt-decode';
 import { AuthorizationHeader } from '@/custom-hooks/useAuthHeader';
+import { hours } from '@/utilities/time';
 
 type DecodedToken = {
   userId: number;
@@ -57,9 +58,9 @@ export const authOptions: AuthOptions = {
           ...user,
         };
       } else {
-        // Check if the access token is expired
+        // Check if the access token is expired or expires soon
         const decoded = jwtDecode<DecodedToken>(token.accessToken as string);
-        const isExpired = Date.now() >= decoded.exp * 1000;
+        const isExpired = Date.now() >= decoded.exp * 1000 - hours(1); // 1 hour early refresh
         if (isExpired) {
           console.info(`Access token expired. Refreshing token...`);
           try {
