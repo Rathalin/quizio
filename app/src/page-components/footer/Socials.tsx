@@ -7,6 +7,7 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import { Route } from 'next';
 
 export default function Socials() {
   return (
@@ -27,7 +28,7 @@ export default function Socials() {
   );
 }
 
-function SocialIcon({ href, children }: PropsWithChildren<{ href: string }>) {
+function SocialIcon({ href, children }: PropsWithChildren<{ href: Route }>) {
   const theme = useTheme();
   const hoverColor = theme.vars.palette.primary.main;
 

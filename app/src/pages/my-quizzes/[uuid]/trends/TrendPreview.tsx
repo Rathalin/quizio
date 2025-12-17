@@ -91,7 +91,7 @@ export function TrendPreview({ quizUuid, statistic, intervalFilter }: Props) {
         />
         <Tooltip
           labelFormatter={(label: DataLabel) => dateFormatter.format(new Date(label))}
-          formatter={(value, label: DataLabel) => [
+          formatter={(value, label) => [
             t('dataKey.times', { count: value as number }),
             label === 'migratedPlayCount' ? t('dataKey.migratedPlays') : t('dataKey.plays'),
           ]}

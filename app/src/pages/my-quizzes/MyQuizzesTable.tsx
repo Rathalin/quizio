@@ -19,6 +19,7 @@ import Skeleton from '@mui/material/Skeleton';
 import LinkButton from '@/components/LinkButton';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import { useDateTimeFormatter } from '@/utilities/useDateFormatter';
+import { Route } from 'next';
 
 type Props = {
   quizzes: GetMyQuizzesResponseQuiz[];
@@ -99,7 +100,7 @@ export function MyQuizzesTable({ quizzes }: Props) {
             })}
           </Typography>
           <LinkButton
-            hrefObserver={`/my-quizzes/${props.row.original.uuid}/trends`}
+            hrefObserver={`/my-quizzes/${props.row.original.uuid}/trends` as Route}
             navigateOnClick
             startIcon={<TimelineIcon />}
           >

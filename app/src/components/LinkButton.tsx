@@ -4,9 +4,10 @@ import Button, { type ButtonProps } from '@mui/material/Button';
 
 import Link from 'next/link';
 import LoadingCircle from './LoadingCircle';
+import { Route } from 'next';
 
 export type LinkButtonProps = {
-  hrefObserver: string;
+  hrefObserver: Route;
   reason?: string;
   navigateOnClick?: boolean;
   iconSide?: 'left' | 'right';

@@ -20,6 +20,7 @@ import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import { useToastStore } from '@/persistence/taost.store';
 import { useTranslations } from 'next-intl';
 import { useDateFormatter } from '@/utilities/useDateFormatter';
+import { Route } from 'next';
 
 type QuizOverviewCardProps = {
   uuid: string;
@@ -186,7 +187,7 @@ export default function QuizOverviewCard({
             }}
           >
             <LinkButton
-              hrefObserver={`/play/${uuid}`}
+              hrefObserver={`/play/${uuid}` as Route}
               navigateOnClick
               variant="contained"
               size="large"
