@@ -47,7 +47,7 @@ export function QuizColumn({ uuid, title, description, imageUrl, isHovered }: Pr
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
       setDialogOpen(false);
       await router.push('/my-quizzes');
-    } catch (error) {
+    } catch {
       showErrorToast(t('column.action.delete.error'));
     }
   }
@@ -91,7 +91,7 @@ export function QuizColumn({ uuid, title, description, imageUrl, isHovered }: Pr
               <Tooltip title={t('column.action.edit.tooltip')} enterDelay={500} enterNextDelay={500} arrow>
                 <Box>
                   <Link href={`/quiz/edit/${uuid}`}>
-                    <IconButton color="inherit">
+                    <IconButton color="primary">
                       <EditIcon fontSize="small" />
                     </IconButton>
                   </Link>
@@ -100,7 +100,7 @@ export function QuizColumn({ uuid, title, description, imageUrl, isHovered }: Pr
               <Tooltip title={t('column.action.delete.tooltip')} enterDelay={500} enterNextDelay={500} arrow>
                 <Box>
                   <IconButton
-                    color="inherit"
+                    color="primary"
                     onClick={() => {
                       setDialogOpen(true);
                     }}
@@ -113,7 +113,7 @@ export function QuizColumn({ uuid, title, description, imageUrl, isHovered }: Pr
               <Tooltip title={t('column.action.copyLink.tooltip')} enterDelay={500} enterNextDelay={500} arrow>
                 <Box>
                   <IconButton
-                    color="inherit"
+                    color="primary"
                     onClick={() => {
                       navigator.clipboard.writeText(`${window.location.origin}/play/${uuid}`);
                       showInfoToast(t('column.action.copyLink.toast'));
@@ -126,7 +126,7 @@ export function QuizColumn({ uuid, title, description, imageUrl, isHovered }: Pr
               <Tooltip title={t('column.action.play.tooltip')} enterDelay={500} enterNextDelay={500} arrow>
                 <Box>
                   <Link href={`/play/${uuid}`}>
-                    <IconButton color="inherit">
+                    <IconButton color="primary">
                       <PlayArrowIcon fontSize="small" />
                     </IconButton>
                   </Link>

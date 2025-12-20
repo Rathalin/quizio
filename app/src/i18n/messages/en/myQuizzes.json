@@ -84,8 +84,8 @@
           "alt": "Quiz image"
         }
       },
-      "trend": {
-        "header": "Trend over 12 Months"
+      "trends": {
+        "header": "Trends"
       },
       "updatedAt": {
         "cell": {

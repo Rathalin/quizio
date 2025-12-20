@@ -52,11 +52,7 @@ export function MyQuizzesTable({ quizzes }: Props) {
     }),
     columnHelper.accessor('isPublished', {
       header: () => t('table.column.isPublished.header'),
-      cell: (props) => (
-        <Box sx={{ marginTop: -1 }}>
-          <VisibilityColumn uuid={props.row.original.uuid} isPublished={props.getValue()} size="small" />
-        </Box>
-      ),
+      cell: (props) => <VisibilityColumn uuid={props.row.original.uuid} isPublished={props.getValue()} size="small" />,
     }),
     columnHelper.accessor('createdAt', {
       header: () => t('table.column.createdAt.header'),
@@ -84,6 +80,16 @@ export function MyQuizzesTable({ quizzes }: Props) {
       header: () => t('table.column.playCount.header'),
       cell: (props) => (
         <Stack>
+          <LinkButton
+            hrefObserver={`/my-quizzes/${props.row.original.uuid}/trends` as Route}
+            navigateOnClick
+            startIcon={<TimelineIcon />}
+            variant="outlined"
+            size="small"
+            sx={{ marginBottom: 1 }}
+          >
+            {t('table.column.playCount.trendsButton.label')}
+          </LinkButton>
           <Typography noWrap>
             {t.rich('table.column.playCount.label', {
               count: props.getValue(),
@@ -99,18 +105,12 @@ export function MyQuizzesTable({ quizzes }: Props) {
               ),
             })}
           </Typography>
-          <LinkButton
-            hrefObserver={`/my-quizzes/${props.row.original.uuid}/trends` as Route}
-            navigateOnClick
-            startIcon={<TimelineIcon />}
-          >
-            {t('table.column.playCount.trendsButton.label')}
-          </LinkButton>
         </Stack>
       ),
     }),
   ];
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: quizzes,
     columns,

@@ -79,7 +79,7 @@ export const authOptions: AuthOptions = {
               ...token,
               accessToken: data.accessToken,
             };
-          } catch (err) {
+          } catch {
             throw new Error('Token refresh failed');
           }
         }

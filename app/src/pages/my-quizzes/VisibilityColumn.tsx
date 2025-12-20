@@ -58,7 +58,7 @@ export function VisibilityColumn({ uuid, isPublished, size }: Props) {
       handleClose();
       queryClient.invalidateQueries({ queryKey: ['getMyQuizzes'] });
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
-    } catch (error) {
+    } catch {
       if (isPublishedSelected) {
         showErrorToast(t('publish.error'));
       } else {
@@ -75,7 +75,8 @@ export function VisibilityColumn({ uuid, isPublished, size }: Props) {
       <Button
         aria-describedby={id}
         size={size}
-        color="inherit"
+        color="primary"
+        variant="outlined"
         startIcon={isPublished ? <PublicIcon /> : <PublicOffIcon />}
         onClick={handleClick}
       >
