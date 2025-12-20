@@ -13,6 +13,8 @@ const eslintConfig = defineConfig([
     'out/**',
     'build/**',
     'next-env.d.ts',
+    // Custom ignores:
+    'next-sitemap.config.js',
   ]),
   {
     plugins: {
@@ -22,11 +24,12 @@ const eslintConfig = defineConfig([
       '@next/next/no-html-link-for-pages': 'off',
       'unused-imports/no-unused-imports': 'error',
 
-      'no-unused-vars': [
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
         'error',
         {
           argsIgnorePattern: '^_',
-          caughtErrors: 'none',
+          varsIgnorePattern: '^_',
         },
       ],
 

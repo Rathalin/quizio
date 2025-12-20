@@ -90,7 +90,7 @@ export default function MyQuizzesPage() {
               gradient: (chunks) => <GradientText>{chunks}</GradientText>,
             })}
           </Box>
-          <LinkButton hrefObserver="/quiz/create" navigateOnClick variant="outlined" startIcon={<AddIcon />}>
+          <LinkButton hrefObserver="/quiz/create" navigateOnClick variant="contained" startIcon={<AddIcon />}>
             {t('create.label')}
           </LinkButton>
         </Typography>

@@ -57,7 +57,7 @@ export function MyQuizzesMobileRow({
       queryClient.invalidateQueries({ queryKey: ['getQuizzesInfinite'] });
       setDialogOpen(false);
       await router.push('/my-quizzes');
-    } catch (error) {
+    } catch {
       showErrorToast(t('column.action.delete.error'));
     }
   }
@@ -141,26 +141,37 @@ export function MyQuizzesMobileRow({
             <Typography variant="body2">{dateTimeFormatter.format(new Date(updatedAt))}</Typography>
           </Stack>
         </Stack>
-        <Stack sx={{ marginTop: 4 }} gap={1}>
-          <Typography noWrap>
-            {t.rich('column.playCount.label', {
-              count: playCount,
-              b: (chunks) => (
-                <Typography component="span" variant="body1">
-                  {chunks}
-                </Typography>
-              ),
-              secondary: (chunks) => (
-                <Typography component="span" color="textSecondary" variant="body2" noWrap>
-                  {chunks}
-                </Typography>
-              ),
-            })}
+        <Box sx={{ marginTop: 4 }}>
+          <Typography color="textSecondary" sx={{ marginBottom: 0.5 }}>
+            {t('column.playCount.header')}
           </Typography>
-          <LinkButton hrefObserver={`/my-quizzes/${uuid}/trends` as Route} navigateOnClick startIcon={<TimelineIcon />}>
-            {t('column.playCount.trendsButton.label')}
-          </LinkButton>
-        </Stack>
+          <Stack gap={1}>
+            <LinkButton
+              hrefObserver={`/my-quizzes/${uuid}/trends` as Route}
+              navigateOnClick
+              startIcon={<TimelineIcon />}
+              variant="outlined"
+              size="medium"
+            >
+              {t('column.playCount.trendsButton.label')}
+            </LinkButton>
+            <Typography noWrap>
+              {t.rich('column.playCount.label', {
+                count: playCount,
+                b: (chunks) => (
+                  <Typography component="span" variant="body1">
+                    {chunks}
+                  </Typography>
+                ),
+                secondary: (chunks) => (
+                  <Typography component="span" color="textSecondary" variant="body2" noWrap>
+                    {chunks}
+                  </Typography>
+                ),
+              })}
+            </Typography>
+          </Stack>
+        </Box>
         <Divider sx={{ marginTop: 2 }} />
       </Box>
     </>
@@ -233,12 +244,12 @@ function ActionButton({ href, onClick, disabled, icon, label }: ActionButtonProp
     <Stack alignItems="center">
       {href != null ? (
         <Link href={href}>
-          <IconButton color="inherit" size="large">
+          <IconButton color="primary" size="large">
             {icon}
           </IconButton>
         </Link>
       ) : (
-        <IconButton color="inherit" size="large" onClick={onClick} disabled={disabled}>
+        <IconButton color="primary" size="large" onClick={onClick} disabled={disabled}>
           {icon}
         </IconButton>
       )}
