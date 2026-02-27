@@ -143,7 +143,7 @@ export default function AccountMenu() {
           onClick={() => {
             handleClose();
             signOut({
-              callbackUrl: '/',
+              callbackUrl: router.locale === router.defaultLocale ? '/' : `/${router.locale}`,
             });
           }}
         >
