@@ -4,7 +4,8 @@
   },
   "form": {
     "button": {
-      "label": "Anmelden"
+      "label": "Mit Passwort anmelden",
+      "continue": "Weiter"
     },
     "passkeyButton": {
       "label": "Mit Passkey anmelden"
@@ -16,6 +17,11 @@
       "errorCancel": "Passkey-Anmeldung abgebrochen",
       "errorGeneral": "Anmeldefehler",
       "success": "Mit Passkey angemeldet"
+    },
+    "passkeyPrompt": {
+      "title": "Passwortlose Anmeldung",
+      "description": "Sichere dir einen Passkey, um dich beim nächsten Mal ohne Passwort anzumelden.",
+      "skipButton": "Überspringen"
     },
     "password": {
       "label": "Passwort"
@@ -30,6 +36,7 @@
   },
   "heading": "Gib deine <gradient>Zugangsdaten</gradient> ein",
   "helpAlert": "Du möchtest ein Quizio-Konto haben? Dann schreib mir eine Nachricht an <email></email>.",
+  "or": "oder",
   "meta": {
     "title": "Anmelden"
   }

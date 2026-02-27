@@ -15,17 +15,22 @@ import { getServerSession } from 'next-auth';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { startAuthentication } from '@simplewebauthn/browser';
 import { apiClient } from '@/api-client';
 import { authOptions } from '../api/auth/[...nextauth].page';
 import { getMessages } from '@/utilities/getMessages';
 import { useTranslations } from 'next-intl';
-import LoginIcon from '@mui/icons-material/Login';
+import PasswordIcon from '@mui/icons-material/Password';
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import Head from 'next/head';
 import { quizioTitle } from '@/utilities/quizioTitle';
-import { useMediaQuery } from '@mui/material';
+import { PasskeyRegistrationForm } from '@/components/users/PasskeyRegistrationForm';
+import EditIcon from '@mui/icons-material/Edit';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import Stack from '@mui/material/Stack';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 export const getServerSideProps: GetServerSideProps<{
   callbackUrl: string | null;
@@ -42,7 +47,7 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
 
-  const messages = await getMessages(ctx.locale, ['signIn']);
+  const messages = await getMessages(ctx.locale, ['signIn', 'users']);
 
   return {
     props: {
@@ -120,7 +125,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
       if (error.name === 'NotAllowedError') {
         showErrorToast(t('signIn.form.passkeyStatus.errorCancel'));
       } else {
-        showErrorToast(`${t('signIn.form.passkeyStatus.errorGeneral')}: ${error instanceof Error ? error.message : JSON.stringify(error)}`);
+        showErrorToast(t('signIn.form.passkeyStatus.errorGeneral'));
       }
     }
   }
@@ -131,7 +136,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
       const res = await login();
       if (res?.ok === true) {
         showSuccessToast(t('signIn.form.status.success'));
-        router.push(callbackUrl ?? '/');
+        setShowPasskeyPrompt(true);
       } else {
         setErrorStatus(res?.status ?? null);
       }
@@ -142,6 +147,54 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
 
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
+  const [showPasskeyPrompt, setShowPasskeyPrompt] = useState(false);
+  const [step, setStep] = useState<1 | 2>(1);
+
+  // Sync state with URL query parameter on mount/change
+  useEffect(() => {
+    if (router.isReady) {
+      const usernameQuery = router.query.username;
+      if (typeof usernameQuery === 'string' && usernameQuery !== '') {
+        setIdentifier(usernameQuery);
+        setStep(2);
+      } else {
+        setStep(1);
+      }
+    }
+  }, [router.isReady, router.query.username]);
+
+  function onContinue(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (identifier) {
+      setStep(2);
+      setErrorStatus(null);
+      // Persist username to URL, keeping other query params
+      router.push(
+        {
+          pathname: router.pathname,
+          query: { ...router.query, username: identifier },
+        },
+        undefined,
+        { shallow: true }
+      );
+    }
+  }
+
+  function handleEditIdentifier() {
+    setStep(1);
+    setErrorStatus(null);
+    // Remove username from URL
+    const newQuery = { ...router.query };
+    delete newQuery.username;
+    router.push(
+      {
+        pathname: router.pathname,
+        query: newQuery,
+      },
+      undefined,
+      { shallow: true }
+    );
+  }
 
   return (
     <>
@@ -161,93 +214,150 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
             },
           }}
         >
-          <Typography
-            variant="h1"
+          <Card
             sx={{
-              marginTop: 2,
-              marginBottom: 6,
-              textAlign: isScreenAsSmallAsInputs ? 'start' : 'center',
+              marginInline: 'auto',
+              maxWidth: { xs: '100%', sm: '50ch' },
+              width: '100%',
             }}
           >
-            {t.rich('signIn.heading', { gradient: (chunks) => <GradientText>{chunks}</GradientText> })}
-          </Typography>
-          <Box
-            sx={{
-              margin: 'auto',
-              maxWidth: '40ch',
-            }}
-          >
-            <form onSubmit={onSubmit}>
-              <Card
+            <CardContent sx={{ padding: { xs: 2, sm: 4 } }}>
+              <Typography
+                variant="h1"
                 sx={{
-                  marginBottom: 2,
+                  marginTop: 2,
+                  marginBottom: 6,
+                  textAlign: isScreenAsSmallAsInputs ? 'start' : 'center',
                 }}
               >
-                <CardContent>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 2,
-                    }}
-                  >
-                    <TextField
-                      id="identifier"
-                      label={t('signIn.form.username.label')}
-                      type="text"
-                      fullWidth
-                      required
-                      value={identifier}
-                      onChange={(e) => setIdentifier(e.target.value)}
-                    />
-                    <TextField
-                      id="password"
-                      label={t('signIn.form.password.label')}
-                      type="password"
-                      fullWidth
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                  </Box>
-                  {errorStatus === 401 && (
-                    <Typography sx={{ marginTop: 2 }} variant="body2" color="error">
-                      {t('signIn.form.invalidCredentials')}
-                    </Typography>
-                  )}
-                </CardContent>
-              </Card>
+                {t.rich('signIn.heading', { gradient: (chunks) => <GradientText>{chunks}</GradientText> })}
+              </Typography>
               <Box
                 sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 2,
+                  margin: 'auto',
+                  maxWidth: '40ch',
                 }}
               >
-                <Button
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  startIcon={isPending ? <LoadingCircle /> : <LoginIcon />}
-                  disabled={isPending || isPasskeyPending || ((isSuccess || isPasskeySuccess) && errorStatus == null)}
-                  size="large"
-                  sx={{ minWidth: '16ch', mb: 1 }}
-                >
-                  {t('signIn.form.button.label')}
-                </Button>
-                <Button
-                  variant="outlined"
-                  onClick={onPasskeyLogin}
-                  startIcon={isPasskeyPending ? <LoadingCircle /> : <FingerprintIcon />}
-                  disabled={isPending || isPasskeyPending || ((isSuccess || isPasskeySuccess) && errorStatus == null) || !identifier}
-                  size="large"
-                  sx={{ minWidth: '16ch' }}
-                >
-                  {t('signIn.form.passkeyButton.label')}
-                </Button>
+                {showPasskeyPrompt ? (
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, marginBottom: 2 }}>
+                    <Typography variant="body1">
+                      {t('signIn.form.passkeyPrompt.description')}
+                    </Typography>
+                    <PasskeyRegistrationForm onSuccess={() => router.push(callbackUrl ?? '/')} />
+                    <Button
+                      variant="text"
+                      color="inherit"
+                      onClick={() => router.push(callbackUrl ?? '/')}
+                    >
+                      {t('signIn.form.passkeyPrompt.skipButton')}
+                    </Button>
+                  </Box>
+                ) : (
+                  <form onSubmit={step === 1 ? onContinue : onSubmit}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 2,
+                      }}
+                    >
+                      <TextField
+                        id="identifier"
+                        label={t('signIn.form.username.label')}
+                        type="text"
+                        fullWidth
+                        required
+                        value={identifier}
+                        onChange={(e) => setIdentifier(e.target.value)}
+                        disabled={step === 2 || isPending || isPasskeyPending}
+                        slotProps={{
+                          input: step === 2
+                            ? {
+                              endAdornment: (
+                                <InputAdornment position="end">
+                                  <IconButton onClick={handleEditIdentifier} edge="end" disabled={isPending || isPasskeyPending}>
+                                    <EditIcon />
+                                  </IconButton>
+                                </InputAdornment>
+                              ),
+                            }
+                            : undefined,
+                        }}
+                        sx={{
+                          marginBottom: 2,
+                        }}
+                      />
+                      {step === 2 && (
+                        <TextField
+                          id="password"
+                          label={t('signIn.form.password.label')}
+                          type="password"
+                          fullWidth
+                          required
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          disabled={isPending || isPasskeyPending}
+                          autoFocus
+                        />
+                      )}
+                    </Box>
+                    {errorStatus === 401 && (
+                      <Typography sx={{ marginBottom: 2 }} variant="body2" color="error">
+                        {t('signIn.form.invalidCredentials')}
+                      </Typography>
+                    )}
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 2,
+                      }}
+                    >
+                      {step === 1 ? (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          type="submit"
+                          disabled={!identifier}
+                          size="large"
+                          sx={{ minWidth: '16ch', marginBottom: 1 }}
+                        >
+                          {t('signIn.form.button.continue')}
+                        </Button>
+                      ) : (
+                        <Stack gap={2}>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            type="submit"
+                            startIcon={isPending ? <LoadingCircle /> : <PasswordIcon />}
+                            disabled={isPending || isPasskeyPending || ((isSuccess || isPasskeySuccess) && errorStatus == null) || !password}
+                            size="large"
+                            sx={{ minWidth: '16ch', marginTop: 2 }}
+                          >
+                            {t('signIn.form.button.label')}
+                          </Button>
+                          <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                            {t('signIn.or')}
+                          </Typography>
+                          <Button
+                            variant="outlined"
+                            onClick={onPasskeyLogin}
+                            startIcon={isPasskeyPending ? <LoadingCircle /> : <FingerprintIcon />}
+                            disabled={isPending || isPasskeyPending || ((isSuccess || isPasskeySuccess) && errorStatus == null) || !identifier}
+                            size="large"
+                            sx={{ minWidth: '16ch' }}
+                          >
+                            {t('signIn.form.passkeyButton.label')}
+                          </Button>
+                        </Stack>
+                      )}
+                    </Box>
+                  </form>
+                )}
               </Box>
-            </form>
-          </Box>
+            </CardContent>
+          </Card>
           <Alert severity="info" sx={{ marginTop: 10, marginInline: 'auto', maxWidth: '60ch' }}>
             <Typography>
               <span>

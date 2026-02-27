@@ -11,7 +11,11 @@ import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-export function PasskeyRegistrationForm() {
+type Props = {
+  onSuccess?: () => void;
+}
+
+export function PasskeyRegistrationForm({ onSuccess }: Props) {
   const t = useTranslations('users.form.passkey');
   const { showSuccessToast, showErrorToast } = useToastStore();
   const [isPending, setIsPending] = useState(false);
@@ -48,6 +52,7 @@ export function PasskeyRegistrationForm() {
         showErrorToast(t('status.errorFinish'));
       } else {
         showSuccessToast(t('status.success'));
+        onSuccess?.();
       }
     } catch (error: any) {
       console.error(error);

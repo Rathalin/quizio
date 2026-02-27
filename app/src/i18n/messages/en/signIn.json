@@ -4,7 +4,8 @@
   },
   "form": {
     "button": {
-      "label": "Sign in"
+      "label": "Sign in with Password",
+      "continue": "Continue"
     },
     "passkeyButton": {
       "label": "Sign in with Passkey"
@@ -16,6 +17,11 @@
       "errorCancel": "Passkey login cancelled",
       "errorGeneral": "Login error",
       "success": "Signed in via Passkey"
+    },
+    "passkeyPrompt": {
+      "title": "One-Tap Sign In",
+      "description": "Skip typing passwords! Register a passkey now to sign in quickly and securely next time.",
+      "skipButton": "Skip for now"
     },
     "password": {
       "label": "Password"
@@ -30,6 +36,7 @@
   },
   "heading": "Enter your <gradient>credentials</gradient>",
   "helpAlert": "Do you need an account to create quizzes? Feel free to contact me on <email></email>.",
+  "or": "or",
   "meta": {
     "title": "Sign in"
   }
