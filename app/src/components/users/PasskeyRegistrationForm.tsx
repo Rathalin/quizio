@@ -8,9 +8,11 @@ import LoadingCircle from '@/components/LoadingCircle';
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import Stack from '@mui/material/Stack';
 import { useAuthHeader } from '@/custom-hooks/useAuthHeader';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 export function PasskeyRegistrationForm() {
-  const t = useTranslations('users.form.passkey'); // Will need translation keys
+  const t = useTranslations('users.form.passkey');
   const { showSuccessToast, showErrorToast } = useToastStore();
   const [isPending, setIsPending] = useState(false);
   const authHeader = useAuthHeader();
@@ -60,16 +62,16 @@ export function PasskeyRegistrationForm() {
   }
 
   return (
-    <Stack direction="column" gap={2}>
+    <Box>
+      <Typography variant="h2" marginBottom={2}>{t('title')}</Typography>
       <Button
-        variant="contained"
-        color="secondary"
+        variant="outlined"
         onClick={handleRegisterPasskey}
         disabled={isPending}
         startIcon={isPending ? <LoadingCircle /> : <FingerprintIcon />}
       >
         {t('button.label')}
       </Button>
-    </Stack>
+    </Box>
   );
 }

@@ -26,6 +26,7 @@
       }
     },
     "passkey": {
+      "title": "Passwordless Authentication",
       "button": {
         "label": "Register New Passkey"
       },
