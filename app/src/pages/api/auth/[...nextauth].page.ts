@@ -48,6 +48,50 @@ export const authOptions: AuthOptions = {
         };
       },
     }),
+    CredentialsProvider({
+      id: 'passkey',
+      name: 'Passkey',
+      credentials: {
+        passkeyResponse: { type: 'text' },
+      },
+      async authorize(credentials) {
+        if (!credentials?.passkeyResponse) {
+          return null;
+        }
+
+        try {
+          // passkeyResponse should be the JSON stringified result of startAuthentication()
+          const passkeyJson = JSON.parse(credentials.passkeyResponse);
+
+          const finishResp = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/auth/passkeys/login/finish', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(passkeyJson),
+          });
+
+          if (!finishResp.ok) {
+            console.error(`Passkey signin error`, finishResp.statusText);
+            return null;
+          }
+
+          const data = (await finishResp.json()) as {
+            uuid: string;
+            accessToken: string;
+            refreshToken: string;
+          };
+          console.info(`Signed in via Passkey.`);
+          return {
+            id: data.uuid,
+            uuid: data.uuid,
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+          };
+        } catch (e) {
+          console.error("Failed to parse passkey response or call backend", e);
+          return null;
+        }
+      },
+    }),
   ],
   callbacks: {
     async jwt({ token, user, trigger, session }) {

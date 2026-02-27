@@ -26,7 +26,7 @@ import (
 func main() {
 	env.Load()
 
-	auth.Init(env.Config.JWTSecret)
+	auth.Init(env.Config.JWTSecret, env.Config.WebAuthnRPDisplayName, env.Config.WebAuthnRPID, env.Config.WebAuthnRPOrigin)
 
 	db.Connect()
 	defer db.Close()
@@ -57,6 +57,8 @@ func main() {
 		router.Method(http.MethodGet, "/user/{uuid}/profile", nethttp.NewHandler(dbWrapper.GetUserProfile()))
 		router.Method(http.MethodGet, "/alerts", nethttp.NewHandler(dbWrapper.GetAlerts()))
 		router.Method(http.MethodPost, "/create-play-protocol-entry", nethttp.NewHandler((dbWrapper.CreatePublicPlayProtocolEntry())))
+		router.Method(http.MethodPost, "/auth/passkeys/login/start", nethttp.NewHandler(dbWrapper.StartPasskeyLogin()))
+		router.Method(http.MethodPost, "/auth/passkeys/login/finish", http.HandlerFunc(dbWrapper.FinishPasskeyLogin))
 
 		router.Route("/quizzes", func(router chi.Router) {
 			router.Method(http.MethodGet, "/", nethttp.NewHandler(dbWrapper.GetQuizzes()))
@@ -80,6 +82,11 @@ func main() {
 			router.Method(http.MethodPost, "/change-password", nethttp.NewHandler(dbWrapper.ChangeMyPassword()))
 			router.Method(http.MethodPost, "/update-image", nethttp.NewHandler(dbWrapper.UpdateMyUserProfileImage()))
 			router.Method(http.MethodPost, "/create-play-protocol-entry", nethttp.NewHandler((dbWrapper.CreateMyPlayProtocolEntry())))
+			
+			router.Route("/auth/passkeys/register", func(router chi.Router) {
+				router.Method(http.MethodGet, "/start", nethttp.NewHandler(dbWrapper.StartPasskeyRegistration()))
+				router.Method(http.MethodPost, "/finish", http.HandlerFunc(dbWrapper.FinishPasskeyRegistration))
+			})
 
 			router.Route("/upload", func(router chi.Router) {
 				router.Method(http.MethodPost, "/", nethttp.NewHandler((dbWrapper.UploadMyFile())))

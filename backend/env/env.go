@@ -18,6 +18,9 @@ type EnvVars struct {
 	OpenAPIDocsUser     string
 	OpenAPIDocsPassword string
 	SEOAPIKey           string
+	WebAuthnRPDisplayName string
+	WebAuthnRPID          string
+	WebAuthnRPOrigin      string
 }
 
 var Config *EnvVars
@@ -51,6 +54,9 @@ func Load() {
 		OpenAPIDocsUser:     os.Getenv("OPENAPI_DOCS_USER"),
 		OpenAPIDocsPassword: os.Getenv("OPENAPI_DOCS_PASSWORD"),
 		SEOAPIKey:           os.Getenv("SEO_API_KEY"),
+		WebAuthnRPDisplayName: os.Getenv("WEBAUTHN_RP_DISPLAY_NAME"),
+		WebAuthnRPID:          os.Getenv("WEBAUTHN_RP_ID"),
+		WebAuthnRPOrigin:      os.Getenv("WEBAUTHN_RP_ORIGIN"),
 	}
 
 	if Config.JWTSecret == "" {
@@ -76,6 +82,16 @@ func Load() {
 	}
 	if Config.SEOAPIKey == "" {
 		log.Fatal("Environment variable SEO_API_KEY is not set\n")
+	}
+
+	if Config.WebAuthnRPDisplayName == "" {
+		Config.WebAuthnRPDisplayName = "Quizio"
+	}
+	if Config.WebAuthnRPID == "" {
+		Config.WebAuthnRPID = "localhost"
+	}
+	if Config.WebAuthnRPOrigin == "" {
+		Config.WebAuthnRPOrigin = "http://localhost:3000"
 	}
 
 	log.Printf("GO_ENV: %s\n", goEnv)

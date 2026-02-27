@@ -21,6 +21,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/auth/passkeys/login/start': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper Start Passkey Login */
+    post: operations['backend/handlers.(*DBWrapper).StartPasskeyLogin'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/create-play-protocol-entry': {
     parameters: {
       query?: never;
@@ -47,6 +64,23 @@ export interface paths {
     };
     /** DB Wrapper Get My Account */
     get: operations['backend/handlers.(*DBWrapper).GetMyAccount'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/me/auth/passkeys/register/start': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** DB Wrapper Start Passkey Registration */
+    get: operations['backend/handlers.(*DBWrapper).StartPasskeyRegistration'];
     put?: never;
     post?: never;
     delete?: never;
@@ -554,6 +588,9 @@ export interface components {
     HandlersSignOutRequest: {
       refreshToken: string;
     };
+    HandlersStartPasskeyLoginRequest: {
+      username: string;
+    };
     HandlersUpdateQuizRequest: {
       description: string | null;
       imageUrl: string | null;
@@ -651,6 +688,64 @@ export interface components {
       username: string;
       uuid: string;
     };
+    ProtocolAuthenticationExtensions: {
+      [key: string]: unknown;
+    };
+    ProtocolAuthenticatorSelection: {
+      authenticatorAttachment?: string;
+      requireResidentKey?: boolean | null;
+      residentKey?: string;
+      userVerification?: string;
+    };
+    ProtocolCredentialAssertion: {
+      mediation?: string;
+      publicKey?: components['schemas']['ProtocolPublicKeyCredentialRequestOptions'];
+    };
+    ProtocolCredentialCreation: {
+      mediation?: string;
+      publicKey?: components['schemas']['ProtocolPublicKeyCredentialCreationOptions'];
+    };
+    ProtocolCredentialDescriptor: {
+      id?: components['schemas']['ProtocolURLEncodedBase64'];
+      transports?: string[];
+      type?: string;
+    };
+    ProtocolCredentialParameter: {
+      alg?: number;
+      type?: string;
+    };
+    ProtocolPublicKeyCredentialCreationOptions: {
+      attestation?: string;
+      attestationFormats?: string[];
+      authenticatorSelection?: components['schemas']['ProtocolAuthenticatorSelection'];
+      challenge?: components['schemas']['ProtocolURLEncodedBase64'];
+      excludeCredentials?: components['schemas']['ProtocolCredentialDescriptor'][];
+      extensions?: components['schemas']['ProtocolAuthenticationExtensions'];
+      hints?: string[];
+      pubKeyCredParams?: components['schemas']['ProtocolCredentialParameter'][];
+      rp?: components['schemas']['ProtocolRelyingPartyEntity'];
+      timeout?: number;
+      user?: components['schemas']['ProtocolUserEntity'];
+    };
+    ProtocolPublicKeyCredentialRequestOptions: {
+      allowCredentials?: components['schemas']['ProtocolCredentialDescriptor'][];
+      challenge?: components['schemas']['ProtocolURLEncodedBase64'];
+      extensions?: components['schemas']['ProtocolAuthenticationExtensions'];
+      hints?: string[];
+      rpId?: string;
+      timeout?: number;
+      userVerification?: string;
+    };
+    ProtocolRelyingPartyEntity: {
+      id?: string;
+      name?: string;
+    };
+    ProtocolURLEncodedBase64: number[] | null;
+    ProtocolUserEntity: {
+      displayName?: string;
+      id?: unknown;
+      name?: string;
+    };
     RestErrResponse: {
       /** @description Application-specific error code. */
       code?: number;
@@ -694,6 +789,30 @@ export interface operations {
       };
     };
   };
+  'backend/handlers.(*DBWrapper).StartPasskeyLogin': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['HandlersStartPasskeyLoginRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProtocolCredentialAssertion'];
+        };
+      };
+    };
+  };
   'backend/handlers.(*DBWrapper).CreatePublicPlayProtocolEntry': {
     parameters: {
       query?: never;
@@ -732,6 +851,35 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['ModelsUserAccount'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).StartPasskeyRegistration': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProtocolCredentialCreation'];
         };
       };
       /** @description Unauthorized */

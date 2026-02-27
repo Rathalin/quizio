@@ -16,10 +16,13 @@ import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FormEvent, useState } from 'react';
+import { startAuthentication } from '@simplewebauthn/browser';
+import { apiClient } from '@/api-client';
 import { authOptions } from '../api/auth/[...nextauth].page';
 import { getMessages } from '@/utilities/getMessages';
 import { useTranslations } from 'next-intl';
 import LoginIcon from '@mui/icons-material/Login';
+import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import Head from 'next/head';
 import { quizioTitle } from '@/utilities/quizioTitle';
 import { useMediaQuery } from '@mui/material';
@@ -70,6 +73,53 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
   });
 
   const [errorStatus, setErrorStatus] = useState<number | null>(null);
+  const [isPasskeyPending, setIsPasskeyPending] = useState(false);
+
+  async function onPasskeyLogin() {
+    if (!identifier) {
+      showErrorToast("Please enter your username first");
+      return;
+    }
+    
+    setIsPasskeyPending(true);
+    try {
+      // 1. Get challenge from backend
+      const { data: challengeData, error: challengeError } = await apiClient.POST('/auth/passkeys/login/start', {
+        body: { username: identifier },
+      });
+      
+      if (challengeError || !challengeData?.publicKey) {
+        showErrorToast('Failed to start passkey login');
+        setIsPasskeyPending(false);
+        return;
+      }
+
+      // 2. Authenticate with the browser
+      const asseResp = await startAuthentication(challengeData.publicKey as any);
+
+      // 3. Send response to NextAuth provider
+      const res = await signIn('passkey', {
+        passkeyResponse: JSON.stringify(asseResp),
+        redirect: false,
+      });
+
+      if (res?.ok === true) {
+        showSuccessToast('Signed in via Passkey');
+        router.push(callbackUrl ?? '/');
+      } else {
+        setErrorStatus(res?.status ?? null);
+      }
+    } catch (error: any) {
+      console.error(error);
+      if (error.name === 'NotAllowedError') {
+        showErrorToast('Passkey login cancelled');
+      } else {
+        showErrorToast(`Login error: ${error instanceof Error ? error.message : JSON.stringify(error)}`);
+      }
+    } finally {
+      setIsPasskeyPending(false);
+    }
+  }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -174,11 +224,22 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
                   color="primary"
                   type="submit"
                   startIcon={isPending ? <LoadingCircle /> : <LoginIcon />}
-                  disabled={isPending || (isSuccess && errorStatus == null)}
+                  disabled={isPending || isPasskeyPending || (isSuccess && errorStatus == null)}
+                  size="large"
+                  sx={{ minWidth: '16ch', mb: 1 }}
+                >
+                  {t('signIn.form.button.label')}
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={onPasskeyLogin}
+                  startIcon={isPasskeyPending ? <LoadingCircle /> : <FingerprintIcon />}
+                  disabled={isPending || isPasskeyPending || (isSuccess && errorStatus == null) || !identifier}
                   size="large"
                   sx={{ minWidth: '16ch' }}
                 >
-                  {t('signIn.form.button.label')}
+                  Sign in with Passkey
                 </Button>
               </Box>
             </form>
