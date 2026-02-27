@@ -142,7 +142,9 @@ export default function AccountMenu() {
         <MenuItem
           onClick={() => {
             handleClose();
-            signOut();
+            signOut({
+              callbackUrl: '/',
+            });
           }}
         >
           <ListItemIcon>
