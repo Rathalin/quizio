@@ -6,7 +6,17 @@
     "button": {
       "label": "Sign in"
     },
+    "passkeyButton": {
+      "label": "Sign in with Passkey"
+    },
     "invalidCredentials": "Invalid username or password!",
+    "passkeyStatus": {
+      "errorStart": "Please enter your username first",
+      "errorChallenge": "Failed to start passkey login",
+      "errorCancel": "Passkey login cancelled",
+      "errorGeneral": "Login error",
+      "success": "Signed in via Passkey"
+    },
     "password": {
       "label": "Password"
     },

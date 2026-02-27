@@ -22,9 +22,9 @@ export function PasskeyRegistrationForm() {
       const { data: optionsData, error: optionsError } = await apiClient.GET('/me/auth/passkeys/register/start', {
         headers: authHeader,
       });
-      
+
       if (optionsError || !optionsData?.publicKey) {
-        showErrorToast('Failed to start passkey registration');
+        showErrorToast(t('status.errorStart'));
         setIsPending(false);
         return;
       }
@@ -43,16 +43,16 @@ export function PasskeyRegistrationForm() {
       });
 
       if (!finishResp.ok) {
-        showErrorToast('Failed to finish passkey registration');
+        showErrorToast(t('status.errorFinish'));
       } else {
-        showSuccessToast('Passkey registered successfully');
+        showSuccessToast(t('status.success'));
       }
     } catch (error: any) {
       console.error(error);
       if (error.name === 'NotAllowedError') {
-        showErrorToast('Passkey registration cancelled');
+        showErrorToast(t('status.errorCancel'));
       } else {
-        showErrorToast(`Registration error: ${error instanceof Error ? error.message : JSON.stringify(error)}`);
+        showErrorToast(`${t('status.errorGeneral')}: ${error instanceof Error ? error.message : JSON.stringify(error)}`);
       }
     } finally {
       setIsPending(false);
@@ -68,7 +68,7 @@ export function PasskeyRegistrationForm() {
         disabled={isPending}
         startIcon={isPending ? <LoadingCircle /> : <FingerprintIcon />}
       >
-        Register New Passkey
+        {t('button.label')}
       </Button>
     </Stack>
   );

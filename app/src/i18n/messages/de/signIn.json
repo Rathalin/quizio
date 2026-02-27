@@ -6,7 +6,17 @@
     "button": {
       "label": "Anmelden"
     },
+    "passkeyButton": {
+      "label": "Mit Passkey anmelden"
+    },
     "invalidCredentials": "Ungültiger Benutzername oder Passwort!",
+    "passkeyStatus": {
+      "errorStart": "Bitte gib zuerst deinen Benutzernamen ein",
+      "errorChallenge": "Fehler beim Starten der Passkey-Anmeldung",
+      "errorCancel": "Passkey-Anmeldung abgebrochen",
+      "errorGeneral": "Anmeldefehler",
+      "success": "Mit Passkey angemeldet"
+    },
     "password": {
       "label": "Passwort"
     },

@@ -72,39 +72,45 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
       }),
   });
 
-  const [errorStatus, setErrorStatus] = useState<number | null>(null);
-  const [isPasskeyPending, setIsPasskeyPending] = useState(false);
-
-  async function onPasskeyLogin() {
-    if (!identifier) {
-      showErrorToast("Please enter your username first");
-      return;
-    }
-    
-    setIsPasskeyPending(true);
-    try {
+  const {
+    mutateAsync: loginPasskey,
+    isPending: isPasskeyPending,
+    isSuccess: isPasskeySuccess,
+  } = useMutation({
+    mutationKey: ['signInPasskey'],
+    mutationFn: async () => {
       // 1. Get challenge from backend
       const { data: challengeData, error: challengeError } = await apiClient.POST('/auth/passkeys/login/start', {
         body: { username: identifier },
       });
-      
+
       if (challengeError || !challengeData?.publicKey) {
-        showErrorToast('Failed to start passkey login');
-        setIsPasskeyPending(false);
-        return;
+        throw new Error(t('signIn.form.passkeyStatus.errorChallenge'));
       }
 
       // 2. Authenticate with the browser
       const asseResp = await startAuthentication(challengeData.publicKey as any);
 
       // 3. Send response to NextAuth provider
-      const res = await signIn('passkey', {
+      return signIn('passkey', {
         passkeyResponse: JSON.stringify(asseResp),
         redirect: false,
       });
+    },
+  });
 
+  const [errorStatus, setErrorStatus] = useState<number | null>(null);
+
+  async function onPasskeyLogin() {
+    if (!identifier) {
+      showErrorToast(t('signIn.form.passkeyStatus.errorStart'));
+      return;
+    }
+
+    try {
+      const res = await loginPasskey();
       if (res?.ok === true) {
-        showSuccessToast('Signed in via Passkey');
+        showSuccessToast(t('signIn.form.passkeyStatus.success'));
         router.push(callbackUrl ?? '/');
       } else {
         setErrorStatus(res?.status ?? null);
@@ -112,12 +118,10 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
     } catch (error: any) {
       console.error(error);
       if (error.name === 'NotAllowedError') {
-        showErrorToast('Passkey login cancelled');
+        showErrorToast(t('signIn.form.passkeyStatus.errorCancel'));
       } else {
-        showErrorToast(`Login error: ${error instanceof Error ? error.message : JSON.stringify(error)}`);
+        showErrorToast(`${t('signIn.form.passkeyStatus.errorGeneral')}: ${error instanceof Error ? error.message : JSON.stringify(error)}`);
       }
-    } finally {
-      setIsPasskeyPending(false);
     }
   }
 
@@ -217,6 +221,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
                 sx={{
                   display: 'flex',
                   flexDirection: 'column',
+                  gap: 2,
                 }}
               >
                 <Button
@@ -224,7 +229,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
                   color="primary"
                   type="submit"
                   startIcon={isPending ? <LoadingCircle /> : <LoginIcon />}
-                  disabled={isPending || isPasskeyPending || (isSuccess && errorStatus == null)}
+                  disabled={isPending || isPasskeyPending || ((isSuccess || isPasskeySuccess) && errorStatus == null)}
                   size="large"
                   sx={{ minWidth: '16ch', mb: 1 }}
                 >
@@ -232,14 +237,13 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
                 </Button>
                 <Button
                   variant="outlined"
-                  color="secondary"
                   onClick={onPasskeyLogin}
                   startIcon={isPasskeyPending ? <LoadingCircle /> : <FingerprintIcon />}
-                  disabled={isPending || isPasskeyPending || (isSuccess && errorStatus == null) || !identifier}
+                  disabled={isPending || isPasskeyPending || ((isSuccess || isPasskeySuccess) && errorStatus == null) || !identifier}
                   size="large"
                   sx={{ minWidth: '16ch' }}
                 >
-                  Sign in with Passkey
+                  {t('signIn.form.passkeyButton.label')}
                 </Button>
               </Box>
             </form>
