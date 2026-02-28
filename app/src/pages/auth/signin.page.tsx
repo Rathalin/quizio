@@ -31,6 +31,7 @@ import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import CardActions from '@mui/material/CardActions';
 
 export const getServerSideProps: GetServerSideProps<{
   callbackUrl: string | null;
@@ -89,7 +90,13 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
         body: { username: identifier },
       });
 
-      if (challengeError || !challengeData?.publicKey) {
+      if (challengeError) {
+        if (typeof (challengeError as any)?.error === 'string' && (challengeError as any).error.includes('no passkeys found for user')) {
+          throw new Error('NO_PASSKEYS');
+        }
+        throw new Error(t('signIn.form.passkeyStatus.errorChallenge'));
+      }
+      if (!challengeData?.publicKey) {
         throw new Error(t('signIn.form.passkeyStatus.errorChallenge'));
       }
 
@@ -122,7 +129,17 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
       }
     } catch (error: any) {
       console.error(error);
-      if (error.name === 'NotAllowedError') {
+      if (error.message === 'NO_PASSKEYS') {
+        setNeedsPasskeyRegistration(true);
+        router.push(
+          {
+            pathname: router.pathname,
+            query: { ...router.query, nopasskey: 'true' },
+          },
+          undefined,
+          { shallow: true }
+        );
+      } else if (error.name === 'NotAllowedError') {
         showErrorToast(t('signIn.form.passkeyStatus.errorCancel'));
       } else {
         showErrorToast(t('signIn.form.passkeyStatus.errorGeneral'));
@@ -148,31 +165,44 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPasskeyPrompt, setShowPasskeyPrompt] = useState(false);
+  const [needsPasskeyRegistration, setNeedsPasskeyRegistration] = useState(false);
   const [step, setStep] = useState<1 | 2>(1);
 
   // Sync state with URL query parameter on mount/change
   useEffect(() => {
     if (router.isReady) {
       const usernameQuery = router.query.username;
+      const noPasskeyQuery = router.query.nopasskey;
+
       if (typeof usernameQuery === 'string' && usernameQuery !== '') {
         setIdentifier(usernameQuery);
         setStep(2);
       } else {
         setStep(1);
       }
+
+      if (noPasskeyQuery === 'true') {
+        setNeedsPasskeyRegistration(true);
+      } else {
+        setNeedsPasskeyRegistration(false);
+      }
     }
-  }, [router.isReady, router.query.username]);
+  }, [router.isReady, router.query.username, router.query.nopasskey]);
 
   function onContinue(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (identifier) {
       setStep(2);
       setErrorStatus(null);
+
+      const newQuery: Record<string, any> = { ...router.query, username: identifier };
+      delete newQuery.nopasskey; // just in case
+
       // Persist username to URL, keeping other query params
       router.push(
         {
           pathname: router.pathname,
-          query: { ...router.query, username: identifier },
+          query: newQuery,
         },
         undefined,
         { shallow: true }
@@ -183,9 +213,11 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
   function handleEditIdentifier() {
     setStep(1);
     setErrorStatus(null);
+    setNeedsPasskeyRegistration(false);
     // Remove username from URL
-    const newQuery = { ...router.query };
+    const newQuery: Record<string, any> = { ...router.query };
     delete newQuery.username;
+    delete newQuery.nopasskey;
     router.push(
       {
         pathname: router.pathname,
@@ -207,25 +239,21 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
         </QuizioBreadcrumbs>
         <Box
           sx={{
-            marginInline: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
             marginTop: {
               sx: 4,
               lg: 6,
             },
           }}
         >
-          <Card
-            sx={{
-              marginInline: 'auto',
-              maxWidth: { xs: '100%', sm: '50ch' },
-              width: '100%',
-            }}
-          >
+          <Card sx={{ maxWidth: '40ch', width: '100%' }}>
             <CardContent sx={{ padding: { xs: 2, sm: 4 } }}>
               <Typography
-                variant="h1"
+                component="h1"
+                variant="h2"
                 sx={{
-                  marginTop: 2,
                   marginBottom: 6,
                   textAlign: isScreenAsSmallAsInputs ? 'start' : 'center',
                 }}
@@ -235,7 +263,6 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
               <Box
                 sx={{
                   margin: 'auto',
-                  maxWidth: '40ch',
                 }}
               >
                 {showPasskeyPrompt ? (
@@ -252,6 +279,89 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
                       {t('signIn.form.passkeyPrompt.skipButton')}
                     </Button>
                   </Box>
+                ) : needsPasskeyRegistration ? (
+                  <form onSubmit={onSubmit}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 2,
+                        marginBottom: 2,
+                      }}
+                    >
+                      <Typography variant="body1" sx={{ marginBottom: 1 }}>
+                        {t('signIn.form.noPasskeyPrompt.description')}
+                      </Typography>
+                      <TextField
+                        id="identifier-no-passkey"
+                        label={t('signIn.form.username.label')}
+                        type="text"
+                        fullWidth
+                        required
+                        value={identifier}
+                        disabled={true}
+                        slotProps={{
+                          input: {
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton onClick={handleEditIdentifier} edge="end" disabled={isPending || isPasskeyPending}>
+                                  <EditIcon />
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }
+                        }}
+                      />
+                      <TextField
+                        id="password"
+                        label={t('signIn.form.password.label')}
+                        type="password"
+                        fullWidth
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        disabled={isPending}
+                        autoFocus
+                      />
+                      {errorStatus === 401 && (
+                        <Typography variant="body2" color="error">
+                          {t('signIn.form.invalidCredentials')}
+                        </Typography>
+                      )}
+                      <Stack gap={2} sx={{ mt: 1 }}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          type="submit"
+                          startIcon={isPending ? <LoadingCircle /> : <PasswordIcon />}
+                          disabled={isPending || ((isSuccess) && errorStatus == null) || !password}
+                          size="large"
+                        >
+                          {t('signIn.form.button.label')}
+                        </Button>
+                        <Button
+                          variant="text"
+                          color="inherit"
+                          onClick={() => {
+                            setNeedsPasskeyRegistration(false);
+                            const newQuery: Record<string, any> = { ...router.query };
+                            delete newQuery.nopasskey;
+                            router.push(
+                              {
+                                pathname: router.pathname,
+                                query: newQuery,
+                              },
+                              undefined,
+                              { shallow: true }
+                            );
+                          }}
+                          disabled={isPending}
+                        >
+                          {t('signIn.form.noPasskeyPrompt.backButton')}
+                        </Button>
+                      </Stack>
+                    </Box>
+                  </form>
                 ) : (
                   <form onSubmit={step === 1 ? onContinue : onSubmit}>
                     <Box
@@ -357,6 +467,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
                 )}
               </Box>
             </CardContent>
+            <CardActions sx={{ padding: 0 }} />
           </Card>
           <Alert severity="info" sx={{ marginTop: 10, marginInline: 'auto', maxWidth: '60ch' }}>
             <Typography>

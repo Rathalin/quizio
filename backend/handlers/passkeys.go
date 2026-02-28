@@ -101,7 +101,7 @@ func (dbw *DBWrapper) StartPasskeyLogin() usecase.Interactor {
 	type startPasskeyLoginRequest struct {
 		Username string `json:"username" required:"true"`
 	}
-	return usecase.NewInteractor(func(ctx context.Context, input startPasskeyLoginRequest, output *protocol.CredentialAssertion) error {
+	u := usecase.NewInteractor(func(ctx context.Context, input startPasskeyLoginRequest, output *protocol.CredentialAssertion) error {
 		if err := validate.Struct(input); err != nil {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
@@ -127,6 +127,8 @@ func (dbw *DBWrapper) StartPasskeyLogin() usecase.Interactor {
 		*output = *assertion
 		return nil
 	})
+	u.SetExpectedErrors(status.Unauthenticated)
+	return u
 }
 
 func (dbw *DBWrapper) FinishPasskeyLogin(w http.ResponseWriter, request *http.Request) {

@@ -23,6 +23,22 @@
       "description": "Skip typing passwords! Register a passkey now to sign in quickly and securely next time.",
       "skipButton": "Skip for now"
     },
+    "noPasskeyPrompt": {
+      "description": "No passkeys found for this account. Would you like to log in with your password to create one?",
+      "backButton": "Back"
+    },
+    "registerPasskey": {
+      "button": {
+        "label": "Register New Passkey"
+      },
+      "status": {
+        "success": "Passkey registered successfully",
+        "errorStart": "Failed to start passkey registration",
+        "errorFinish": "Failed to finish passkey registration",
+        "errorCancel": "Passkey registration cancelled",
+        "errorGeneral": "Registration error"
+      }
+    },
     "password": {
       "label": "Password"
     },
@@ -34,7 +50,7 @@
       "label": "Username"
     }
   },
-  "heading": "Enter your <gradient>credentials</gradient>",
+  "heading": "<gradient>Welcome</gradient> back",
   "helpAlert": "Do you need an account to create quizzes? Feel free to contact me on <email></email>.",
   "or": "or",
   "meta": {

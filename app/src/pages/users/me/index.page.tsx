@@ -3,7 +3,6 @@ import GenericLoadingErrorMessage from '@/components/GenericLoadingErrorMessage'
 import GradientText from '@/components/GradientText';
 import LoadingCircle from '@/components/LoadingCircle';
 import { ProfilePictureForm } from '@/components/users/ProfilePictureForm';
-import { PasskeyRegistrationForm } from '@/components/users/PasskeyRegistrationForm';
 import { useUserAccountQuery } from '@/data/useUserAccountQuery';
 import MyProfilePlaceholder from '@/page-components/user/me/MyProfilePlaceholder';
 import { getMessages } from '@/utilities/getMessages';
@@ -61,9 +60,6 @@ export default function MePage() {
                 <>
                   <Box sx={{ marginBottom: 4 }}>
                     <ProfilePictureForm />
-                  </Box>
-                  <Box sx={{ marginBottom: 4 }}>
-                    <PasskeyRegistrationForm />
                   </Box>
                   <Typography variant="body2">
                     {t.rich('myProfile.changeUsernameRequest', {

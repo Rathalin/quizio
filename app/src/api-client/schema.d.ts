@@ -811,6 +811,15 @@ export interface operations {
           'application/json': components['schemas']['ProtocolCredentialAssertion'];
         };
       };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['RestErrResponse'];
+        };
+      };
     };
   };
   'backend/handlers.(*DBWrapper).CreatePublicPlayProtocolEntry': {

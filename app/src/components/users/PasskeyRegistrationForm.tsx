@@ -16,7 +16,7 @@ type Props = {
 }
 
 export function PasskeyRegistrationForm({ onSuccess }: Props) {
-  const t = useTranslations('users.form.passkey');
+  const t = useTranslations('signIn.form.registerPasskey');
   const { showSuccessToast, showErrorToast } = useToastStore();
   const [isPending, setIsPending] = useState(false);
   const authHeader = useAuthHeader();
@@ -67,16 +67,14 @@ export function PasskeyRegistrationForm({ onSuccess }: Props) {
   }
 
   return (
-    <Box>
-      <Typography variant="h2" marginBottom={2}>{t('title')}</Typography>
-      <Button
-        variant="outlined"
-        onClick={handleRegisterPasskey}
-        disabled={isPending}
-        startIcon={isPending ? <LoadingCircle /> : <FingerprintIcon />}
-      >
-        {t('button.label')}
-      </Button>
-    </Box>
+    <Button
+      variant="outlined"
+      size="large"
+      onClick={handleRegisterPasskey}
+      disabled={isPending}
+      startIcon={isPending ? <LoadingCircle /> : <FingerprintIcon />}
+    >
+      {t('button.label')}
+    </Button>
   );
 }

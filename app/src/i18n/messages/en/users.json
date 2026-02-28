@@ -24,19 +24,6 @@
         "error": "Could not update profile image!",
         "success": "Profile image updated."
       }
-    },
-    "passkey": {
-      "title": "Passwordless Authentication",
-      "button": {
-        "label": "Register New Passkey"
-      },
-      "status": {
-        "success": "Passkey registered successfully",
-        "errorStart": "Failed to start passkey registration",
-        "errorFinish": "Failed to finish passkey registration",
-        "errorCancel": "Passkey registration cancelled",
-        "errorGeneral": "Registration error"
-      }
     }
   },
   "link": {

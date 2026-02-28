@@ -24,19 +24,6 @@
         "error": "Profilbild konnte nicht gespeichert werden!",
         "success": "Profilbild aktualisiert."
       }
-    },
-    "passkey": {
-      "title": "Passwortlose Authentifizierung",
-      "button": {
-        "label": "Neuen Passkey registrieren"
-      },
-      "status": {
-        "success": "Passkey erfolgreich registriert",
-        "errorStart": "Passkey-Registrierung konnte nicht gestartet werden",
-        "errorFinish": "Fehler beim Abschluss der Registrierung",
-        "errorCancel": "Passkey-Registrierung abgebrochen",
-        "errorGeneral": "Registrierungsfehler"
-      }
     }
   },
   "link": {

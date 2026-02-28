@@ -19,9 +19,24 @@
       "success": "Mit Passkey angemeldet"
     },
     "passkeyPrompt": {
-      "title": "Passwortlose Anmeldung",
-      "description": "Sichere dir einen Passkey, um dich beim nächsten Mal ohne Passwort anzumelden.",
-      "skipButton": "Überspringen"
+      "description": "Möchtest du einen Passkey für diese Webseite erstellen?",
+      "skipButton": "Jetzt überspringen"
+    },
+    "noPasskeyPrompt": {
+      "description": "Für dieses Konto wurden keine Passkeys gefunden. Möchtest du dich mit deinem Passwort einloggen, um einen zu erstellen?",
+      "backButton": "Zurück"
+    },
+    "registerPasskey": {
+      "button": {
+        "label": "Neuen Passkey registrieren"
+      },
+      "status": {
+        "success": "Passkey erfolgreich registriert",
+        "errorStart": "Passkey-Registrierung konnte nicht gestartet werden",
+        "errorFinish": "Fehler beim Abschluss der Registrierung",
+        "errorCancel": "Passkey-Registrierung abgebrochen",
+        "errorGeneral": "Registrierungsfehler"
+      }
     },
     "password": {
       "label": "Passwort"
@@ -34,7 +49,7 @@
       "label": "Benutzername"
     }
   },
-  "heading": "Gib deine <gradient>Zugangsdaten</gradient> ein",
+  "heading": "<gradient>Willkommen</gradient> zurück",
   "helpAlert": "Du möchtest ein Quizio-Konto haben? Dann schreib mir eine Nachricht an <email></email>.",
   "or": "oder",
   "meta": {
