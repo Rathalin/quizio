@@ -582,6 +582,7 @@ export interface components {
     };
     HandlersSignInResponse: {
       accessToken: string;
+      hasPasskeys: boolean;
       refreshToken: string;
       uuid: string;
     };
@@ -680,6 +681,7 @@ export interface components {
     ModelsUserAccount: {
       /** Format: date-time */
       createdAt: string;
+      hasPasskeys: boolean;
       isBlocked: boolean;
       isConfirmed: boolean;
       profileImageUrl: string | null;

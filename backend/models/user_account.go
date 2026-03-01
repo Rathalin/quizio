@@ -14,6 +14,7 @@ type UserAccount struct {
 	IsConfirmed     bool      `json:"isConfirmed" required:"true"`
 	IsBlocked       bool      `json:"isBlocked" required:"true"`
 	ProfileImageUrl *string   `json:"profileImageUrl" required:"true" nullable:"true"`
+	HasPasskeys     bool      `json:"hasPasskeys" required:"true"`
 
 	// These are not persisted with UserAccount directly but injected at runtime
 	passkeyCredentials []webauthn.Credential `json:"-"`

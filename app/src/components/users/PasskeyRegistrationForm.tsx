@@ -68,6 +68,7 @@ export function PasskeyRegistrationForm({ onSuccess }: Props) {
 
   return (
     <Button
+      type="button"
       variant="outlined"
       size="large"
       onClick={handleRegisterPasskey}

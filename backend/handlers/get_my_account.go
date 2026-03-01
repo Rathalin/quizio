@@ -32,6 +32,17 @@ func (dbw *DBWrapper) GetMyAccount() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
+		passkeysCount := 0
+		err = dbw.DB.QueryRow(`
+			SELECT COUNT(*)
+			FROM passkey
+			WHERE user_account_id = $1
+		`, userId).Scan(&passkeysCount)
+		if err != nil {
+			return logAndReturnError(err)
+		}
+		response.HasPasskeys = passkeysCount > 0
+
 		*output = response
 		return nil
 	})

@@ -114,6 +114,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
   const [errorStatus, setErrorStatus] = useState<number | null>(null);
 
   async function onPasskeyLogin() {
+    setErrorStatus(null);
     if (!identifier) {
       showErrorToast(t('signIn.form.passkeyStatus.errorStart'));
       return;
@@ -125,7 +126,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
         showSuccessToast(t('signIn.form.passkeyStatus.success'));
         router.push(callbackUrl ?? '/');
       } else {
-        setErrorStatus(res?.status ?? null);
+        showErrorToast(t('signIn.form.passkeyStatus.errorGeneral'));
       }
     } catch (error: any) {
       console.error(error);
@@ -153,7 +154,23 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
       const res = await login();
       if (res?.ok === true) {
         showSuccessToast(t('signIn.form.status.success'));
-        setShowPasskeyPrompt(true);
+
+        let hasPasskeys = false;
+        try {
+          const sessionRes = await fetch('/api/auth/session');
+          if (sessionRes.ok) {
+            const sessionData: any = await sessionRes.json();
+            hasPasskeys = sessionData?.user?.hasPasskeys === true;
+          }
+        } catch (e) {
+          console.error("Failed to fetch session to check passkeys", e);
+        }
+
+        if (hasPasskeys) {
+          router.push(callbackUrl ?? '/');
+        } else {
+          setShowPasskeyPrompt(true);
+        }
       } else {
         setErrorStatus(res?.status ?? null);
       }
@@ -272,6 +289,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
                     </Typography>
                     <PasskeyRegistrationForm onSuccess={() => router.push(callbackUrl ?? '/')} />
                     <Button
+                      type="button"
                       variant="text"
                       color="inherit"
                       onClick={() => router.push(callbackUrl ?? '/')}
@@ -340,6 +358,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
                           {t('signIn.form.button.label')}
                         </Button>
                         <Button
+                          type="button"
                           variant="text"
                           color="inherit"
                           onClick={() => {
@@ -451,6 +470,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
                             {t('signIn.or')}
                           </Typography>
                           <Button
+                            type="button"
                             variant="outlined"
                             onClick={onPasskeyLogin}
                             startIcon={isPasskeyPending ? <LoadingCircle /> : <FingerprintIcon />}

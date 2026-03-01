@@ -14,6 +14,8 @@ type UserPasskey struct {
 	SignCount     int64     `json:"signCount" required:"true"`
 	CreatedAt     time.Time `json:"createdAt" required:"true"`
 	UpdatedAt     time.Time `json:"updatedAt" required:"true"`
+	BackupEligible bool     `json:"backupEligible" required:"true"`
+	BackupState    bool     `json:"backupState" required:"true"`
 }
 
 func (up *UserPasskey) ToWebAuthnCredential() webauthn.Credential {
@@ -25,8 +27,8 @@ func (up *UserPasskey) ToWebAuthnCredential() webauthn.Credential {
 		Flags: webauthn.CredentialFlags{
 			UserPresent:    true,
 			UserVerified:   true,
-			BackupEligible: true,
-			BackupState:    true,
+			BackupEligible: up.BackupEligible,
+			BackupState:    up.BackupState,
 		},
 		Authenticator: webauthn.Authenticator{
 			AAGUID:       []byte{},

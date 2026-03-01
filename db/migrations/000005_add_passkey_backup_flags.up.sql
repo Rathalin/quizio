@@ -1,0 +1,2 @@
+ALTER TABLE passkey ADD COLUMN backup_eligible BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE passkey ADD COLUMN backup_state BOOLEAN NOT NULL DEFAULT false;

@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
@@ -81,9 +82,9 @@ func (dbw *DBWrapper) FinishPasskeyRegistration(w http.ResponseWriter, request *
 
 	// Store credential in database
 	_, err = dbw.DB.ExecContext(request.Context(), `
-		INSERT INTO passkey (user_account_id, credential_id, public_key, sign_count)
-		VALUES ($1, $2, $3, $4)
-	`, userID, credential.ID, credential.PublicKey, credential.Authenticator.SignCount)
+		INSERT INTO passkey (user_account_id, credential_id, public_key, sign_count, backup_eligible, backup_state)
+		VALUES ($1, $2, $3, $4, $5, $6)
+	`, userID, credential.ID, credential.PublicKey, credential.Authenticator.SignCount, credential.Flags.BackupEligible, credential.Flags.BackupState)
 	
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -168,6 +169,7 @@ func (dbw *DBWrapper) FinishPasskeyLogin(w http.ResponseWriter, request *http.Re
 
 	credential, err := auth.WebAuthn.ValidateLogin(userAccount, *sessionData, parsedResponse)
 	if err != nil {
+		log.Printf("Passkey validation failed: %v", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -213,6 +215,7 @@ func (dbw *DBWrapper) FinishPasskeyLogin(w http.ResponseWriter, request *http.Re
 
 	resp := map[string]interface{}{
 		"uuid": userUuid,
+		"hasPasskeys": true, // User just signed in with a passkey, so they must have one
 		"accessToken": accessToken,
 		"refreshToken": refreshToken,
 	}

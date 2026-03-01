@@ -20,6 +20,7 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 		UserUUID     string `json:"uuid" required:"true"`
 		AccessToken  string `json:"accessToken" required:"true"`
 		RefreshToken string `json:"refreshToken" required:"true"`
+		HasPasskeys  bool   `json:"hasPasskeys" required:"true"`
 	}
 
 	return usecase.NewInteractor(func(ctx context.Context, input signInRequest, output *signInResponse) error {
@@ -59,6 +60,17 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 		if err != nil {
 			return logAndReturnError(err)
 		}
+
+		passkeysCount := 0
+		err = dbw.DB.QueryRow(`
+			SELECT COUNT(*)
+			FROM passkey
+			WHERE user_account_id = $1
+		`, row.ID).Scan(&passkeysCount)
+		if err != nil {
+			return logAndReturnError(err)
+		}
+		response.HasPasskeys = passkeysCount > 0
 
 		// Validate password
 		err = bcrypt.CompareHashAndPassword([]byte(row.PasswordHash), []byte(input.Password))

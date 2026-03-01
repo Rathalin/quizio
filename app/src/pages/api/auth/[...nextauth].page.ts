@@ -43,6 +43,7 @@ export const authOptions: AuthOptions = {
         return {
           id: data.uuid,
           uuid: data.uuid,
+          hasPasskeys: data.hasPasskeys,
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
         };
@@ -78,11 +79,13 @@ export const authOptions: AuthOptions = {
             uuid: string;
             accessToken: string;
             refreshToken: string;
+            hasPasskeys: boolean;
           };
           console.info(`Signed in via Passkey.`);
           return {
             id: data.uuid,
             uuid: data.uuid,
+            hasPasskeys: data.hasPasskeys,
             accessToken: data.accessToken,
             refreshToken: data.refreshToken,
           };

@@ -105,7 +105,7 @@ func (dbw *DBWrapper) getUserAccountByUsername(username string) (*models.UserAcc
 
 func (dbw *DBWrapper) getWebAuthnCredentialsForUser(userAccountId int64) ([]webauthn.Credential, error) {
 	rows, err := dbw.DB.Query(`
-		SELECT id, credential_id, public_key, sign_count, created_at, updated_at
+		SELECT id, credential_id, public_key, sign_count, backup_eligible, backup_state, created_at, updated_at
 		FROM passkey
 		WHERE user_account_id = $1
 	`, userAccountId)
@@ -117,7 +117,7 @@ func (dbw *DBWrapper) getWebAuthnCredentialsForUser(userAccountId int64) ([]weba
 	var credentials []webauthn.Credential
 	for rows.Next() {
 		var passkey models.UserPasskey
-		err := rows.Scan(&passkey.ID, &passkey.CredentialID, &passkey.PublicKey, &passkey.SignCount, &passkey.CreatedAt, &passkey.UpdatedAt)
+		err := rows.Scan(&passkey.ID, &passkey.CredentialID, &passkey.PublicKey, &passkey.SignCount, &passkey.BackupEligible, &passkey.BackupState, &passkey.CreatedAt, &passkey.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}

@@ -7,6 +7,7 @@ export declare module 'next-auth' {
       uuid: string;
       accessToken: string;
       refreshToken: string;
+      hasPasskeys: boolean;
     };
   }
 }
