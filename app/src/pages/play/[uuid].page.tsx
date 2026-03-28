@@ -25,8 +25,6 @@ import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
 import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import { QuizioBreadcrumbs } from '@/components/breadcrumbs/QuizioBreadcrumbs';
 import Link from 'next/link';
@@ -34,6 +32,7 @@ import { getMessages } from '@/utilities/getMessages';
 import { useTranslations } from 'next-intl';
 import { quizioTitle } from '@/utilities/quizioTitle';
 import { canonicalUrl, SeoMeta } from '../../../types/seo';
+import { useToastStore } from '@/persistence/taost.store';
 
 export type AnsweredState = {
   correctAnswerId: string;
@@ -85,12 +84,12 @@ export default function PlayIdPage({ uuid, canonicalUrl }: InferGetServerSidePro
   const quizQuery = usePlayQuizQuery(uuid);
   const quiz = quizQuery.data;
   const { mutateAsync: addPlayProtocolEntry } = useCreatePlayProtocolEntryMutation();
+  const { showInfoToast } = useToastStore();
 
   const [playCountIncreased, setPlayCountIncreased] = useState(false);
   const questions = useMemo(() => quiz?.questions ?? [], [quiz]);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [answeredProgress, setAnswerwedProgress] = useState<AnsweredState[]>([]);
-  const [showCopiedAlert, setShowCopiedAlert] = useState(false);
 
   const question = questions[questionIndex];
   const gameDone = quizQuery.isSuccess && question == null;
@@ -111,6 +110,7 @@ export default function PlayIdPage({ uuid, canonicalUrl }: InferGetServerSidePro
   }, [questionAnsweredCorrectly, theme.vars.palette.error.main, theme.vars.palette.success.main]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setQuestionIndex(0);
     setAnswerwedProgress(
       questions.map((question) => ({
@@ -187,15 +187,8 @@ export default function PlayIdPage({ uuid, canonicalUrl }: InferGetServerSidePro
   function writeResultToClipboard() {
     if (resultScore != null) {
       navigator.clipboard.writeText(resultScore);
-      setShowCopiedAlert(true);
+      showInfoToast(t('toast.copiedToClipboard'));
     }
-  }
-
-  function handleCopiedAlertClose(_event: unknown, reason?: string) {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setShowCopiedAlert(false);
   }
 
   return (
@@ -316,16 +309,6 @@ export default function PlayIdPage({ uuid, canonicalUrl }: InferGetServerSidePro
             )}
           </>
         )}
-        <Snackbar
-          open={showCopiedAlert}
-          anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
-          autoHideDuration={2000}
-          onClose={handleCopiedAlertClose}
-        >
-          <Alert severity="info" onClose={handleCopiedAlertClose}>
-            {t('toast.copiedToClipboard')}
-          </Alert>
-        </Snackbar>
       </Box>
     </>
   );
