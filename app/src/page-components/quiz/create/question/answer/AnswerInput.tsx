@@ -39,7 +39,14 @@ export default function AnswerInput({
   const answerErrors = errors.questions?.[questionIndex]?.answers?.[index];
 
   return (
-    <Stack direction="row" columnGap={2} alignItems="start" flexWrap="wrap-reverse">
+    <Stack
+      direction="row"
+      sx={{
+        columnGap: 2,
+        alignItems: 'start',
+        flexWrap: 'wrap-reverse',
+      }}
+    >
       <Controller
         name={`${name}.title`}
         render={({ field }) => (
@@ -71,10 +78,10 @@ export default function AnswerInput({
       />
       <Stack
         direction="row"
-        gap={2}
-        alignItems="center"
-        justifyContent="end"
         sx={{
+          gap: 2,
+          alignItems: 'center',
+          justifyContent: 'end',
           marginTop: {
             xs: 0,
             sm: 1,

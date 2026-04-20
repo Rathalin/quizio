@@ -24,12 +24,12 @@ export function ProfileAvatar({ imageUrl, username }: AvatarImageProps) {
         <Avatar
           variant="rounded"
           sx={{
-            backgroundColor: theme.vars.palette.primary.main,
+            backgroundColor: theme.vars?.palette.primary.main,
             fontWeight: 'bold',
             width,
             height,
             fontSize: '4rem',
-            color: theme.vars.palette.primary.contrastText,
+            color: theme.vars?.palette.primary.contrastText,
           }}
         >
           {initials}
@@ -38,7 +38,7 @@ export function ProfileAvatar({ imageUrl, username }: AvatarImageProps) {
         <Avatar
           variant="rounded"
           sx={{
-            backgroundColor: theme.vars.palette.primary.main,
+            backgroundColor: theme.vars?.palette.primary.main,
             width,
             height,
           }}

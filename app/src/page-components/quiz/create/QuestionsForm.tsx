@@ -216,14 +216,27 @@ export default function QuestionsForm({
             </Box>
           </CardContent>
           <CardActions sx={{ padding: 2 }}>
-            <Stack gap={2} sx={{ flex: 1 }}>
+            <Stack sx={{ gap: 2, flex: 1 }}>
               {!isValid && (
-                <Stack direction="row" alignItems="center" justifyContent="end" gap={1}>
+                <Stack
+                  direction="row"
+                  sx={{
+                    alignItems: 'center',
+                    justifyContent: 'end',
+                    gap: 1,
+                  }}
+                >
                   <FormErrorIcon />
                   <Typography color="error">{t('error.general')}</Typography>
                 </Stack>
               )}
-              <Stack direction="row" justifyContent="space-between" flexWrap="wrap">
+              <Stack
+                direction="row"
+                sx={{
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                }}
+              >
                 <BackButton onClick={() => onBack(getValues())}>{backLabel}</BackButton>
                 <NextButton>{nextLabel}</NextButton>
               </Stack>

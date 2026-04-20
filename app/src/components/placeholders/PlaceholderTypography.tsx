@@ -14,7 +14,7 @@ export default function PlaceholderTypography({ text = '.', ...other }: Placehol
       <Box
         component="span"
         sx={{
-          backgroundColor: theme.vars.palette.placeholder.main,
+          backgroundColor: theme.vars?.palette.placeholder.main,
           display: 'flow-root',
           marginBlock: '.4em',
           lineHeight: '1em',

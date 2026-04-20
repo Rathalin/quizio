@@ -124,17 +124,17 @@ export default function QuestionInput({
       {...other}
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />} component="div">
-        <Stack direction="row" alignItems="center" sx={{ flex: 1 }}>
+        <Stack direction="row" sx={{ flex: 1, alignItems: 'center' }}>
           <DragHandleOutlined sx={{ marginRight: 2, color: draggable ? 'action.hover' : 'action.disabled' }} />
-          <Stack gap={0} sx={{ flex: 1 }}>
-            <Stack direction="row" alignItems="center" columnGap={3} rowGap={1} flexWrap="wrap" sx={{ flex: 1 }}>
+          <Stack sx={{ gap: 0, flex: 1 }}>
+            <Stack direction="row" sx={{ flex: 1, alignItems: 'center', gap: 3, rowGap: 1, flexWrap: 'wrap' }}>
               <Typography variant="h5">{t('title', { count: index + 1 })}</Typography>
               <Tooltip title="Some inputs require your attention." arrow>
                 <Stack
                   direction="row"
-                  alignItems="end"
-                  gap={1}
                   sx={{
+                    alignItems: 'end',
+                    gap: 1,
                     visibility: questionErrors != null ? 'visible' : 'hidden',
                   }}
                 >
@@ -153,7 +153,14 @@ export default function QuestionInput({
         </Stack>
       </AccordionSummary>
       <AccordionDetails sx={{ cursor: 'initial' }}>
-        <Stack display="inline-flex" alignItems="center" gap={1} sx={{ marginBottom: 4 }}>
+        <Stack
+          sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 1,
+            marginBottom: 4,
+          }}
+        >
           <Controller
             name={`${name}.questionImage.data.file`}
             render={({ field }) => (
@@ -186,7 +193,7 @@ export default function QuestionInput({
                     }}
                   >
                     {questionImageUrl != null ? (
-                      <Stack alignItems="center">
+                      <Stack sx={{ alignItems: 'center' }}>
                         <Image
                           src={questionImageUrl}
                           width={imageWidth}
@@ -300,7 +307,13 @@ export default function QuestionInput({
             </Tooltip>
           </Box>
           <Divider sx={{ marginBlock: 4 }} />
-          <Stack display="inline-flex" alignItems="center" gap={1}>
+          <Stack
+            sx={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 1,
+            }}
+          >
             <Controller
               name={`${name}.explanationImage.data.file`}
               render={({ field }) => (
@@ -333,7 +346,7 @@ export default function QuestionInput({
                       }}
                     >
                       {explanationImageUrl != null ? (
-                        <Stack alignItems="center">
+                        <Stack sx={{ alignItems: 'center' }}>
                           <Image
                             src={explanationImageUrl}
                             width={imageWidth}

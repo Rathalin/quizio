@@ -75,10 +75,14 @@ export function MyQuizzesMobileRow({
       />
       <Box key={uuid}>
         <Box
-          marginBottom={4}
-          sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', columnGap: 2 }}
+          sx={{
+            marginBottom: 4,
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+            columnGap: 2,
+          }}
         >
-          <Stack columnGap={4} rowGap={2}>
+          <Stack sx={{ columnGap: 4, rowGap: 2 }}>
             <Box>
               <PreviewImage url={imageUrl} width={150} />
             </Box>
@@ -112,7 +116,7 @@ export function MyQuizzesMobileRow({
               </Typography>
             </Box>
           </Stack>
-          <Box marginTop={2} flex={1}>
+          <Box sx={{ marginTop: 2, flex: 1 }}>
             <ActionButtons
               uuid={uuid}
               setDialogOpen={setDialogOpen}
@@ -127,7 +131,14 @@ export function MyQuizzesMobileRow({
           </Typography>
           <VisibilityColumn uuid={uuid} isPublished={isPublished} size="medium" />
         </Box>
-        <Stack direction="row" columnGap={6} rowGap={2} flexWrap="wrap">
+        <Stack
+          direction="row"
+          sx={{
+            columnGap: 6,
+            rowGap: 2,
+            flexWrap: 'wrap',
+          }}
+        >
           <Stack>
             <Typography variant="body2" color="textSecondary">
               {t('column.createdAt.header')}
@@ -145,7 +156,7 @@ export function MyQuizzesMobileRow({
           <Typography color="textSecondary" sx={{ marginBottom: 0.5 }}>
             {t('column.playCount.header')}
           </Typography>
-          <Stack gap={1}>
+          <Stack sx={{ gap: 1 }}>
             <LinkButton
               hrefObserver={`/my-quizzes/${uuid}/trends` as Route}
               navigateOnClick
@@ -241,7 +252,7 @@ type ActionButtonProps = {
 
 function ActionButton({ href, onClick, disabled, icon, label }: ActionButtonProps) {
   return (
-    <Stack alignItems="center">
+    <Stack sx={{ alignItems: 'center' }}>
       {href != null ? (
         <Link href={href}>
           <IconButton color="primary" size="large">
@@ -253,7 +264,7 @@ function ActionButton({ href, onClick, disabled, icon, label }: ActionButtonProp
           {icon}
         </IconButton>
       )}
-      <Typography color="textSecondary" variant="caption" textAlign="center">
+      <Typography color="textSecondary" variant="caption" sx={{ textAlign: 'center' }}>
         {label}
       </Typography>
     </Stack>

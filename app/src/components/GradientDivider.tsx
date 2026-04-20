@@ -9,7 +9,7 @@ export default function GradientDivider() {
       sx={{
         height: '2px',
         borderRadius: '4px',
-        background: `linear-gradient(270deg, ${theme.vars.palette.accent.primary.main}60 0%, ${theme.vars.palette.accent.secondary.main}60 100%)`,
+        background: `linear-gradient(270deg, ${theme.vars?.palette.accent.primary.main}60 0%, ${theme.vars?.palette.accent.secondary.main}60 100%)`,
       }}
     ></Box>
   );

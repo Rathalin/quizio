@@ -43,10 +43,10 @@ export function GameImage({ src, alt }: GameImageProps) {
         }}
       >
         <Stack
-          alignItems="center"
-          justifyContent="center"
-          gap={2}
           sx={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 2,
             padding: {
               xs: 2,
               sm: 4,

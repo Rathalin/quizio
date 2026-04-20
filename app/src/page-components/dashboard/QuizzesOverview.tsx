@@ -102,9 +102,9 @@ export default function QuizzesOverview() {
                 }}
               />
             ) : (
-              <Stack gap={2}>
+              <Stack sx={{ gap: 2 }}>
                 <GradientDivider />
-                <Stack direction="row" justifyContent="center">
+                <Stack direction="row" sx={{ justifyContent: 'center' }}>
                   <Typography>
                     {t.rich('noMoreResults', {
                       gradient: (chunks) => <GradientText>{chunks}</GradientText>,

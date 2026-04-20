@@ -104,10 +104,10 @@ export default function PlayIdPage({ uuid, canonicalUrl }: InferGetServerSidePro
       return 'transparent';
     }
     if (questionAnsweredCorrectly) {
-      return theme.vars.palette.success.main;
+      return theme.vars?.palette.success.main;
     }
-    return theme.vars.palette.error.main;
-  }, [questionAnsweredCorrectly, theme.vars.palette.error.main, theme.vars.palette.success.main]);
+    return theme.vars?.palette.error.main;
+  }, [questionAnsweredCorrectly, theme.vars?.palette.error.main, theme.vars?.palette.success.main]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -286,7 +286,7 @@ export default function PlayIdPage({ uuid, canonicalUrl }: InferGetServerSidePro
                       answeredProgress={answeredProgress}
                     />
                     <Divider />
-                    <Stack alignItems="center" gap={2} sx={{ marginBottom: 2, marginTop: 2 }}>
+                    <Stack sx={{ alignItems: 'center', gap: 2, marginBottom: 2, marginTop: 2 }}>
                       <Typography sx={{ whiteSpace: 'pre-line', textAlign: 'center' }}>{resultScore}</Typography>
                       <Button variant="contained" startIcon={<ContentCopyIcon />} onClick={writeResultToClipboard}>
                         Copy

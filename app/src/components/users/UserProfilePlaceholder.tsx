@@ -10,7 +10,7 @@ export default function UserProfilePlaceholder() {
       <Stack direction="row" sx={{ marginBottom: 2 }}>
         <PlaceholderBox minWidth={`${width}px`} minHeight={`${height}px`} />
       </Stack>
-      <Stack alignItems="start" gap={1}>
+      <Stack sx={{ alignItems: 'center', gap: 1 }}>
         <PlaceholderTypography variant="h1" text="Excepteur dolore." />
         <PlaceholderTypography text="Excepteur dolore nostrud." />
         <PlaceholderTypography text="Qui non sint duis quis tempor voluptate nisi dolore nostrud." />

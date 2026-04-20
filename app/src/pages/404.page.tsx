@@ -37,7 +37,7 @@ export default function NotFoundPage() {
           justifyContent: 'center',
         }}
       >
-        <Stack alignItems="center">
+        <Stack sx={{ alignItems: 'center' }}>
           <Typography color="secondary" variant="h3" component="p" sx={{ marginTop: 4, marginBottom: 0 }}>
             {t('error.404.eyebrow')}
           </Typography>

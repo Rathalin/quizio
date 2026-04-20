@@ -35,7 +35,7 @@ export const getServerSideProps: GetServerSideProps<{
   const { uuid, interval: intervalParam } = ctx.query;
   if (typeof uuid !== 'string') {
     return {
-      notFound: true
+      notFound: true,
     };
   }
 
@@ -56,9 +56,9 @@ export const getServerSideProps: GetServerSideProps<{
     queryFn: () =>
       throwOnError(() =>
         fetchMyQuizTrends(uuid, fromDate, toDate, {
-          Authorization: `Bearer ${session?.user.accessToken}`
-        })
-      )
+          Authorization: `Bearer ${session?.user.accessToken}`,
+        }),
+      ),
   });
 
   const [messages] = await Promise.all([messagesPromise, prefetchPromise]);
@@ -69,11 +69,11 @@ export const getServerSideProps: GetServerSideProps<{
       interval: {
         value: interval,
         from: fromDate,
-        to: toDate
+        to: toDate,
       },
       messages,
-      dehydratedState: dehydrate(queryClient)
-    }
+      dehydratedState: dehydrate(queryClient),
+    },
   };
 };
 
@@ -104,11 +104,11 @@ export default function MyQuizzesPage({ uuid, interval }: InferGetServerSideProp
         component="h1"
         sx={{
           marginTop: 2,
-          marginBottom: 2
+          marginBottom: 2,
         }}
       >
         {t.rich('heading', {
-          gradient: (chunks) => <GradientText>{chunks}</GradientText>
+          gradient: (chunks) => <GradientText>{chunks}</GradientText>,
         })}
       </Typography>
       {quiz != null && (
@@ -116,10 +116,18 @@ export default function MyQuizzesPage({ uuid, interval }: InferGetServerSideProp
           <Typography>{t('text', { count: quiz.playProtocolStatistic.entriesPerDay.length })}</Typography>
           <Typography color="textSecondary">
             {t('migratedInfo', {
-              migrationDate: dateFormatter.format(new Date(quiz.playProtocolStatistic.migrationDate))
+              migrationDate: dateFormatter.format(new Date(quiz.playProtocolStatistic.migrationDate)),
             })}
           </Typography>
-          <Stack direction="row" gap={2} flexWrap="wrap" marginTop={4} justifyContent="center">
+          <Stack
+            direction="row"
+            sx={{
+              gap: 2,
+              flexWrap: 'wrap',
+              marginTop: 4,
+              justifyContent: 'center',
+            }}
+          >
             <ToggleButtonGroup
               value={interval.value}
               color="primary"
@@ -127,8 +135,8 @@ export default function MyQuizzesPage({ uuid, interval }: InferGetServerSideProp
                 router.replace({
                   query: {
                     uuid,
-                    ...(nextInterval != null ? { interval: nextInterval } : { interval: interval.value })
-                  }
+                    ...(nextInterval != null ? { interval: nextInterval } : { interval: interval.value }),
+                  },
                 })
               }
               exclusive

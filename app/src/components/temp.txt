@@ -1,0 +1,1 @@
+Property 'accent' does not exist on type 'Omit<Palette & CssVarsPalette, "colorScheme" | "mode" | "contrastThreshold" | "tonalOffset" | "getContrastText" | "augmentColor">'.

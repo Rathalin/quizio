@@ -110,7 +110,13 @@ export default function SummaryForm({
                 {qIndex > 0 && <Divider sx={{ marginBottom: 1 }} />}
                 <ListItem>
                   <Box>
-                    <Stack direction="row" alignItems="center" gap={2}>
+                    <Stack
+                      direction="row"
+                      sx={{
+                        alignItems: 'center',
+                        gap: 2,
+                      }}
+                    >
                       <IndexAvatar index={qIndex + 1} />
                       <Typography variant="h5" component="h3">
                         {question.title}
@@ -133,7 +139,7 @@ export default function SummaryForm({
                     </List>
                     {question.explanation != null && question.explanation.length > 0 && (
                       <Box sx={{ marginBottom: 2 }}>
-                        <Typography component="span" color={theme.vars.palette.primary.main}>
+                        <Typography component="span" color={theme.vars?.palette.primary.main}>
                           Explanation:
                         </Typography>
                         <Typography component="span" sx={{ marginLeft: 1 }}>
