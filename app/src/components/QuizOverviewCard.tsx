@@ -135,7 +135,7 @@ export default function QuizOverviewCard({
                 >
                   {title}
                 </Box>
-                <Stack direction="row" alignItems="center">
+                <Stack direction="row" sx={{ alignItems: 'center' }}>
                   <Tooltip title={t('share.tooltip')} arrow>
                     <IconButton onClick={() => handleShareClick()}>
                       <ShareIcon color="secondary" />
@@ -159,7 +159,7 @@ export default function QuizOverviewCard({
                 <Link href={`/users/${userUuid}`}>
                   <Chip
                     label={
-                      <Stack direction="row" alignItems="center" gap={1}>
+                      <Stack direction="row" sx={{ alignItems: 'center', gap: 1 }}>
                         <Box component="span">{username}</Box>
                         {transitionHref === `/users/${userUuid}` && <LoadingCircle />}
                       </Stack>

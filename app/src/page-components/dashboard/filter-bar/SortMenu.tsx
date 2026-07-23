@@ -42,7 +42,7 @@ export function SortMenu() {
   return (
     <>
       <Button aria-describedby={id} variant="outlined" onClick={handleClick} startIcon={<SortIcon />}>
-        <Stack direction="row" gap={1}>
+        <Stack direction="row" sx={{ gap: 1 }}>
           <Box component="span" sx={{ fontWeight: 400 }}>
             {t.rich('menu.button.label', {
               sort: () => (

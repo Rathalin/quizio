@@ -20,7 +20,7 @@ export default function AlertsViewer() {
 
   return (
     <Stack
-      gap={1}
+      spacing={1}
       sx={{
         marginBottom: alerts.length === dismissedAlertIds.length ? 0 : 4,
         transitionProperty: 'margin-bottom',
@@ -60,7 +60,7 @@ export default function AlertsViewer() {
                 </ReactMarkdown>
               </Grid>
               <Grid size={{ xs: 12, sm: 12, md: 4 }}>
-                <Stack justifyContent="center" alignItems="center" sx={{ height: '100%' }}>
+                <Stack sx={{ justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                   {alert.imageUrl != null && (
                     <Image
                       src={prefixWithBackendUrl(alert.imageUrl)}

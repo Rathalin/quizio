@@ -12,12 +12,12 @@ export default function QuizOverviewSkeleton() {
         <Skeleton variant="rectangular" height="180px" />
       </CardMedia>
       <CardContent>
-        <Stack alignItems="start">
+        <Stack sx={{ alignItems: 'center' }}>
           <Skeleton height="4rem" width="80%" sx={{ marginBottom: 4 }} />
           <Skeleton height="3rem" width="40%" />
           <Skeleton height="3rem" width="60%" />
         </Stack>
-        <Stack direction="row" justifyContent="center" sx={{ marginTop: 6 }}>
+        <Stack direction="row" sx={{ justifyContent: 'center', marginTop: 6 }}>
           <Skeleton variant="rectangular" height="3rem" width="8rem" sx={{ borderRadius: 1 }} />
         </Stack>
       </CardContent>

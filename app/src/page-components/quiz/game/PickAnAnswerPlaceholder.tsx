@@ -7,7 +7,7 @@ export default function PickAnAnswerPlaceholder() {
   return (
     <Card sx={{ padding: 4 }}>
       <CardContent>
-        <Stack alignItems="start">
+        <Stack sx={{ alignItems: 'start' }}>
           <PlaceholderTypography variant="h1" sx={{ width: '80%', marginTop: 0, marginBottom: 4 }} />
           <PlaceholderTypography variant="h3" sx={{ marginBlock: 1, width: '60%' }} />
           <PlaceholderTypography variant="h3" sx={{ marginBlock: 1, width: '60%' }} />

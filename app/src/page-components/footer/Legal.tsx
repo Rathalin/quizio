@@ -6,7 +6,7 @@ export default function Legal() {
   const t = useTranslations('footer');
 
   return (
-    <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
+    <Stack direction="row" sx={{ alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
       <Link href="/imprint" className="link">
         {t('imprint')}
       </Link>

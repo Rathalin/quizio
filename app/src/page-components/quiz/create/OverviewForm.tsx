@@ -119,8 +119,8 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
       <form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
         <Card>
           <CardContent>
-            <Stack direction="column" gap={2} flexWrap="wrap">
-              <Stack direction="column" gap={2} sx={{ flexGrow: 1 }}>
+            <Stack direction="column" sx={{ gap: 2, flexWrap: 'wrap' }}>
+              <Stack direction="column" sx={{ gap: 2, flexGrow: 1 }}>
                 <Box>
                   <Controller
                     name="title"
@@ -164,8 +164,8 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
                   />
                 </Box>
               </Stack>
-              <Stack direction="column" alignItems="start" gap={1}>
-                <Stack alignItems="center" gap={1}>
+              <Stack direction="column" sx={{ alignItems: 'start', gap: 1 }}>
+                <Stack sx={{ alignItems: 'center', gap: 1 }}>
                   <Controller
                     name="image.data.file"
                     render={({ field }) => (
@@ -198,7 +198,7 @@ export default function OverviewForm({ defaultData, onSubmit, backLabel, nextLab
                             }}
                           >
                             {imageUrl != null ? (
-                              <Stack alignItems="center">
+                              <Stack sx={{ alignItems: 'center' }}>
                                 <Image
                                   src={imageUrl}
                                   width={imageWidth}

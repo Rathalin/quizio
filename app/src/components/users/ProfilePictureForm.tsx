@@ -118,7 +118,7 @@ export function ProfilePictureForm() {
         </DialogActions>
       </Dialog>
       <form onSubmit={handleSubmit(handleFormSubmit)} noValidate>
-        <Stack display="inline-flex" alignItems="center" gap={1} sx={{ marginBottom: 4 }}>
+        <Stack sx={{ display: 'inline-flex', gap: 1, alignItems: 'center', marginBottom: 4 }}>
           <Controller
             name="imageFile"
             render={({ field }) => (
@@ -178,9 +178,9 @@ export function ProfilePictureForm() {
                           priority
                         />
                         <Stack
-                          alignItems="center"
-                          justifyContent="center"
                           sx={{
+                            alignItems: 'center',
+                            justifyContent: 'center',
                             margin: '-1rem',
                             gridColumn: 1,
                             gridRow: 1,
@@ -211,12 +211,12 @@ export function ProfilePictureForm() {
           />
           {previewImageUrl != null && (
             <>
-              <Stack direction="row" gap={1} sx={{ color: 'action.active' }}>
+              <Stack direction="row" sx={{ gap: 1, color: 'action.active' }}>
                 <InfoIcon fontSize="small" />
                 <Typography sx={{ fontSize: 'small' }}>{t('hint')}</Typography>
               </Stack>
 
-              <Stack direction="column" gap={2} sx={{ marginTop: 2 }}>
+              <Stack direction="column" sx={{ gap: 2, marginTop: 2 }}>
                 <Button
                   variant="outlined"
                   color="primary"

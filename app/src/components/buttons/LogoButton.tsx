@@ -6,7 +6,7 @@ import LogoText from '../logo/LogoText';
 export default function LogoButton() {
   const router = useRouter();
   return (
-    <Stack alignItems="center" sx={{ cursor: 'pointer', display: 'inline-flex' }} onClick={() => router.push('/')}>
+    <Stack sx={{ alignItems: 'center', cursor: 'pointer', display: 'inline-flex' }} onClick={() => router.push('/')}>
       <LogoText />
     </Stack>
   );

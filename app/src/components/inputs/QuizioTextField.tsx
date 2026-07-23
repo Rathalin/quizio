@@ -26,7 +26,7 @@ export default forwardRef<HTMLDivElement, QuizioTextInputProps>(function QuizioT
       }}
     >
       <TextField value={value} slotProps={slotProps} fullWidth={fullWidth} ref={ref} {...other} />
-      <Stack direction="row" justifyContent="space-between" sx={{ marginInline: 1 }} gap={1}>
+      <Stack direction="row" sx={{ justifyContent: 'space-between', gap: 1, marginInline: 1 }}>
         <FormHelperText error>{helperText}</FormHelperText>
         <FormHelperText>{remainingCharacters}</FormHelperText>
       </Stack>

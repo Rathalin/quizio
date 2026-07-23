@@ -48,7 +48,13 @@ export default function PickAnAnswer({
         <Grid container spacing={4} wrap="wrap-reverse" sx={{ paddingBottom: 2 }}>
           <Grid size={{ xs: 12, md: 8 }}>
             <Stack sx={{ height: '100%' }}>
-              <Stack direction="row" alignItems="center" gap={2}>
+              <Stack
+                direction="row"
+                sx={{
+                  alignItems: 'center',
+                  gap: 2,
+                }}
+              >
                 <IndexAvatar index={index} />
                 <Typography variant="h4" component="h1">
                   {title}
@@ -57,7 +63,12 @@ export default function PickAnAnswer({
             </Stack>
           </Grid>
           <Grid size={{ xs: 12, md: 4 }}>
-            <Stack direction="row" justifyContent="end">
+            <Stack
+              direction="row"
+              sx={{
+                justifyContent: 'end',
+              }}
+            >
               <AnsweredProgress answeredProgress={answeredProgress} />
             </Stack>
           </Grid>

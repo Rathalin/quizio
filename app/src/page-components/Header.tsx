@@ -19,7 +19,7 @@ export default function Header() {
     >
       <Container maxWidth="lg">
         <Toolbar disableGutters>
-          <Grid container width="100%">
+          <Grid container sx={{ width: '100%' }}>
             <Grid
               size={4}
               sx={{
@@ -44,8 +44,8 @@ export default function Header() {
                 display: 'flex',
                 justifyContent: 'end',
                 alignItems: 'center',
+                gap: 1,
               }}
-              gap={1}
             >
               <ThemeSwitch />
               <AccountMenu />

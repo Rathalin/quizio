@@ -105,7 +105,7 @@ export function VisibilityColumn({ uuid, isPublished, size }: Props) {
                 <FormControlLabel value="private" control={<Radio size="small" />} label={t('option.notPublished')} />
               </RadioGroup>
             </FormControl>
-            <Stack direction="row" alignItems="center" gap={1} sx={{ marginTop: 2 }}>
+            <Stack direction="row" sx={{ alignItems: 'center', gap: 1, marginTop: 2 }}>
               <Typography variant="body2" color="textSecondary" sx={{ display: 'flex', gap: 0.5 }}>
                 <InfoOutlinedIcon fontSize="small" />
                 {t('popover.footer')}

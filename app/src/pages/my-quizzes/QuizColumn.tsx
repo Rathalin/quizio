@@ -63,9 +63,9 @@ export function QuizColumn({ uuid, title, description, imageUrl, isHovered }: Pr
         onConfirm={onDeleteDialogConfirm}
         loading={isDeletePending}
       />
-      <Stack direction="row" gap={2} sx={{ width: '100%' }}>
+      <Stack direction="row" sx={{ gap: 2, width: '100%' }}>
         <PreviewImage url={imageUrl} width={112.5} />
-        <Stack gap={1} sx={{ maxWidth: '30ch' }}>
+        <Stack sx={{ gap: 1, maxWidth: '30ch' }}>
           <Typography
             variant="body1"
             color="textPrimary"

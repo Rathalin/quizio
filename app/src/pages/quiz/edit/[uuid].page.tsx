@@ -51,7 +51,7 @@ export const getServerSideProps: GetServerSideProps<{ uuid: string }> = async (c
   const session = await getServerSession(ctx.req, ctx.res, authOptions);
   const authHeader = {
     Authorization: `Bearer ${session?.user?.accessToken}`,
-  } satisfies AuthorizationHeader
+  } satisfies AuthorizationHeader;
   const { data, response } = await fetchQuiz(uuid, authHeader);
   if (response.status === 404) {
     return {
@@ -308,7 +308,14 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
             marginBottom: 3,
           }}
         >
-          <Stack direction="row" alignItems="center" flexWrap="wrap" gap={2}>
+          <Stack
+            direction="row"
+            sx={{
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 2,
+            }}
+          >
             <Box>
               {t.rich('heading.update', {
                 gradient: (chunks) => <GradientText>{chunks}</GradientText>,

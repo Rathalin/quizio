@@ -142,7 +142,7 @@ export function MyQuizzesTable({ quizzes }: Props) {
                 sx={{
                   verticalAlign: 'top',
                   ':hover': {
-                    backgroundColor: theme.vars.palette.action.hover,
+                    backgroundColor: theme.vars?.palette.action.hover,
                   },
                 }}
               >
@@ -185,9 +185,9 @@ export function MyQuizzesTableSkeleton() {
             <Box key={i}>
               <Stack direction="row">
                 <Box sx={{ width: '50%' }}>
-                  <Stack direction="row" gap={2}>
+                  <Stack direction="row" sx={{ gap: 2 }}>
                     <Skeleton width={112.5} height={75 / 0.6} />
-                    <Stack marginTop={3} flex={1}>
+                    <Stack sx={{ marginTop: 3, flex: 1 }}>
                       <Skeleton width="30%" height="2rem" />
                       <Skeleton width="50%" height="2rem" />
                     </Stack>

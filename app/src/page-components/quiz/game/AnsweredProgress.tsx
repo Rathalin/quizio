@@ -21,7 +21,7 @@ export default function AnsweredProgress({ answeredProgress }: ScoreProgressProp
   return (
     <Stack>
       {groups.map((row, index) => (
-        <Stack direction="row" flexWrap="wrap" key={index}>
+        <Stack direction="row" key={index} sx={{ flexWrap: 'wrap' }}>
           {row.map((state, index) => (
             <AnsweredStateItem key={index} correct={isAnswerCorrect(state)} />
           ))}

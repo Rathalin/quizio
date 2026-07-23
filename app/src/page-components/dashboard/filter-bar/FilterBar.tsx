@@ -12,7 +12,7 @@ export default function FilterBar({ quizzesCount }: FilterBarProps) {
   const { searchText } = useSearch();
 
   return (
-    <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
+    <Stack direction="row" sx={{ alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
       <IndexAvatar
         variant={searchText.trim().length === 0 ? 'rounded' : 'circular'}
         color="primary.main"

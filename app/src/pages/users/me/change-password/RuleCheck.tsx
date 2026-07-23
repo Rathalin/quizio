@@ -10,9 +10,20 @@ type Props = {
 
 export function RuleCheck({ valid, label }: Props) {
   return (
-    <Stack direction="row" alignItems="center" gap={1}>
+    <Stack
+      direction="row"
+      sx={{
+        alignItems: 'center',
+        gap: 1,
+      }}
+    >
       {valid ? <Check color="success" fontSize="small" /> : <Clear color="error" fontSize="small" />}
-      <Typography fontSize="0.9rem" marginTop="2px">
+      <Typography
+        sx={{
+          fontSize: '0.9rem',
+          marginTop: '2px',
+        }}
+      >
         {label}
       </Typography>
     </Stack>

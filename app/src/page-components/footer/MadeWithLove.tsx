@@ -8,7 +8,14 @@ export default function MadeWithLove() {
   const t = useTranslations('footer');
 
   return (
-    <Stack direction="row" alignItems="center" columnGap={1} flexWrap="wrap">
+    <Stack
+      direction="row"
+      sx={{
+        alignItems: 'center',
+        columnGap: 1,
+        flexWrap: 'wrap',
+      }}
+    >
       <Box component="span">{t('madeWithLove.part1')}</Box>
       <ScreenReaderOnly>{t('madeWithLove.srLove')}</ScreenReaderOnly>
       <Box aria-hidden component="span">

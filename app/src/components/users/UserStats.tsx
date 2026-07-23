@@ -21,14 +21,14 @@ export default function UserStats({ createdAt, quizCount, quizViewsTotal }: User
         component="h2"
         sx={{
           marginTop: 1,
-          marginBottom: 2
+          marginBottom: 2,
         }}
       >
         {t('heading')}
       </Typography>
-      <Stack spacing={1} alignItems="start">
-        <Stack direction="row" columnGap={10} rowGap={4} flexWrap="wrap">
-          <Stack justifyContent="space-between">
+      <Stack spacing={1} sx={{ alignItems: 'start' }}>
+        <Stack direction="row" sx={{ columnGap: 10, rowGap: 4, flexWrap: 'wrap' }}>
+          <Stack sx={{ justifyContent: 'space-between' }}>
             <Typography variant="overline" color="textSecondary">
               {t('joinedAt.label')}
             </Typography>
@@ -37,7 +37,7 @@ export default function UserStats({ createdAt, quizCount, quizViewsTotal }: User
             </Typography>
           </Stack>
 
-          <Stack justifyContent="space-between">
+          <Stack sx={{ justifyContent: 'center' }}>
             <Typography variant="overline" color="textSecondary">
               {t('created.label')}
             </Typography>
@@ -46,7 +46,7 @@ export default function UserStats({ createdAt, quizCount, quizViewsTotal }: User
             </Typography>
           </Stack>
 
-          <Stack justifyContent="space-between">
+          <Stack sx={{ justifyContent: 'space-between' }}>
             <Typography variant="overline" color="textSecondary">
               {t('totalPlayCount.label')}
             </Typography>

@@ -13,7 +13,7 @@ export default function IndexAvatar({ index, color, sx: { ...sxOther } = {}, ...
   return (
     <Avatar
       sx={{
-        backgroundColor: color ?? theme.vars.palette.secondary.main,
+        backgroundColor: color ?? theme.vars?.palette.secondary.main,
         width: '2rem',
         height: '2rem',
         ...sxOther,

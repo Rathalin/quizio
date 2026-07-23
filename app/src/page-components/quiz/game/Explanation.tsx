@@ -41,7 +41,7 @@ export default function Explanation({ correct, text, imageUrl }: ExplanationProp
         <Box
           component="span"
           sx={{
-            color: correct ? theme.vars.palette.success.light : theme.vars.palette.error.light,
+            color: correct ? theme.vars?.palette.success.light : theme.vars?.palette.error.light,
           }}
         >
           {correct ? t('correct') : t('incorrect')}

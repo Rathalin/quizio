@@ -15,7 +15,7 @@ export default function GradientText({ deg, startColor, endColor, children }: Pr
   return (
     <Box
       sx={{
-        background: `linear-gradient(${(deg ?? 270) + 'deg'} in oklch, ${endColor ?? theme.vars.palette.accent.primary.main} 00%, ${startColor ?? theme.vars.palette.accent.secondary.main} 100%)`,
+        background: `linear-gradient(${(deg ?? 270) + 'deg'} in oklch, ${endColor ?? theme.vars?.palette.accent.primary.main} 00%, ${startColor ?? theme.vars?.palette.accent.secondary.main} 100%)`,
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
       }}

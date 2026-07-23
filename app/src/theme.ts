@@ -1,6 +1,5 @@
-import { createTheme, responsiveFontSizes } from '@mui/material/styles';
-// https://mui.com/material-ui/customization/css-theme-variables/usage/#typescript
-import type {} from '@mui/material/themeCssVarsAugmentation';
+// theme.ts
+import { createTheme, responsiveFontSizes, PaletteColor, PaletteColorOptions } from '@mui/material/styles';
 
 export const theme = responsiveFontSizes(
   createTheme({
@@ -47,8 +46,8 @@ export const theme = responsiveFontSizes(
       light: {
         palette: {
           text: {
-            primary: 'rgba(0, 0, 0, 0.87);',
-            secondary: 'rgba(0, 0, 0, 0.6);',
+            primary: 'rgba(0, 0, 0, 0.87)',
+            secondary: 'rgba(0, 0, 0, 0.6)',
           },
           primary: {
             main: '#cc9200',
@@ -109,30 +108,25 @@ export const theme = responsiveFontSizes(
   }),
 );
 
-declare module '@mui/material/styles/createPalette' {
+declare module '@mui/material/styles' {
   interface Palette {
-    loading: Palette['primary'];
-    placeholder: Palette['primary'];
+    loading: PaletteColor;
+    placeholder: PaletteColor;
     accent: {
-      primary: Palette['primary'];
-      secondary: Palette['primary'];
+      primary: PaletteColor;
+      secondary: PaletteColor;
     };
   }
+
   interface PaletteOptions {
-    loading: PaletteOptions['primary'];
-    placeholder: PaletteOptions['primary'];
-    accent: {
-      primary: PaletteOptions['primary'];
-      secondary: PaletteOptions['primary'];
+    loading?: PaletteColorOptions;
+    placeholder?: PaletteColorOptions;
+    accent?: {
+      primary?: PaletteColorOptions;
+      secondary?: PaletteColorOptions;
     };
   }
 }
-
-// declare module '@mui/material/Button' {
-//   export interface ButtonPropsColorOverrides {
-//     loading: true;
-//   }
-// }
 
 declare module '@mui/material/CircularProgress' {
   export interface CircularProgressPropsColorOverrides {

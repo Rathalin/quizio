@@ -12,7 +12,7 @@ type Props = {
 export function MyQuizzesMobileTable({ quizzes }: Props) {
   return (
     <>
-      <Stack gap={4}>
+      <Stack sx={{ gap: 4 }}>
         <Divider />
         {quizzes.map((quiz) => (
           <MyQuizzesMobileRow key={quiz.uuid} {...quiz} />
@@ -49,9 +49,9 @@ export function MyQuizzesMobileTableSkeleton() {
             <Box key={i}>
               <Stack direction="row">
                 <Box sx={{ width: '50%' }}>
-                  <Stack direction="row" gap={2}>
+                  <Stack direction="row" sx={{ gap: 2 }}>
                     <Skeleton width={112.5} height={75 / 0.6} />
-                    <Stack marginTop={3} flex={1}>
+                    <Stack sx={{ marginTop: 3, flex: 1 }}>
                       <Skeleton width="30%" height="2rem" />
                       <Skeleton width="50%" height="2rem" />
                     </Stack>

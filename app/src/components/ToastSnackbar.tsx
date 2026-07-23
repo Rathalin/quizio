@@ -42,8 +42,14 @@ export default function ToastSnackbar() {
       open={open}
       autoHideDuration={4000}
       onClose={handleClose}
-      TransitionProps={{ onExited: handleExited }}
-      TransitionComponent={SlideTransition}
+      slots={{
+        transition: SlideTransition,
+      }}
+      slotProps={{
+        transition: {
+          onExited: handleExited,
+        },
+      }}
       action={
         <>
           <IconButton aria-label="close" color="inherit" sx={{ p: 0.5 }} onClick={handleClose}>

@@ -134,7 +134,7 @@ export default function ChangePasswordPage() {
               handleSubmit(onSubmit)(e);
             }}
           >
-            <Stack gap={2}>
+            <Stack sx={{ gap: 2 }}>
               <Controller
                 name="currentPassword"
                 render={({ field }) => (
@@ -222,7 +222,7 @@ export default function ChangePasswordPage() {
                 label={t('form.check.minCharacters', { count: passwordMinLength })}
               />
             </Stack>
-            <Stack sx={{ marginTop: 2 }} direction="row" justifyContent="end">
+            <Stack direction="row" sx={{ justifyContent: 'end', marginTop: 2 }}>
               <Button
                 variant="contained"
                 type="submit"

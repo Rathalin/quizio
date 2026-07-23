@@ -59,12 +59,12 @@ export function TrendPreview({ quizUuid, statistic, intervalFilter }: Props) {
       <AreaChart key={quizUuid} data={statistic.entriesPerDay} margin={{ top: 20, right: 60, left: -30, bottom: 50 }}>
         <defs>
           <linearGradient id="colorPlays" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor={theme.vars.palette.secondary.main} stopOpacity={0.8} />
-            <stop offset="95%" stopColor={theme.vars.palette.secondary.dark} stopOpacity={0} />
+            <stop offset="5%" stopColor={theme.vars?.palette.secondary.main} stopOpacity={0.8} />
+            <stop offset="95%" stopColor={theme.vars?.palette.secondary.dark} stopOpacity={0} />
           </linearGradient>
           <linearGradient id="colorMigratedPlays" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor={theme.vars.palette.secondary.main} stopOpacity={0.2} />
-            <stop offset="95%" stopColor={theme.vars.palette.secondary.dark} stopOpacity={0} />
+            <stop offset="5%" stopColor={theme.vars?.palette.secondary.main} stopOpacity={0.2} />
+            <stop offset="95%" stopColor={theme.vars?.palette.secondary.dark} stopOpacity={0} />
           </linearGradient>
         </defs>
         <CartesianGrid strokeOpacity={0.2} />
@@ -79,26 +79,29 @@ export function TrendPreview({ quizUuid, statistic, intervalFilter }: Props) {
         <Area
           type="monotone"
           dataKey={'playCount' satisfies DataKey}
-          stroke={theme.vars.palette.secondary.light}
+          stroke={theme.vars?.palette.secondary.light}
           fill="url(#colorPlays)"
         />
         <Area
           type="monotone"
           dataKey={'migratedPlayCount' satisfies DataKey}
-          stroke={theme.vars.palette.secondary.light}
+          stroke={theme.vars?.palette.secondary.light}
           fill="url(#colorMigratedPlays)"
           strokeDasharray="4"
         />
         <Tooltip
-          labelFormatter={(label: DataLabel) => dateFormatter.format(new Date(label))}
-          formatter={(value, label) => [
+          labelFormatter={(label) => {
+            if (!label) return '';
+            return dateFormatter.format(new Date(label as string | number));
+          }}
+          formatter={(value, name) => [
             t('dataKey.times', { count: value as number }),
-            label === 'migratedPlayCount' ? t('dataKey.migratedPlays') : t('dataKey.plays'),
+            name === 'migratedPlayCount' ? t('dataKey.migratedPlays') : t('dataKey.plays'),
           ]}
           contentStyle={{
-            backgroundColor: theme.vars.palette.background.paper,
-            borderColor: theme.vars.palette.secondary.main,
-            borderRadius: theme.vars.shape.borderRadius,
+            backgroundColor: theme.vars?.palette.background.paper,
+            borderColor: theme.vars?.palette.secondary.main,
+            borderRadius: theme.vars?.shape.borderRadius,
           }}
         />
       </AreaChart>
