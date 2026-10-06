@@ -16,9 +16,8 @@ export const config = {
     '/users/me',
     '/users/me/change-password',
     '/my-quizzes',
-    '/quiz/my-quizzes/:path/trends',
+    '/my-quizzes/:path/trends',
     '/quiz/create',
     '/quiz/edit/:path',
-    '/quiz/my-quizzes/:path/trends',
   ],
 };
