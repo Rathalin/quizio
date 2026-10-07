@@ -77,7 +77,7 @@ func setupMCPServer() *mcpserver.StreamableHTTPServer {
 			if err != nil {
 				return mcp.NewToolResultError(err.Error()), nil
 			}
-			resp, err := doRequest(http.MethodGet, "/me/quizzes?sortDirection=desc&sortOption=created_at", nil, token)
+			resp, err := doRequest(http.MethodGet, "/me/quizzes?sortDirection=desc&sortOption=createdAt", nil, token)
 			if err != nil {
 				return mcp.NewToolResultError(err.Error()), nil
 			}
