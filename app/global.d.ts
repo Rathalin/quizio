@@ -24,6 +24,8 @@ import deMyQuizzes from '@messages/de/myQuizzes.json';
 import enMyQuizzes from '@messages/en/myQuizzes.json';
 import deMyQuizzesTrends from '@messages/de/myQuizzesTrends.json';
 import enMyQuizzesTrends from '@messages/en/myQuizzesTrends.json';
+import deOAuthLogin from '@messages/de/oauthLogin.json';
+import enOAuthLogin from '@messages/en/oauthLogin.json';
 
 type Messages = {
   common: typeof deCommon & typeof enCommon;
@@ -40,6 +42,7 @@ type Messages = {
   play: typeof dePlay & typeof enPlay;
   myQuizzes: typeof deMyQuizzes & typeof enMyQuizzes;
   myQuizzesTrends: typeof deMyQuizzesTrends & typeof enMyQuizzesTrends;
+  oauthLogin: typeof deOAuthLogin & typeof enOAuthLogin;
 };
 
 declare global {
