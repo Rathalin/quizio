@@ -8,19 +8,20 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"sync"
 
+	"github.com/go-chi/jwtauth/v5"
 	"github.com/mark3labs/mcp-go/mcp"
 	mcpserver "github.com/mark3labs/mcp-go/server"
+
+	"github.com/Rathalin/quizio/backend/env"
 )
 
-var sessionTokens sync.Map
+type contextKey string
 
-func doRequest(method, path string, body interface{}, authToken string) ([]byte, error) {
-	apiURL := os.Getenv("QUIZIO_API_URL")
-	if apiURL == "" {
-		apiURL = "http://localhost:8080"
-	}
+const tokenContextKey contextKey = "jwtToken"
+
+func doRequest(method, path string, body any, authToken string) ([]byte, error) {
+	apiURL := env.Config.APIURL
 
 	var bodyReader io.Reader
 	if body != nil {
@@ -60,55 +61,14 @@ func doRequest(method, path string, body interface{}, authToken string) ([]byte,
 }
 
 func getToken(ctx context.Context) (string, error) {
-	session := mcpserver.ClientSessionFromContext(ctx)
-	if session == nil {
-		return "", fmt.Errorf("no active MCP session")
+	if token, ok := ctx.Value(tokenContextKey).(string); ok && token != "" {
+		return token, nil
 	}
-	tokenRaw, ok := sessionTokens.Load(session.SessionID())
-	if !ok {
-		return "", fmt.Errorf("not signed in. Please use the sign_in tool first")
-	}
-	return tokenRaw.(string), nil
+	return "", fmt.Errorf("not signed in or missing bearer token")
 }
 
 func setupMCPServer() *mcpserver.StreamableHTTPServer {
 	s := mcpserver.NewMCPServer("quizio-mcp", "1.0.0")
-
-	// 0. sign_in
-	s.AddTool(mcp.NewTool("sign_in", mcp.WithDescription("Sign in to Quizio to obtain an authentication session token"),
-		mcp.WithString("username", mcp.Required()),
-		mcp.WithString("password", mcp.Required()),
-	), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-		args, ok := request.Params.Arguments.(map[string]interface{})
-		if !ok {
-			return mcp.NewToolResultError("invalid arguments format"), nil
-		}
-		username, _ := args["username"].(string)
-		password, _ := args["password"].(string)
-
-		body := map[string]string{
-			"username": username,
-			"password": password,
-		}
-		resp, err := doRequest(http.MethodPost, "/sign-in", body, "")
-		if err != nil {
-			return mcp.NewToolResultError(err.Error()), nil
-		}
-
-		var result struct {
-			AccessToken string `json:"accessToken"`
-		}
-		if err := json.Unmarshal(resp, &result); err != nil {
-			return mcp.NewToolResultError("Failed to parse sign-in response"), nil
-		}
-
-		session := mcpserver.ClientSessionFromContext(ctx)
-		if session == nil {
-			return mcp.NewToolResultError("Failed to get MCP session from context"), nil
-		}
-		sessionTokens.Store(session.SessionID(), result.AccessToken)
-		return mcp.NewToolResultText("Successfully signed in! You can now use the other MCP tools to interact with quizzes."), nil
-	})
 
 	// 1. get_quizzes
 	s.AddTool(mcp.NewTool("get_quizzes", mcp.WithDescription("Get all quizzes for the authorized user")),
@@ -117,7 +77,7 @@ func setupMCPServer() *mcpserver.StreamableHTTPServer {
 			if err != nil {
 				return mcp.NewToolResultError(err.Error()), nil
 			}
-			resp, err := doRequest(http.MethodGet, "/me/quizzes", nil, token)
+			resp, err := doRequest(http.MethodGet, "/me/quizzes?sortDirection=desc&sortOption=created_at", nil, token)
 			if err != nil {
 				return mcp.NewToolResultError(err.Error()), nil
 			}
@@ -134,7 +94,7 @@ func setupMCPServer() *mcpserver.StreamableHTTPServer {
 		if err != nil {
 			return mcp.NewToolResultError(err.Error()), nil
 		}
-		args, ok := request.Params.Arguments.(map[string]interface{})
+		args, ok := request.Params.Arguments.(map[string]any)
 		if !ok {
 			return mcp.NewToolResultError("invalid arguments format"), nil
 		}
@@ -158,7 +118,7 @@ func setupMCPServer() *mcpserver.StreamableHTTPServer {
 		if err != nil {
 			return mcp.NewToolResultError(err.Error()), nil
 		}
-		args, ok := request.Params.Arguments.(map[string]interface{})
+		args, ok := request.Params.Arguments.(map[string]any)
 		if !ok {
 			return mcp.NewToolResultError("invalid arguments format"), nil
 		}
@@ -179,30 +139,30 @@ func setupMCPServer() *mcpserver.StreamableHTTPServer {
 		Description: "Create a new quiz",
 		InputSchema: mcp.ToolInputSchema{
 			Type: "object",
-			Properties: map[string]interface{}{
-				"title":       map[string]interface{}{"type": "string"},
-				"description": map[string]interface{}{"type": "string"},
-				"isPublished": map[string]interface{}{"type": "boolean"},
-				"imageUrl":    map[string]interface{}{"type": "string"},
-				"questions": map[string]interface{}{
+			Properties: map[string]any{
+				"title":       map[string]any{"type": "string"},
+				"description": map[string]any{"type": "string"},
+				"isPublished": map[string]any{"type": "boolean"},
+				"imageUrl":    map[string]any{"type": "string"},
+				"questions": map[string]any{
 					"type": "array",
-					"items": map[string]interface{}{
+					"items": map[string]any{
 						"type": "object",
-						"properties": map[string]interface{}{
-							"title":               map[string]interface{}{"type": "string"},
-							"description":         map[string]interface{}{"type": "string"},
-							"imageUrl":            map[string]interface{}{"type": "string"},
-							"explanation":         map[string]interface{}{"type": "string"},
-							"explanationImageUrl": map[string]interface{}{"type": "string"},
-							"answers": map[string]interface{}{
+						"properties": map[string]any{
+							"title":               map[string]any{"type": "string"},
+							"description":         map[string]any{"type": "string"},
+							"imageUrl":            map[string]any{"type": "string"},
+							"explanation":         map[string]any{"type": "string"},
+							"explanationImageUrl": map[string]any{"type": "string"},
+							"answers": map[string]any{
 								"type": "array",
-								"items": map[string]interface{}{
+								"items": map[string]any{
 									"type": "object",
-									"properties": map[string]interface{}{
-										"title":       map[string]interface{}{"type": "string"},
-										"description": map[string]interface{}{"type": "string"},
-										"imageUrl":    map[string]interface{}{"type": "string"},
-										"isCorrect":   map[string]interface{}{"type": "boolean"},
+									"properties": map[string]any{
+										"title":       map[string]any{"type": "string"},
+										"description": map[string]any{"type": "string"},
+										"imageUrl":    map[string]any{"type": "string"},
+										"isCorrect":   map[string]any{"type": "boolean"},
 									},
 									"required": []string{"title", "isCorrect"},
 								},
@@ -233,33 +193,33 @@ func setupMCPServer() *mcpserver.StreamableHTTPServer {
 		Description: "Update an existing quiz",
 		InputSchema: mcp.ToolInputSchema{
 			Type: "object",
-			Properties: map[string]interface{}{
-				"uuid":        map[string]interface{}{"type": "string"},
-				"title":       map[string]interface{}{"type": "string"},
-				"description": map[string]interface{}{"type": "string"},
-				"isPublished": map[string]interface{}{"type": "boolean"},
-				"imageUrl":    map[string]interface{}{"type": "string"},
-				"questions": map[string]interface{}{
+			Properties: map[string]any{
+				"uuid":        map[string]any{"type": "string"},
+				"title":       map[string]any{"type": "string"},
+				"description": map[string]any{"type": "string"},
+				"isPublished": map[string]any{"type": "boolean"},
+				"imageUrl":    map[string]any{"type": "string"},
+				"questions": map[string]any{
 					"type": "array",
-					"items": map[string]interface{}{
+					"items": map[string]any{
 						"type": "object",
-						"properties": map[string]interface{}{
-							"uuid":                map[string]interface{}{"type": "string"},
-							"title":               map[string]interface{}{"type": "string"},
-							"description":         map[string]interface{}{"type": "string"},
-							"imageUrl":            map[string]interface{}{"type": "string"},
-							"explanation":         map[string]interface{}{"type": "string"},
-							"explanationImageUrl": map[string]interface{}{"type": "string"},
-							"answers": map[string]interface{}{
+						"properties": map[string]any{
+							"uuid":                map[string]any{"type": "string"},
+							"title":               map[string]any{"type": "string"},
+							"description":         map[string]any{"type": "string"},
+							"imageUrl":            map[string]any{"type": "string"},
+							"explanation":         map[string]any{"type": "string"},
+							"explanationImageUrl": map[string]any{"type": "string"},
+							"answers": map[string]any{
 								"type": "array",
-								"items": map[string]interface{}{
+								"items": map[string]any{
 									"type": "object",
-									"properties": map[string]interface{}{
-										"uuid":        map[string]interface{}{"type": "string"},
-										"title":       map[string]interface{}{"type": "string"},
-										"description": map[string]interface{}{"type": "string"},
-										"imageUrl":    map[string]interface{}{"type": "string"},
-										"isCorrect":   map[string]interface{}{"type": "boolean"},
+									"properties": map[string]any{
+										"uuid":        map[string]any{"type": "string"},
+										"title":       map[string]any{"type": "string"},
+										"description": map[string]any{"type": "string"},
+										"imageUrl":    map[string]any{"type": "string"},
+										"isCorrect":   map[string]any{"type": "boolean"},
 									},
 									"required": []string{"title", "isCorrect"},
 								},
@@ -277,7 +237,7 @@ func setupMCPServer() *mcpserver.StreamableHTTPServer {
 		if err != nil {
 			return mcp.NewToolResultError(err.Error()), nil
 		}
-		args, ok := request.Params.Arguments.(map[string]interface{})
+		args, ok := request.Params.Arguments.(map[string]any)
 		if !ok {
 			return mcp.NewToolResultError("invalid arguments format"), nil
 		}
@@ -292,10 +252,68 @@ func setupMCPServer() *mcpserver.StreamableHTTPServer {
 		return mcp.NewToolResultText(fmt.Sprintf("Quiz updated successfully:\n%s", string(resp))), nil
 	})
 
-	apiURL := os.Getenv("QUIZIO_API_URL")
-	if apiURL == "" {
-		apiURL = "http://localhost:8080"
+	// 6. upload_file
+	uploadFileTool := mcp.Tool{
+		Name:        "upload_file",
+		Description: "Upload a file to the server. Provide the absolute 'filepath' to a local file.",
+		InputSchema: mcp.ToolInputSchema{
+			Type: "object",
+			Properties: map[string]any{
+				"filename": map[string]any{"type": "string", "description": "The name to save the file as (e.g. image.png)"},
+				"filepath": map[string]any{"type": "string", "description": "Absolute path to the local file to upload"},
+			},
+			Required: []string{"filename", "filepath"},
+		},
 	}
+	s.AddTool(uploadFileTool, func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		token, err := getToken(ctx)
+		if err != nil {
+			return mcp.NewToolResultError(err.Error()), nil
+		}
+		args, ok := request.Params.Arguments.(map[string]any)
+		if !ok {
+			return mcp.NewToolResultError("invalid arguments format"), nil
+		}
+		filename, ok := args["filename"].(string)
+		if !ok {
+			return mcp.NewToolResultError("filename is required and must be a string"), nil
+		}
+		filepathArg, ok := args["filepath"].(string)
+		if !ok {
+			return mcp.NewToolResultError("filepath is required and must be a string"), nil
+		}
 
-	return mcpserver.NewStreamableHTTPServer(s, mcpserver.WithEndpointPath("/mcp"))
+		fileBytes, err := os.ReadFile(filepathArg)
+		if err != nil {
+			return mcp.NewToolResultError(fmt.Sprintf("Failed to read local file: %v", err)), nil
+		}
+
+		body := map[string]any{
+			"filename": filename,
+			"file":     fileBytes,
+		}
+
+		resp, err := doRequest(http.MethodPost, "/me/upload", body, token)
+		if err != nil {
+			return mcp.NewToolResultError(err.Error()), nil
+		}
+		return mcp.NewToolResultText(fmt.Sprintf("File uploaded successfully:\n%s", string(resp))), nil
+	})
+
+	apiURL := env.Config.APIURL
+
+	return mcpserver.NewStreamableHTTPServer(s,
+		mcpserver.WithEndpointPath("/mcp"),
+		mcpserver.WithHTTPContextFunc(func(ctx context.Context, r *http.Request) context.Context {
+			token := jwtauth.TokenFromHeader(r)
+			if token != "" {
+				return context.WithValue(ctx, tokenContextKey, token)
+			}
+			return ctx
+		}),
+		mcpserver.WithProtectedResourceMetadata(mcpserver.ProtectedResourceMetadataConfig{
+			Resource:             apiURL + "/mcp",
+			AuthorizationServers: []string{apiURL},
+		}),
+	)
 }

@@ -1,6 +1,7 @@
 /public/uploads
 
-./main
+main
+quizio-backend
 
 .env.local
 .env.local-docker

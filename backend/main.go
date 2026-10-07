@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -99,6 +100,23 @@ func main() {
 		})
 	})
 
+	// OAuth routes
+	service.Route("/oauth", func(router chi.Router) {
+		router.Method(http.MethodGet, "/authorize", dbWrapper.OAuthAuthorizeHandler())
+		router.Method(http.MethodPost, "/token", nethttp.NewHandler(dbWrapper.OAuthToken()))
+
+		// /oauth/grant requires authentication
+		router.With(
+			nethttp.HTTPBearerSecurityMiddleware(service.OpenAPICollector, "JWT token", "baerer", "string"),
+		).Group(func(r chi.Router) {
+			r.Use(
+				jwtauth.Verifier(auth.TokenAuth),
+				jwtauth.Authenticator(auth.TokenAuth),
+			)
+			r.Method(http.MethodPost, "/grant", nethttp.NewHandler(dbWrapper.OAuthGrant()))
+		})
+	})
+
 	service.Route("/seo", func(router chi.Router) {
 		router.With(nethttp.HTTPBearerSecurityMiddleware(service.OpenAPICollector, "SEO API Key", "baerer", "string")).Group(func(r chi.Router) {
 			r.Use(middlewares.APIKeyMiddleware(env.Config.SEOAPIKey))
@@ -129,6 +147,18 @@ func main() {
 
 	mcpServer := setupMCPServer()
 	service.Mount("/mcp", mcpServer)
+	service.Method(http.MethodGet, "/.well-known/oauth-protected-resource/mcp", mcpServer)
+
+	service.Route("/.well-known", func(router chi.Router) {
+		router.Method(http.MethodGet, "/oauth-authorization-server", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(map[string]any{
+				"issuer":                 env.Config.APIURL,
+				"authorization_endpoint": env.Config.APPURL + "/oauth-login",
+				"token_endpoint":         env.Config.APIURL + "/oauth/token",
+			})
+		}))
+	})
 
 	service.Route("/", func(r chi.Router) {
 		r.Method(http.MethodGet, "/", http.RedirectHandler("/docs", http.StatusMovedPermanently))

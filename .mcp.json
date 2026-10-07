@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "quizio": {
+      "type": "http",
+      "url": "http://localhost:8080/mcp",
+      "oauth": {
+        "clientId": "copilot-mcp-client"
+      }
+    }
+  }
+}

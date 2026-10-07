@@ -18,6 +18,8 @@ type EnvVars struct {
 	OpenAPIDocsUser     string
 	OpenAPIDocsPassword string
 	SEOAPIKey           string
+	APIURL              string
+	APPURL              string
 }
 
 var Config *EnvVars
@@ -51,6 +53,8 @@ func Load() {
 		OpenAPIDocsUser:     os.Getenv("OPENAPI_DOCS_USER"),
 		OpenAPIDocsPassword: os.Getenv("OPENAPI_DOCS_PASSWORD"),
 		SEOAPIKey:           os.Getenv("SEO_API_KEY"),
+		APIURL:              os.Getenv("API_URL"),
+		APPURL:              os.Getenv("APP_URL"),
 	}
 
 	if Config.JWTSecret == "" {
@@ -77,6 +81,12 @@ func Load() {
 	if Config.SEOAPIKey == "" {
 		log.Fatal("Environment variable SEO_API_KEY is not set\n")
 	}
+	if Config.APIURL == "" {
+		log.Fatal("Environment variable API_URL is not set\n")
+	}
+	if Config.APPURL == "" {
+		log.Fatal("Environment variable APP_URL is not set\n")
+	}
 
 	log.Printf("GO_ENV: %s\n", goEnv)
 	log.Printf("JWT_SECRET: %s\n", "(hidden)")
@@ -87,5 +97,7 @@ func Load() {
 	log.Printf("OPENAPI_DOCS_USER: %s\n", Config.OpenAPIDocsUser)
 	log.Printf("OPENAPI_DOCS_PASSWORD: %s\n", "(hidden)")
 	log.Printf("SEO_API_KEY: %s\n", "(hidden)")
+	log.Printf("API_URL: %s\n", Config.APIURL)
+	log.Printf("APP_URL: %s\n", Config.APPURL)
 	log.Printf("\n")
 }
