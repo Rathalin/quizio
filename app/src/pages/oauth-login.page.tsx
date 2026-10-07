@@ -10,10 +10,12 @@ import { useState } from 'react';
 import LoadingCircle from '@/components/LoadingCircle';
 import { useSession } from 'next-auth/react';
 import { getMessages } from '@/utilities/getMessages';
-import { AbstractIntlMessages } from 'next-intl';
+import { AbstractIntlMessages, useTranslations } from 'next-intl';
 import { z } from 'zod';
+import Head from 'next/head';
 import { prefixWithBackendUrl } from '@/utilities/urlUtils';
 import { isAllowedOAuthRedirectUri } from '@/utilities/oauthUtils';
+import { quizioTitle } from '@/utilities/quizioTitle';
 
 export const getServerSideProps: GetServerSideProps<{
   clientId: string;
@@ -47,7 +49,7 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
 
-  const messages = await getMessages(ctx.locale, ['header', 'common']);
+  const messages = await getMessages(ctx.locale, ['oauthLogin']);
 
   return {
     props: {
@@ -64,13 +66,14 @@ export default function OAuthLoginPage({
   redirectUri,
   state,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const t = useTranslations('oauthLogin');
   const { data: session } = useSession();
   const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState('');
+  const [hasError, setHasError] = useState(false);
 
   const onAuthorize = async () => {
     setIsPending(true);
-    setError('');
+    setHasError(false);
     try {
       const accessToken = session?.user.accessToken;
 
@@ -110,63 +113,74 @@ export default function OAuthLoginPage({
       window.location.href = redirectUrl.toString();
     } catch (err) {
       console.error(err);
-      setError('An error occurred during authorization.');
+      setHasError(true);
       setIsPending(false);
     }
   };
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
-      <Card sx={{ maxWidth: 400, width: '100%' }}>
-        <CardContent
-          sx={{ display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'center', textAlign: 'center' }}
-        >
-          <Typography variant="h5" component="h1">
-            Authorize Application
-          </Typography>
-          <Typography variant="body1">
-            The application <strong>{clientId}</strong> is requesting access to your Quizio account.
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            You will be redirected to <strong>{new URL(redirectUri).host}</strong>
-          </Typography>
-
-          {error && (
-            <Typography variant="body2" color="error">
-              {error}
+    <>
+      <Head>
+        <title>{quizioTitle(t('meta.title'))}</title>
+      </Head>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
+        <Card sx={{ maxWidth: 400, width: '100%' }}>
+          <CardContent
+            sx={{ display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'center', textAlign: 'center' }}
+          >
+            <Typography variant="h5" component="h1">
+              {t('heading')}
             </Typography>
-          )}
+            <Typography variant="body1">
+              {t.rich('description', {
+                clientId,
+                strong: (chunks) => <strong>{chunks}</strong>,
+              })}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {t.rich('redirectNotice', {
+                host: new URL(redirectUri).host,
+                strong: (chunks) => <strong>{chunks}</strong>,
+              })}
+            </Typography>
 
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={onAuthorize}
-            disabled={isPending}
-            startIcon={isPending ? <LoadingCircle /> : null}
-            fullWidth
-            size="large"
-          >
-            Authorize
-          </Button>
+            {hasError && (
+              <Typography variant="body2" color="error">
+                {t('status.error')}
+              </Typography>
+            )}
 
-          <Button
-            variant="text"
-            color="inherit"
-            onClick={() => {
-              const cancelUrl = new URL(redirectUri);
-              cancelUrl.searchParams.set('error', 'access_denied');
-              if (state) {
-                cancelUrl.searchParams.set('state', state);
-              }
-              window.location.href = cancelUrl.toString();
-            }}
-            disabled={isPending}
-            fullWidth
-          >
-            Cancel
-          </Button>
-        </CardContent>
-      </Card>
-    </Box>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={onAuthorize}
+              disabled={isPending}
+              startIcon={isPending ? <LoadingCircle /> : null}
+              fullWidth
+              size="large"
+            >
+              {t('actions.authorize')}
+            </Button>
+
+            <Button
+              variant="text"
+              color="inherit"
+              onClick={() => {
+                const cancelUrl = new URL(redirectUri);
+                cancelUrl.searchParams.set('error', 'access_denied');
+                if (state) {
+                  cancelUrl.searchParams.set('state', state);
+                }
+                window.location.href = cancelUrl.toString();
+              }}
+              disabled={isPending}
+              fullWidth
+            >
+              {t('actions.cancel')}
+            </Button>
+          </CardContent>
+        </Card>
+      </Box>
+    </>
   );
 }

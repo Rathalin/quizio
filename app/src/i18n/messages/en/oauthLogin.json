@@ -1,0 +1,16 @@
+{
+  "actions": {
+    "authorize": "Authorize",
+    "cancel": "Cancel"
+  },
+  "description": "The application <strong>{clientId}</strong> is requesting access to your Quizio account.",
+  "heading": "Authorize application",
+  "meta": {
+    "title": "Authorize application"
+  },
+  "redirectNotice": "You will be redirected to <strong>{host}</strong>",
+  "status": {
+    "error": "An error occurred during authorization."
+  }
+}
+

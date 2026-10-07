@@ -1,0 +1,16 @@
+{
+  "actions": {
+    "authorize": "Autorisieren",
+    "cancel": "Abbrechen"
+  },
+  "description": "Die Anwendung <strong>{clientId}</strong> möchte auf dein Quizio-Konto zugreifen.",
+  "heading": "Anwendung autorisieren",
+  "meta": {
+    "title": "Anwendung autorisieren"
+  },
+  "redirectNotice": "Du wirst zu <strong>{host}</strong> weitergeleitet",
+  "status": {
+    "error": "Bei der Autorisierung ist ein Fehler aufgetreten."
+  }
+}
+
