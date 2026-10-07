@@ -127,6 +127,9 @@ func main() {
 		service.Method(http.MethodGet, "/docs/openapi.json", service.OpenAPICollector)
 	}
 
+	mcpServer := setupMCPServer()
+	service.Mount("/mcp", mcpServer)
+
 	service.Route("/", func(r chi.Router) {
 		r.Method(http.MethodGet, "/", http.RedirectHandler("/docs", http.StatusMovedPermanently))
 	})

@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "quizio": {
+      "url": "http://localhost:8080/mcp"
+    }
+  }
+}
