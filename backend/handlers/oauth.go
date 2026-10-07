@@ -5,42 +5,90 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
+	"net"
 	"net/http"
-	"os"
+	"net/url"
+	"slices"
 	"sync"
 	"time"
 
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
+
+	"github.com/Rathalin/quizio/backend/auth"
+	"github.com/Rathalin/quizio/backend/env"
 )
 
+const authCodeTTL = 5 * time.Minute
+
+// authCodeEntry is the data bound to an issued authorization code.
+type authCodeEntry struct {
+	UserID      int64
+	ClientID    string
+	RedirectURI string
+}
+
 var (
-	// authCodes maps auth code -> user ID
+	// authCodes maps auth code -> authCodeEntry
 	authCodes sync.Map
 )
 
-// GenerateAuthCode generates a random hex string for the auth code.
-func generateAuthCode() string {
-	b := make([]byte, 16)
-	rand.Read(b)
-	return hex.EncodeToString(b)
+// allowedRedirectURIs contains non-loopback redirect URIs that MCP clients are allowed to use.
+// Loopback redirect URIs (http://localhost:*, http://127.0.0.1:*, http://[::1]:*) are always allowed.
+// Keep in sync with app/src/utilities/oauthUtils.ts.
+var allowedRedirectURIs = []string{
+	"https://vscode.dev/redirect",
+	"https://insiders.vscode.dev/redirect",
 }
 
-// OAuthAuthorizeHandler just redirects to the frontend login mask.
+// IsAllowedRedirectURI reports whether the redirect URI is safe to send an authorization code to.
+// Only loopback addresses (native apps, RFC 8252) and an explicit allowlist are accepted, so that
+// codes can't be sent to an attacker-controlled host.
+func IsAllowedRedirectURI(redirectURI string) bool {
+	if slices.Contains(allowedRedirectURIs, redirectURI) {
+		return true
+	}
+
+	u, err := url.Parse(redirectURI)
+	if err != nil || u.Scheme != "http" || u.User != nil || u.Fragment != "" {
+		return false
+	}
+
+	host := u.Hostname()
+	if host == "localhost" {
+		return true
+	}
+	ip := net.ParseIP(host)
+	return ip != nil && ip.IsLoopback()
+}
+
+// generateAuthCode generates a random hex string for the auth code.
+func generateAuthCode() (string, error) {
+	b := make([]byte, 16)
+	if _, err := rand.Read(b); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(b), nil
+}
+
+// OAuthAuthorizeHandler validates the request and redirects to the frontend login/consent page.
 func (dbw *DBWrapper) OAuthAuthorizeHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		clientID := r.URL.Query().Get("client_id")
-		redirectURI := r.URL.Query().Get("redirect_uri")
-		state := r.URL.Query().Get("state")
+		query := r.URL.Query()
+		redirectURI := query.Get("redirect_uri")
 
-		frontendURL := os.Getenv("QUIZIO_FRONTEND_URL")
-		if frontendURL == "" {
-			frontendURL = "http://localhost:3000"
+		if !IsAllowedRedirectURI(redirectURI) {
+			http.Error(w, "invalid redirect_uri", http.StatusBadRequest)
+			return
 		}
 
+		params := url.Values{}
+		params.Set("client_id", query.Get("client_id"))
+		params.Set("redirect_uri", redirectURI)
+		params.Set("state", query.Get("state"))
+
 		// Redirect to Next.js frontend to handle login and consent
-		target := fmt.Sprintf("%s/oauth-login?client_id=%s&redirect_uri=%s&state=%s",
-			frontendURL, clientID, redirectURI, state)
+		target := fmt.Sprintf("%s/oauth-login?%s", env.Config.APPURL, params.Encode())
 		http.Redirect(w, r, target, http.StatusFound)
 	}
 }
@@ -64,13 +112,24 @@ func (dbw *DBWrapper) OAuthGrant() usecase.Interactor {
 			return status.Wrap(err, status.Unauthenticated)
 		}
 
-		code := generateAuthCode()
-		
-		// Store code -> userID for 5 minutes
-		authCodes.Store(code, userID)
-		
+		if !IsAllowedRedirectURI(input.RedirectURI) {
+			return status.Wrap(fmt.Errorf("invalid redirect_uri"), status.InvalidArgument)
+		}
+
+		code, err := generateAuthCode()
+		if err != nil {
+			return status.Wrap(err, status.Internal)
+		}
+
+		// Store code -> entry for a short time
+		authCodes.Store(code, authCodeEntry{
+			UserID:      userID,
+			ClientID:    input.ClientID,
+			RedirectURI: input.RedirectURI,
+		})
+
 		go func(c string) {
-			time.Sleep(5 * time.Minute)
+			time.Sleep(authCodeTTL)
 			authCodes.Delete(c)
 		}(code)
 
@@ -96,26 +155,34 @@ func (dbw *DBWrapper) OAuthToken() usecase.Interactor {
 	}
 
 	return usecase.NewInteractor(func(ctx context.Context, input tokenRequest, output *tokenResponse) error {
-		userIDAny, ok := authCodes.Load(input.Code)
+		if input.GrantType != "" && input.GrantType != "authorization_code" {
+			return status.Wrap(fmt.Errorf("unsupported grant_type"), status.InvalidArgument)
+		}
+
+		// LoadAndDelete: code is single-use, even if the request below fails
+		entryAny, ok := authCodes.LoadAndDelete(input.Code)
 		if !ok {
 			return status.Wrap(fmt.Errorf("invalid or expired authorization code"), status.InvalidArgument)
 		}
-		
-		userID := userIDAny.(int64)
+		entry := entryAny.(authCodeEntry)
 
-		// Code is single-use
-		authCodes.Delete(input.Code)
+		// RFC 6749 4.1.3: redirect_uri must be identical to the one used in the authorization request
+		if input.RedirectURI != entry.RedirectURI {
+			return status.Wrap(fmt.Errorf("redirect_uri mismatch"), status.InvalidArgument)
+		}
+		if input.ClientID != "" && input.ClientID != entry.ClientID {
+			return status.Wrap(fmt.Errorf("client_id mismatch"), status.InvalidArgument)
+		}
 
-		accessToken, err := generateJWT(userID)
+		accessToken, err := generateJWT(entry.UserID)
 		if err != nil {
 			return status.Wrap(err, status.Internal)
 		}
 
 		output.AccessToken = accessToken
 		output.TokenType = "Bearer"
-		output.ExpiresIn = 3600 // 1 hour
+		output.ExpiresIn = int(auth.AccessTokenTTL.Seconds())
 
 		return nil
 	})
 }
-

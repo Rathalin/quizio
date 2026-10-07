@@ -16,6 +16,8 @@ services:
       - OPENAPI_DOCS_USER=${OPENAPI_DOCS_USER}
       - OPENAPI_DOCS_PASSWORD=${OPENAPI_DOCS_PASSWORD}
       - SEO_API_KEY=${SEO_API_KEY}
+      - API_URL=${API_URL}
+      - APP_URL=${APP_URL}
     networks:
       - web-net
     deploy:

@@ -3,11 +3,12 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	"os"
+	"path/filepath"
 
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/mark3labs/mcp-go/mcp"
@@ -253,16 +254,18 @@ func setupMCPServer() *mcpserver.StreamableHTTPServer {
 	})
 
 	// 6. upload_file
+	// NOTE: The file content must be supplied by the client. Never read paths from the
+	// server's filesystem here, as that would allow reading arbitrary server files.
 	uploadFileTool := mcp.Tool{
 		Name:        "upload_file",
-		Description: "Upload a file to the server. Provide the absolute 'filepath' to a local file.",
+		Description: "Upload a file (e.g. an image for a quiz) to Quizio. Provide the file content base64-encoded. Returns the URL of the uploaded file.",
 		InputSchema: mcp.ToolInputSchema{
 			Type: "object",
 			Properties: map[string]any{
-				"filename": map[string]any{"type": "string", "description": "The name to save the file as (e.g. image.png)"},
-				"filepath": map[string]any{"type": "string", "description": "Absolute path to the local file to upload"},
+				"filename":      map[string]any{"type": "string", "description": "The name to save the file as (e.g. image.png)"},
+				"contentBase64": map[string]any{"type": "string", "description": "The file content, base64-encoded (standard encoding)"},
 			},
-			Required: []string{"filename", "filepath"},
+			Required: []string{"filename", "contentBase64"},
 		},
 	}
 	s.AddTool(uploadFileTool, func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
@@ -275,22 +278,23 @@ func setupMCPServer() *mcpserver.StreamableHTTPServer {
 			return mcp.NewToolResultError("invalid arguments format"), nil
 		}
 		filename, ok := args["filename"].(string)
-		if !ok {
+		if !ok || filename == "" {
 			return mcp.NewToolResultError("filename is required and must be a string"), nil
 		}
-		filepathArg, ok := args["filepath"].(string)
-		if !ok {
-			return mcp.NewToolResultError("filepath is required and must be a string"), nil
+		filename = filepath.Base(filename)
+		contentBase64, ok := args["contentBase64"].(string)
+		if !ok || contentBase64 == "" {
+			return mcp.NewToolResultError("contentBase64 is required and must be a string"), nil
 		}
 
-		fileBytes, err := os.ReadFile(filepathArg)
+		fileBytes, err := base64.StdEncoding.DecodeString(contentBase64)
 		if err != nil {
-			return mcp.NewToolResultError(fmt.Sprintf("Failed to read local file: %v", err)), nil
+			return mcp.NewToolResultError(fmt.Sprintf("contentBase64 is not valid base64: %v", err)), nil
 		}
 
 		body := map[string]any{
 			"filename": filename,
-			"file":     fileBytes,
+			"file":     fileBytes, // []byte is marshalled as base64, as expected by /me/upload
 		}
 
 		resp, err := doRequest(http.MethodPost, "/me/upload", body, token)

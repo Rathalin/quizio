@@ -12,6 +12,8 @@ import { useSession } from 'next-auth/react';
 import { getMessages } from '@/utilities/getMessages';
 import { AbstractIntlMessages } from 'next-intl';
 import { z } from 'zod';
+import { prefixWithBackendUrl } from '@/utilities/urlUtils';
+import { isAllowedOAuthRedirectUri } from '@/utilities/oauthUtils';
 
 export const getServerSideProps: GetServerSideProps<{
   clientId: string;
@@ -23,24 +25,23 @@ export const getServerSideProps: GetServerSideProps<{
   const redirectUri = typeof ctx.query?.redirect_uri === 'string' ? ctx.query.redirect_uri : '';
   const state = typeof ctx.query?.state === 'string' ? ctx.query.state : '';
 
-  const session = await getServerSession(ctx.req, ctx.res, authOptions);
-
-  if (!session) {
-    const callbackUrl = encodeURIComponent(
-      `/oauth-login?client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}`,
-    );
+  if (!clientId || !redirectUri || !isAllowedOAuthRedirectUri(redirectUri)) {
     return {
       redirect: {
-        destination: `/auth/signin?callbackUrl=${callbackUrl}`,
+        destination: '/',
         permanent: false,
       },
     };
   }
 
-  if (!clientId || !redirectUri) {
+  const session = await getServerSession(ctx.req, ctx.res, authOptions);
+
+  if (!session) {
+    const oauthParams = new URLSearchParams({ client_id: clientId, redirect_uri: redirectUri, state });
+    const signInParams = new URLSearchParams({ callbackUrl: `/oauth-login?${oauthParams.toString()}` });
     return {
       redirect: {
-        destination: '/',
+        destination: `/auth/signin?${signInParams.toString()}`,
         permanent: false,
       },
     };
@@ -72,13 +73,8 @@ export default function OAuthLoginPage({
     setError('');
     try {
       const accessToken = session?.user.accessToken;
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-      if (!apiUrl) {
-        throw new Error('NEXT_PUBLIC_API_URL is not set');
-      }
-
-      const res = await fetch(`${apiUrl}/oauth/grant`, {
+      const res = await fetch(prefixWithBackendUrl('/oauth/grant'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -131,6 +127,9 @@ export default function OAuthLoginPage({
           <Typography variant="body1">
             The application <strong>{clientId}</strong> is requesting access to your Quizio account.
           </Typography>
+          <Typography variant="body2" color="text.secondary">
+            You will be redirected to <strong>{new URL(redirectUri).host}</strong>
+          </Typography>
 
           {error && (
             <Typography variant="body2" color="error">
@@ -154,7 +153,12 @@ export default function OAuthLoginPage({
             variant="text"
             color="inherit"
             onClick={() => {
-              window.location.href = redirectUri;
+              const cancelUrl = new URL(redirectUri);
+              cancelUrl.searchParams.set('error', 'access_denied');
+              if (state) {
+                cancelUrl.searchParams.set('state', state);
+              }
+              window.location.href = cancelUrl.toString();
             }}
             disabled={isPending}
             fullWidth
