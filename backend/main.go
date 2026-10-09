@@ -115,7 +115,11 @@ func main() {
 			}
 			var clientID string
 			if uris, ok := req["redirect_uris"].([]any); ok && len(uris) > 0 {
-				_, tokenString, err := auth.TokenAuth.Encode(map[string]any{"redirect_uris": uris})
+				claims := map[string]any{"redirect_uris": uris}
+				if name, ok := req["client_name"].(string); ok {
+					claims["client_name"] = name
+				}
+				_, tokenString, err := auth.TokenAuth.Encode(claims)
 				if err == nil {
 					clientID = tokenString
 				}

@@ -115,6 +115,17 @@ func (dbw *DBWrapper) OAuthAuthorizeHandler() http.HandlerFunc {
 			params.Set("resource", query.Get("resource"))
 		}
 
+		if clientID := query.Get("client_id"); clientID != "" {
+			token, err := auth.TokenAuth.Decode(clientID)
+			if err == nil {
+				if clientName, ok := token.Get("client_name"); ok {
+					if nameStr, ok := clientName.(string); ok {
+						params.Set("client_name", nameStr)
+					}
+				}
+			}
+		}
+
 		// Redirect to Next.js frontend to handle login and consent
 		target := fmt.Sprintf("%s/oauth-login?%s", env.Config.APPURL, params.Encode())
 		http.Redirect(w, r, target, http.StatusFound)
