@@ -158,6 +158,14 @@ func main() {
 				"token_endpoint":         env.Config.APIURL + "/oauth/token",
 			})
 		}))
+
+		router.Method(http.MethodGet, "/oauth-protected-resource", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(map[string]any{
+				"resource":              env.Config.APIURL + "/mcp",
+				"authorization_servers": []string{env.Config.APIURL},
+			})
+		}))
 	})
 
 	service.Route("/", func(r chi.Router) {
