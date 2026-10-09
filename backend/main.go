@@ -106,6 +106,21 @@ func main() {
 		router.Method(http.MethodGet, "/authorize", dbWrapper.OAuthAuthorizeHandler())
 		router.Method(http.MethodPost, "/token", nethttp.NewHandler(dbWrapper.OAuthToken()))
 
+		// Dynamic Client Registration (RFC 7591)
+		router.Method(http.MethodPost, "/register", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			var req map[string]any
+			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusCreated)
+			json.NewEncoder(w).Encode(map[string]any{
+				"client_id":     "dynamic-client-id-" + r.RemoteAddr,
+				"redirect_uris": req["redirect_uris"],
+			})
+		}))
+
 		// /oauth/grant requires authentication
 		router.With(
 			nethttp.HTTPBearerSecurityMiddleware(service.OpenAPICollector, "JWT token", "baerer", "string"),
