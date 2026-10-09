@@ -3,6 +3,8 @@ package handlers
 import (
 	"context"
 	"crypto/rand"
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
 	"fmt"
 	"net"
@@ -23,9 +25,11 @@ const authCodeTTL = 5 * time.Minute
 
 // authCodeEntry is the data bound to an issued authorization code.
 type authCodeEntry struct {
-	UserID      int64
-	ClientID    string
-	RedirectURI string
+	UserID              int64
+	ClientID            string
+	RedirectURI         string
+	CodeChallenge       string
+	CodeChallengeMethod string
 }
 
 var (
@@ -39,27 +43,45 @@ var (
 var allowedRedirectURIs = []string{
 	"https://vscode.dev/redirect",
 	"https://insiders.vscode.dev/redirect",
+	"https://claude.ai/api/mcp/auth_callback",
+	"https://claude.com/api/mcp/auth_callback",
 }
 
-// IsAllowedRedirectURI reports whether the redirect URI is safe to send an authorization code to.
-// Only loopback addresses (native apps, RFC 8252) and an explicit allowlist are accepted, so that
-// codes can't be sent to an attacker-controlled host.
-func IsAllowedRedirectURI(redirectURI string) bool {
+// IsValidClientRedirectURI reports whether the redirect URI is safe for the given client.
+// It checks the static allowlist, loopback rules, and dynamic client registrations.
+func IsValidClientRedirectURI(clientID, redirectURI string) bool {
 	if slices.Contains(allowedRedirectURIs, redirectURI) {
 		return true
 	}
 
 	u, err := url.Parse(redirectURI)
-	if err != nil || u.Scheme != "http" || u.User != nil || u.Fragment != "" {
-		return false
+	if err == nil && u.Scheme == "http" && u.User == nil && u.Fragment == "" {
+		host := u.Hostname()
+		if host == "localhost" {
+			return true
+		}
+		ip := net.ParseIP(host)
+		if ip != nil && ip.IsLoopback() {
+			return true
+		}
 	}
 
-	host := u.Hostname()
-	if host == "localhost" {
-		return true
+	if clientID != "" {
+		token, err := auth.TokenAuth.Decode(clientID)
+		if err == nil {
+			if urisIf, ok := token.Get("redirect_uris"); ok {
+				if uris, ok := urisIf.([]interface{}); ok {
+					for _, uriIf := range uris {
+						if uri, ok := uriIf.(string); ok && uri == redirectURI {
+							return true
+						}
+					}
+				}
+			}
+		}
 	}
-	ip := net.ParseIP(host)
-	return ip != nil && ip.IsLoopback()
+
+	return false
 }
 
 // generateAuthCode generates a random hex string for the auth code.
@@ -77,7 +99,7 @@ func (dbw *DBWrapper) OAuthAuthorizeHandler() http.HandlerFunc {
 		query := r.URL.Query()
 		redirectURI := query.Get("redirect_uri")
 
-		if !IsAllowedRedirectURI(redirectURI) {
+		if !IsValidClientRedirectURI(query.Get("client_id"), redirectURI) {
 			http.Error(w, "invalid redirect_uri", http.StatusBadRequest)
 			return
 		}
@@ -86,6 +108,12 @@ func (dbw *DBWrapper) OAuthAuthorizeHandler() http.HandlerFunc {
 		params.Set("client_id", query.Get("client_id"))
 		params.Set("redirect_uri", redirectURI)
 		params.Set("state", query.Get("state"))
+		params.Set("code_challenge", query.Get("code_challenge"))
+		params.Set("code_challenge_method", query.Get("code_challenge_method"))
+		params.Set("response_type", query.Get("response_type"))
+		if query.Has("resource") {
+			params.Set("resource", query.Get("resource"))
+		}
 
 		// Redirect to Next.js frontend to handle login and consent
 		target := fmt.Sprintf("%s/oauth-login?%s", env.Config.APPURL, params.Encode())
@@ -96,9 +124,11 @@ func (dbw *DBWrapper) OAuthAuthorizeHandler() http.HandlerFunc {
 // OAuthGrant creates an auth code for an authenticated user.
 func (dbw *DBWrapper) OAuthGrant() usecase.Interactor {
 	type grantRequest struct {
-		ClientID    string `json:"client_id" required:"true"`
-		RedirectURI string `json:"redirect_uri" required:"true"`
-		State       string `json:"state"`
+		ClientID            string `json:"client_id" required:"true"`
+		RedirectURI         string `json:"redirect_uri" required:"true"`
+		State               string `json:"state"`
+		CodeChallenge       string `json:"code_challenge"`
+		CodeChallengeMethod string `json:"code_challenge_method"`
 	}
 
 	type grantResponse struct {
@@ -112,7 +142,7 @@ func (dbw *DBWrapper) OAuthGrant() usecase.Interactor {
 			return status.Wrap(err, status.Unauthenticated)
 		}
 
-		if !IsAllowedRedirectURI(input.RedirectURI) {
+		if !IsValidClientRedirectURI(input.ClientID, input.RedirectURI) {
 			return status.Wrap(fmt.Errorf("invalid redirect_uri"), status.InvalidArgument)
 		}
 
@@ -123,9 +153,11 @@ func (dbw *DBWrapper) OAuthGrant() usecase.Interactor {
 
 		// Store code -> entry for a short time
 		authCodes.Store(code, authCodeEntry{
-			UserID:      userID,
-			ClientID:    input.ClientID,
-			RedirectURI: input.RedirectURI,
+			UserID:              userID,
+			ClientID:            input.ClientID,
+			RedirectURI:         input.RedirectURI,
+			CodeChallenge:       input.CodeChallenge,
+			CodeChallengeMethod: input.CodeChallengeMethod,
 		})
 
 		go func(c string) {
@@ -142,10 +174,11 @@ func (dbw *DBWrapper) OAuthGrant() usecase.Interactor {
 // OAuthToken exchanges the auth code for a standard JWT token.
 func (dbw *DBWrapper) OAuthToken() usecase.Interactor {
 	type tokenRequest struct {
-		GrantType   string `formData:"grant_type" json:"grant_type"`
-		Code        string `formData:"code" json:"code" required:"true"`
-		RedirectURI string `formData:"redirect_uri" json:"redirect_uri"`
-		ClientID    string `formData:"client_id" json:"client_id"`
+		GrantType    string `formData:"grant_type" json:"grant_type"`
+		Code         string `formData:"code" json:"code" required:"true"`
+		RedirectURI  string `formData:"redirect_uri" json:"redirect_uri"`
+		ClientID     string `formData:"client_id" json:"client_id"`
+		CodeVerifier string `formData:"code_verifier" json:"code_verifier"`
 	}
 
 	type tokenResponse struct {
@@ -172,6 +205,25 @@ func (dbw *DBWrapper) OAuthToken() usecase.Interactor {
 		}
 		if input.ClientID != "" && input.ClientID != entry.ClientID {
 			return status.Wrap(fmt.Errorf("client_id mismatch"), status.InvalidArgument)
+		}
+
+		// PKCE Validation
+		if entry.CodeChallenge != "" {
+			if input.CodeVerifier == "" {
+				return status.Wrap(fmt.Errorf("code_verifier required"), status.InvalidArgument)
+			}
+			if entry.CodeChallengeMethod == "S256" {
+				hash := sha256.Sum256([]byte(input.CodeVerifier))
+				expectedChallenge := base64.RawURLEncoding.EncodeToString(hash[:])
+				if input.CodeVerifier != entry.CodeChallenge && expectedChallenge != entry.CodeChallenge {
+					return status.Wrap(fmt.Errorf("invalid code_verifier"), status.InvalidArgument)
+				}
+			} else {
+				// Plain or undefined method fallback
+				if input.CodeVerifier != entry.CodeChallenge {
+					return status.Wrap(fmt.Errorf("invalid code_verifier"), status.InvalidArgument)
+				}
+			}
 		}
 
 		accessToken, err := generateJWT(entry.UserID)

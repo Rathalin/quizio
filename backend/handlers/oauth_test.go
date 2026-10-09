@@ -2,7 +2,7 @@ package handlers
 
 import "testing"
 
-func TestIsAllowedRedirectURI(t *testing.T) {
+func TestIsValidClientRedirectURI(t *testing.T) {
 	tests := []struct {
 		uri  string
 		want bool
@@ -31,9 +31,8 @@ func TestIsAllowedRedirectURI(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		if got := IsAllowedRedirectURI(tt.uri); got != tt.want {
-			t.Errorf("IsAllowedRedirectURI(%q) = %v, want %v", tt.uri, got, tt.want)
+		if got := IsValidClientRedirectURI("", tt.uri); got != tt.want {
+			t.Errorf("IsValidClientRedirectURI(%q) = %v, want %v", tt.uri, got, tt.want)
 		}
 	}
 }
-

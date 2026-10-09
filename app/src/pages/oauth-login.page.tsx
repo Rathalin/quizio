@@ -14,20 +14,25 @@ import { AbstractIntlMessages, useTranslations } from 'next-intl';
 import { z } from 'zod';
 import Head from 'next/head';
 import { prefixWithBackendUrl } from '@/utilities/urlUtils';
-import { isAllowedOAuthRedirectUri } from '@/utilities/oauthUtils';
 import { quizioTitle } from '@/utilities/quizioTitle';
 
 export const getServerSideProps: GetServerSideProps<{
   clientId: string;
   redirectUri: string;
   state: string;
+  codeChallenge: string;
+  codeChallengeMethod: string;
   messages: AbstractIntlMessages;
 }> = async (ctx) => {
   const clientId = typeof ctx.query?.client_id === 'string' ? ctx.query.client_id : '';
   const redirectUri = typeof ctx.query?.redirect_uri === 'string' ? ctx.query.redirect_uri : '';
   const state = typeof ctx.query?.state === 'string' ? ctx.query.state : '';
+  const codeChallenge = typeof ctx.query?.code_challenge === 'string' ? ctx.query.code_challenge : '';
+  const codeChallengeMethod = typeof ctx.query?.code_challenge_method === 'string' ? ctx.query.code_challenge_method : '';
+  const responseType = typeof ctx.query?.response_type === 'string' ? ctx.query.response_type : '';
+  const resource = typeof ctx.query?.resource === 'string' ? ctx.query.resource : '';
 
-  if (!clientId || !redirectUri || !isAllowedOAuthRedirectUri(redirectUri)) {
+  if (!clientId || !redirectUri) {
     return {
       redirect: {
         destination: '/',
@@ -40,6 +45,10 @@ export const getServerSideProps: GetServerSideProps<{
 
   if (!session) {
     const oauthParams = new URLSearchParams({ client_id: clientId, redirect_uri: redirectUri, state });
+    if (codeChallenge) oauthParams.set('code_challenge', codeChallenge);
+    if (codeChallengeMethod) oauthParams.set('code_challenge_method', codeChallengeMethod);
+    if (responseType) oauthParams.set('response_type', responseType);
+    if (resource) oauthParams.set('resource', resource);
     const signInParams = new URLSearchParams({ callbackUrl: `/oauth-login?${oauthParams.toString()}` });
     return {
       redirect: {
@@ -56,6 +65,8 @@ export const getServerSideProps: GetServerSideProps<{
       clientId,
       redirectUri,
       state,
+      codeChallenge,
+      codeChallengeMethod,
       messages,
     },
   };
@@ -65,6 +76,8 @@ export default function OAuthLoginPage({
   clientId,
   redirectUri,
   state,
+  codeChallenge,
+  codeChallengeMethod,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const t = useTranslations('oauthLogin');
   const { data: session } = useSession();
@@ -87,6 +100,8 @@ export default function OAuthLoginPage({
           client_id: clientId,
           redirect_uri: redirectUri,
           state: state,
+          code_challenge: codeChallenge,
+          code_challenge_method: codeChallengeMethod,
         }),
       });
 
@@ -133,7 +148,7 @@ export default function OAuthLoginPage({
             </Typography>
             <Typography variant="body1">
               {t.rich('description', {
-                clientId,
+                clientId: clientId.length > 40 ? clientId.substring(0, 10) + '...' + clientId.substring(clientId.length - 10) : clientId,
                 strong: (chunks) => <strong>{chunks}</strong>,
               })}
             </Typography>

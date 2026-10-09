@@ -113,10 +113,21 @@ func main() {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}
+			var clientID string
+			if uris, ok := req["redirect_uris"].([]any); ok && len(uris) > 0 {
+				_, tokenString, err := auth.TokenAuth.Encode(map[string]any{"redirect_uris": uris})
+				if err == nil {
+					clientID = tokenString
+				}
+			}
+			if clientID == "" {
+				clientID = "dynamic-client-id-" + r.RemoteAddr
+			}
+
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusCreated)
 			json.NewEncoder(w).Encode(map[string]any{
-				"client_id":     "dynamic-client-id-" + r.RemoteAddr,
+				"client_id":     clientID,
 				"redirect_uris": req["redirect_uris"],
 			})
 		}))
@@ -183,7 +194,7 @@ func main() {
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(map[string]any{
 				"issuer":                           env.Config.APIURL,
-				"authorization_endpoint":           env.Config.APPURL + "/oauth-login",
+				"authorization_endpoint":           env.Config.APIURL + "/oauth/authorize",
 				"token_endpoint":                   env.Config.APIURL + "/oauth/token",
 				"registration_endpoint":            env.Config.APIURL + "/oauth/register",
 				"code_challenge_methods_supported": []string{"S256"},
