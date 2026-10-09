@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -146,16 +147,31 @@ func main() {
 	}
 
 	mcpServer := setupMCPServer()
-	service.Mount("/mcp", mcpServer)
+
+	mcpAuthMiddleware := func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			token := jwtauth.TokenFromHeader(r)
+			if token == "" {
+				w.Header().Set("WWW-Authenticate", fmt.Sprintf(`Bearer resource_metadata="%s/.well-known/oauth-protected-resource"`, env.Config.APIURL))
+				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+				return
+			}
+			next.ServeHTTP(w, r)
+		})
+	}
+
+	service.Mount("/mcp", mcpAuthMiddleware(mcpServer))
 	service.Method(http.MethodGet, "/.well-known/oauth-protected-resource/mcp", mcpServer)
 
 	service.Route("/.well-known", func(router chi.Router) {
 		router.Method(http.MethodGet, "/oauth-authorization-server", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(map[string]any{
-				"issuer":                 env.Config.APIURL,
-				"authorization_endpoint": env.Config.APPURL + "/oauth-login",
-				"token_endpoint":         env.Config.APIURL + "/oauth/token",
+				"issuer":                           env.Config.APIURL,
+				"authorization_endpoint":           env.Config.APPURL + "/oauth-login",
+				"token_endpoint":                   env.Config.APIURL + "/oauth/token",
+				"registration_endpoint":            env.Config.APIURL + "/oauth/register",
+				"code_challenge_methods_supported": []string{"S256"},
 			})
 		}))
 
