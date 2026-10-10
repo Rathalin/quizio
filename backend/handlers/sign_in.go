@@ -46,10 +46,11 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 			ID           int64
 			PasswordHash string
 			IsBlocked    bool
+			IsConfirmed  bool
 		}
 		// Fetch user details
 		err = dbw.DB.QueryRow(`
-			SELECT id, password_hash, uuid, is_blocked
+			SELECT id, password_hash, uuid, is_blocked, is_confirmed
 			FROM user_account
 			WHERE username = $1
 		`, trimmedUsername).Scan(
@@ -57,9 +58,14 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 			&row.PasswordHash,
 			&response.UserUUID,
 			&row.IsBlocked,
+			&row.IsConfirmed,
 		)
 		if err != nil {
 			return logAndReturnError(err)
+		}
+
+		if !row.IsConfirmed {
+			return status.Wrap(logAndReturnTypedError("account is not confirmed", "account_unconfirmed"), status.PermissionDenied)
 		}
 
 		if row.IsBlocked {
@@ -102,6 +108,7 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 	u.SetExpectedErrors(
 		status.Wrap(&TypedError{ErrorType: "invalid_credentials"}, status.Unauthenticated),
 		status.Wrap(&TypedError{ErrorType: "account_blocked"}, status.PermissionDenied),
+		status.Wrap(&TypedError{ErrorType: "account_unconfirmed"}, status.PermissionDenied),
 	)
 
 	return u

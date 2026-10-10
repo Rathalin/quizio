@@ -8,6 +8,7 @@
     },
     "invalidCredentials": "Invalid username or password.",
     "accountBlocked": "Your account has been blocked.",
+    "accountUnconfirmed": "Your account still needs to be confirmed by the administrator.",
     "password": {
       "label": "Password"
     },

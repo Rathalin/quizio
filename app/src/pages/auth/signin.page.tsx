@@ -69,7 +69,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
       }),
   });
 
-  const [signInError, setSignInError] = useState<'invalidCredentials' | 'accountBlocked' | null>(null);
+  const [signInError, setSignInError] = useState<'invalidCredentials' | 'accountBlocked' | 'accountUnconfirmed' | null>(null);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -81,6 +81,8 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
       } else {
         if (res?.error === 'account_blocked') {
           setSignInError('accountBlocked');
+        } else if (res?.error === 'account_unconfirmed') {
+          setSignInError('accountUnconfirmed');
         } else if (res?.error === 'invalid_credentials' || res?.status === 401) {
           setSignInError('invalidCredentials');
         } else {
@@ -170,6 +172,11 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
                   {signInError === 'accountBlocked' && (
                     <Typography sx={{ marginTop: 2 }} variant="body2" color="error">
                       {t('signIn.form.accountBlocked')}
+                    </Typography>
+                  )}
+                  {signInError === 'accountUnconfirmed' && (
+                    <Typography sx={{ marginTop: 2 }} variant="body2" color="error">
+                      {t('signIn.form.accountUnconfirmed')}
                     </Typography>
                   )}
                 </CardContent>

@@ -43,6 +43,9 @@ export const authOptions: AuthOptions = {
           if (errorType === 'account_blocked') {
             throw new Error('account_blocked');
           }
+          if (errorType === 'account_unconfirmed') {
+            throw new Error('account_unconfirmed');
+          }
           if (errorType === 'invalid_credentials') {
             throw new Error('invalid_credentials');
           }
