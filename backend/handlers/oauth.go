@@ -70,7 +70,7 @@ func IsValidClientRedirectURI(clientID, redirectURI string) bool {
 		token, err := auth.TokenAuth.Decode(clientID)
 		if err == nil {
 			if urisIf, ok := token.Get("redirect_uris"); ok {
-				if uris, ok := urisIf.([]interface{}); ok {
+				if uris, ok := urisIf.([]any); ok {
 					for _, uriIf := range uris {
 						if uri, ok := uriIf.(string); ok && uri == redirectURI {
 							return true
@@ -113,6 +113,17 @@ func (dbw *DBWrapper) OAuthAuthorizeHandler() http.HandlerFunc {
 		params.Set("response_type", query.Get("response_type"))
 		if query.Has("resource") {
 			params.Set("resource", query.Get("resource"))
+		}
+
+		if clientID := query.Get("client_id"); clientID != "" {
+			token, err := auth.TokenAuth.Decode(clientID)
+			if err == nil {
+				if clientName, ok := token.Get("client_name"); ok {
+					if nameStr, ok := clientName.(string); ok {
+						params.Set("client_name", nameStr)
+					}
+				}
+			}
 		}
 
 		// Redirect to Next.js frontend to handle login and consent

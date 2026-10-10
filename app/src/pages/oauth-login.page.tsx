@@ -18,6 +18,7 @@ import { quizioTitle } from '@/utilities/quizioTitle';
 
 export const getServerSideProps: GetServerSideProps<{
   clientId: string;
+  clientName: string;
   redirectUri: string;
   state: string;
   codeChallenge: string;
@@ -25,6 +26,7 @@ export const getServerSideProps: GetServerSideProps<{
   messages: AbstractIntlMessages;
 }> = async (ctx) => {
   const clientId = typeof ctx.query?.client_id === 'string' ? ctx.query.client_id : '';
+  const clientName = typeof ctx.query?.client_name === 'string' ? ctx.query.client_name : '';
   const redirectUri = typeof ctx.query?.redirect_uri === 'string' ? ctx.query.redirect_uri : '';
   const state = typeof ctx.query?.state === 'string' ? ctx.query.state : '';
   const codeChallenge = typeof ctx.query?.code_challenge === 'string' ? ctx.query.code_challenge : '';
@@ -45,6 +47,7 @@ export const getServerSideProps: GetServerSideProps<{
 
   if (!session) {
     const oauthParams = new URLSearchParams({ client_id: clientId, redirect_uri: redirectUri, state });
+    if (clientName) oauthParams.set('client_name', clientName);
     if (codeChallenge) oauthParams.set('code_challenge', codeChallenge);
     if (codeChallengeMethod) oauthParams.set('code_challenge_method', codeChallengeMethod);
     if (responseType) oauthParams.set('response_type', responseType);
@@ -63,6 +66,7 @@ export const getServerSideProps: GetServerSideProps<{
   return {
     props: {
       clientId,
+      clientName,
       redirectUri,
       state,
       codeChallenge,
@@ -74,6 +78,7 @@ export const getServerSideProps: GetServerSideProps<{
 
 export default function OAuthLoginPage({
   clientId,
+  clientName,
   redirectUri,
   state,
   codeChallenge,
@@ -133,6 +138,8 @@ export default function OAuthLoginPage({
     }
   };
 
+  const displayClientName = clientName || (clientId.length > 40 ? clientId.substring(0, 10) + '...' + clientId.substring(clientId.length - 10) : clientId);
+
   return (
     <>
       <Head>
@@ -148,7 +155,7 @@ export default function OAuthLoginPage({
             </Typography>
             <Typography variant="body1">
               {t.rich('description', {
-                clientId: clientId.length > 40 ? clientId.substring(0, 10) + '...' + clientId.substring(clientId.length - 10) : clientId,
+                clientId: displayClientName,
                 strong: (chunks) => <strong>{chunks}</strong>,
               })}
             </Typography>

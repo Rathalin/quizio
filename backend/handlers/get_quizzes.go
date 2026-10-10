@@ -15,8 +15,8 @@ import (
 
 func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 	type getQuizzesRequest struct {
-		Page          int    `query:"page" required:"true" example:"0"`
-		PageSize      int    `query:"pageSize" required:"true" example:"5"`
+		Page          int    `query:"page" required:"true" example:"0" validate:"min=0"`
+		PageSize      int    `query:"pageSize" required:"true" example:"5" validate:"min=1,max=50"`
 		SortOption    string `query:"sortOption" required:"true" enum:"createdAt,playCount" example:"createdAt"`
 		SortDirection string `query:"sortDirection" required:"true" enum:"asc,desc" example:"desc"`
 	}
@@ -70,7 +70,7 @@ func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 				q.created_at, 
 				q.updated_at, 
 				q.title, 
-				q.description_text, 
+				COALESCE(q.description_text, ''), 
 				q.is_published, 
 				q.image_url, 
 				u.uuid, 
@@ -90,12 +90,12 @@ func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 				q.created_at, 
 				q.updated_at, 
 				q.title, 
-				q.description_text, 
+				COALESCE(q.description_text, ''), 
 				q.is_published, 
 				q.image_url, 
 				u.uuid, 
 				u.username
-			ORDER BY %s %s
+			ORDER BY %s %s, q.uuid ASC
 			LIMIT $1
 			OFFSET $2
 		`, sortOption, sortDirection), input.PageSize, input.Page*input.PageSize)
@@ -133,6 +133,11 @@ func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 			}
 			quizzes = append(quizzes, q)
 		}
+
+		if err := rows.Err(); err != nil {
+			return logAndReturnError(err)
+		}
+
 		response.Quizzes = quizzes
 		*output = response
 		return nil

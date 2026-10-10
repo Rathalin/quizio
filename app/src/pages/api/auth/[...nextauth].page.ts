@@ -5,6 +5,7 @@ import { apiClient } from '@/api-client';
 import { jwtDecode } from 'jwt-decode';
 import { AuthorizationHeader } from '@/custom-hooks/useAuthHeader';
 import { hours } from '@/utilities/time';
+import { z } from 'zod';
 
 type DecodedToken = {
   userId: number;
@@ -37,6 +38,17 @@ export const authOptions: AuthOptions = {
 
         if (error != null) {
           console.error(`Signin-error`, error);
+          const errorType = error.context?.error_type;
+
+          if (errorType === 'account_blocked') {
+            throw new Error('account_blocked');
+          }
+          if (errorType === 'account_unconfirmed') {
+            throw new Error('account_unconfirmed');
+          }
+          if (errorType === 'invalid_credentials') {
+            throw new Error('invalid_credentials');
+          }
           return null;
         }
         console.info(`${username} signed in.`);
@@ -59,13 +71,13 @@ export const authOptions: AuthOptions = {
         };
       } else {
         // Check if the access token is expired or expires soon
-        const decoded = jwtDecode<DecodedToken>(token.accessToken as string);
+        const decoded = jwtDecode<DecodedToken>(token.accessToken);
         const isExpired = Date.now() >= decoded.exp * 1000 - hours(1); // 1 hour early refresh
         if (isExpired) {
           console.info(`Access token expired. Refreshing token...`);
           try {
             const { data, error } = await apiClient.POST('/refresh-token', {
-              body: { refreshToken: token.refreshToken as string },
+              body: { refreshToken: token.refreshToken },
               headers: {
                 Authorization: `Bearer ${token.accessToken}`,
               } satisfies AuthorizationHeader,
@@ -85,18 +97,25 @@ export const authOptions: AuthOptions = {
         }
 
         if (trigger === 'update') {
-          token = {
-            ...token,
-            ...session, // TODO Validate https://next-auth.js.org/getting-started/client#updating-the-session
-          };
+          // Validate the session update payload using Zod to prevent prototype pollution or token overwrite.
+          // Add updatable fields to this schema when needed.
+          const updateSchema = z.object({});
+          const parsed = updateSchema.safeParse(session);
+          if (parsed.success) {
+            token = {
+              ...token,
+              ...parsed.data,
+            };
+          }
         }
       }
       return token;
     },
     async session({ session, token }) {
       session.user = {
-        ...token,
         ...session.user,
+        uuid: token.uuid,
+        accessToken: token.accessToken,
       };
       return session;
     },

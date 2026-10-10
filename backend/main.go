@@ -1,10 +1,15 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	_ "github.com/lib/pq"
 
@@ -43,7 +48,7 @@ func main() {
 	service.OpenAPISchema().SetTitle("Quizzes API")
 	service.OpenAPISchema().SetDescription("This service manages quizzes and their questions.")
 	service.OpenAPISchema().SetVersion("v1.0.0")
-	service.OpenAPISchema().SetHTTPBearerTokenSecurity("JWT token", "baerer", "")
+	service.OpenAPISchema().SetHTTPBearerTokenSecurity("JWT token", "bearer", "")
 
 	service.Use(
 		cors.AllowAll().Handler,
@@ -51,7 +56,8 @@ func main() {
 
 	// Public routes
 	service.Group(func(router chi.Router) {
-		router.Handle("/public/*", http.StripPrefix("/public/", http.FileServer(http.Dir("./public"))))
+		fs := http.FileServer(middlewares.NeuteredFileSystem{FS: http.Dir("./public")})
+		router.Handle("/public/*", http.StripPrefix("/public/", fs))
 
 		router.Method(http.MethodPost, "/register", nethttp.NewHandler(dbWrapper.Register()))
 		router.Method(http.MethodPost, "/sign-in", nethttp.NewHandler(dbWrapper.SignIn()))
@@ -69,11 +75,12 @@ func main() {
 	// Auth routes
 	service.Route("/me", func(router chi.Router) {
 		router.With(
-			nethttp.HTTPBearerSecurityMiddleware(service.OpenAPICollector, "JWT token", "baerer", "string"),
+			nethttp.HTTPBearerSecurityMiddleware(service.OpenAPICollector, "JWT token", "bearer", "string"),
 		).Group(func(router chi.Router) {
 			router.Use(
 				jwtauth.Verifier(auth.TokenAuth),
 				jwtauth.Authenticator(auth.TokenAuth),
+				middlewares.RequireAccessToken,
 			)
 
 			router.Method(http.MethodPost, "/signout", nethttp.NewHandler(dbWrapper.SignOut()))
@@ -84,6 +91,12 @@ func main() {
 			router.Method(http.MethodPost, "/create-play-protocol-entry", nethttp.NewHandler((dbWrapper.CreateMyPlayProtocolEntry())))
 
 			router.Route("/upload", func(router chi.Router) {
+				router.Use(func(next http.Handler) http.Handler {
+					return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+						r.Body = http.MaxBytesReader(w, r.Body, 10*1024*1024) // 10MB max request size
+						next.ServeHTTP(w, r)
+					})
+				})
 				router.Method(http.MethodPost, "/", nethttp.NewHandler((dbWrapper.UploadMyFile())))
 				router.Method(http.MethodDelete, "/", nethttp.NewHandler((dbWrapper.DeleteMyFile())))
 			})
@@ -115,7 +128,11 @@ func main() {
 			}
 			var clientID string
 			if uris, ok := req["redirect_uris"].([]any); ok && len(uris) > 0 {
-				_, tokenString, err := auth.TokenAuth.Encode(map[string]any{"redirect_uris": uris})
+				claims := map[string]any{"redirect_uris": uris}
+				if name, ok := req["client_name"].(string); ok {
+					claims["client_name"] = name
+				}
+				_, tokenString, err := auth.TokenAuth.Encode(claims)
 				if err == nil {
 					clientID = tokenString
 				}
@@ -134,18 +151,19 @@ func main() {
 
 		// /oauth/grant requires authentication
 		router.With(
-			nethttp.HTTPBearerSecurityMiddleware(service.OpenAPICollector, "JWT token", "baerer", "string"),
+			nethttp.HTTPBearerSecurityMiddleware(service.OpenAPICollector, "JWT token", "bearer", "string"),
 		).Group(func(r chi.Router) {
 			r.Use(
 				jwtauth.Verifier(auth.TokenAuth),
 				jwtauth.Authenticator(auth.TokenAuth),
+				middlewares.RequireAccessToken,
 			)
 			r.Method(http.MethodPost, "/grant", nethttp.NewHandler(dbWrapper.OAuthGrant()))
 		})
 	})
 
 	service.Route("/seo", func(router chi.Router) {
-		router.With(nethttp.HTTPBearerSecurityMiddleware(service.OpenAPICollector, "SEO API Key", "baerer", "string")).Group(func(r chi.Router) {
+		router.With(nethttp.HTTPBearerSecurityMiddleware(service.OpenAPICollector, "SEO API Key", "bearer", "string")).Group(func(r chi.Router) {
 			r.Use(middlewares.APIKeyMiddleware(env.Config.SEOAPIKey))
 			r.Method(http.MethodGet, "/published-quizzes-uuids", nethttp.NewHandler(dbWrapper.GetSeoPublishedQuizzesUuids()))
 		})
@@ -211,11 +229,35 @@ func main() {
 	})
 
 	service.Route("/", func(r chi.Router) {
-		r.Method(http.MethodGet, "/", http.RedirectHandler("/docs", http.StatusMovedPermanently))
+		r.Method(http.MethodGet, "/", http.RedirectHandler("/docs", http.StatusFound))
 	})
 
-	log.Println("Starting service")
-	if err := http.ListenAndServe("0.0.0.0:8080", service); err != nil {
-		log.Fatal(err)
+	srv := &http.Server{
+		Addr:         "0.0.0.0:8080",
+		Handler:      service,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 30 * time.Second,
+		IdleTimeout:  120 * time.Second,
 	}
+
+	go func() {
+		log.Println("Starting service on port 8080")
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+	<-quit
+	log.Println("Shutting down server...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatal("Server forced to shutdown:", err)
+	}
+
+	log.Println("Server exiting")
 }

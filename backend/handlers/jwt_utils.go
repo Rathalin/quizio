@@ -18,7 +18,7 @@ type DBWrapper struct {
 // GenerateJWT generates a short-term access token using jwtauth.JWTAuth
 func generateJWT(userID int64) (string, error) {
 	// Create claims with user ID and expiry time
-	claims := map[string]interface{}{
+	claims := map[string]any{
 		"userId": userID,
 		"exp":    time.Now().Add(auth.AccessTokenTTL).Unix(),
 		"type":   "access",
@@ -36,7 +36,7 @@ func generateJWT(userID int64) (string, error) {
 // GenerateRefreshToken generates a secure refresh token using jwtauth.JWTAuth
 func generateRefreshToken(userID int64) (string, error) {
 	// Create claims with user ID and longer expiry time (e.g., 7 days)
-	claims := map[string]interface{}{
+	claims := map[string]any{
 		"userId": userID,
 		"exp":    time.Now().Add(auth.RefreshTokenTTL).Unix(),
 		"type":   "refresh", // To differentiate from access tokens
@@ -57,16 +57,10 @@ func getUserIdFromContext(ctx context.Context) (int64, error) {
 		return -1, err
 	}
 
-	userId, ok := claims["userId"].(float64) // JWT claims use int64 for numbers
+	userId, ok := claims["userId"].(float64) // JWT claims decode numbers as float64
 	if !ok {
 		return -1, fmt.Errorf("userId not found in token claims")
 	}
-
-	// Print all key-value pairs in the claims map
-	// fmt.Println("JWT Claims:")
-	// for key, value := range claims {
-	// 	fmt.Printf("%s: %v\n", key, value)
-	// }
 
 	return int64(userId), nil
 }

@@ -120,7 +120,7 @@ export default function QuizCreatePage({ uuid }: InferGetServerSidePropsType<typ
     if (quiz != null) {
       setOverviewFormData({
         title: quiz.title,
-        description: quiz.description,
+        description: quiz.description ?? undefined,
         image: {
           data: {
             file: null,

@@ -24,7 +24,8 @@ func (dbw *DBWrapper) CreateMyPlayProtocolEntry() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
-		quizId, err := dbw.GetQuizId(input.QuizUuid)
+		var quizId int64
+		err = dbw.DB.QueryRow(`SELECT id FROM quiz WHERE uuid = $1`, input.QuizUuid).Scan(&quizId)
 		if err != nil {
 			return logAndReturnError(err)
 		}
@@ -50,7 +51,8 @@ func (dbw *DBWrapper) CreatePublicPlayProtocolEntry() usecase.Interactor {
 	type createPlayProtocolEntryResponse struct{}
 
 	return usecase.NewInteractor(func(ctx context.Context, input createPlayProtocolEntryRequest, output *createPlayProtocolEntryResponse) error {
-		quizId, err := dbw.GetQuizId(input.QuizUuid)
+		var quizId int64
+		err := dbw.DB.QueryRow(`SELECT id FROM quiz WHERE uuid = $1`, input.QuizUuid).Scan(&quizId)
 		if err != nil {
 			return logAndReturnError(err)
 		}

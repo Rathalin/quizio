@@ -262,6 +262,40 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/oauth/grant': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper O Auth Grant */
+    post: operations['backend/handlers.(*DBWrapper).OAuthGrant'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/oauth/token': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** DB Wrapper O Auth Token */
+    post: operations['backend/handlers.(*DBWrapper).OAuthToken'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/quizzes/': {
     parameters: {
       query?: never;
@@ -385,6 +419,13 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    FormDataHandlersTokenRequest: {
+      client_id?: string;
+      code: string;
+      code_verifier?: string;
+      grant_type?: string;
+      redirect_uri?: string;
+    };
     HandlersChangePasswordRequest: {
       currentPassword: string;
       newPassword: string;
@@ -399,14 +440,14 @@ export interface components {
       quizUuid: string;
     };
     HandlersCreateQuizRequest: {
-      description: string | null;
+      description: string;
       imageUrl: string | null;
       isPublished: boolean;
       questions: components['schemas']['HandlersCreateQuizRequestQuestion'][] | null;
       title: string;
     };
     HandlersCreateQuizRequestAnswer: {
-      description: string | null;
+      description: string;
       imageUrl: string | null;
       isCorrect: boolean;
       title: string;
@@ -524,6 +565,17 @@ export interface components {
       };
       uuid: string;
     };
+    HandlersGrantRequest: {
+      client_id: string;
+      code_challenge?: string;
+      code_challenge_method?: string;
+      redirect_uri: string;
+      state?: string;
+    };
+    HandlersGrantResponse: {
+      code: string;
+      state?: string;
+    };
     HandlersPlayQuizResponse: {
       imageUrl: string | null;
       questions: components['schemas']['ModelsQuestion'][];
@@ -554,15 +606,20 @@ export interface components {
     HandlersSignOutRequest: {
       refreshToken: string;
     };
+    HandlersTokenResponse: {
+      access_token: string;
+      expires_in: number;
+      token_type: string;
+    };
     HandlersUpdateQuizRequest: {
-      description: string | null;
+      description: string;
       imageUrl: string | null;
       isPublished: boolean;
       questions: components['schemas']['HandlersUpdateQuizRequestQuestion'][];
       title: string;
     };
     HandlersUpdateQuizRequestAnswer: {
-      description: string | null;
+      description: string;
       imageUrl: string | null;
       isCorrect: boolean;
       title: string;
@@ -612,13 +669,13 @@ export interface components {
     };
     ModelsAnswer: {
       /** Format: date-time */
-      created_at: string;
-      description: string | null;
+      createdAt: string;
+      description: string;
       imageUrl: string | null;
       isCorrect: boolean;
       title: string;
       /** Format: date-time */
-      updated_at: string;
+      updatedAt: string;
       uuid: string;
     };
     ModelsMeta: {
@@ -631,7 +688,7 @@ export interface components {
       answers: components['schemas']['ModelsAnswer'][];
       /** Format: date-time */
       createdAt: string;
-      description: string | null;
+      description: string;
       explanation: string | null;
       explanationImageUrl: string | null;
       imageUrl: string | null;
@@ -656,7 +713,7 @@ export interface components {
       code?: number;
       /** @description Application context. */
       context?: {
-        [key: string]: unknown;
+        [key: string]: string;
       };
       /** @description Error message. */
       error?: string;
@@ -1216,6 +1273,63 @@ export interface operations {
       };
     };
   };
+  'backend/handlers.(*DBWrapper).OAuthGrant': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['HandlersGrantRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HandlersGrantResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RestErrResponse'];
+        };
+      };
+    };
+  };
+  'backend/handlers.(*DBWrapper).OAuthToken': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/x-www-form-urlencoded': components['schemas']['FormDataHandlersTokenRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HandlersTokenResponse'];
+        };
+      };
+    };
+  };
   'backend/handlers.(*DBWrapper).GetQuizzes': {
     parameters: {
       query: {
@@ -1360,6 +1474,24 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['HandlersSignInResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['RestErrResponse'];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['RestErrResponse'];
         };
       };
     };

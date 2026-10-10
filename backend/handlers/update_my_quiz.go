@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"slices"
 
 	"github.com/swaggest/usecase"
@@ -11,30 +10,30 @@ import (
 
 func (dbw *DBWrapper) UpdateMyQuiz() usecase.Interactor {
 	type updateQuizRequestAnswer struct {
-		UUID        *string `json:"uuid" required:"true" nullable:"true" validate:"required,uuid4"`
+		UUID        *string `json:"uuid" required:"true" nullable:"true" validate:"omitempty,uuid4"`
 		Title       string  `json:"title" required:"true" validate:"required,min=1,max=100"`
-		Description *string `json:"description" required:"true" nullable:"true" validate:"max=200"`
+		Description string  `json:"description" required:"true" validate:"max=200"`
 		ImageUrl    *string `json:"imageUrl" required:"true" nullable:"true"`
 		IsCorrect   bool    `json:"isCorrect" required:"true"`
 	}
 
 	type updateQuizRequestQuestion struct {
-		UUID                *string                   `json:"uuid" required:"true" nullable:"true" validate:"required,uuid4"`
+		UUID                *string                   `json:"uuid" required:"true" nullable:"true" validate:"omitempty,uuid4"`
 		Title               string                    `json:"title" required:"true" validate:"required,min=1,max=100"`
 		Description         *string                   `json:"description" required:"true" nullable:"true" validate:"max=200"`
 		ImageUrl            *string                   `json:"imageUrl" required:"true" nullable:"true"`
-		Explanation         *string                   `json:"explanation" required:"true" nullable:"true" validation:"max=400"`
+		Explanation         *string                   `json:"explanation" required:"true" nullable:"true" validate:"max=400"`
 		ExplanationImageUrl *string                   `json:"explanationImageUrl" required:"true" nullable:"true"`
-		Answers             []updateQuizRequestAnswer `json:"answers" required:"true" nullable:"false" validate:"required,min=2,max=10"`
+		Answers             []updateQuizRequestAnswer `json:"answers" required:"true" nullable:"false" validate:"required,min=2,max=10,dive"`
 	}
 
 	type updateQuizRequest struct {
 		UUID        string                      `path:"uuid" required:"true" validate:"required,uuid4"`
 		Title       string                      `json:"title" required:"true" validate:"required,min=1,max=50"`
-		Description *string                     `json:"description" required:"true" nullable:"true" validate:"max=200"`
+		Description string                      `json:"description" required:"true" validate:"max=200"`
 		IsPublished bool                        `json:"isPublished" required:"true"`
 		ImageUrl    *string                     `json:"imageUrl" required:"true" nullable:"true"`
-		Questions   []updateQuizRequestQuestion `json:"questions" required:"true" nullable:"false" validate:"required,min=1,max=20"`
+		Questions   []updateQuizRequestQuestion `json:"questions" required:"true" nullable:"false" validate:"required,min=1,max=20,dive"`
 	}
 
 	type updateQuizResponse struct{}
@@ -50,20 +49,7 @@ func (dbw *DBWrapper) UpdateMyQuiz() usecase.Interactor {
 		}
 
 		if !isValidUUID(input.UUID) {
-			return status.Wrap(logAndReturnErrorMessage("quiz does not exists (invalid uuid)"), status.NotFound)
-		}
-
-		quizExists, err := dbw.QuizExistsForUser(input.UUID, userId)
-		if err != nil {
-			return logAndReturnError(err)
-		}
-		if !quizExists {
-			return status.Wrap(logAndReturnErrorMessage(fmt.Sprintf("quiz with uuid %v does not exist for this user", input.UUID)), status.NotFound)
-		}
-
-		quizId, err := dbw.GetQuizId(input.UUID)
-		if err != nil {
-			return logAndReturnError(err)
+			return status.Wrap(logAndReturnErrorMessage("quiz does not exist (invalid uuid)"), status.NotFound)
 		}
 
 		tx, err := dbw.DB.BeginTx(ctx, nil)
@@ -73,11 +59,13 @@ func (dbw *DBWrapper) UpdateMyQuiz() usecase.Interactor {
 		defer tx.Rollback()
 
 		// Update quiz details
-		_, err = tx.ExecContext(ctx, `
+		var quizId int64
+		err = tx.QueryRowContext(ctx, `
 			UPDATE quiz
 			SET title = $1, description_text = $2, is_published = $3, image_url = $4
-			WHERE uuid = $5
-		`, input.Title, input.Description, input.IsPublished, input.ImageUrl, input.UUID)
+			WHERE uuid = $5 AND user_account_id = $6
+			RETURNING id
+		`, input.Title, input.Description, input.IsPublished, input.ImageUrl, input.UUID, userId).Scan(&quizId)
 		if err != nil {
 			return logAndReturnError(err)
 		}
@@ -96,10 +84,14 @@ func (dbw *DBWrapper) UpdateMyQuiz() usecase.Interactor {
 		for rows.Next() {
 			questionUuid := ""
 			err = rows.Scan(&questionUuid)
-			existingQuestionUuids = append(existingQuestionUuids, questionUuid)
 			if err != nil {
 				return logAndReturnError(err)
 			}
+			existingQuestionUuids = append(existingQuestionUuids, questionUuid)
+		}
+
+		if err := rows.Err(); err != nil {
+			return logAndReturnError(err)
 		}
 
 		remainingQuestionUuids := append(existingQuestionUuids[:0:0], existingQuestionUuids...)
@@ -164,10 +156,14 @@ func (dbw *DBWrapper) UpdateMyQuiz() usecase.Interactor {
 			for answerRows.Next() {
 				answerUuid := ""
 				err = answerRows.Scan(&answerUuid)
-				existingAnswerUuids = append(existingAnswerUuids, answerUuid)
 				if err != nil {
 					return logAndReturnError(err)
 				}
+				existingAnswerUuids = append(existingAnswerUuids, answerUuid)
+			}
+
+			if err := answerRows.Err(); err != nil {
+				return logAndReturnError(err)
 			}
 
 			remainingAnswerUuids := append(existingAnswerUuids[:0:0], existingAnswerUuids...)

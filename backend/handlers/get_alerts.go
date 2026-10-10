@@ -40,7 +40,7 @@ func (dbw *DBWrapper) GetAlerts() usecase.Interactor {
 		defer rows.Close()
 		for rows.Next() {
 			alert := models.Alert{}
-			rows.Scan(
+			if err := rows.Scan(
 				&alert.UUID,
 				&alert.CreatedAt,
 				&alert.UpdatedAt,
@@ -51,8 +51,14 @@ func (dbw *DBWrapper) GetAlerts() usecase.Interactor {
 				&alert.ImageSize,
 				&alert.IsActive,
 				&alert.VisibleTo,
-			)
+			); err != nil {
+				return logAndReturnError(err)
+			}
 			response.Alerts = append(response.Alerts, alert)
+		}
+
+		if err := rows.Err(); err != nil {
+			return logAndReturnError(err)
 		}
 
 		*output = response

@@ -69,7 +69,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
       }),
   });
 
-  const [errorStatus, setErrorStatus] = useState<number | null>(null);
+  const [signInError, setSignInError] = useState<'invalidCredentials' | 'accountBlocked' | 'accountUnconfirmed' | null>(null);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -79,7 +79,15 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
         showSuccessToast(t('signIn.form.status.success'));
         router.push(callbackUrl ?? '/');
       } else {
-        setErrorStatus(res?.status ?? null);
+        if (res?.error === 'account_blocked') {
+          setSignInError('accountBlocked');
+        } else if (res?.error === 'account_unconfirmed') {
+          setSignInError('accountUnconfirmed');
+        } else if (res?.error === 'invalid_credentials' || res?.status === 401) {
+          setSignInError('invalidCredentials');
+        } else {
+          showErrorToast(t('signIn.form.status.error'));
+        }
       }
     } catch (error) {
       showErrorToast(t('signIn.form.status.error'));
@@ -156,9 +164,19 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </Box>
-                  {errorStatus === 401 && (
+                  {signInError === 'invalidCredentials' && (
                     <Typography sx={{ marginTop: 2 }} variant="body2" color="error">
                       {t('signIn.form.invalidCredentials')}
+                    </Typography>
+                  )}
+                  {signInError === 'accountBlocked' && (
+                    <Typography sx={{ marginTop: 2 }} variant="body2" color="error">
+                      {t('signIn.form.accountBlocked')}
+                    </Typography>
+                  )}
+                  {signInError === 'accountUnconfirmed' && (
+                    <Typography sx={{ marginTop: 2 }} variant="body2" color="error">
+                      {t('signIn.form.accountUnconfirmed')}
                     </Typography>
                   )}
                 </CardContent>
@@ -174,7 +192,7 @@ export default function SigninPage({ callbackUrl }: InferGetServerSidePropsType<
                   color="primary"
                   type="submit"
                   startIcon={isPending ? <LoadingCircle /> : <LoginIcon />}
-                  disabled={isPending || (isSuccess && errorStatus == null)}
+                  disabled={isPending || (isSuccess && signInError == null)}
                   size="large"
                   sx={{ minWidth: '16ch' }}
                 >
