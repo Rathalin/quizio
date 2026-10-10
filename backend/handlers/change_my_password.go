@@ -30,7 +30,7 @@ func (dbw *DBWrapper) ChangeMyPassword() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 		if !isValidPassword(input.NewPassword) {
-			return errors.New("new password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character")
+			return status.Wrap(errors.New("new password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character"), status.InvalidArgument)
 		}
 
 		// Fetch current password hash from the database

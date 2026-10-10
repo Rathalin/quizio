@@ -62,12 +62,12 @@ func (dbw *DBWrapper) UploadMyFile() usecase.Interactor {
 		pathDir := fmt.Sprintf("/public/uploads/%v/", userUuid)
 		uploadDir := filepath.Join("public", "uploads", userUuid)
 		if err := os.MkdirAll(uploadDir, 0o755); err != nil {
-			return fmt.Errorf("unable to create upload directory: %w", err)
+			return logAndReturnError(fmt.Errorf("unable to create upload directory: %w", err))
 		}
 
 		root, err := os.OpenRoot(uploadDir)
 		if err != nil {
-			return fmt.Errorf("unable to open upload directory: %w", err)
+			return logAndReturnError(fmt.Errorf("unable to open upload directory: %w", err))
 		}
 		defer root.Close()
 
@@ -77,13 +77,13 @@ func (dbw *DBWrapper) UploadMyFile() usecase.Interactor {
 		// Save the file securely and exclusively
 		out, err := root.OpenFile(name, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
 		if err != nil {
-			return fmt.Errorf("failed to create file: %w", err)
+			return logAndReturnError(fmt.Errorf("failed to create file: %w", err))
 		}
 		defer out.Close()
 
 		_, err = io.Copy(out, bytes.NewReader(input.File))
 		if err != nil {
-			return fmt.Errorf("failed to write file to disk: %w", err)
+			return logAndReturnError(fmt.Errorf("failed to write file to disk: %w", err))
 		}
 
 		// Generate the file URL (adjust this to your server's public URL)
