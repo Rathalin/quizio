@@ -22,7 +22,7 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 		RefreshToken string `json:"refreshToken" required:"true"`
 	}
 
-	return usecase.NewInteractor(func(ctx context.Context, input signInRequest, output *signInResponse) error {
+	u := usecase.NewInteractor(func(ctx context.Context, input signInRequest, output *signInResponse) error {
 		if err := validate.Struct(input); err != nil {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
@@ -37,7 +37,7 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 		unauthenticatedMessage := "invalid username or password"
 
 		if !usernameExists {
-			return status.Wrap(logAndReturnErrorMessage(unauthenticatedMessage), status.Unauthenticated)
+			return status.Wrap(logAndReturnTypedError(unauthenticatedMessage, "invalid_credentials"), status.Unauthenticated)
 		}
 
 		response := signInResponse{}
@@ -45,25 +45,31 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 		var row struct {
 			ID           int64
 			PasswordHash string
+			IsBlocked    bool
 		}
 		// Fetch user details
 		err = dbw.DB.QueryRow(`
-			SELECT id, password_hash, uuid
+			SELECT id, password_hash, uuid, is_blocked
 			FROM user_account
 			WHERE username = $1
 		`, trimmedUsername).Scan(
 			&row.ID,
 			&row.PasswordHash,
 			&response.UserUUID,
+			&row.IsBlocked,
 		)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
+		if row.IsBlocked {
+			return status.Wrap(logAndReturnTypedError("account is blocked", "account_blocked"), status.PermissionDenied)
+		}
+
 		// Validate password
 		err = bcrypt.CompareHashAndPassword([]byte(row.PasswordHash), []byte(input.Password))
 		if err != nil {
-			return status.Wrap(logAndReturnErrorMessage(unauthenticatedMessage), status.Unauthenticated)
+			return status.Wrap(logAndReturnTypedError(unauthenticatedMessage, "invalid_credentials"), status.Unauthenticated)
 		}
 
 		// Generate access token
@@ -92,4 +98,11 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 		*output = response
 		return nil
 	})
+
+	u.SetExpectedErrors(
+		status.Wrap(&TypedError{ErrorType: "invalid_credentials"}, status.Unauthenticated),
+		status.Wrap(&TypedError{ErrorType: "account_blocked"}, status.PermissionDenied),
+	)
+
+	return u
 }

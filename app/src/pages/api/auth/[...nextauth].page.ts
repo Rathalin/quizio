@@ -38,6 +38,14 @@ export const authOptions: AuthOptions = {
 
         if (error != null) {
           console.error(`Signin-error`, error);
+          const errorType = error.context?.error_type;
+
+          if (errorType === 'account_blocked') {
+            throw new Error('account_blocked');
+          }
+          if (errorType === 'invalid_credentials') {
+            throw new Error('invalid_credentials');
+          }
           return null;
         }
         console.info(`${username} signed in.`);

@@ -6,7 +6,8 @@
     "button": {
       "label": "Anmelden"
     },
-    "invalidCredentials": "Ungültiger Benutzername oder Passwort!",
+    "invalidCredentials": "Ungültiger Benutzername oder Passwort.",
+    "accountBlocked": "Dein Konto wurde gesperrt.",
     "password": {
       "label": "Passwort"
     },

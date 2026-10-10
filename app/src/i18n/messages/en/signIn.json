@@ -6,7 +6,8 @@
     "button": {
       "label": "Sign in"
     },
-    "invalidCredentials": "Invalid username or password!",
+    "invalidCredentials": "Invalid username or password.",
+    "accountBlocked": "Your account has been blocked.",
     "password": {
       "label": "Password"
     },

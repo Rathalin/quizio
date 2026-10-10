@@ -70,7 +70,7 @@ func IsValidClientRedirectURI(clientID, redirectURI string) bool {
 		token, err := auth.TokenAuth.Decode(clientID)
 		if err == nil {
 			if urisIf, ok := token.Get("redirect_uris"); ok {
-				if uris, ok := urisIf.([]interface{}); ok {
+				if uris, ok := urisIf.([]any); ok {
 					for _, uriIf := range uris {
 						if uri, ok := uriIf.(string); ok && uri == redirectURI {
 							return true

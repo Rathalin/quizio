@@ -24,14 +24,15 @@ func (dbw *DBWrapper) RefreshToken() usecase.Interactor {
 
 		var userID int64
 
-		// Validate refresh token
+		// Validate refresh token and check if the user is blocked
 		err := dbw.DB.QueryRow(`
-			SELECT user_account_id
-			FROM refresh_token
-			WHERE token = $1 AND expires_at > NOW()
+			SELECT rt.user_account_id
+			FROM refresh_token rt
+			JOIN user_account ua ON rt.user_account_id = ua.id
+			WHERE rt.token = $1 AND rt.expires_at > NOW() AND ua.is_blocked = false
 		`, input.RefreshToken).Scan(&userID)
 		if err != nil {
-			return errors.New("invalid or expired refresh token")
+			return status.Wrap(errors.New("invalid or expired refresh token, or account blocked"), status.Unauthenticated)
 		}
 
 		response := refreshTokenResponse{}

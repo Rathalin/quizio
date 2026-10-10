@@ -56,13 +56,32 @@ func (dbw *DBWrapper) ChangeMyPassword() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
-		// Update the password in the database
-		_, err = dbw.DB.ExecContext(ctx, `
+		// Update the password and clear refresh tokens in a transaction
+		tx, err := dbw.DB.BeginTx(ctx, nil)
+		if err != nil {
+			return logAndReturnError(err)
+		}
+		defer tx.Rollback()
+
+		_, err = tx.ExecContext(ctx, `
 			UPDATE user_account
 			SET password_hash = $1
 			WHERE id = $2
 		`, string(hashedNewPassword), userId)
 		if err != nil {
+			return logAndReturnError(err)
+		}
+
+		// Invalidate all existing sessions
+		_, err = tx.ExecContext(ctx, `
+			DELETE FROM refresh_token
+			WHERE user_account_id = $1
+		`, userId)
+		if err != nil {
+			return logAndReturnError(err)
+		}
+
+		if err = tx.Commit(); err != nil {
 			return logAndReturnError(err)
 		}
 
