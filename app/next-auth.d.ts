@@ -1,12 +1,21 @@
-export declare module 'next-auth' {
+import 'next-auth';
+
+declare module 'next-auth' {
   /**
    * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
    */
-  export interface Session {
+  interface Session {
     user: {
       uuid: string;
       accessToken: string;
-      refreshToken: string;
     };
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    uuid: string;
+    accessToken: string;
+    refreshToken: string;
   }
 }

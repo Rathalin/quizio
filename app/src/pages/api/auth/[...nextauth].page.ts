@@ -59,13 +59,13 @@ export const authOptions: AuthOptions = {
         };
       } else {
         // Check if the access token is expired or expires soon
-        const decoded = jwtDecode<DecodedToken>(token.accessToken as string);
+        const decoded = jwtDecode<DecodedToken>(token.accessToken);
         const isExpired = Date.now() >= decoded.exp * 1000 - hours(1); // 1 hour early refresh
         if (isExpired) {
           console.info(`Access token expired. Refreshing token...`);
           try {
             const { data, error } = await apiClient.POST('/refresh-token', {
-              body: { refreshToken: token.refreshToken as string },
+              body: { refreshToken: token.refreshToken },
               headers: {
                 Authorization: `Bearer ${token.accessToken}`,
               } satisfies AuthorizationHeader,
@@ -95,8 +95,9 @@ export const authOptions: AuthOptions = {
     },
     async session({ session, token }) {
       session.user = {
-        ...token,
         ...session.user,
+        uuid: token.uuid,
+        accessToken: token.accessToken,
       };
       return session;
     },

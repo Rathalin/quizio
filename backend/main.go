@@ -74,6 +74,7 @@ func main() {
 			router.Use(
 				jwtauth.Verifier(auth.TokenAuth),
 				jwtauth.Authenticator(auth.TokenAuth),
+				middlewares.RequireAccessToken,
 			)
 
 			router.Method(http.MethodPost, "/signout", nethttp.NewHandler(dbWrapper.SignOut()))
@@ -143,6 +144,7 @@ func main() {
 			r.Use(
 				jwtauth.Verifier(auth.TokenAuth),
 				jwtauth.Authenticator(auth.TokenAuth),
+				middlewares.RequireAccessToken,
 			)
 			r.Method(http.MethodPost, "/grant", nethttp.NewHandler(dbWrapper.OAuthGrant()))
 		})
