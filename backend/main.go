@@ -51,7 +51,8 @@ func main() {
 
 	// Public routes
 	service.Group(func(router chi.Router) {
-		router.Handle("/public/*", http.StripPrefix("/public/", http.FileServer(http.Dir("./public"))))
+		fs := http.FileServer(middlewares.NeuteredFileSystem{FS: http.Dir("./public")})
+		router.Handle("/public/*", http.StripPrefix("/public/", fs))
 
 		router.Method(http.MethodPost, "/register", nethttp.NewHandler(dbWrapper.Register()))
 		router.Method(http.MethodPost, "/sign-in", nethttp.NewHandler(dbWrapper.SignIn()))
