@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"math"
 	"time"
 
@@ -51,19 +50,6 @@ func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 			return status.Wrap(logAndReturnErrorMessage("quiz does not exist (invalid uuid)"), status.NotFound)
 		}
 
-		quizExists, err := dbw.QuizExistsForUser(input.QuizUUID, userId)
-		if err != nil {
-			return logAndReturnError(err)
-		}
-		if !quizExists {
-			return status.Wrap(logAndReturnErrorMessage(fmt.Sprintf("quiz with uuid %v does not exist for this user", input.QuizUUID)), status.NotFound)
-		}
-
-		quizId, err := dbw.GetQuizId(input.QuizUUID)
-		if err != nil {
-			return logAndReturnError(err)
-		}
-
 		if input.EndDate.Before(input.StartDate) {
 			return status.Wrap(logAndReturnErrorMessage("from date has to be before to date"), status.InvalidArgument)
 		}
@@ -78,9 +64,11 @@ func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 			},
 		}
 
+		var quizId int64
 		// Select quiz details
 		err = dbw.DB.QueryRowContext(ctx, `
 			SELECT
+				q.id,
 				q.created_at,
 				q.updated_at,
 				q.title,
@@ -96,7 +84,7 @@ func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 				ON qn.quiz_id = q.id
 			LEFT JOIN play_protocol_entry pe
 				ON pe.quiz_id = q.id
-			WHERE q.id = $1
+			WHERE q.uuid = $1 AND q.user_account_id = $2
 			GROUP BY
 				q.id,
 				q.uuid,
@@ -108,7 +96,8 @@ func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 				q.image_url,
 				u.uuid,
 				u.username
-		`, quizId).Scan(
+		`, input.QuizUUID, userId).Scan(
+			&quizId,
 			&response.CreatedAt,
 			&response.UpdatedAt,
 			&response.Title,

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
@@ -29,14 +28,6 @@ func (dbw *DBWrapper) DeleteMyQuiz() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
-		quizExists, err := dbw.QuizExistsForUser(input.QuizUUID, userId)
-		if err != nil {
-			return logAndReturnError(err)
-		}
-		if !quizExists {
-			return status.Wrap(logAndReturnErrorMessage(fmt.Sprintf("quiz with uuid %v does not exist for this user", input.QuizUUID)), status.NotFound)
-		}
-
 		userUuid, err := dbw.GetUserUuid(userId)
 		if err != nil {
 			return logAndReturnError(err)
@@ -47,8 +38,8 @@ func (dbw *DBWrapper) DeleteMyQuiz() usecase.Interactor {
 		err = dbw.DB.QueryRowContext(ctx, `
 			SELECT image_url
 			FROM quiz
-			WHERE uuid = $1
-		`, input.QuizUUID).Scan(&quizImageUrl)
+			WHERE uuid = $1 AND user_account_id = $2
+		`, input.QuizUUID, userId).Scan(&quizImageUrl)
 		if err != nil {
 			return logAndReturnError(err)
 		}
@@ -117,8 +108,8 @@ func (dbw *DBWrapper) DeleteMyQuiz() usecase.Interactor {
 
 		_, err = dbw.DB.ExecContext(ctx, `
 			DELETE FROM quiz
-			WHERE uuid = $1
-		`, input.QuizUUID)
+			WHERE uuid = $1 AND user_account_id = $2
+		`, input.QuizUUID, userId)
 		if err != nil {
 			return logAndReturnError(err)
 		}

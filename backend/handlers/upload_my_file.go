@@ -47,12 +47,12 @@ func (dbw *DBWrapper) UploadMyFile() usecase.Interactor {
 		}
 
 		mtype := mimetype.Detect(input.File)
-		
+
 		// Explicitly reject SVGs even if they bypass the extension check (e.g. named .jpg)
 		if mtype.Is("image/svg+xml") || mtype.Is("text/xml") || mtype.Is("application/xml") {
 			return status.Wrap(fmt.Errorf("svg uploads are not allowed"), status.InvalidArgument)
 		}
-		
+
 		if !strings.HasPrefix(mtype.String(), "image/") && !strings.HasPrefix(mtype.String(), "audio/") {
 			return status.Wrap(fmt.Errorf("invalid file content type: %s", mtype.String()), status.InvalidArgument)
 		}
@@ -65,7 +65,7 @@ func (dbw *DBWrapper) UploadMyFile() usecase.Interactor {
 		}
 
 		uploadDir := filepath.Join("public", "uploads", userUuid)
-		
+
 		currentDirSize, err := getDirSize(uploadDir)
 		if err != nil {
 			return logAndReturnError(fmt.Errorf("failed to calculate current user quota: %w", err))

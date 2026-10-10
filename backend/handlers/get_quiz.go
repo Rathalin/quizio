@@ -59,14 +59,6 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
-		quizExists, err := dbw.QuizExists(input.UUID)
-		if err != nil {
-			return logAndReturnError(err)
-		}
-		if !quizExists {
-			return status.Wrap(logAndReturnErrorMessage("quiz does not exist"), status.NotFound)
-		}
-
 		rows, err := dbw.DB.Query(`
 			SELECT
 				q.id,
@@ -110,8 +102,10 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 		}
 		lastQuizId := ""
 		lastQuestionId := ""
+		hasRows := false
 
 		for rows.Next() {
+			hasRows = true
 			if err := rows.Scan(
 				&row.ID,
 				&row.Title,
@@ -168,6 +162,10 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 				ImageUrl:    row.Answer.ImageUrl,
 				IsCorrect:   row.Answer.IsCorrect,
 			})
+		}
+
+		if !hasRows {
+			return status.Wrap(logAndReturnErrorMessage("quiz does not exist"), status.NotFound)
 		}
 
 		if err := rows.Err(); err != nil {

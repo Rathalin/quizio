@@ -35,26 +35,14 @@ func (dbw *DBWrapper) GetUserProfile() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
-		userExists, err := dbw.UserExists(input.UUID)
-		if err != nil {
-			return logAndReturnError(err)
-		}
-		if !userExists {
-			return status.Wrap(logAndReturnErrorMessage("user does not exist"), status.NotFound)
-		}
-
-		userId, err := dbw.GetUserId(input.UUID)
-		if err != nil {
-			return logAndReturnError(err)
-		}
-
 		response := getPublicUserProfileResponse{}
 
-		err = dbw.DB.QueryRow(`
-			SELECT uuid, created_at, username, profile_image_url
+		var userId int64
+		err := dbw.DB.QueryRow(`
+			SELECT id, uuid, created_at, username, profile_image_url
 			FROM user_account
-			WHERE id = $1
-		`, userId).Scan(&response.User.UUID, &response.User.CreatedAt, &response.User.Username, &response.User.ProfileImageUrl)
+			WHERE uuid = $1
+		`, input.UUID).Scan(&userId, &response.User.UUID, &response.User.CreatedAt, &response.User.Username, &response.User.ProfileImageUrl)
 		if err != nil {
 			return logAndReturnError(err)
 		}

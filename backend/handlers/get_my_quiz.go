@@ -69,14 +69,6 @@ func (dbw *DBWrapper) GetMyQuiz() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
-		quizExists, err := dbw.QuizExistsForUser(input.UUID, userId)
-		if err != nil {
-			return logAndReturnError(err)
-		}
-		if !quizExists {
-			return status.Wrap(logAndReturnErrorMessage(fmt.Sprintf("quiz with uuid %v does not exist for this user", input.UUID)), status.NotFound)
-		}
-
 		rows, err := dbw.DB.Query(`
 			SELECT
 				q.id,
@@ -108,9 +100,9 @@ func (dbw *DBWrapper) GetMyQuiz() usecase.Interactor {
 				ON q.id = qn.quiz_id
 			JOIN answer a
 				ON qn.id = a.question_id
-			WHERE q.uuid = $1
+			WHERE q.uuid = $1 AND q.user_account_id = $2
 			ORDER BY qn.order_index ASC, a.order_index ASC
-		`, input.UUID)
+		`, input.UUID, userId)
 		if err != nil {
 			return logAndReturnError(err)
 		}
@@ -122,8 +114,10 @@ func (dbw *DBWrapper) GetMyQuiz() usecase.Interactor {
 		}
 		lastQuizId := ""
 		lastQuestionId := ""
+		hasRows := false
 
 		for rows.Next() {
+			hasRows = true
 			if err := rows.Scan(
 				&row.ID,
 				&row.Title,
@@ -184,6 +178,10 @@ func (dbw *DBWrapper) GetMyQuiz() usecase.Interactor {
 				ImageUrl:    row.Answer.ImageUrl,
 				IsCorrect:   row.Answer.IsCorrect,
 			})
+		}
+
+		if !hasRows {
+			return status.Wrap(logAndReturnErrorMessage(fmt.Sprintf("quiz with uuid %v does not exist for this user", input.UUID)), status.NotFound)
 		}
 
 		if err := rows.Err(); err != nil {

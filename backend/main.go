@@ -229,7 +229,7 @@ func main() {
 	})
 
 	service.Route("/", func(r chi.Router) {
-		r.Method(http.MethodGet, "/", http.RedirectHandler("/docs", http.StatusMovedPermanently))
+		r.Method(http.MethodGet, "/", http.RedirectHandler("/docs", http.StatusFound))
 	})
 
 	srv := &http.Server{

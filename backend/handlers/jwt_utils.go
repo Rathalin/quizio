@@ -57,16 +57,10 @@ func getUserIdFromContext(ctx context.Context) (int64, error) {
 		return -1, err
 	}
 
-	userId, ok := claims["userId"].(float64) // JWT claims use int64 for numbers
+	userId, ok := claims["userId"].(float64) // JWT claims decode numbers as float64
 	if !ok {
 		return -1, fmt.Errorf("userId not found in token claims")
 	}
-
-	// Print all key-value pairs in the claims map
-	// fmt.Println("JWT Claims:")
-	// for key, value := range claims {
-	// 	fmt.Printf("%s: %v\n", key, value)
-	// }
 
 	return int64(userId), nil
 }

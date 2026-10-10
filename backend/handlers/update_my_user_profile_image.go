@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
@@ -27,7 +26,6 @@ func (dbw *DBWrapper) UpdateMyUserProfileImage() usecase.Interactor {
 		}
 
 		if input.ProfileImageUrl != nil {
-			log.Printf(".%v\n", *input.ProfileImageUrl)
 			profileImageExists, err := fileExists(*input.ProfileImageUrl)
 			if err != nil {
 				return logAndReturnError(err)

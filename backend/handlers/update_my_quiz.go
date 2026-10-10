@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"slices"
 
 	"github.com/swaggest/usecase"
@@ -53,19 +52,6 @@ func (dbw *DBWrapper) UpdateMyQuiz() usecase.Interactor {
 			return status.Wrap(logAndReturnErrorMessage("quiz does not exist (invalid uuid)"), status.NotFound)
 		}
 
-		quizExists, err := dbw.QuizExistsForUser(input.UUID, userId)
-		if err != nil {
-			return logAndReturnError(err)
-		}
-		if !quizExists {
-			return status.Wrap(logAndReturnErrorMessage(fmt.Sprintf("quiz with uuid %v does not exist for this user", input.UUID)), status.NotFound)
-		}
-
-		quizId, err := dbw.GetQuizId(input.UUID)
-		if err != nil {
-			return logAndReturnError(err)
-		}
-
 		tx, err := dbw.DB.BeginTx(ctx, nil)
 		if err != nil {
 			return logAndReturnError(err)
@@ -73,11 +59,13 @@ func (dbw *DBWrapper) UpdateMyQuiz() usecase.Interactor {
 		defer tx.Rollback()
 
 		// Update quiz details
-		_, err = tx.ExecContext(ctx, `
+		var quizId int64
+		err = tx.QueryRowContext(ctx, `
 			UPDATE quiz
 			SET title = $1, description_text = $2, is_published = $3, image_url = $4
-			WHERE uuid = $5
-		`, input.Title, input.Description, input.IsPublished, input.ImageUrl, input.UUID)
+			WHERE uuid = $5 AND user_account_id = $6
+			RETURNING id
+		`, input.Title, input.Description, input.IsPublished, input.ImageUrl, input.UUID, userId).Scan(&quizId)
 		if err != nil {
 			return logAndReturnError(err)
 		}

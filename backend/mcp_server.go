@@ -98,13 +98,13 @@ func setupMCPServer() *mcpserver.StreamableHTTPServer {
 		if !ok {
 			return mcp.NewToolResultError("invalid arguments format"), nil
 		}
-		
+
 		page, _ := args["page"].(float64)
 		pageSize, _ := args["pageSize"].(float64)
 		sortOption, _ := args["sortOption"].(string)
 		sortDirection, _ := args["sortDirection"].(string)
 
-		path := fmt.Sprintf("/quizzes?page=%d&pageSize=%d&sortOption=%s&sortDirection=%s", 
+		path := fmt.Sprintf("/quizzes?page=%d&pageSize=%d&sortOption=%s&sortDirection=%s",
 			int(page), int(pageSize), sortOption, sortDirection)
 
 		resp, err := doRequest(http.MethodGet, path, nil, "")
@@ -341,7 +341,7 @@ func setupMCPServer() *mcpserver.StreamableHTTPServer {
 		if !ok {
 			return mcp.NewToolResultError("invalid arguments format"), nil
 		}
-		
+
 		visibleTo, ok := args["visibleTo"].(string)
 		if !ok {
 			return mcp.NewToolResultError("visibleTo is required and must be a string"), nil
@@ -370,7 +370,7 @@ func setupMCPServer() *mcpserver.StreamableHTTPServer {
 		if !ok {
 			return mcp.NewToolResultError("invalid arguments format"), nil
 		}
-		
+
 		uuid, _ := args["uuid"].(string)
 		from, _ := args["from"].(string)
 		to, _ := args["to"].(string)
