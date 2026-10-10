@@ -85,6 +85,12 @@ func main() {
 			router.Method(http.MethodPost, "/create-play-protocol-entry", nethttp.NewHandler((dbWrapper.CreateMyPlayProtocolEntry())))
 
 			router.Route("/upload", func(router chi.Router) {
+				router.Use(func(next http.Handler) http.Handler {
+					return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+						r.Body = http.MaxBytesReader(w, r.Body, 10*1024*1024) // 10MB max request size
+						next.ServeHTTP(w, r)
+					})
+				})
 				router.Method(http.MethodPost, "/", nethttp.NewHandler((dbWrapper.UploadMyFile())))
 				router.Method(http.MethodDelete, "/", nethttp.NewHandler((dbWrapper.DeleteMyFile())))
 			})

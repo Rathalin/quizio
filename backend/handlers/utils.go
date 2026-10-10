@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
@@ -81,4 +82,21 @@ func fileExists(filePath string) (bool, error) {
 	}
 	// Some other error occurred (e.g., permission issues)
 	return false, err
+}
+
+func getDirSize(path string) (int64, error) {
+	var size int64
+	err := filepath.Walk(path, func(_ string, info os.FileInfo, err error) error {
+		if err != nil {
+			if os.IsNotExist(err) {
+				return nil
+			}
+			return err
+		}
+		if !info.IsDir() {
+			size += info.Size()
+		}
+		return nil
+	})
+	return size, err
 }

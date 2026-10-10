@@ -53,14 +53,30 @@ func (dbw *DBWrapper) UploadMyFile() usecase.Interactor {
 			return status.Wrap(fmt.Errorf("svg uploads are not allowed"), status.InvalidArgument)
 		}
 		
-		// Ensure the content is actually an image or audio
 		if !strings.HasPrefix(mtype.String(), "image/") && !strings.HasPrefix(mtype.String(), "audio/") {
 			return status.Wrap(fmt.Errorf("invalid file content type: %s", mtype.String()), status.InvalidArgument)
 		}
 
+		const maxUploadSize = 5 * 1024 * 1024 // 5MB
+		const maxUserQuota = 50 * 1024 * 1024 // 50MB
+
+		if len(input.File) > maxUploadSize {
+			return status.Wrap(fmt.Errorf("file size exceeds maximum allowed size of 5MB"), status.InvalidArgument)
+		}
+
+		uploadDir := filepath.Join("public", "uploads", userUuid)
+		
+		currentDirSize, err := getDirSize(uploadDir)
+		if err != nil {
+			return logAndReturnError(fmt.Errorf("failed to calculate current user quota: %w", err))
+		}
+
+		if currentDirSize+int64(len(input.File)) > maxUserQuota {
+			return status.Wrap(fmt.Errorf("upload would exceed the maximum user quota of 50MB"), status.InvalidArgument)
+		}
+
 		// Define the upload directory
 		pathDir := fmt.Sprintf("/public/uploads/%v/", userUuid)
-		uploadDir := filepath.Join("public", "uploads", userUuid)
 		if err := os.MkdirAll(uploadDir, 0o755); err != nil {
 			return logAndReturnError(fmt.Errorf("unable to create upload directory: %w", err))
 		}
