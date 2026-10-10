@@ -15,11 +15,11 @@ import (
 
 func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 	type getQuizzesRequest struct {
-		Page          int    `query:"page" required:"true" example:"0"`
-		PageSize      int    `query:"pageSize" required:"true" example:"5"`
+		Page          int    `query:"page" required:"true" example:"0" validate:"min=0"`
+		PageSize      int    `query:"pageSize" required:"true" example:"5" validate:"min=1,max=50"`
 		SortOption    string `query:"sortOption" required:"true" enum:"createdAt,playCount" example:"createdAt"`
 		SortDirection string `query:"sortDirection" required:"true" enum:"asc,desc" example:"desc"`
-	}
+	} 
 
 	type getQuizzesResponseQuiz struct {
 		UUID          string    `json:"uuid" required:"true"`
