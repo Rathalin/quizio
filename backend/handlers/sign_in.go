@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Rathalin/quizio/backend/auth"
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
 	"golang.org/x/crypto/bcrypt"
@@ -93,7 +94,7 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 		_, err = dbw.DB.Exec(`
 			INSERT INTO refresh_token (user_account_id, token, expires_at)
 			VALUES ($1, $2, $3)
-		`, row.ID, refreshToken, time.Now().Add(7*24*time.Hour)) // 7 days expiry
+		`, row.ID, refreshToken, time.Now().Add(auth.RefreshTokenTTL)) // 7 days expiry
 		if err != nil {
 			return logAndReturnError(err)
 		}

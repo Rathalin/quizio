@@ -5,6 +5,7 @@ import Paper from '@mui/material/Paper';
 import Container from '@mui/material/Container';
 import { SxProps, Theme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import { raise } from '@/utilities/errorHandling';
 
 type FooterProps = { sx: SxProps<Theme> };
 
@@ -30,6 +31,9 @@ export default function Footer({ sx }: FooterProps) {
         >
           <Box sx={{ justifySelf: { xs: 'start', md: 'start' } }}>
             <MadeWithLove />
+            <Box sx={{ mt: 1, typography: 'caption', color: 'text.secondary' }}>
+              {`v${process.env.NEXT_PUBLIC_APP_VERSION ?? raise('NEXT_PUBLIC_APP_VERSION is not defined')}`}
+            </Box>
           </Box>
           <Box sx={{ justifySelf: { xs: 'start', md: 'center' } }}>
             <Socials />

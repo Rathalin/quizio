@@ -48,7 +48,7 @@ func main() {
 	service.OpenAPISchema().SetTitle("Quizzes API")
 	service.OpenAPISchema().SetDescription("This service manages quizzes and their questions.")
 	service.OpenAPISchema().SetVersion("v1.0.0")
-	service.OpenAPISchema().SetHTTPBearerTokenSecurity("JWT token", "baerer", "")
+	service.OpenAPISchema().SetHTTPBearerTokenSecurity("JWT token", "bearer", "")
 
 	service.Use(
 		cors.AllowAll().Handler,
@@ -75,7 +75,7 @@ func main() {
 	// Auth routes
 	service.Route("/me", func(router chi.Router) {
 		router.With(
-			nethttp.HTTPBearerSecurityMiddleware(service.OpenAPICollector, "JWT token", "baerer", "string"),
+			nethttp.HTTPBearerSecurityMiddleware(service.OpenAPICollector, "JWT token", "bearer", "string"),
 		).Group(func(router chi.Router) {
 			router.Use(
 				jwtauth.Verifier(auth.TokenAuth),
@@ -151,7 +151,7 @@ func main() {
 
 		// /oauth/grant requires authentication
 		router.With(
-			nethttp.HTTPBearerSecurityMiddleware(service.OpenAPICollector, "JWT token", "baerer", "string"),
+			nethttp.HTTPBearerSecurityMiddleware(service.OpenAPICollector, "JWT token", "bearer", "string"),
 		).Group(func(r chi.Router) {
 			r.Use(
 				jwtauth.Verifier(auth.TokenAuth),
@@ -163,7 +163,7 @@ func main() {
 	})
 
 	service.Route("/seo", func(router chi.Router) {
-		router.With(nethttp.HTTPBearerSecurityMiddleware(service.OpenAPICollector, "SEO API Key", "baerer", "string")).Group(func(r chi.Router) {
+		router.With(nethttp.HTTPBearerSecurityMiddleware(service.OpenAPICollector, "SEO API Key", "bearer", "string")).Group(func(r chi.Router) {
 			r.Use(middlewares.APIKeyMiddleware(env.Config.SEOAPIKey))
 			r.Method(http.MethodGet, "/published-quizzes-uuids", nethttp.NewHandler(dbWrapper.GetSeoPublishedQuizzesUuids()))
 		})

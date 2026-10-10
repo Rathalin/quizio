@@ -10,7 +10,7 @@ import (
 func (dbw *DBWrapper) CreateMyQuiz() usecase.Interactor {
 	type createQuizRequestAnswer struct {
 		Title       string  `json:"title" required:"true" validate:"required,min=1,max=100"`
-		Description *string `json:"description" required:"true" nullable:"true" validate:"max=200"`
+		Description string  `json:"description" required:"true" validate:"max=200"`
 		ImageUrl    *string `json:"imageUrl" required:"true" nullable:"true"`
 		IsCorrect   bool    `json:"isCorrect" required:"true" validate:"required"`
 	}
@@ -19,17 +19,17 @@ func (dbw *DBWrapper) CreateMyQuiz() usecase.Interactor {
 		Title               string                    `json:"title" required:"true" validate:"required,min=1,max=100"`
 		Description         *string                   `json:"description" required:"true" nullable:"true" validate:"max=200"`
 		ImageUrl            *string                   `json:"imageUrl" required:"true" nullable:"true"`
-		Explanation         *string                   `json:"explanation" required:"true" nullable:"true" validation:"max=400"`
+		Explanation         *string                   `json:"explanation" required:"true" nullable:"true" validate:"max=400"`
 		ExplanationImageUrl *string                   `json:"explanationImageUrl" required:"true" nullable:"true"`
-		Answers             []createQuizRequestAnswer `json:"answers" required:"true" nullable:"false" validate:"required,min=2,max=10"`
+		Answers             []createQuizRequestAnswer `json:"answers" required:"true" nullable:"false" validate:"required,min=2,max=10,dive"`
 	}
 
 	type createQuizRequest struct {
 		Title       string                      `json:"title" required:"true" validate:"required,min=1,max=50"`
-		Description *string                     `json:"description" required:"true" nullable:"true" validate:"max=200"`
+		Description string                      `json:"description" required:"true" validate:"max=200"`
 		IsPublished bool                        `json:"isPublished" required:"true"`
 		ImageUrl    *string                     `json:"imageUrl" required:"true" nullable:"true"`
-		Questions   []createQuizRequestQuestion `json:"questions" required:"true" validate:"required,min=1,max=20"`
+		Questions   []createQuizRequestQuestion `json:"questions" required:"true" validate:"required,min=1,max=20,dive"`
 	}
 
 	type createQuizResponse struct{}

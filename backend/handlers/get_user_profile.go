@@ -28,7 +28,7 @@ func (dbw *DBWrapper) GetUserProfile() usecase.Interactor {
 
 	return usecase.NewInteractor(func(ctx context.Context, input getPublicUserProfileRequest, output *getPublicUserProfileResponse) error {
 		if !isValidUUID(input.UUID) {
-			return status.Wrap(logAndReturnErrorMessage("user does not exists (invalid uuid)"), status.NotFound)
+			return status.Wrap(logAndReturnErrorMessage("user does not exist (invalid uuid)"), status.NotFound)
 		}
 
 		if err := validate.Struct(input); err != nil {
@@ -40,7 +40,7 @@ func (dbw *DBWrapper) GetUserProfile() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 		if !userExists {
-			return status.Wrap(logAndReturnErrorMessage("user does not exists"), status.NotFound)
+			return status.Wrap(logAndReturnErrorMessage("user does not exist"), status.NotFound)
 		}
 
 		userId, err := dbw.GetUserId(input.UUID)

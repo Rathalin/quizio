@@ -38,10 +38,10 @@ import { authOptions } from '@/pages/api/auth/[...nextauth].page';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const messagesPromise = getMessages(ctx.locale, ['quizForm']);
-    const session = await getServerSession(ctx.req, ctx.res, authOptions);
-    const authHeader = {
-      Authorization: `Bearer ${session?.user?.accessToken}`,
-    } satisfies AuthorizationHeader
+  const session = await getServerSession(ctx.req, ctx.res, authOptions);
+  const authHeader = {
+    Authorization: `Bearer ${session?.user?.accessToken}`,
+  } satisfies AuthorizationHeader;
 
   const queryClient = new QueryClient();
   const prefetchAllowedFileTypesPromise = queryClient.prefetchQuery({
@@ -110,7 +110,7 @@ export default function QuizCreatePage() {
 
     const mutationData = {
       title: overviewFormData.title,
-      description: overviewFormData.description ?? null,
+      description: overviewFormData.description ?? '',
       isPublished: publish,
       imageUrl: imageUrls.url,
       questions: questionsFormData.questions

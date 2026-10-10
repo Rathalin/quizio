@@ -58,7 +58,7 @@ func (dbw *DBWrapper) GetMyQuizzes() usecase.Interactor {
 				q.created_at,
 				q.updated_at,
 				q.title,
-				q.description_text,
+				COALESCE(q.description_text, ''),
 				q.is_published,
 				q.image_url,
 				COUNT(DISTINCT qn.id) AS question_count,
@@ -77,7 +77,7 @@ func (dbw *DBWrapper) GetMyQuizzes() usecase.Interactor {
 				q.created_at,
 				q.updated_at,
 				q.title,
-				q.description_text,
+				COALESCE(q.description_text, ''),
 				q.is_published,
 				q.image_url,
 				u.uuid,
@@ -113,6 +113,11 @@ func (dbw *DBWrapper) GetMyQuizzes() usecase.Interactor {
 
 			quizzes = append(quizzes, q)
 		}
+
+		if err := rows.Err(); err != nil {
+			return logAndReturnError(err)
+		}
+
 		response.Quizzes = quizzes
 		*output = response
 		return nil

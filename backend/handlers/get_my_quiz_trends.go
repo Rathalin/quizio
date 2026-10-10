@@ -48,7 +48,7 @@ func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 		}
 
 		if !isValidUUID(input.QuizUUID) {
-			return status.Wrap(logAndReturnErrorMessage("quiz does not exists (invalid uuid)"), status.NotFound)
+			return status.Wrap(logAndReturnErrorMessage("quiz does not exist (invalid uuid)"), status.NotFound)
 		}
 
 		quizExists, err := dbw.QuizExistsForUser(input.QuizUUID, userId)
@@ -56,7 +56,7 @@ func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 		if !quizExists {
-			return status.Wrap(logAndReturnErrorMessage(fmt.Sprintf("quiz wtih uuid %v does not exists for this user", input.QuizUUID)), status.NotFound)
+			return status.Wrap(logAndReturnErrorMessage(fmt.Sprintf("quiz with uuid %v does not exist for this user", input.QuizUUID)), status.NotFound)
 		}
 
 		quizId, err := dbw.GetQuizId(input.QuizUUID)
@@ -84,7 +84,7 @@ func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 				q.created_at,
 				q.updated_at,
 				q.title,
-				q.description_text,
+				COALESCE(q.description_text, ''),
 				q.is_published,
 				q.image_url,
 				COUNT(DISTINCT qn.id) AS question_count,
@@ -103,7 +103,7 @@ func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 				q.created_at,
 				q.updated_at,
 				q.title,
-				q.description_text,
+				COALESCE(q.description_text, ''),
 				q.is_published,
 				q.image_url,
 				u.uuid,
@@ -126,15 +126,16 @@ func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 		entriesPerDayRows, err := dbw.DB.QueryContext(ctx, `
 			SELECT TO_CHAR(played_at, 'YYYY-MM-DD') AS date, COUNT(*) AS play_count
 			FROM play_protocol_entry
-			WHERE played_at >= NOW() - INTERVAL '1 year' 
+			WHERE played_at >= $2 AND played_at <= $3
 				AND quiz_id = $1 
-				AND played_at != $2
+				AND played_at != $4
 			GROUP BY date
 			ORDER BY date
-			`, quizId, migrationDate)
+			`, quizId, input.StartDate, input.EndDate, migrationDate)
 		if err != nil {
 			return logAndReturnError(err)
 		}
+		defer entriesPerDayRows.Close()
 
 		var migratedPlayCount *float64
 		err = dbw.DB.QueryRowContext(ctx, `
@@ -147,7 +148,11 @@ func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 		var averageDailyMigratedPlayCount *float64
-		daysBetween := input.EndDate.Sub(input.StartDate).Hours() / 24
+
+		daysBetween := migrationDate.Sub(response.CreatedAt).Hours() / 24
+		if daysBetween <= 0 {
+			daysBetween = 1
+		}
 		avg := *migratedPlayCount / daysBetween
 		roundDigits := float64(3)
 		roundedAvg := math.Round(avg*math.Pow(10, roundDigits)) / math.Pow(10, roundDigits)
@@ -168,7 +173,9 @@ func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 			}
 			entriesPerDayMap[date.Format("2006-01-02")] = playCount
 		}
-		entriesPerDayRows.Close()
+		if err := entriesPerDayRows.Err(); err != nil {
+			return logAndReturnError(err)
+		}
 
 		var entriesPerDay []getMyQuizTrendsResponsePlayProtocolEntry
 		// Iterate through all days in the range and fill missing days

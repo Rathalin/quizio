@@ -37,7 +37,7 @@ func (dbw *DBWrapper) GetMyQuiz() usecase.Interactor {
 			UpdatedAt           time.Time
 			OrderIndex          int
 			Title               string
-			Description         *string
+			Description         string
 			ImageUrl            *string
 			Explanation         *string
 			ExplanationImageUrl *string
@@ -49,7 +49,7 @@ func (dbw *DBWrapper) GetMyQuiz() usecase.Interactor {
 			UpdatedAt   time.Time
 			OrderIndex  int
 			Title       string
-			Description *string
+			Description string
 			ImageUrl    *string
 			IsCorrect   bool
 		}
@@ -62,7 +62,7 @@ func (dbw *DBWrapper) GetMyQuiz() usecase.Interactor {
 		}
 
 		if !isValidUUID(input.UUID) {
-			return status.Wrap(logAndReturnErrorMessage("quiz does not exists (invalid uuid)"), status.NotFound)
+			return status.Wrap(logAndReturnErrorMessage("quiz does not exist (invalid uuid)"), status.NotFound)
 		}
 
 		if err := validate.Struct(input); err != nil {
@@ -74,14 +74,14 @@ func (dbw *DBWrapper) GetMyQuiz() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 		if !quizExists {
-			return status.Wrap(logAndReturnErrorMessage(fmt.Sprintf("quiz wtih uuid %v does not exists for this user", input.UUID)), status.NotFound)
+			return status.Wrap(logAndReturnErrorMessage(fmt.Sprintf("quiz with uuid %v does not exist for this user", input.UUID)), status.NotFound)
 		}
 
 		rows, err := dbw.DB.Query(`
 			SELECT
 				q.id,
 				q.title,
-				q.description_text,
+				COALESCE(q.description_text, ''),
 				q.is_published,
 				q.image_url,
 				qn.id,
@@ -90,7 +90,7 @@ func (dbw *DBWrapper) GetMyQuiz() usecase.Interactor {
 				qn.updated_at,
 				qn.order_index,
 				qn.title,
-				qn.description_text,
+				COALESCE(qn.description_text, ''),
 				qn.image_url,
 				qn.explanation,
 				qn.explanation_image_url,
@@ -100,7 +100,7 @@ func (dbw *DBWrapper) GetMyQuiz() usecase.Interactor {
 				a.updated_at,
 				a.order_index,
 				a.title,
-				a.description_text,
+				COALESCE(a.description_text, ''),
 				a.image_url,
 				a.is_correct
 			FROM quiz q
@@ -185,6 +185,11 @@ func (dbw *DBWrapper) GetMyQuiz() usecase.Interactor {
 				IsCorrect:   row.Answer.IsCorrect,
 			})
 		}
+
+		if err := rows.Err(); err != nil {
+			return logAndReturnError(err)
+		}
+
 		*output = response
 		return nil
 	})

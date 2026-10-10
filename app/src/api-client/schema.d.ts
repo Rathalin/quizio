@@ -440,14 +440,14 @@ export interface components {
       quizUuid: string;
     };
     HandlersCreateQuizRequest: {
-      description: string | null;
+      description: string;
       imageUrl: string | null;
       isPublished: boolean;
       questions: components['schemas']['HandlersCreateQuizRequestQuestion'][] | null;
       title: string;
     };
     HandlersCreateQuizRequestAnswer: {
-      description: string | null;
+      description: string;
       imageUrl: string | null;
       isCorrect: boolean;
       title: string;
@@ -612,14 +612,14 @@ export interface components {
       token_type: string;
     };
     HandlersUpdateQuizRequest: {
-      description: string | null;
+      description: string;
       imageUrl: string | null;
       isPublished: boolean;
       questions: components['schemas']['HandlersUpdateQuizRequestQuestion'][];
       title: string;
     };
     HandlersUpdateQuizRequestAnswer: {
-      description: string | null;
+      description: string;
       imageUrl: string | null;
       isCorrect: boolean;
       title: string;
@@ -669,13 +669,13 @@ export interface components {
     };
     ModelsAnswer: {
       /** Format: date-time */
-      created_at: string;
-      description: string | null;
+      createdAt: string;
+      description: string;
       imageUrl: string | null;
       isCorrect: boolean;
       title: string;
       /** Format: date-time */
-      updated_at: string;
+      updatedAt: string;
       uuid: string;
     };
     ModelsMeta: {
@@ -688,7 +688,7 @@ export interface components {
       answers: components['schemas']['ModelsAnswer'][];
       /** Format: date-time */
       createdAt: string;
-      description: string | null;
+      description: string;
       explanation: string | null;
       explanationImageUrl: string | null;
       imageUrl: string | null;

@@ -70,7 +70,7 @@ func Load() {
 		log.Fatal("Environment variable POSTGRES_USER is not set\n")
 	}
 	if Config.PostgresPassword == "" {
-		log.Fatal("Environment variable POSTGRES_PW is not set\n")
+		log.Fatal("Environment variable POSTGRES_PASSWORD is not set\n")
 	}
 	if Config.OpenAPIDocsUser == "" {
 		log.Fatal("Environment variable OPENAPI_DOCS_USER is not set\n")

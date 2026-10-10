@@ -30,10 +30,13 @@ func (dbw *DBWrapper) GetSeoPublishedQuizzesUuids() usecase.Interactor {
 		for rows.Next() {
 			quizUuid := ""
 			err = rows.Scan(&quizUuid)
-			publishedQuizesUuids = append(publishedQuizesUuids, quizUuid)
 			if err != nil {
 				return logAndReturnError(err)
 			}
+			publishedQuizesUuids = append(publishedQuizesUuids, quizUuid)
+		}
+		if err := rows.Err(); err != nil {
+			return logAndReturnError(err)
 		}
 		*output = publishedQuizesUuids
 		return nil

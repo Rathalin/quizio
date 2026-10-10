@@ -23,7 +23,7 @@ func (dbw *DBWrapper) UpdateMyQuizVisibility() usecase.Interactor {
 		}
 
 		if !isValidUUID(input.UUID) {
-			return status.Wrap(logAndReturnErrorMessage("quiz does not exists (invalid uuid)"), status.NotFound)
+			return status.Wrap(logAndReturnErrorMessage("quiz does not exist (invalid uuid)"), status.NotFound)
 		}
 
 		if err := validate.Struct(input); err != nil {

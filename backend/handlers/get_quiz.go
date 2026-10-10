@@ -32,7 +32,7 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 			UpdatedAt           time.Time
 			OrderIndex          int
 			Title               string
-			Description         *string
+			Description         string
 			ImageUrl            *string
 			Explanation         *string
 			ExplanationImageUrl *string
@@ -44,7 +44,7 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 			UpdatedAt   time.Time
 			OrderIndex  int
 			Title       string
-			Description *string
+			Description string
 			ImageUrl    *string
 			IsCorrect   bool
 		}
@@ -52,7 +52,7 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 
 	return usecase.NewInteractor(func(_ context.Context, input playQuizRequest, output *playQuizResponse) error {
 		if !isValidUUID(input.UUID) {
-			return status.Wrap(logAndReturnErrorMessage("quiz does not exists (invalid uuid)"), status.NotFound)
+			return status.Wrap(logAndReturnErrorMessage("quiz does not exist (invalid uuid)"), status.NotFound)
 		}
 
 		if err := validate.Struct(input); err != nil {
@@ -64,7 +64,7 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 		if !quizExists {
-			return status.Wrap(logAndReturnErrorMessage("quiz does not exists"), status.NotFound)
+			return status.Wrap(logAndReturnErrorMessage("quiz does not exist"), status.NotFound)
 		}
 
 		rows, err := dbw.DB.Query(`
@@ -78,7 +78,7 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 				qn.updated_at,
 				qn.order_index,
 				qn.title,
-				qn.description_text,
+				COALESCE(qn.description_text, ''),
 				qn.image_url,
 				qn.explanation,
 				qn.explanation_image_url,
@@ -88,7 +88,7 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 				a.updated_at,
 				a.order_index,
 				a.title,
-				a.description_text,
+				COALESCE(a.description_text, ''),
 				a.image_url,
 				a.is_correct
 			FROM quiz q
@@ -162,13 +162,18 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 			response.Questions[len(response.Questions)-1].Answers = append(response.Questions[len(response.Questions)-1].Answers, models.Answer{
 				UUID:        row.Answer.UUID,
 				CreatedAt:   row.Answer.CreatedAt,
-				UpdatedAt:   row.Question.UpdatedAt,
+				UpdatedAt:   row.Answer.UpdatedAt,
 				Title:       row.Answer.Title,
 				Description: row.Answer.Description,
 				ImageUrl:    row.Answer.ImageUrl,
 				IsCorrect:   row.Answer.IsCorrect,
 			})
 		}
+
+		if err := rows.Err(); err != nil {
+			return logAndReturnError(err)
+		}
+
 		*output = response
 		return nil
 	})
