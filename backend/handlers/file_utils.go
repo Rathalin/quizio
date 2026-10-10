@@ -63,13 +63,12 @@ var AllowedImageTypes = []string{
 	"jpeg",
 	"png",
 	"webp",
-	"svg",
 	"gif",
 	"avif",
 }
 var AllowedAudioTypes = []string{
 	"mp3",
-	"acc",
+	"aac",
 	"ogg",
 	"wav",
 	"flac",

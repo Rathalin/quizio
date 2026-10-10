@@ -11,6 +11,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/gabriel-vasile/mimetype"
 	"github.com/google/uuid"
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
@@ -43,6 +44,18 @@ func (dbw *DBWrapper) UploadMyFile() usecase.Interactor {
 
 		if !slices.Contains(AllowedFileTypes, strings.ToLower(GetFileExtension(input.Filename))) {
 			return status.Wrap(fmt.Errorf("invalid file type"), status.InvalidArgument)
+		}
+
+		mtype := mimetype.Detect(input.File)
+		
+		// Explicitly reject SVGs even if they bypass the extension check (e.g. named .jpg)
+		if mtype.Is("image/svg+xml") || mtype.Is("text/xml") || mtype.Is("application/xml") {
+			return status.Wrap(fmt.Errorf("svg uploads are not allowed"), status.InvalidArgument)
+		}
+		
+		// Ensure the content is actually an image or audio
+		if !strings.HasPrefix(mtype.String(), "image/") && !strings.HasPrefix(mtype.String(), "audio/") {
+			return status.Wrap(fmt.Errorf("invalid file content type: %s", mtype.String()), status.InvalidArgument)
 		}
 
 		// Define the upload directory
