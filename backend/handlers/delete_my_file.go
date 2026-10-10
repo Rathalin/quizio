@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
@@ -34,21 +35,34 @@ func (dbw *DBWrapper) DeleteMyFile() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
-		filePath := GetFilePaths(input.Filename, userUuid).filePath
-
-		// Check if the file exists
-		if _, err := os.Stat(filePath); os.IsNotExist(err) {
-			*output = deleteFileResponse{
-				Message: fmt.Sprintf("file does not exist: %v", input.Filename),
-			}
-		} else {
-			// Delete the file
-			if err := os.Remove(filePath); err != nil {
-				return fmt.Errorf("failed to delete file: %w", err)
-			}
-
-			log.Printf("Deleted file %v for user %v\n", input.Filename, userUuid)
+		if input.Filename != filepath.Base(input.Filename) {
+			return status.Wrap(fmt.Errorf("invalid filename"), status.InvalidArgument)
 		}
+
+		uploadDir := filepath.Join("public", "uploads", userUuid)
+		root, err := os.OpenRoot(uploadDir)
+		if err != nil {
+			if os.IsNotExist(err) {
+				*output = deleteFileResponse{
+					Message: fmt.Sprintf("file does not exist: %v", input.Filename),
+				}
+				return nil
+			}
+			return logAndReturnError(err)
+		}
+		defer root.Close()
+
+		if err := root.Remove(input.Filename); err != nil {
+			if os.IsNotExist(err) {
+				*output = deleteFileResponse{
+					Message: fmt.Sprintf("file does not exist: %v", input.Filename),
+				}
+				return nil
+			}
+			return fmt.Errorf("failed to delete file: %w", err)
+		}
+
+		log.Printf("Deleted file %v for user %v\n", input.Filename, userUuid)
 
 		*output = deleteFileResponse{
 			Message: fmt.Sprintf("File %v successfully deleted.", input.Filename),

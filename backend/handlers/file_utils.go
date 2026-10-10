@@ -31,21 +31,31 @@ func GetFilenameFromUrl(fileUrl string) string {
 }
 
 func DeleteFile(filename string, userUuid string) bool {
-	paths := GetFilePaths(filename, userUuid)
-
-	// Check if the file exists
-	if _, err := os.Stat(paths.filePath); os.IsNotExist(err) {
+	if filename != filepath.Base(filename) {
+		log.Printf("failed to delete file: invalid filename %s", filename)
 		return false
-	} else {
-		// Delete the file
-		if err := os.Remove(paths.filePath); err != nil {
-			log.Printf("failed to delete file: %s", err.Error())
+	}
+
+	uploadDir := filepath.Join("public", "uploads", userUuid)
+	root, err := os.OpenRoot(uploadDir)
+	if err != nil {
+		if os.IsNotExist(err) {
 			return false
 		}
-
-		log.Printf("Deleted file %v for user %v\n", filename, userUuid)
-		return true
+		log.Printf("failed to delete file (OpenRoot): %v", err)
+		return false
 	}
+	defer root.Close()
+
+	if err := root.Remove(filename); err != nil {
+		if !os.IsNotExist(err) {
+			log.Printf("failed to delete file: %v", err)
+		}
+		return false
+	}
+
+	log.Printf("Deleted file %v for user %v\n", filename, userUuid)
+	return true
 }
 
 var AllowedImageTypes = []string{
