@@ -9,7 +9,9 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strings"
 
+	"github.com/google/uuid"
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
 )
@@ -39,35 +41,28 @@ func (dbw *DBWrapper) UploadMyFile() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
-		if !slices.Contains(AllowedFileTypes, GetFileExtension(input.Filename)) {
+		if !slices.Contains(AllowedFileTypes, strings.ToLower(GetFileExtension(input.Filename))) {
 			return status.Wrap(fmt.Errorf("invalid file type"), status.InvalidArgument)
 		}
 
 		// Define the upload directory
 		pathDir := fmt.Sprintf("/public/uploads/%v/", userUuid)
-		uploadDir := fmt.Sprintf(".%v", pathDir)
-		if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
+		uploadDir := filepath.Join("public", "uploads", userUuid)
+		if err := os.MkdirAll(uploadDir, 0o755); err != nil {
 			return fmt.Errorf("unable to create upload directory: %w", err)
 		}
 
-		// Generate a unique file name if the file already exists
-		originalFilePath := filepath.Join(uploadDir, input.Filename)
-		filePath := originalFilePath
-		ext := filepath.Ext(input.Filename)
-		name := input.Filename[:len(input.Filename)-len(ext)]
-		counter := 1
-
-		for {
-			if _, err := os.Stat(filePath); os.IsNotExist(err) {
-				break // File does not exist, use this filePath
-			}
-			// File exists, generate a new name
-			filePath = filepath.Join(uploadDir, fmt.Sprintf("%s_%d%s", name, counter, ext))
-			counter++
+		root, err := os.OpenRoot(uploadDir)
+		if err != nil {
+			return fmt.Errorf("unable to open upload directory: %w", err)
 		}
+		defer root.Close()
 
-		// Save the file
-		out, err := os.Create(filePath)
+		ext := strings.ToLower(filepath.Ext(input.Filename))
+		name := uuid.NewString() + ext
+
+		// Save the file securely and exclusively
+		out, err := root.OpenFile(name, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
 		if err != nil {
 			return fmt.Errorf("failed to create file: %w", err)
 		}
@@ -79,7 +74,7 @@ func (dbw *DBWrapper) UploadMyFile() usecase.Interactor {
 		}
 
 		// Generate the file URL (adjust this to your server's public URL)
-		fileURL := fmt.Sprintf("%s%s", pathDir, filepath.Base(filePath))
+		fileURL := fmt.Sprintf("%s%s", pathDir, name)
 
 		log.Printf("Uploaded image %v for user %v -> %v\n", input.Filename, userUuid, fileURL)
 
