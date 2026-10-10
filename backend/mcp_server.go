@@ -71,8 +71,8 @@ func getToken(ctx context.Context) (string, error) {
 func setupMCPServer() *mcpserver.StreamableHTTPServer {
 	s := mcpserver.NewMCPServer("quizio-mcp", "1.0.0")
 
-	// 1. get_quizzes
-	s.AddTool(mcp.NewTool("get_quizzes", mcp.WithDescription("Get all quizzes for the authorized user")),
+	// 1. get_my_quizzes
+	s.AddTool(mcp.NewTool("get_my_quizzes", mcp.WithDescription("Get all quizzes for the authorized user (your private and public quizzes)")),
 		func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 			token, err := getToken(ctx)
 			if err != nil {
@@ -86,9 +86,37 @@ func setupMCPServer() *mcpserver.StreamableHTTPServer {
 		},
 	)
 
-	// 2. get_quiz
-	s.AddTool(mcp.NewTool("get_quiz",
-		mcp.WithDescription("Get a specific quiz by UUID"),
+	// 1b. get_public_quizzes
+	s.AddTool(mcp.NewTool("get_public_quizzes",
+		mcp.WithDescription("Get all public quizzes with pagination and sorting"),
+		mcp.WithNumber("page", mcp.Required(), mcp.Description("Page number (0-indexed)")),
+		mcp.WithNumber("pageSize", mcp.Required(), mcp.Description("Number of items per page")),
+		mcp.WithString("sortOption", mcp.Required(), mcp.Description("Field to sort by: 'createdAt' or 'playCount'")),
+		mcp.WithString("sortDirection", mcp.Required(), mcp.Description("Sort direction: 'asc' or 'desc'")),
+	), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		args, ok := request.Params.Arguments.(map[string]any)
+		if !ok {
+			return mcp.NewToolResultError("invalid arguments format"), nil
+		}
+		
+		page, _ := args["page"].(float64)
+		pageSize, _ := args["pageSize"].(float64)
+		sortOption, _ := args["sortOption"].(string)
+		sortDirection, _ := args["sortDirection"].(string)
+
+		path := fmt.Sprintf("/quizzes?page=%d&pageSize=%d&sortOption=%s&sortDirection=%s", 
+			int(page), int(pageSize), sortOption, sortDirection)
+
+		resp, err := doRequest(http.MethodGet, path, nil, "")
+		if err != nil {
+			return mcp.NewToolResultError(err.Error()), nil
+		}
+		return mcp.NewToolResultText(string(resp)), nil
+	})
+
+	// 2. get_my_quiz
+	s.AddTool(mcp.NewTool("get_my_quiz",
+		mcp.WithDescription("Get a specific quiz owned by the authorized user by UUID"),
 		mcp.WithString("uuid", mcp.Required(), mcp.Description("Quiz UUID")),
 	), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		token, err := getToken(ctx)
@@ -110,9 +138,9 @@ func setupMCPServer() *mcpserver.StreamableHTTPServer {
 		return mcp.NewToolResultText(string(resp)), nil
 	})
 
-	// 3. delete_quiz
-	s.AddTool(mcp.NewTool("delete_quiz",
-		mcp.WithDescription("Delete a quiz by UUID"),
+	// 3. delete_my_quiz
+	s.AddTool(mcp.NewTool("delete_my_quiz",
+		mcp.WithDescription("Delete a quiz owned by the authorized user by UUID"),
 		mcp.WithString("uuid", mcp.Required(), mcp.Description("Quiz UUID")),
 	), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		token, err := getToken(ctx)
@@ -134,10 +162,10 @@ func setupMCPServer() *mcpserver.StreamableHTTPServer {
 		return mcp.NewToolResultText(fmt.Sprintf("Quiz %s deleted successfully. Response: %s", uuid, string(resp))), nil
 	})
 
-	// 4. create_quiz
+	// 4. create_my_quiz
 	createQuizTool := mcp.Tool{
-		Name:        "create_quiz",
-		Description: "Create a new quiz",
+		Name:        "create_my_quiz",
+		Description: "Create a new quiz for the authorized user",
 		InputSchema: mcp.ToolInputSchema{
 			Type: "object",
 			Properties: map[string]any{
@@ -188,10 +216,10 @@ func setupMCPServer() *mcpserver.StreamableHTTPServer {
 		return mcp.NewToolResultText(fmt.Sprintf("Quiz created successfully:\n%s", string(resp))), nil
 	})
 
-	// 5. update_quiz
+	// 5. update_my_quiz
 	updateQuizTool := mcp.Tool{
-		Name:        "update_quiz",
-		Description: "Update an existing quiz",
+		Name:        "update_my_quiz",
+		Description: "Update an existing quiz owned by the authorized user",
 		InputSchema: mcp.ToolInputSchema{
 			Type: "object",
 			Properties: map[string]any{
@@ -302,6 +330,61 @@ func setupMCPServer() *mcpserver.StreamableHTTPServer {
 			return mcp.NewToolResultError(err.Error()), nil
 		}
 		return mcp.NewToolResultText(fmt.Sprintf("File uploaded successfully:\n%s", string(resp))), nil
+	})
+
+	// 7. get_alerts
+	s.AddTool(mcp.NewTool("get_alerts",
+		mcp.WithDescription("Get system alerts with filtering by visibility"),
+		mcp.WithString("visibleTo", mcp.Required(), mcp.Description("Who can see this alert: 'everyone' or 'authorized'")),
+	), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		args, ok := request.Params.Arguments.(map[string]any)
+		if !ok {
+			return mcp.NewToolResultError("invalid arguments format"), nil
+		}
+		
+		visibleTo, ok := args["visibleTo"].(string)
+		if !ok {
+			return mcp.NewToolResultError("visibleTo is required and must be a string"), nil
+		}
+
+		path := fmt.Sprintf("/alerts?visibleTo=%s", visibleTo)
+		resp, err := doRequest(http.MethodGet, path, nil, "")
+		if err != nil {
+			return mcp.NewToolResultError(err.Error()), nil
+		}
+		return mcp.NewToolResultText(string(resp)), nil
+	})
+
+	// 8. get_my_quiz_trends
+	s.AddTool(mcp.NewTool("get_my_quiz_trends",
+		mcp.WithDescription("Get play count trends for a specific quiz owned by the authorized user over a time period"),
+		mcp.WithString("uuid", mcp.Required(), mcp.Description("Quiz UUID")),
+		mcp.WithString("from", mcp.Required(), mcp.Description("Start date in ISO-8601 format (e.g. 2023-01-01T00:00:00Z)")),
+		mcp.WithString("to", mcp.Required(), mcp.Description("End date in ISO-8601 format")),
+	), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		token, err := getToken(ctx)
+		if err != nil {
+			return mcp.NewToolResultError(err.Error()), nil
+		}
+		args, ok := request.Params.Arguments.(map[string]any)
+		if !ok {
+			return mcp.NewToolResultError("invalid arguments format"), nil
+		}
+		
+		uuid, _ := args["uuid"].(string)
+		from, _ := args["from"].(string)
+		to, _ := args["to"].(string)
+
+		if uuid == "" || from == "" || to == "" {
+			return mcp.NewToolResultError("uuid, from, and to are required"), nil
+		}
+
+		path := fmt.Sprintf("/me/quizzes/%s/trends?from=%s&to=%s", uuid, from, to)
+		resp, err := doRequest(http.MethodGet, path, nil, token)
+		if err != nil {
+			return mcp.NewToolResultError(err.Error()), nil
+		}
+		return mcp.NewToolResultText(string(resp)), nil
 	})
 
 	apiURL := env.Config.APIURL
