@@ -5,6 +5,7 @@ import { apiClient } from '@/api-client';
 import { jwtDecode } from 'jwt-decode';
 import { AuthorizationHeader } from '@/custom-hooks/useAuthHeader';
 import { hours } from '@/utilities/time';
+import { z } from 'zod';
 
 type DecodedToken = {
   userId: number;
@@ -85,10 +86,16 @@ export const authOptions: AuthOptions = {
         }
 
         if (trigger === 'update') {
-          token = {
-            ...token,
-            ...session, // TODO Validate https://next-auth.js.org/getting-started/client#updating-the-session
-          };
+          // Validate the session update payload using Zod to prevent prototype pollution or token overwrite.
+          // Add updatable fields to this schema when needed.
+          const updateSchema = z.object({});
+          const parsed = updateSchema.safeParse(session);
+          if (parsed.success) {
+            token = {
+              ...token,
+              ...parsed.data,
+            };
+          }
         }
       }
       return token;
