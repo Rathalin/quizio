@@ -26,39 +26,24 @@ func (dbw *DBWrapper) GetAlerts() usecase.Interactor {
 		response := getAlertsResponse{
 			Alerts: make([]models.Alert, 0),
 		}
-		rows, err := dbw.DB.QueryContext(ctx, `
-			SELECT uuid, created_at, updated_at, markdown_de, markdown_en, severity, image_url, image_size, is_active, visible_to
-			FROM alert
-			WHERE is_active 
-				AND (visible_to = 'everyone' OR visible_to = $1)
-			ORDER BY order_index ASC
-		`, input.VisibleTo)
+		alerts, err := dbw.Queries.GetAlerts(ctx, input.VisibleTo)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
-		defer rows.Close()
-		for rows.Next() {
-			alert := models.Alert{}
-			if err := rows.Scan(
-				&alert.UUID,
-				&alert.CreatedAt,
-				&alert.UpdatedAt,
-				&alert.MarkdownDE,
-				&alert.MarkdownEN,
-				&alert.Severity,
-				&alert.ImageUrl,
-				&alert.ImageSize,
-				&alert.IsActive,
-				&alert.VisibleTo,
-			); err != nil {
-				return logAndReturnError(err)
-			}
-			response.Alerts = append(response.Alerts, alert)
-		}
-
-		if err := rows.Err(); err != nil {
-			return logAndReturnError(err)
+		for _, a := range alerts {
+			response.Alerts = append(response.Alerts, models.Alert{
+				UUID:       a.Uuid.String(),
+				CreatedAt:  a.CreatedAt,
+				UpdatedAt:  a.UpdatedAt,
+				MarkdownDE: a.MarkdownDe,
+				MarkdownEN: a.MarkdownEn,
+				Severity:   a.Severity,
+				ImageUrl:   a.ImageUrl,
+				ImageSize:  a.ImageSize,
+				IsActive:   a.IsActive,
+				VisibleTo:  a.VisibleTo,
+			})
 		}
 
 		*output = response

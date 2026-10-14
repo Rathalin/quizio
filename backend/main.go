@@ -25,6 +25,7 @@ import (
 
 	"github.com/Rathalin/quizio/backend/auth"
 	"github.com/Rathalin/quizio/backend/db"
+	"github.com/Rathalin/quizio/backend/db/sqlc"
 	"github.com/Rathalin/quizio/backend/env"
 	"github.com/Rathalin/quizio/backend/handlers"
 	"github.com/Rathalin/quizio/backend/middlewares"
@@ -38,7 +39,8 @@ func main() {
 	db.Connect()
 	defer db.Close()
 
-	dbWrapper := &handlers.DBWrapper{DB: db.DB}
+	queries := sqlc.New(db.DB)
+	dbWrapper := &handlers.DBWrapper{DB: db.DB, Queries: queries}
 
 	response.DefaultErrorResponseContentType = "application/problem+json"
 

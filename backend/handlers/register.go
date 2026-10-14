@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	"github.com/Rathalin/quizio/backend/db/sqlc"
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
 	"golang.org/x/crypto/bcrypt"
@@ -59,10 +60,10 @@ func (dbw *DBWrapper) Register() usecase.Interactor {
 		}
 
 		// Insert user into the database
-		_, err = dbw.DB.ExecContext(ctx, `
-			INSERT INTO user_account (username, password_hash, is_confirmed, is_blocked)
-			VALUES ($1, $2, true, false)
-		`, trimmedUsername, string(hashedPassword))
+		err = dbw.Queries.CreateUserAccount(ctx, sqlc.CreateUserAccountParams{
+			Username:     trimmedUsername,
+			PasswordHash: string(hashedPassword),
+		})
 		if err != nil {
 			return logAndReturnError(err)
 		}

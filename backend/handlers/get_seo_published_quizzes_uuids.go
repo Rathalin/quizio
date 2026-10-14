@@ -17,28 +17,16 @@ func (dbw *DBWrapper) GetSeoPublishedQuizzesUuids() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
-		publishedQuizesUuids := []string{}
-		rows, err := dbw.DB.QueryContext(ctx, `
-			SELECT uuid
-			FROM quiz
-			WHERE is_published = true
-		`)
+		uuids, err := dbw.Queries.GetSeoPublishedQuizzesUuids(ctx)
 		if err != nil {
 			return logAndReturnError(err)
 		}
-		defer rows.Close()
-		for rows.Next() {
-			quizUuid := ""
-			err = rows.Scan(&quizUuid)
-			if err != nil {
-				return logAndReturnError(err)
-			}
-			publishedQuizesUuids = append(publishedQuizesUuids, quizUuid)
+
+		publishedQuizzesUuids := make([]string, len(uuids))
+		for i, u := range uuids {
+			publishedQuizzesUuids[i] = u.String()
 		}
-		if err := rows.Err(); err != nil {
-			return logAndReturnError(err)
-		}
-		*output = publishedQuizesUuids
+		*output = publishedQuizzesUuids
 		return nil
 	})
 }

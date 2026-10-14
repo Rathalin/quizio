@@ -21,18 +21,20 @@ func (dbw *DBWrapper) GetMyAccount() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
-		response := models.UserAccount{}
-
-		err = dbw.DB.QueryRowContext(ctx, `
-			SELECT uuid, created_at, updated_at, username, is_confirmed, is_blocked, profile_image_url
-			FROM user_account
-			WHERE id = $1
-		`, userId).Scan(&response.UUID, &response.CreatedAt, &response.UpdatedAt, &response.Username, &response.IsConfirmed, &response.IsBlocked, &response.ProfileImageUrl)
+		acc, err := dbw.Queries.GetMyAccount(ctx, userId)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
-		*output = response
+		*output = models.UserAccount{
+			UUID:            acc.Uuid.String(),
+			CreatedAt:       acc.CreatedAt,
+			UpdatedAt:       acc.UpdatedAt,
+			Username:        acc.Username,
+			IsConfirmed:     acc.IsConfirmed,
+			IsBlocked:       acc.IsBlocked,
+			ProfileImageUrl: acc.ProfileImageUrl,
+		}
 		return nil
 	})
 }

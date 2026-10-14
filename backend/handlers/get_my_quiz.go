@@ -3,9 +3,10 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"time"
 
+	"github.com/Rathalin/quizio/backend/db/sqlc"
 	"github.com/Rathalin/quizio/backend/models"
+	"github.com/google/uuid"
 
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
@@ -24,37 +25,6 @@ func (dbw *DBWrapper) GetMyQuiz() usecase.Interactor {
 		Questions   []models.Question `json:"questions" required:"true" nullable:"false"`
 	}
 
-	type row struct {
-		ID          string
-		Title       string
-		Description string
-		IsPublished bool
-		ImageUrl    *string
-		Question    struct {
-			ID                  string
-			UUID                string
-			CreatedAt           time.Time
-			UpdatedAt           time.Time
-			OrderIndex          int
-			Title               string
-			Description         string
-			ImageUrl            *string
-			Explanation         *string
-			ExplanationImageUrl *string
-		}
-		Answer struct {
-			ID          string
-			UUID        string
-			CreatedAt   time.Time
-			UpdatedAt   time.Time
-			OrderIndex  int
-			Title       string
-			Description string
-			ImageUrl    *string
-			IsCorrect   bool
-		}
-	}
-
 	return usecase.NewInteractor(func(ctx context.Context, input getQuizRequest, output *getQuizResponse) error {
 		userId, err := getUserIdFromContext(ctx)
 		if err != nil {
@@ -69,123 +39,61 @@ func (dbw *DBWrapper) GetMyQuiz() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
-		rows, err := dbw.DB.QueryContext(ctx, `
-			SELECT
-				q.id,
-				q.title,
-				COALESCE(q.description_text, ''),
-				q.is_published,
-				q.image_url,
-				qn.id,
-				qn.uuid,
-				qn.created_at,
-				qn.updated_at,
-				qn.order_index,
-				qn.title,
-				COALESCE(qn.description_text, ''),
-				qn.image_url,
-				qn.explanation,
-				qn.explanation_image_url,
-				a.id,
-				a.uuid,
-				a.created_at,
-				a.updated_at,
-				a.order_index,
-				a.title,
-				COALESCE(a.description_text, ''),
-				a.image_url,
-				a.is_correct
-			FROM quiz q
-			JOIN question qn
-				ON q.id = qn.quiz_id
-			JOIN answer a
-				ON qn.id = a.question_id
-			WHERE q.uuid = $1 AND q.user_account_id = $2
-			ORDER BY qn.order_index ASC, a.order_index ASC
-		`, input.UUID, userId)
+		quizUUID, err := uuid.Parse(input.UUID)
+		if err != nil {
+			return status.Wrap(logAndReturnErrorMessage("quiz does not exist (invalid uuid)"), status.NotFound)
+		}
+
+		rows, err := dbw.Queries.GetMyQuizForEditing(ctx, sqlc.GetMyQuizForEditingParams{
+			Uuid:          quizUUID,
+			UserAccountID: userId,
+		})
 		if err != nil {
 			return logAndReturnError(err)
 		}
-		defer rows.Close()
 
-		var row row
+		if len(rows) == 0 {
+			return status.Wrap(logAndReturnErrorMessage(fmt.Sprintf("quiz with uuid %v does not exist for this user", input.UUID)), status.NotFound)
+		}
+
 		response := getQuizResponse{
 			Questions: make([]models.Question, 0),
 		}
-		lastQuizId := ""
-		lastQuestionId := ""
-		hasRows := false
+		lastQuizId := int64(0)
+		lastQuestionId := int64(0)
 
-		for rows.Next() {
-			hasRows = true
-			if err := rows.Scan(
-				&row.ID,
-				&row.Title,
-				&row.Description,
-				&row.IsPublished,
-				&row.ImageUrl,
-				&row.Question.ID,
-				&row.Question.UUID,
-				&row.Question.CreatedAt,
-				&row.Question.UpdatedAt,
-				&row.Question.OrderIndex,
-				&row.Question.Title,
-				&row.Question.Description,
-				&row.Question.ImageUrl,
-				&row.Question.Explanation,
-				&row.Question.ExplanationImageUrl,
-				&row.Answer.ID,
-				&row.Answer.UUID,
-				&row.Answer.CreatedAt,
-				&row.Answer.UpdatedAt,
-				&row.Answer.OrderIndex,
-				&row.Answer.Title,
-				&row.Answer.Description,
-				&row.Answer.ImageUrl,
-				&row.Answer.IsCorrect,
-			); err != nil {
-				return logAndReturnError(err)
+		for _, row := range rows {
+			if lastQuizId != row.QuizID {
+				lastQuizId = row.QuizID
+				response.Title = row.QuizTitle
+				response.Description = row.QuizDescription
+				response.IsPublished = row.QuizIsPublished
+				response.ImageUrl = row.QuizImageUrl
 			}
 
-			if lastQuizId != row.ID {
-				lastQuizId = row.ID
-				response.Title = row.Title
-				response.Description = row.Description
-				response.IsPublished = row.IsPublished
-				response.ImageUrl = row.ImageUrl
-			}
-
-			if lastQuestionId != row.Question.ID {
-				lastQuestionId = row.Question.ID
+			if lastQuestionId != row.QuestionID {
+				lastQuestionId = row.QuestionID
 				response.Questions = append(response.Questions, models.Question{
-					UUID:                row.Question.UUID,
-					CreatedAt:           row.Question.CreatedAt,
-					UpdatedAt:           row.Question.UpdatedAt,
-					Title:               row.Question.Title,
-					Description:         row.Question.Description,
-					ImageUrl:            row.Question.ImageUrl,
-					Explanation:         row.Question.Explanation,
-					ExplanationImageUrl: row.Question.ExplanationImageUrl,
+					UUID:                row.QuestionUuid.String(),
+					CreatedAt:           row.QuestionCreatedAt,
+					UpdatedAt:           row.QuestionUpdatedAt,
+					Title:               row.QuestionTitle,
+					Description:         row.QuestionDescription,
+					ImageUrl:            row.QuestionImageUrl,
+					Explanation:         row.QuestionExplanation,
+					ExplanationImageUrl: row.QuestionExplanationImageUrl,
 				})
 			}
 
 			response.Questions[len(response.Questions)-1].Answers = append(response.Questions[len(response.Questions)-1].Answers, models.Answer{
-				UUID:        row.Answer.UUID,
-				CreatedAt:   row.Answer.CreatedAt,
-				UpdatedAt:   row.Answer.UpdatedAt,
-				Title:       row.Answer.Title,
-				Description: row.Answer.Description,
-				ImageUrl:    row.Answer.ImageUrl,
-				IsCorrect:   row.Answer.IsCorrect,
+				UUID:        row.AnswerUuid.String(),
+				CreatedAt:   row.AnswerCreatedAt,
+				UpdatedAt:   row.AnswerUpdatedAt,
+				Title:       row.AnswerTitle,
+				Description: row.AnswerDescription,
+				ImageUrl:    row.AnswerImageUrl,
+				IsCorrect:   row.AnswerIsCorrect,
 			})
-		}
-
-		if !hasRows {
-			return status.Wrap(logAndReturnErrorMessage(fmt.Sprintf("quiz with uuid %v does not exist for this user", input.UUID)), status.NotFound)
-		}
-
-		if err := rows.Err(); err != nil {
-			return logAndReturnError(err)
 		}
 
 		*output = response

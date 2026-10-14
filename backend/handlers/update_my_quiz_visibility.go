@@ -3,6 +3,8 @@ package handlers
 import (
 	"context"
 
+	"github.com/Rathalin/quizio/backend/db/sqlc"
+	"github.com/google/uuid"
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
 )
@@ -29,13 +31,16 @@ func (dbw *DBWrapper) UpdateMyQuizVisibility() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
-		var quizId int64
-		err = dbw.DB.QueryRowContext(ctx, `
-			UPDATE quiz
-			SET is_published = $1
-			WHERE uuid = $2 AND user_account_id = $3
-			RETURNING id
-		`, input.IsPublished, input.UUID, userId).Scan(&quizId)
+		quizUUID, err := uuid.Parse(input.UUID)
+		if err != nil {
+			return status.Wrap(logAndReturnErrorMessage("quiz does not exist (invalid uuid)"), status.NotFound)
+		}
+
+		_, err = dbw.Queries.UpdateQuizVisibility(ctx, sqlc.UpdateQuizVisibilityParams{
+			IsPublished:   input.IsPublished,
+			Uuid:          quizUUID,
+			UserAccountID: userId,
+		})
 		if err != nil {
 			return logAndReturnError(err)
 		}

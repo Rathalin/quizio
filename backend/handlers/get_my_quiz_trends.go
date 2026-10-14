@@ -5,6 +5,8 @@ import (
 	"math"
 	"time"
 
+	"github.com/Rathalin/quizio/backend/db/sqlc"
+	"github.com/google/uuid"
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
 )
@@ -60,52 +62,34 @@ func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 			},
 		}
 
-		var quizId int64
+		quizUUID, err := uuid.Parse(input.QuizUUID)
+		if err != nil {
+			return status.Wrap(logAndReturnErrorMessage("quiz does not exist (invalid uuid)"), status.NotFound)
+		}
+
 		// Select quiz details
-		err = dbw.DB.QueryRowContext(ctx, `
-			SELECT
-				q.id,
-				q.created_at,
-				q.updated_at,
-				q.title,
-				COALESCE(q.description_text, ''),
-				q.is_published,
-				q.image_url,
-				COUNT(DISTINCT qn.id) AS question_count,
-				COUNT(DISTINCT pe.id) AS play_count
-			FROM quiz q
-			JOIN user_account u
-				ON u.id = q.user_account_id
-			LEFT JOIN question qn
-				ON qn.quiz_id = q.id
-			LEFT JOIN play_protocol_entry pe
-				ON pe.quiz_id = q.id
-			WHERE q.uuid = $1 AND q.user_account_id = $2
-			GROUP BY
-				q.id,
-				q.uuid,
-				q.created_at,
-				q.updated_at,
-				q.title,
-				COALESCE(q.description_text, ''),
-				q.is_published,
-				q.image_url,
-				u.uuid,
-				u.username
-		`, input.QuizUUID, userId).Scan(
-			&quizId,
-			&response.CreatedAt,
-			&response.UpdatedAt,
-			&response.Title,
-			&response.Description,
-			&response.IsPublished,
-			&response.ImageUrl,
-			&response.QuestionCount,
-			&response.PlayProtocolStatistic.PlayCountTotal,
-		)
+		header, err := dbw.Queries.GetMyQuizTrendsHeader(ctx, sqlc.GetMyQuizTrendsHeaderParams{
+			Uuid:          quizUUID,
+			UserAccountID: userId,
+		})
 		if err != nil {
 			return logAndReturnError(err)
 		}
+
+		var description *string
+		if header.Description != "" {
+			d := header.Description
+			description = &d
+		}
+
+		response.CreatedAt = header.CreatedAt
+		response.UpdatedAt = header.UpdatedAt
+		response.Title = header.Title
+		response.Description = description
+		response.IsPublished = header.IsPublished
+		response.ImageUrl = header.ImageUrl
+		response.QuestionCount = int(header.QuestionCount)
+		response.PlayProtocolStatistic.PlayCountTotal = int(header.PlayCount)
 
 		now := time.Now().UTC()
 		nowDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
@@ -155,30 +139,27 @@ func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 		}
 
 		// Select protocol entries
-		entriesPerDayRows, err := dbw.DB.QueryContext(ctx, `
-			SELECT TO_CHAR(played_at, 'YYYY-MM-DD') AS date, COUNT(*) AS play_count
-			FROM play_protocol_entry
-			WHERE played_at >= $2::date AND played_at < ($3::date + INTERVAL '1 day')
-				AND quiz_id = $1 
-				AND played_at != $4
-			GROUP BY date
-			ORDER BY date
-			`, quizId, startDate, endDate, migrationDate)
+		entries, err := dbw.Queries.GetPlayProtocolEntriesByDateRange(ctx, sqlc.GetPlayProtocolEntriesByDateRangeParams{
+			QuizID:        header.ID,
+			StartDate:     startDate,
+			EndDate:       endDate,
+			MigrationDate: migrationDate,
+		})
 		if err != nil {
 			return logAndReturnError(err)
 		}
-		defer entriesPerDayRows.Close()
 
-		var migratedPlayCount *float64
-		err = dbw.DB.QueryRowContext(ctx, `
-				SELECT COUNT(*)
-				FROM play_protocol_entry
-				WHERE quiz_id = $1
-					AND played_at = $2
-			`, quizId, migrationDate).Scan(&migratedPlayCount)
+		migratedCount, err := dbw.Queries.GetMigratedPlayCount(ctx, sqlc.GetMigratedPlayCountParams{
+			QuizID:   header.ID,
+			PlayedAt: migrationDate,
+		})
 		if err != nil {
 			return logAndReturnError(err)
 		}
+
+		migratedPlayCountVal := float64(migratedCount)
+		migratedPlayCount := &migratedPlayCountVal
+
 		var averageDailyMigratedPlayCount *float64
 
 		daysBetween := migrationDate.Sub(response.CreatedAt).Hours() / 24
@@ -191,17 +172,8 @@ func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 		averageDailyMigratedPlayCount = &roundedAvg
 
 		entriesPerDayMap := make(map[string]float64)
-		for entriesPerDayRows.Next() {
-			var dateString string
-			var playCount float64
-			err := entriesPerDayRows.Scan(&dateString, &playCount)
-			if err != nil {
-				return logAndReturnError(err)
-			}
-			entriesPerDayMap[dateString] = playCount
-		}
-		if err := entriesPerDayRows.Err(); err != nil {
-			return logAndReturnError(err)
+		for _, entry := range entries {
+			entriesPerDayMap[entry.EntryDate] = float64(entry.PlayCount)
 		}
 
 		var entriesPerDay []getMyQuizTrendsResponsePlayProtocolEntry

@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/Rathalin/quizio/backend/db/sqlc"
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
 )
@@ -57,11 +58,10 @@ func (dbw *DBWrapper) UpdateMyUserProfileImage() usecase.Interactor {
 			}
 		}
 
-		_, err = dbw.DB.ExecContext(ctx, `
-			UPDATE user_account
-			SET profile_image_url = $1
-			WHERE id = $2
-		`, input.ProfileImageUrl, userId)
+		err = dbw.Queries.UpdateUserProfileImage(ctx, sqlc.UpdateUserProfileImageParams{
+			ProfileImageUrl: input.ProfileImageUrl,
+			ID:              userId,
+		})
 		if err != nil {
 			return logAndReturnError(err)
 		}
