@@ -19,7 +19,7 @@ func (dbw *DBWrapper) SignOut() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
-		_, err := dbw.DB.Exec(`
+		_, err := dbw.DB.ExecContext(ctx, `
 			DELETE FROM refresh_token
 			WHERE token = $1
 		`, input.RefreshToken)

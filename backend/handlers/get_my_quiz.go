@@ -69,7 +69,7 @@ func (dbw *DBWrapper) GetMyQuiz() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
-		rows, err := dbw.DB.Query(`
+		rows, err := dbw.DB.QueryContext(ctx, `
 			SELECT
 				q.id,
 				q.title,

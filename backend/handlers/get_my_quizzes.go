@@ -51,7 +51,7 @@ func (dbw *DBWrapper) GetMyQuizzes() usecase.Interactor {
 			sortDirection = "DESC"
 		}
 
-		rows, err := dbw.DB.Query(fmt.Sprintf(`
+		rows, err := dbw.DB.QueryContext(ctx, fmt.Sprintf(`
 			SELECT
 				q.id,
 				q.uuid,

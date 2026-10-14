@@ -47,10 +47,10 @@ VALUES
     (3, NULL); -- Anonymous play
 
 -- Insert into alert
-INSERT INTO alert(markdown_content, severity, image_url, image_size, is_active)
+INSERT INTO alert(markdown_de, markdown_en, severity, image_url, image_size, is_active, visible_to)
 VALUES 
-    ('**System Maintenance**: Scheduled maintenance at 10 PM.', 'info', NULL, 'medium', FALSE),
-    ('**High Load Warning**: Some services may be slow.', 'warning', NULL, NULL, FALSE);
+    ('**Systemwartung**: Geplante Wartung um 22:00 Uhr.', '**System Maintenance**: Scheduled maintenance at 10 PM.', 'info', NULL, 'medium', FALSE, 'everyone'),
+    ('**Warnung vor hoher Auslastung**: Einige Dienste könnten langsam sein.', '**High Load Warning**: Some services may be slow.', 'warning', NULL, NULL, FALSE, 'everyone');
  
 SELECT setval(pg_get_serial_sequence('alert', 'id'), MAX(id)) FROM alert;
 SELECT setval(pg_get_serial_sequence('play_protocol_entry', 'id'), MAX(id)) FROM play_protocol_entry;

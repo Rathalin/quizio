@@ -152,19 +152,21 @@ func (dbw *DBWrapper) UpdateMyQuiz() usecase.Interactor {
 			if err != nil {
 				return logAndReturnError(err)
 			}
-			defer answerRows.Close()
 			for answerRows.Next() {
 				answerUuid := ""
 				err = answerRows.Scan(&answerUuid)
 				if err != nil {
+					answerRows.Close()
 					return logAndReturnError(err)
 				}
 				existingAnswerUuids = append(existingAnswerUuids, answerUuid)
 			}
 
 			if err := answerRows.Err(); err != nil {
+				answerRows.Close()
 				return logAndReturnError(err)
 			}
+			answerRows.Close()
 
 			remainingAnswerUuids := append(existingAnswerUuids[:0:0], existingAnswerUuids...)
 

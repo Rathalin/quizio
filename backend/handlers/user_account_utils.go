@@ -1,11 +1,13 @@
 package handlers
 
-func (dbw *DBWrapper) UsernameExists(username string) (bool, error) {
+import "context"
+
+func (dbw *DBWrapper) UsernameExists(ctx context.Context, username string) (bool, error) {
 	usernameCount := 0
-	err := dbw.DB.QueryRow(`
+	err := dbw.DB.QueryRowContext(ctx, `
 		SELECT COUNT(*)
 		FROM user_account
-		WHERE username = $1
+		WHERE LOWER(username) = LOWER($1)
 	`, username).Scan(&usernameCount)
 	if err != nil {
 		return false, err
@@ -13,9 +15,9 @@ func (dbw *DBWrapper) UsernameExists(username string) (bool, error) {
 
 	return usernameCount > 0, nil
 }
-func (dbw *DBWrapper) GetUserUuid(id int64) (string, error) {
+func (dbw *DBWrapper) GetUserUuid(ctx context.Context, id int64) (string, error) {
 	var userUuid string
-	err := dbw.DB.QueryRow(`
+	err := dbw.DB.QueryRowContext(ctx, `
 		SELECT uuid
 		FROM user_account
 		WHERE id = $1

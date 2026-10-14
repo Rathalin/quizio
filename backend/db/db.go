@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/Rathalin/quizio/backend/env"
 )
@@ -16,6 +17,10 @@ func Connect() {
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v\n", err)
 	}
+
+	DB.SetMaxOpenConns(25)
+	DB.SetMaxIdleConns(25)
+	DB.SetConnMaxLifetime(5 * time.Minute)
 
 	// Test the connection
 	if err = DB.Ping(); err != nil {

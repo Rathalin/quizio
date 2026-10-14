@@ -1,6 +1,9 @@
 package middlewares
 
-import "net/http"
+import (
+	"crypto/subtle"
+	"net/http"
+)
 
 func APIKeyMiddleware(expectedApiKey string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
@@ -14,7 +17,7 @@ func APIKeyMiddleware(expectedApiKey string) func(http.Handler) http.Handler {
 			}
 
 			apiKey := authHeader[len(prefix):]
-			if apiKey != expectedApiKey {
+			if subtle.ConstantTimeCompare([]byte(apiKey), []byte(expectedApiKey)) != 1 {
 				http.Error(w, "Unauthorized", http.StatusUnauthorized)
 				return
 			}

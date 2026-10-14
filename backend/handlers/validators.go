@@ -7,25 +7,26 @@ import (
 	"github.com/google/uuid"
 )
 
-var validate = validator.New(validator.WithRequiredStructEnabled())
+var (
+	validate = validator.New(validator.WithRequiredStructEnabled())
+
+	hasLowerRegex   = regexp.MustCompile(`[a-z]`)
+	hasUpperRegex   = regexp.MustCompile(`[A-Z]`)
+	hasDigitRegex   = regexp.MustCompile(`\d`)
+	hasSpecialRegex = regexp.MustCompile(`[!@#$%^&*(),.?":{}|<>_\-\s]`)
+)
 
 // Helper function to validate password complexity
 func isValidPassword(password string) bool {
-	// Check for minimum length
-	if len(password) < 8 {
+	// Check for length bounds (bcrypt truncates/fails beyond 72 bytes)
+	if len(password) < 8 || len(password) > 72 {
 		return false
 	}
 
-	// Check for at least one lowercase letter
-	hasLower := regexp.MustCompile(`[a-z]`).MatchString(password)
-	// Check for at least one uppercase letter
-	hasUpper := regexp.MustCompile(`[A-Z]`).MatchString(password)
-	// Check for at least one digit
-	hasDigit := regexp.MustCompile(`\d`).MatchString(password)
-	// Check for at least one special character
-	hasSpecial := regexp.MustCompile(`[!@#$%^&*(),.?":{}|<>]`).MatchString(password)
-
-	return hasLower && hasUpper && hasDigit && hasSpecial
+	return hasLowerRegex.MatchString(password) &&
+		hasUpperRegex.MatchString(password) &&
+		hasDigitRegex.MatchString(password) &&
+		hasSpecialRegex.MatchString(password)
 }
 
 func isValidUUID(u string) bool {

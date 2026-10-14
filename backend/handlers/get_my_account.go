@@ -23,7 +23,7 @@ func (dbw *DBWrapper) GetMyAccount() usecase.Interactor {
 
 		response := models.UserAccount{}
 
-		err = dbw.DB.QueryRow(`
+		err = dbw.DB.QueryRowContext(ctx, `
 			SELECT uuid, created_at, updated_at, username, is_confirmed, is_blocked, profile_image_url
 			FROM user_account
 			WHERE id = $1

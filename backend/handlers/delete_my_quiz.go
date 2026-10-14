@@ -28,12 +28,14 @@ func (dbw *DBWrapper) DeleteMyQuiz() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
-		userUuid, err := dbw.GetUserUuid(userId)
+		userUuid, err := dbw.GetUserUuid(ctx, userId)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
-		// Delete images of quiz
+		// Collect images of quiz to delete after DB deletion succeeds
+		var filesToDelete []string
+
 		var quizImageUrl *string
 		err = dbw.DB.QueryRowContext(ctx, `
 			SELECT image_url
@@ -44,17 +46,11 @@ func (dbw *DBWrapper) DeleteMyQuiz() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 		if quizImageUrl != nil {
-			DeleteFile(GetFilenameFromUrl(*quizImageUrl), userUuid)
-		}
-
-		type questionRow struct {
-			ID                  string
-			ImageUrl            *string
-			ExplanationImageUrl *string
+			filesToDelete = append(filesToDelete, GetFilenameFromUrl(*quizImageUrl))
 		}
 
 		questionRows, err := dbw.DB.QueryContext(ctx, `
-			SELECT qn.id, qn.image_url, qn.explanation_image_url
+			SELECT qn.image_url, qn.explanation_image_url
 			FROM question qn
 			JOIN quiz q
 				ON qn.quiz_id = q.id
@@ -66,52 +62,60 @@ func (dbw *DBWrapper) DeleteMyQuiz() usecase.Interactor {
 		defer questionRows.Close()
 
 		for questionRows.Next() {
-			questionRow := questionRow{}
-			err = questionRows.Scan(&questionRow.ID, &questionRow.ImageUrl, &questionRow.ExplanationImageUrl)
-			if err != nil {
+			var imgUrl, expImgUrl *string
+			if err := questionRows.Scan(&imgUrl, &expImgUrl); err != nil {
 				return logAndReturnError(err)
 			}
-			if questionRow.ImageUrl != nil {
-				DeleteFile(GetFilenameFromUrl(*questionRow.ImageUrl), userUuid)
+			if imgUrl != nil {
+				filesToDelete = append(filesToDelete, GetFilenameFromUrl(*imgUrl))
 			}
-			if questionRow.ExplanationImageUrl != nil {
-				DeleteFile(GetFilenameFromUrl(*questionRow.ExplanationImageUrl), userUuid)
-			}
-
-			type answerRow struct {
-				ImageUrl *string
-			}
-
-			answerRows, err := dbw.DB.QueryContext(ctx, `
-				SELECT image_url
-				FROM answer
-				WHERE question_id = $1
-			`, questionRow.ID)
-			if err != nil {
-				return logAndReturnError(err)
-			}
-			defer answerRows.Close()
-
-			for answerRows.Next() {
-				answerRow := answerRow{}
-				err = answerRows.Scan(&answerRow.ImageUrl)
-				if err != nil {
-					return logAndReturnError(err)
-				}
-				if answerRow.ImageUrl != nil {
-					DeleteFile(GetFilenameFromUrl(*answerRow.ImageUrl), userUuid)
-				}
+			if expImgUrl != nil {
+				filesToDelete = append(filesToDelete, GetFilenameFromUrl(*expImgUrl))
 			}
 		}
+		if err := questionRows.Err(); err != nil {
+			return logAndReturnError(err)
+		}
 
-		// Delete quiz
+		answerRows, err := dbw.DB.QueryContext(ctx, `
+			SELECT a.image_url
+			FROM answer a
+			JOIN question qn
+				ON a.question_id = qn.id
+			JOIN quiz q
+				ON qn.quiz_id = q.id
+			WHERE q.uuid = $1 AND a.image_url IS NOT NULL
+		`, input.QuizUUID)
+		if err != nil {
+			return logAndReturnError(err)
+		}
+		defer answerRows.Close()
 
+		for answerRows.Next() {
+			var ansImgUrl *string
+			if err := answerRows.Scan(&ansImgUrl); err != nil {
+				return logAndReturnError(err)
+			}
+			if ansImgUrl != nil {
+				filesToDelete = append(filesToDelete, GetFilenameFromUrl(*ansImgUrl))
+			}
+		}
+		if err := answerRows.Err(); err != nil {
+			return logAndReturnError(err)
+		}
+
+		// Delete quiz from DB
 		_, err = dbw.DB.ExecContext(ctx, `
 			DELETE FROM quiz
 			WHERE uuid = $1 AND user_account_id = $2
 		`, input.QuizUUID, userId)
 		if err != nil {
 			return logAndReturnError(err)
+		}
+
+		// Delete files after DB deletion succeeds
+		for _, filename := range filesToDelete {
+			DeleteFile(filename, userUuid)
 		}
 
 		*output = deleteQuizResponse{}

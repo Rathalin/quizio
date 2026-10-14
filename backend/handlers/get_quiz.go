@@ -50,7 +50,7 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 		}
 	}
 
-	return usecase.NewInteractor(func(_ context.Context, input playQuizRequest, output *playQuizResponse) error {
+	return usecase.NewInteractor(func(ctx context.Context, input playQuizRequest, output *playQuizResponse) error {
 		if !isValidUUID(input.UUID) {
 			return status.Wrap(logAndReturnErrorMessage("quiz does not exist (invalid uuid)"), status.NotFound)
 		}
@@ -59,7 +59,7 @@ func (dbw *DBWrapper) GetQuiz() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
-		rows, err := dbw.DB.Query(`
+		rows, err := dbw.DB.QueryContext(ctx, `
 			SELECT
 				q.id,
 				q.title,

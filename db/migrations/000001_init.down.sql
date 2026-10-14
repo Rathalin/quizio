@@ -24,10 +24,4 @@ DROP TABLE IF EXISTS quiz;
 DROP TABLE IF EXISTS refresh_token;
 DROP TABLE IF EXISTS user_account;
 
--- Drop database (optional, remove if database should persist)
-DROP DATABASE IF EXISTS quizio;
-
--- Drop extension (optional, keep if used elsewhere)
-DROP EXTENSION IF EXISTS pgcrypto;
-
 COMMIT;

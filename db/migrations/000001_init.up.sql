@@ -3,11 +3,6 @@ BEGIN;
 -- Enable required extensions
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-CREATE DATABASE quizio;
-
--- Switch database
-\c quizio
-
 -- Create tables
 CREATE TABLE IF NOT EXISTS user_account (
   id BIGSERIAL PRIMARY KEY,

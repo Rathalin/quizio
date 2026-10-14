@@ -51,6 +51,9 @@ func main() {
 	service.OpenAPISchema().SetHTTPBearerTokenSecurity("JWT token", "bearer", "")
 
 	service.Use(
+		middleware.RequestID,
+		middleware.RealIP,
+		middleware.Recoverer,
 		cors.AllowAll().Handler,
 	)
 

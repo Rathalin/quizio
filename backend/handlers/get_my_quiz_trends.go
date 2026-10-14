@@ -53,6 +53,9 @@ func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 		if input.EndDate.Before(input.StartDate) {
 			return status.Wrap(logAndReturnErrorMessage("from date has to be before to date"), status.InvalidArgument)
 		}
+		if input.EndDate.Sub(input.StartDate) > 366*24*time.Hour {
+			return status.Wrap(logAndReturnErrorMessage("date range cannot exceed 366 days"), status.InvalidArgument)
+		}
 
 		// Date on which the migration from Strapi to Postgres happened
 		var migrationDate = time.Date(2025, 1, 27, 0, 0, 0, 0, time.UTC)

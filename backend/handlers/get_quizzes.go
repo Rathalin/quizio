@@ -48,9 +48,10 @@ func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 		}
 
 		totalQuizCount := 0
-		err := dbw.DB.QueryRow(`
+		err := dbw.DB.QueryRowContext(ctx, `
 			SELECT COUNT(*)
 			FROM quiz
+			WHERE is_published = true
 		`).Scan(&totalQuizCount)
 		if err != nil {
 			return logAndReturnError(err)
@@ -64,7 +65,7 @@ func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 			sortDirection = "DESC"
 		}
 
-		rows, err := dbw.DB.Query(fmt.Sprintf(`
+		rows, err := dbw.DB.QueryContext(ctx, fmt.Sprintf(`
 			SELECT 
 				q.uuid, 
 				q.created_at, 

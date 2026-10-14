@@ -36,7 +36,7 @@ func (dbw *DBWrapper) GetMyUserProfile() usecase.Interactor {
 
 		response := getMyUserProfileResponse{}
 
-		err = dbw.DB.QueryRow(`
+		err = dbw.DB.QueryRowContext(ctx, `
 			SELECT uuid, created_at, username, profile_image_url
 			FROM user_account
 			WHERE id = $1
@@ -45,7 +45,7 @@ func (dbw *DBWrapper) GetMyUserProfile() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
-		err = dbw.DB.QueryRow(`
+		err = dbw.DB.QueryRowContext(ctx, `
 			SELECT COUNT(*)
 			FROM quiz
 			WHERE user_account_id = $1
@@ -54,7 +54,7 @@ func (dbw *DBWrapper) GetMyUserProfile() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
-		err = dbw.DB.QueryRow(`
+		err = dbw.DB.QueryRowContext(ctx, `
 			SELECT COUNT(*)
 			FROM play_protocol_entry e
 			JOIN quiz q

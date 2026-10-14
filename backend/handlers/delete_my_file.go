@@ -30,7 +30,7 @@ func (dbw *DBWrapper) DeleteMyFile() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
-		userUuid, err := dbw.GetUserUuid(userId)
+		userUuid, err := dbw.GetUserUuid(ctx, userId)
 		if err != nil {
 			return logAndReturnError(err)
 		}

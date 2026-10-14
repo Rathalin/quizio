@@ -25,7 +25,7 @@ func (dbw *DBWrapper) RefreshToken() usecase.Interactor {
 		var userID int64
 
 		// Validate refresh token and check if the user is blocked or unconfirmed
-		err := dbw.DB.QueryRow(`
+		err := dbw.DB.QueryRowContext(ctx, `
 			SELECT rt.user_account_id
 			FROM refresh_token rt
 			JOIN user_account ua ON rt.user_account_id = ua.id

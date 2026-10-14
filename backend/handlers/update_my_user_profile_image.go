@@ -3,6 +3,9 @@ package handlers
 import (
 	"context"
 	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
@@ -25,13 +28,32 @@ func (dbw *DBWrapper) UpdateMyUserProfileImage() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
+		userUuid, err := dbw.GetUserUuid(ctx, userId)
+		if err != nil {
+			return logAndReturnError(err)
+		}
+
 		if input.ProfileImageUrl != nil {
-			profileImageExists, err := fileExists(*input.ProfileImageUrl)
+			expectedPrefix := fmt.Sprintf("/public/uploads/%s/", userUuid)
+			if !strings.HasPrefix(*input.ProfileImageUrl, expectedPrefix) {
+				return status.Wrap(logAndReturnErrorMessage("invalid profile image URL"), status.InvalidArgument)
+			}
+			filename := strings.TrimPrefix(*input.ProfileImageUrl, expectedPrefix)
+			if filename != filepath.Base(filename) {
+				return status.Wrap(logAndReturnErrorMessage("invalid filename in profile image URL"), status.InvalidArgument)
+			}
+
+			root, err := os.OpenRoot(filepath.Join("public", "uploads", userUuid))
 			if err != nil {
 				return logAndReturnError(err)
 			}
-			if !profileImageExists {
-				return status.Wrap(logAndReturnErrorMessage(fmt.Sprintf("file with url %s does not exist", *input.ProfileImageUrl)), status.FailedPrecondition)
+			defer root.Close()
+
+			if _, err := root.Stat(filename); err != nil {
+				if os.IsNotExist(err) {
+					return status.Wrap(logAndReturnErrorMessage(fmt.Sprintf("file with url %s does not exist", *input.ProfileImageUrl)), status.FailedPrecondition)
+				}
+				return logAndReturnError(err)
 			}
 		}
 

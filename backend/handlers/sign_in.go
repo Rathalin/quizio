@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"strings"
 	"time"
 
@@ -29,17 +31,7 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 		}
 
 		trimmedUsername := strings.TrimSpace(input.Username)
-
-		usernameExists, err := dbw.UsernameExists(trimmedUsername)
-		if err != nil {
-			return logAndReturnError(err)
-		}
-
 		unauthenticatedMessage := "invalid username or password"
-
-		if !usernameExists {
-			return status.Wrap(logAndReturnTypedError(unauthenticatedMessage, "invalid_credentials"), status.Unauthenticated)
-		}
 
 		response := signInResponse{}
 
@@ -50,10 +42,10 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 			IsConfirmed  bool
 		}
 		// Fetch user details
-		err = dbw.DB.QueryRow(`
+		err := dbw.DB.QueryRowContext(ctx, `
 			SELECT id, password_hash, uuid, is_blocked, is_confirmed
 			FROM user_account
-			WHERE username = $1
+			WHERE LOWER(username) = LOWER($1)
 		`, trimmedUsername).Scan(
 			&row.ID,
 			&row.PasswordHash,
@@ -62,6 +54,9 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 			&row.IsConfirmed,
 		)
 		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return status.Wrap(logAndReturnTypedError(unauthenticatedMessage, "invalid_credentials"), status.Unauthenticated)
+			}
 			return logAndReturnError(err)
 		}
 
@@ -91,7 +86,7 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
-		_, err = dbw.DB.Exec(`
+		_, err = dbw.DB.ExecContext(ctx, `
 			INSERT INTO refresh_token (user_account_id, token, expires_at)
 			VALUES ($1, $2, $3)
 		`, row.ID, refreshToken, time.Now().Add(auth.RefreshTokenTTL)) // 7 days expiry

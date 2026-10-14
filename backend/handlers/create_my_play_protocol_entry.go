@@ -25,12 +25,12 @@ func (dbw *DBWrapper) CreateMyPlayProtocolEntry() usecase.Interactor {
 		}
 
 		var quizId int64
-		err = dbw.DB.QueryRow(`SELECT id FROM quiz WHERE uuid = $1`, input.QuizUuid).Scan(&quizId)
+		err = dbw.DB.QueryRowContext(ctx, `SELECT id FROM quiz WHERE uuid = $1`, input.QuizUuid).Scan(&quizId)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
-		_, err = dbw.DB.Exec(`
+		_, err = dbw.DB.ExecContext(ctx, `
 			INSERT INTO play_protocol_entry (quiz_id, user_account_id)
 			VALUES ($1, $2)
 		`, quizId, userId)
@@ -52,12 +52,12 @@ func (dbw *DBWrapper) CreatePublicPlayProtocolEntry() usecase.Interactor {
 
 	return usecase.NewInteractor(func(ctx context.Context, input createPlayProtocolEntryRequest, output *createPlayProtocolEntryResponse) error {
 		var quizId int64
-		err := dbw.DB.QueryRow(`SELECT id FROM quiz WHERE uuid = $1`, input.QuizUuid).Scan(&quizId)
+		err := dbw.DB.QueryRowContext(ctx, `SELECT id FROM quiz WHERE uuid = $1`, input.QuizUuid).Scan(&quizId)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
-		_, err = dbw.DB.Exec(`
+		_, err = dbw.DB.ExecContext(ctx, `
 			INSERT INTO play_protocol_entry (quiz_id)
 			VALUES ($1)
 		`, quizId)
