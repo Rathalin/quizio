@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 
+	"github.com/Rathalin/quizio/backend/db/sqlc"
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
 )
@@ -48,37 +49,44 @@ func (dbw *DBWrapper) CreateMyQuiz() usecase.Interactor {
 		if err != nil {
 			return logAndReturnError(err)
 		}
-
 		defer tx.Rollback()
 
-		var quizId int64
+		qtx := dbw.Queries.WithTx(tx)
 
-		err = tx.QueryRowContext(ctx, `
-			INSERT INTO quiz (title, description_text, is_published, image_url, user_account_id)
-			VALUES ($1, $2, $3, $4, $5)
-			RETURNING id
-		`, input.Title, input.Description, input.IsPublished, input.ImageUrl, userId).Scan(&quizId)
+		quizId, err := qtx.CreateQuiz(ctx, sqlc.CreateQuizParams{
+			Title:           input.Title,
+			DescriptionText: &input.Description,
+			IsPublished:     input.IsPublished,
+			ImageUrl:        input.ImageUrl,
+			UserAccountID:   userId,
+		})
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
 		for questionIndex, question := range input.Questions {
-			var questionId int64
-
-			err = tx.QueryRowContext(ctx, `
-				INSERT INTO question (order_index, title, description_text, image_url, explanation, explanation_image_url, quiz_id)
-				VALUES ($1, $2, $3, $4, $5, $6, $7)
-				RETURNING id
-			`, questionIndex, question.Title, question.Description, question.ImageUrl, question.Explanation, question.ExplanationImageUrl, quizId).Scan(&questionId)
+			questionId, err := qtx.CreateQuestion(ctx, sqlc.CreateQuestionParams{
+				OrderIndex:          int32(questionIndex),
+				Title:               question.Title,
+				DescriptionText:     question.Description,
+				ImageUrl:            question.ImageUrl,
+				Explanation:         question.Explanation,
+				ExplanationImageUrl: question.ExplanationImageUrl,
+				QuizID:              quizId,
+			})
 			if err != nil {
 				return logAndReturnError(err)
 			}
 
 			for answerIndex, answer := range question.Answers {
-				_, err = tx.ExecContext(ctx, `
-					INSERT INTO answer (order_index, title, description_text, image_url, is_correct, question_id)
-					VALUES ($1, $2, $3, $4, $5, $6)
-				`, answerIndex, answer.Title, answer.Description, answer.ImageUrl, answer.IsCorrect, questionId)
+				err = qtx.CreateAnswer(ctx, sqlc.CreateAnswerParams{
+					OrderIndex:      int32(answerIndex),
+					Title:           answer.Title,
+					DescriptionText: &answer.Description,
+					ImageUrl:        answer.ImageUrl,
+					IsCorrect:       answer.IsCorrect,
+					QuestionID:      questionId,
+				})
 				if err != nil {
 					return logAndReturnError(err)
 				}

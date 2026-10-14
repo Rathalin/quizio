@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/Rathalin/quizio/backend/db/sqlc"
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
 	"golang.org/x/crypto/bcrypt"
@@ -34,12 +35,7 @@ func (dbw *DBWrapper) ChangeMyPassword() usecase.Interactor {
 		}
 
 		// Fetch current password hash from the database
-		var currentPasswordHash string
-		err = dbw.DB.QueryRowContext(ctx, `
-			SELECT password_hash
-			FROM user_account
-			WHERE id = $1
-		`, userId).Scan(&currentPasswordHash)
+		currentPasswordHash, err := dbw.Queries.GetPasswordHashById(ctx, userId)
 		if err != nil {
 			return status.Wrap(logAndReturnErrorMessage("username not found"), status.NotFound)
 		}
@@ -63,20 +59,18 @@ func (dbw *DBWrapper) ChangeMyPassword() usecase.Interactor {
 		}
 		defer tx.Rollback()
 
-		_, err = tx.ExecContext(ctx, `
-			UPDATE user_account
-			SET password_hash = $1
-			WHERE id = $2
-		`, string(hashedNewPassword), userId)
+		qtx := dbw.Queries.WithTx(tx)
+
+		err = qtx.UpdatePasswordHash(ctx, sqlc.UpdatePasswordHashParams{
+			PasswordHash: string(hashedNewPassword),
+			ID:           userId,
+		})
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
 		// Invalidate all existing sessions
-		_, err = tx.ExecContext(ctx, `
-			DELETE FROM refresh_token
-			WHERE user_account_id = $1
-		`, userId)
+		err = qtx.DeleteRefreshTokensByUserId(ctx, userId)
 		if err != nil {
 			return logAndReturnError(err)
 		}

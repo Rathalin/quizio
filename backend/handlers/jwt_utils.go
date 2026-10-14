@@ -7,12 +7,14 @@ import (
 	"time"
 
 	"github.com/Rathalin/quizio/backend/auth"
+	"github.com/Rathalin/quizio/backend/db/sqlc"
 
 	jwtauth "github.com/go-chi/jwtauth/v5"
 )
 
 type DBWrapper struct {
-	DB *sql.DB
+	DB      *sql.DB
+	Queries *sqlc.Queries
 }
 
 // GenerateJWT generates a short-term access token using jwtauth.JWTAuth

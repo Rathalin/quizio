@@ -2,11 +2,11 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"math"
 	"strings"
 	"time"
 
+	"github.com/Rathalin/quizio/backend/db/sqlc"
 	"github.com/Rathalin/quizio/backend/models"
 
 	"github.com/swaggest/usecase"
@@ -47,99 +47,54 @@ func (dbw *DBWrapper) GetQuizzes() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
-		totalQuizCount := 0
-		err := dbw.DB.QueryRowContext(ctx, `
-			SELECT COUNT(*)
-			FROM quiz
-			WHERE is_published = true
-		`).Scan(&totalQuizCount)
+		totalQuizCount, err := dbw.Queries.GetTotalPublishedQuizCount(ctx)
 		if err != nil {
 			return logAndReturnError(err)
-		}
-		sortOption := "q.created_at"
-		if input.SortOption == "playCount" {
-			sortOption = "play_count"
-		}
-		sortDirection := "ASC"
-		if strings.ToUpper(input.SortDirection) == "DESC" {
-			sortDirection = "DESC"
 		}
 
-		rows, err := dbw.DB.QueryContext(ctx, fmt.Sprintf(`
-			SELECT 
-				q.uuid, 
-				q.created_at, 
-				q.updated_at, 
-				q.title, 
-				COALESCE(q.description_text, ''), 
-				q.is_published, 
-				q.image_url, 
-				u.uuid, 
-				u.username, 
-				COUNT(DISTINCT qn.id) AS question_count,
-				COUNT(DISTINCT pe.id) AS play_count
-			FROM quiz q
-			JOIN user_account u
-				ON u.id = q.user_account_id
-			LEFT JOIN question qn
-				ON qn.quiz_id = q.id
-			LEFT JOIN play_protocol_entry pe
-				ON pe.quiz_id = q.id
-			WHERE q.is_published
-			GROUP BY 
-				q.uuid, 
-				q.created_at, 
-				q.updated_at, 
-				q.title, 
-				COALESCE(q.description_text, ''), 
-				q.is_published, 
-				q.image_url, 
-				u.uuid, 
-				u.username
-			ORDER BY %s %s, q.uuid ASC
-			LIMIT $1
-			OFFSET $2
-		`, sortOption, sortDirection), input.PageSize, input.Page*input.PageSize)
+		rows, err := dbw.Queries.GetQuizzes(ctx, sqlc.GetQuizzesParams{
+			Limit:         int32(input.PageSize),
+			Offset:        int32(input.Page * input.PageSize),
+			SortOption:    input.SortOption,
+			SortDirection: strings.ToLower(input.SortDirection),
+		})
 		if err != nil {
 			return logAndReturnError(err)
 		}
-		defer rows.Close()
 
 		response := getQuizzesResponse{
 			Meta: models.Meta{
 				Page:       input.Page,
 				PageSize:   input.PageSize,
-				TotalItems: totalQuizCount,
+				TotalItems: int(totalQuizCount),
 				TotalPages: int(math.Ceil(float64(totalQuizCount) / float64(input.PageSize))),
 			},
-			Quizzes: make([]getQuizzesResponseQuiz, 0),
+			Quizzes: make([]getQuizzesResponseQuiz, 0, len(rows)),
 		}
-		var quizzes []getQuizzesResponseQuiz = make([]getQuizzesResponseQuiz, 0)
-		for rows.Next() {
-			var q getQuizzesResponseQuiz
-			if err := rows.Scan(
-				&q.UUID,
-				&q.CreatedAt,
-				&q.UpdatedAt,
-				&q.Title,
-				&q.Description,
-				&q.IsPublished,
-				&q.ImageUrl,
-				&q.User.UUID,
-				&q.User.Username,
-				&q.QuestionCount,
-				&q.PlayCount,
-			); err != nil {
-				return logAndReturnError(err)
+
+		for _, r := range rows {
+			var description *string
+			if r.Description != "" {
+				desc := r.Description
+				description = &desc
 			}
-			quizzes = append(quizzes, q)
+
+			q := getQuizzesResponseQuiz{
+				UUID:          r.Uuid.String(),
+				CreatedAt:     r.CreatedAt,
+				UpdatedAt:     r.UpdatedAt,
+				Title:         r.Title,
+				Description:   description,
+				IsPublished:   r.IsPublished,
+				ImageUrl:      r.ImageUrl,
+				QuestionCount: int(r.QuestionCount),
+				PlayCount:     int(r.PlayCount),
+			}
+			q.User.UUID = r.UserUuid.String()
+			q.User.Username = r.Username
+			response.Quizzes = append(response.Quizzes, q)
 		}
 
-		if err := rows.Err(); err != nil {
-			return logAndReturnError(err)
-		}
-
-		response.Quizzes = quizzes
 		*output = response
 		return nil
 	})

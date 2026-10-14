@@ -3,6 +3,8 @@ package handlers
 import (
 	"context"
 
+	"github.com/Rathalin/quizio/backend/db/sqlc"
+	"github.com/google/uuid"
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
 )
@@ -24,16 +26,20 @@ func (dbw *DBWrapper) CreateMyPlayProtocolEntry() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
-		var quizId int64
-		err = dbw.DB.QueryRowContext(ctx, `SELECT id FROM quiz WHERE uuid = $1`, input.QuizUuid).Scan(&quizId)
+		quizUUID, err := uuid.Parse(input.QuizUuid)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
-		_, err = dbw.DB.ExecContext(ctx, `
-			INSERT INTO play_protocol_entry (quiz_id, user_account_id)
-			VALUES ($1, $2)
-		`, quizId, userId)
+		quizId, err := dbw.Queries.GetQuizIdByUuid(ctx, quizUUID)
+		if err != nil {
+			return logAndReturnError(err)
+		}
+
+		err = dbw.Queries.CreatePlayProtocolEntry(ctx, sqlc.CreatePlayProtocolEntryParams{
+			QuizID:        quizId,
+			UserAccountID: userId,
+		})
 		if err != nil {
 			return logAndReturnError(err)
 		}
@@ -51,16 +57,17 @@ func (dbw *DBWrapper) CreatePublicPlayProtocolEntry() usecase.Interactor {
 	type createPlayProtocolEntryResponse struct{}
 
 	return usecase.NewInteractor(func(ctx context.Context, input createPlayProtocolEntryRequest, output *createPlayProtocolEntryResponse) error {
-		var quizId int64
-		err := dbw.DB.QueryRowContext(ctx, `SELECT id FROM quiz WHERE uuid = $1`, input.QuizUuid).Scan(&quizId)
+		quizUUID, err := uuid.Parse(input.QuizUuid)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
-		_, err = dbw.DB.ExecContext(ctx, `
-			INSERT INTO play_protocol_entry (quiz_id)
-			VALUES ($1)
-		`, quizId)
+		quizId, err := dbw.Queries.GetQuizIdByUuid(ctx, quizUUID)
+		if err != nil {
+			return logAndReturnError(err)
+		}
+
+		err = dbw.Queries.CreatePublicPlayProtocolEntry(ctx, quizId)
 		if err != nil {
 			return logAndReturnError(err)
 		}

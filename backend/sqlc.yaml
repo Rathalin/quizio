@@ -1,0 +1,32 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    schema: "../db/migrations"
+    queries: "db/queries"
+    gen:
+      go:
+        package: "sqlc"
+        out: "db/sqlc"
+        sql_package: "database/sql"
+        emit_pointers_for_null_types: true
+        overrides:
+          - db_type: text
+            nullable: true
+            go_type:
+              type: string
+              pointer: true
+          - db_type: bigint
+            nullable: true
+            go_type:
+              type: int64
+              pointer: true
+          - db_type: timestamptz
+            nullable: true
+            go_type:
+              type: time.Time
+              pointer: true
+          - db_type: timestamp
+            nullable: true
+            go_type:
+              type: time.Time
+              pointer: true

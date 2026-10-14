@@ -36,34 +36,27 @@ func (dbw *DBWrapper) GetMyUserProfile() usecase.Interactor {
 
 		response := getMyUserProfileResponse{}
 
-		err = dbw.DB.QueryRowContext(ctx, `
-			SELECT uuid, created_at, username, profile_image_url
-			FROM user_account
-			WHERE id = $1
-		`, userId).Scan(&response.User.UUID, &response.User.CreatedAt, &response.User.Username, &response.User.ProfileImageUrl)
+		u, err := dbw.Queries.GetUserProfileById(ctx, userId)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
-		err = dbw.DB.QueryRowContext(ctx, `
-			SELECT COUNT(*)
-			FROM quiz
-			WHERE user_account_id = $1
-		`, userId).Scan(&response.QuizStats.TotalQuizzesCreated)
+		createdCount, err := dbw.Queries.GetTotalQuizzesCreatedByUser(ctx, userId)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
-		err = dbw.DB.QueryRowContext(ctx, `
-			SELECT COUNT(*)
-			FROM play_protocol_entry e
-			JOIN quiz q
-				ON q.id = e.quiz_id
-			WHERE q.user_account_id = $1
-		`, userId).Scan(&response.QuizStats.TotalQuizzesPlayCount)
+		playCount, err := dbw.Queries.GetTotalQuizzesPlayCountByUser(ctx, userId)
 		if err != nil {
 			return logAndReturnError(err)
 		}
+
+		response.User.UUID = u.Uuid.String()
+		response.User.CreatedAt = u.CreatedAt
+		response.User.Username = u.Username
+		response.User.ProfileImageUrl = u.ProfileImageUrl
+		response.QuizStats.TotalQuizzesCreated = int(createdCount)
+		response.QuizStats.TotalQuizzesPlayCount = int(playCount)
 
 		*output = response
 		return nil

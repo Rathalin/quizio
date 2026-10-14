@@ -4,6 +4,8 @@ import (
 	"context"
 	"slices"
 
+	"github.com/Rathalin/quizio/backend/db/sqlc"
+	"github.com/google/uuid"
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
 )
@@ -52,46 +54,40 @@ func (dbw *DBWrapper) UpdateMyQuiz() usecase.Interactor {
 			return status.Wrap(logAndReturnErrorMessage("quiz does not exist (invalid uuid)"), status.NotFound)
 		}
 
+		quizUUID, err := uuid.Parse(input.UUID)
+		if err != nil {
+			return status.Wrap(logAndReturnErrorMessage("quiz does not exist (invalid uuid)"), status.NotFound)
+		}
+
 		tx, err := dbw.DB.BeginTx(ctx, nil)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 		defer tx.Rollback()
 
+		qtx := dbw.Queries.WithTx(tx)
+
 		// Update quiz details
-		var quizId int64
-		err = tx.QueryRowContext(ctx, `
-			UPDATE quiz
-			SET title = $1, description_text = $2, is_published = $3, image_url = $4
-			WHERE uuid = $5 AND user_account_id = $6
-			RETURNING id
-		`, input.Title, input.Description, input.IsPublished, input.ImageUrl, input.UUID, userId).Scan(&quizId)
+		quizId, err := qtx.UpdateQuizDetails(ctx, sqlc.UpdateQuizDetailsParams{
+			Title:           input.Title,
+			DescriptionText: &input.Description,
+			IsPublished:     input.IsPublished,
+			ImageUrl:        input.ImageUrl,
+			Uuid:            quizUUID,
+			UserAccountID:   userId,
+		})
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
 		// Handle questions
-		existingQuestionUuids := []string{}
-		rows, err := tx.QueryContext(ctx, `
-			SELECT uuid
-			FROM question
-			WHERE quiz_id = $1
-		`, quizId)
+		existingQuestionUuidsRaw, err := qtx.GetQuestionUuidsByQuizId(ctx, quizId)
 		if err != nil {
 			return logAndReturnError(err)
 		}
-		defer rows.Close()
-		for rows.Next() {
-			questionUuid := ""
-			err = rows.Scan(&questionUuid)
-			if err != nil {
-				return logAndReturnError(err)
-			}
-			existingQuestionUuids = append(existingQuestionUuids, questionUuid)
-		}
-
-		if err := rows.Err(); err != nil {
-			return logAndReturnError(err)
+		existingQuestionUuids := make([]string, len(existingQuestionUuidsRaw))
+		for i, u := range existingQuestionUuidsRaw {
+			existingQuestionUuids[i] = u.String()
 		}
 
 		remainingQuestionUuids := append(existingQuestionUuids[:0:0], existingQuestionUuids...)
@@ -100,20 +96,19 @@ func (dbw *DBWrapper) UpdateMyQuiz() usecase.Interactor {
 			var questionId int64
 			if questionInput.UUID != nil && slices.Contains(existingQuestionUuids, *questionInput.UUID) {
 				// Update existing question
-				err = tx.QueryRowContext(ctx, `
-					UPDATE question
-					SET order_index = $1, title = $2, description_text = $3, image_url = $4, explanation = $5, explanation_image_url = $6
-					WHERE uuid = $7
-					RETURNING id
-				`,
-					questionIndex,
-					questionInput.Title,
-					questionInput.Description,
-					questionInput.ImageUrl,
-					questionInput.Explanation,
-					questionInput.ExplanationImageUrl,
-					questionInput.UUID,
-				).Scan(&questionId)
+				qUUID, err := uuid.Parse(*questionInput.UUID)
+				if err != nil {
+					return logAndReturnError(err)
+				}
+				questionId, err = qtx.UpdateQuestion(ctx, sqlc.UpdateQuestionParams{
+					OrderIndex:          int32(questionIndex),
+					Title:               questionInput.Title,
+					DescriptionText:     questionInput.Description,
+					ImageUrl:            questionInput.ImageUrl,
+					Explanation:         questionInput.Explanation,
+					ExplanationImageUrl: questionInput.ExplanationImageUrl,
+					Uuid:                qUUID,
+				})
 				if err != nil {
 					return logAndReturnError(err)
 				}
@@ -124,60 +119,47 @@ func (dbw *DBWrapper) UpdateMyQuiz() usecase.Interactor {
 
 			} else {
 				// Insert new question
-				err = tx.QueryRowContext(ctx, `
-						INSERT INTO question (order_index, title, description_text, image_url, explanation, explanation_image_url, quiz_id)
-						VALUES ($1, $2, $3, $4, $5, $6, $7)
-						RETURNING id
-				`,
-					questionIndex,
-					questionInput.Title,
-					questionInput.Description,
-					questionInput.ImageUrl,
-					questionInput.Explanation,
-					questionInput.ExplanationImageUrl,
-					quizId,
-				).Scan(&questionId)
+				questionId, err = qtx.CreateQuestion(ctx, sqlc.CreateQuestionParams{
+					OrderIndex:          int32(questionIndex),
+					Title:               questionInput.Title,
+					DescriptionText:     questionInput.Description,
+					ImageUrl:            questionInput.ImageUrl,
+					Explanation:         questionInput.Explanation,
+					ExplanationImageUrl: questionInput.ExplanationImageUrl,
+					QuizID:              quizId,
+				})
 				if err != nil {
 					return logAndReturnError(err)
 				}
 			}
 
 			// Handle answers for the current question
-			existingAnswerUuids := []string{}
-			answerRows, err := tx.QueryContext(ctx, `
-					SELECT uuid
-					FROM answer
-					WHERE question_id = $1
-			`, questionId)
+			existingAnswerUuidsRaw, err := qtx.GetAnswerUuidsByQuestionId(ctx, questionId)
 			if err != nil {
 				return logAndReturnError(err)
 			}
-			for answerRows.Next() {
-				answerUuid := ""
-				err = answerRows.Scan(&answerUuid)
-				if err != nil {
-					answerRows.Close()
-					return logAndReturnError(err)
-				}
-				existingAnswerUuids = append(existingAnswerUuids, answerUuid)
+			existingAnswerUuids := make([]string, len(existingAnswerUuidsRaw))
+			for i, u := range existingAnswerUuidsRaw {
+				existingAnswerUuids[i] = u.String()
 			}
-
-			if err := answerRows.Err(); err != nil {
-				answerRows.Close()
-				return logAndReturnError(err)
-			}
-			answerRows.Close()
 
 			remainingAnswerUuids := append(existingAnswerUuids[:0:0], existingAnswerUuids...)
 
 			for answerIndex, answerInput := range questionInput.Answers {
 				if answerInput.UUID != nil && slices.Contains(existingAnswerUuids, *answerInput.UUID) {
 					// Update existing answer
-					_, err = tx.ExecContext(ctx, `
-							UPDATE answer
-							SET order_index = $1, title = $2, description_text = $3, image_url = $4, is_correct = $5
-							WHERE uuid = $6
-					`, answerIndex, answerInput.Title, answerInput.Description, answerInput.ImageUrl, answerInput.IsCorrect, answerInput.UUID)
+					aUUID, err := uuid.Parse(*answerInput.UUID)
+					if err != nil {
+						return logAndReturnError(err)
+					}
+					err = qtx.UpdateAnswer(ctx, sqlc.UpdateAnswerParams{
+						OrderIndex:      int32(answerIndex),
+						Title:           answerInput.Title,
+						DescriptionText: &answerInput.Description,
+						ImageUrl:        answerInput.ImageUrl,
+						IsCorrect:       answerInput.IsCorrect,
+						Uuid:            aUUID,
+					})
 					if err != nil {
 						return logAndReturnError(err)
 					}
@@ -187,10 +169,14 @@ func (dbw *DBWrapper) UpdateMyQuiz() usecase.Interactor {
 					remainingAnswerUuids = slices.Delete(remainingAnswerUuids, uuidIndex, uuidIndex+1)
 				} else {
 					// Insert new answer
-					_, err = tx.ExecContext(ctx, `
-							INSERT INTO answer (order_index, title, description_text, image_url, is_correct, question_id)
-							VALUES ($1, $2, $3, $4, $5, $6)
-					`, answerIndex, answerInput.Title, answerInput.Description, answerInput.ImageUrl, answerInput.IsCorrect, questionId)
+					err = qtx.CreateAnswer(ctx, sqlc.CreateAnswerParams{
+						OrderIndex:      int32(answerIndex),
+						Title:           answerInput.Title,
+						DescriptionText: &answerInput.Description,
+						ImageUrl:        answerInput.ImageUrl,
+						IsCorrect:       answerInput.IsCorrect,
+						QuestionID:      questionId,
+					})
 					if err != nil {
 						return logAndReturnError(err)
 					}
@@ -199,9 +185,11 @@ func (dbw *DBWrapper) UpdateMyQuiz() usecase.Interactor {
 
 			// Delete removed answers
 			for _, answerUuid := range remainingAnswerUuids {
-				_, err = tx.ExecContext(ctx, `
-						DELETE FROM answer WHERE uuid = $1
-				`, answerUuid)
+				aUUID, err := uuid.Parse(answerUuid)
+				if err != nil {
+					return logAndReturnError(err)
+				}
+				err = qtx.DeleteAnswerByUuid(ctx, aUUID)
 				if err != nil {
 					return logAndReturnError(err)
 				}
@@ -210,9 +198,11 @@ func (dbw *DBWrapper) UpdateMyQuiz() usecase.Interactor {
 
 		// Delete removed questions
 		for _, questionUuid := range remainingQuestionUuids {
-			_, err = tx.ExecContext(ctx, `
-					DELETE FROM question WHERE uuid = $1
-			`, questionUuid)
+			qUUID, err := uuid.Parse(questionUuid)
+			if err != nil {
+				return logAndReturnError(err)
+			}
+			err = qtx.DeleteQuestionByUuid(ctx, qUUID)
 			if err != nil {
 				return logAndReturnError(err)
 			}

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/Rathalin/quizio/backend/auth"
+	"github.com/Rathalin/quizio/backend/db/sqlc"
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
 	"golang.org/x/crypto/bcrypt"
@@ -33,26 +34,8 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 		trimmedUsername := strings.TrimSpace(input.Username)
 		unauthenticatedMessage := "invalid username or password"
 
-		response := signInResponse{}
-
-		var row struct {
-			ID           int64
-			PasswordHash string
-			IsBlocked    bool
-			IsConfirmed  bool
-		}
 		// Fetch user details
-		err := dbw.DB.QueryRowContext(ctx, `
-			SELECT id, password_hash, uuid, is_blocked, is_confirmed
-			FROM user_account
-			WHERE LOWER(username) = LOWER($1)
-		`, trimmedUsername).Scan(
-			&row.ID,
-			&row.PasswordHash,
-			&response.UserUUID,
-			&row.IsBlocked,
-			&row.IsConfirmed,
-		)
+		user, err := dbw.Queries.GetUserSignInData(ctx, trimmedUsername)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return status.Wrap(logAndReturnTypedError(unauthenticatedMessage, "invalid_credentials"), status.Unauthenticated)
@@ -60,44 +43,46 @@ func (dbw *DBWrapper) SignIn() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
-		if !row.IsConfirmed {
+		if !user.IsConfirmed {
 			return status.Wrap(logAndReturnTypedError("account is not confirmed", "account_unconfirmed"), status.PermissionDenied)
 		}
 
-		if row.IsBlocked {
+		if user.IsBlocked {
 			return status.Wrap(logAndReturnTypedError("account is blocked", "account_blocked"), status.PermissionDenied)
 		}
 
 		// Validate password
-		err = bcrypt.CompareHashAndPassword([]byte(row.PasswordHash), []byte(input.Password))
+		err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(input.Password))
 		if err != nil {
 			return status.Wrap(logAndReturnTypedError(unauthenticatedMessage, "invalid_credentials"), status.Unauthenticated)
 		}
 
 		// Generate access token
-		accessToken, err := generateJWT(row.ID)
+		accessToken, err := generateJWT(user.ID)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
 		// Generate refresh token
-		refreshToken, err := generateRefreshToken(row.ID)
+		refreshToken, err := generateRefreshToken(user.ID)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
-		_, err = dbw.DB.ExecContext(ctx, `
-			INSERT INTO refresh_token (user_account_id, token, expires_at)
-			VALUES ($1, $2, $3)
-		`, row.ID, refreshToken, time.Now().Add(auth.RefreshTokenTTL)) // 7 days expiry
+		err = dbw.Queries.CreateRefreshToken(ctx, sqlc.CreateRefreshTokenParams{
+			UserAccountID: user.ID,
+			Token:         refreshToken,
+			ExpiresAt:     time.Now().Add(auth.RefreshTokenTTL),
+		})
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
-		response.AccessToken = accessToken
-		response.RefreshToken = refreshToken
-
-		*output = response
+		*output = signInResponse{
+			UserUUID:     user.Uuid.String(),
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
+		}
 		return nil
 	})
 

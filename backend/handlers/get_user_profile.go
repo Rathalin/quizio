@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
 )
@@ -35,37 +36,34 @@ func (dbw *DBWrapper) GetUserProfile() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
+		userUUID, err := uuid.Parse(input.UUID)
+		if err != nil {
+			return status.Wrap(logAndReturnErrorMessage("user does not exist (invalid uuid)"), status.NotFound)
+		}
+
 		response := getPublicUserProfileResponse{}
 
-		var userId int64
-		err := dbw.DB.QueryRowContext(ctx, `
-			SELECT id, uuid, created_at, username, profile_image_url
-			FROM user_account
-			WHERE uuid = $1
-		`, input.UUID).Scan(&userId, &response.User.UUID, &response.User.CreatedAt, &response.User.Username, &response.User.ProfileImageUrl)
+		u, err := dbw.Queries.GetUserProfileByUuid(ctx, userUUID)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
-		err = dbw.DB.QueryRowContext(ctx, `
-			SELECT COUNT(*)
-			FROM quiz
-			WHERE user_account_id = $1
-		`, userId).Scan(&response.QuizStats.TotalQuizzesCreated)
+		createdCount, err := dbw.Queries.GetTotalQuizzesCreatedByUser(ctx, u.ID)
 		if err != nil {
 			return logAndReturnError(err)
 		}
 
-		err = dbw.DB.QueryRowContext(ctx, `
-			SELECT COUNT(*)
-			FROM play_protocol_entry e
-			JOIN quiz q
-				ON q.id = e.quiz_id
-			WHERE q.user_account_id = $1
-		`, userId).Scan(&response.QuizStats.TotalQuizzesPlayCount)
+		playCount, err := dbw.Queries.GetTotalQuizzesPlayCountByUser(ctx, u.ID)
 		if err != nil {
 			return logAndReturnError(err)
 		}
+
+		response.User.UUID = u.Uuid.String()
+		response.User.CreatedAt = u.CreatedAt
+		response.User.Username = u.Username
+		response.User.ProfileImageUrl = u.ProfileImageUrl
+		response.QuizStats.TotalQuizzesCreated = int(createdCount)
+		response.QuizStats.TotalQuizzesPlayCount = int(playCount)
 
 		*output = response
 		return nil

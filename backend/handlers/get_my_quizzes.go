@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"strings"
 	"time"
 
+	"github.com/Rathalin/quizio/backend/db/sqlc"
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
 )
@@ -42,83 +42,38 @@ func (dbw *DBWrapper) GetMyQuizzes() usecase.Interactor {
 			return status.Wrap(logAndReturnError(err), status.InvalidArgument)
 		}
 
-		sortOption := "q.created_at"
-		if input.SortOption == "playCount" {
-			sortOption = "play_count"
-		}
-		sortDirection := "ASC"
-		if strings.ToUpper(input.SortDirection) == "DESC" {
-			sortDirection = "DESC"
-		}
-
-		rows, err := dbw.DB.QueryContext(ctx, fmt.Sprintf(`
-			SELECT
-				q.id,
-				q.uuid,
-				q.created_at,
-				q.updated_at,
-				q.title,
-				COALESCE(q.description_text, ''),
-				q.is_published,
-				q.image_url,
-				COUNT(DISTINCT qn.id) AS question_count,
-				COUNT(DISTINCT pe.id) AS play_count
-			FROM quiz q
-			JOIN user_account u
-				ON u.id = q.user_account_id
-			LEFT JOIN question qn
-				ON qn.quiz_id = q.id
-			LEFT JOIN play_protocol_entry pe
-				ON pe.quiz_id = q.id
-			WHERE q.user_account_id = $1
-			GROUP BY
-				q.id,
-				q.uuid,
-				q.created_at,
-				q.updated_at,
-				q.title,
-				COALESCE(q.description_text, ''),
-				q.is_published,
-				q.image_url,
-				u.uuid,
-				u.username
-			ORDER BY %s %s
-		`, sortOption, sortDirection), userId)
+		rows, err := dbw.Queries.GetMyQuizzes(ctx, sqlc.GetMyQuizzesParams{
+			UserAccountID: userId,
+			SortOption:    input.SortOption,
+			SortDirection: strings.ToLower(input.SortDirection),
+		})
 		if err != nil {
 			return logAndReturnError(err)
 		}
-		defer rows.Close()
 
 		response := getMyQuizzesResponse{
-			Quizzes: make([]getMyQuizzesResponseQuiz, 0),
+			Quizzes: make([]getMyQuizzesResponseQuiz, 0, len(rows)),
 		}
-		var quizzes []getMyQuizzesResponseQuiz = make([]getMyQuizzesResponseQuiz, 0)
-		for rows.Next() {
-			var q getMyQuizzesResponseQuiz
-			var quizId int
-			if err := rows.Scan(
-				&quizId,
-				&q.UUID,
-				&q.CreatedAt,
-				&q.UpdatedAt,
-				&q.Title,
-				&q.Description,
-				&q.IsPublished,
-				&q.ImageUrl,
-				&q.QuestionCount,
-				&q.PlayCount,
-			); err != nil {
-				return logAndReturnError(err)
+		for _, r := range rows {
+			var description *string
+			if r.Description != "" {
+				desc := r.Description
+				description = &desc
 			}
 
-			quizzes = append(quizzes, q)
+			response.Quizzes = append(response.Quizzes, getMyQuizzesResponseQuiz{
+				UUID:          r.Uuid.String(),
+				CreatedAt:     r.CreatedAt,
+				UpdatedAt:     r.UpdatedAt,
+				Title:         r.Title,
+				Description:   description,
+				IsPublished:   r.IsPublished,
+				ImageUrl:      r.ImageUrl,
+				QuestionCount: int(r.QuestionCount),
+				PlayCount:     int(r.PlayCount),
+			})
 		}
 
-		if err := rows.Err(); err != nil {
-			return logAndReturnError(err)
-		}
-
-		response.Quizzes = quizzes
 		*output = response
 		return nil
 	})
