@@ -1082,9 +1082,9 @@ export interface operations {
   };
   'backend/handlers.(*DBWrapper).GetMyQuizTrends': {
     parameters: {
-      query: {
-        from: string;
-        to: string;
+      query?: {
+        from?: string | null;
+        to?: string | null;
       };
       header?: never;
       path: {

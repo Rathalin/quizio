@@ -19,17 +19,16 @@ import Stack from '@mui/material/Stack';
 import { useRouter } from 'next/router';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import ToggleButton from '@mui/material/ToggleButton';
-import { useMemo } from 'react';
 
-const intervalFilterOptions = ['lastWeek', 'lastMonth', 'lastYear'] as const;
+const intervalFilterOptions = ['allTime', 'lastYear', 'lastMonth', 'lastWeek'] as const;
 export type IntervalFilterOption = (typeof intervalFilterOptions)[number];
 
 export const getServerSideProps: GetServerSideProps<{
   uuid: string;
   interval: {
     value: IntervalFilterOption;
-    from: string;
-    to: string;
+    from: string | null;
+    to: string | null;
   };
 }> = async (ctx) => {
   const { uuid, interval: intervalParam } = ctx.query;
@@ -40,12 +39,12 @@ export const getServerSideProps: GetServerSideProps<{
   }
 
   const interval: IntervalFilterOption =
-    typeof intervalParam === 'string' && intervalFilterOptions.includes(intervalParam)
+    typeof intervalParam === 'string' && intervalFilterOptions.includes(intervalParam as IntervalFilterOption)
       ? (intervalParam as IntervalFilterOption)
-      : 'lastMonth';
+      : 'allTime';
   const today = dayjs(new Date()).startOf('day');
-  const fromDate = getDayjsFromInterval(interval, today).toISOString();
-  const toDate = today.toISOString();
+  const fromDate = interval === 'allTime' ? null : getDayjsFromInterval(interval, today).toISOString();
+  const toDate = interval === 'allTime' ? null : today.toISOString();
 
   const messagesPromise = getMessages(ctx.locale, ['myQuizzesTrends']);
 
@@ -81,9 +80,7 @@ export default function MyQuizzesPage({ uuid, interval }: InferGetServerSideProp
   const t = useTranslations('myQuizzesTrends');
   const dateFormatter = useDateFormatter();
   const router = useRouter();
-  const fromDayjs = useMemo(() => dayjs(interval.from), [interval.from]);
-  const toDayjs = useMemo(() => dayjs(interval.to), [interval.to]);
-  const { data: quiz } = useMyQuizTrendsQuery(uuid, fromDayjs.toISOString(), toDayjs.toISOString());
+  const { data: quiz } = useMyQuizTrendsQuery(uuid, interval.from, interval.to);
 
   return (
     <>
@@ -113,7 +110,11 @@ export default function MyQuizzesPage({ uuid, interval }: InferGetServerSideProp
       </Typography>
       {quiz != null && (
         <>
-          <Typography>{t('text', { count: quiz.playProtocolStatistic.entriesPerDay.length })}</Typography>
+          <Typography>
+            {t(interval.value === 'allTime' ? 'textAllTime' : 'text', {
+              count: quiz.playProtocolStatistic.entriesPerDay.length,
+            })}
+          </Typography>
           <Typography color="textSecondary">
             {t('migratedInfo', {
               migrationDate: dateFormatter.format(new Date(quiz.playProtocolStatistic.migrationDate)),
@@ -141,6 +142,7 @@ export default function MyQuizzesPage({ uuid, interval }: InferGetServerSideProp
               }
               exclusive
             >
+              <ToggleButton value="allTime">{t('filter.allTime.label')}</ToggleButton>
               <ToggleButton value="lastYear">{t('filter.lastYear.label')}</ToggleButton>
               <ToggleButton value="lastMonth">{t('filter.lastMonth.label')}</ToggleButton>
               <ToggleButton value="lastWeek">{t('filter.lastWeek.label')}</ToggleButton>
@@ -163,6 +165,9 @@ function getDayjsFromInterval(interval: IntervalFilterOption, today: Dayjs): Day
     }
     case 'lastYear': {
       return today.subtract(364, 'days');
+    }
+    case 'allTime': {
+      return today;
     }
     default: {
       interval satisfies never;

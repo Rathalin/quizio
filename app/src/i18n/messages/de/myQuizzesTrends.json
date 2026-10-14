@@ -9,6 +9,9 @@
     "myQuizzes": "Meine Quiz"
   },
   "filter": {
+    "allTime": {
+      "label": "Gesamt"
+    },
     "lastMonth": {
       "label": "Letzer Monat"
     },
@@ -31,5 +34,6 @@
     "title": "Trends"
   },
   "migratedInfo": "The exakte Statistik ist erst ab dem {migrationDate} verfügbar.",
-  "text": "Der Graph zeigt wie oft das Quiz in den letzten {count} Tagen gespielt wurde."
+  "text": "Der Graph zeigt wie oft das Quiz in den letzten {count} Tagen gespielt wurde.",
+  "textAllTime": "Der Graph zeigt wie oft das Quiz seit seiner Erstellung gespielt wurde ({count} Tage)."
 }

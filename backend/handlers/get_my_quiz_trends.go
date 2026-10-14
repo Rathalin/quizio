@@ -11,9 +11,9 @@ import (
 
 func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 	type getMyQuizTrendsRequest struct {
-		QuizUUID  string    `path:"uuid" required:"true"`
-		StartDate time.Time `query:"from" required:"true"`
-		EndDate   time.Time `query:"to" required:"true"`
+		QuizUUID  string     `path:"uuid" required:"true"`
+		StartDate *time.Time `query:"from"`
+		EndDate   *time.Time `query:"to"`
 	}
 
 	type getMyQuizTrendsResponsePlayProtocolEntry struct {
@@ -48,13 +48,6 @@ func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 
 		if !isValidUUID(input.QuizUUID) {
 			return status.Wrap(logAndReturnErrorMessage("quiz does not exist (invalid uuid)"), status.NotFound)
-		}
-
-		if input.EndDate.Before(input.StartDate) {
-			return status.Wrap(logAndReturnErrorMessage("from date has to be before to date"), status.InvalidArgument)
-		}
-		if input.EndDate.Sub(input.StartDate) > 366*24*time.Hour {
-			return status.Wrap(logAndReturnErrorMessage("date range cannot exceed 366 days"), status.InvalidArgument)
 		}
 
 		// Date on which the migration from Strapi to Postgres happened
@@ -114,16 +107,63 @@ func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 			return logAndReturnError(err)
 		}
 
+		now := time.Now().UTC()
+		nowDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+
+		quizCreatedAtDate := time.Date(
+			response.CreatedAt.Year(),
+			response.CreatedAt.Month(),
+			response.CreatedAt.Day(),
+			0, 0, 0, 0, time.UTC,
+		)
+
+		var startDate time.Time
+		if input.StartDate != nil {
+			startDate = time.Date(
+				input.StartDate.Year(),
+				input.StartDate.Month(),
+				input.StartDate.Day(),
+				0, 0, 0, 0, time.UTC,
+			)
+		} else {
+			startDate = quizCreatedAtDate
+		}
+
+		var endDate time.Time
+		if input.EndDate != nil {
+			endDate = time.Date(
+				input.EndDate.Year(),
+				input.EndDate.Month(),
+				input.EndDate.Day(),
+				0, 0, 0, 0, time.UTC,
+			)
+		} else {
+			endDate = nowDate
+		}
+
+		if endDate.Before(startDate) {
+			return status.Wrap(logAndReturnErrorMessage("from date has to be before to date"), status.InvalidArgument)
+		}
+		if endDate.After(nowDate.Add(24 * time.Hour)) {
+			return status.Wrap(logAndReturnErrorMessage("to date cannot be in the future"), status.InvalidArgument)
+		}
+		if input.StartDate != nil && startDate.Before(quizCreatedAtDate) && endDate.Sub(startDate) > 366*24*time.Hour {
+			return status.Wrap(logAndReturnErrorMessage("date range before quiz creation cannot exceed 366 days"), status.InvalidArgument)
+		}
+		if endDate.Sub(startDate) > 3652*24*time.Hour {
+			return status.Wrap(logAndReturnErrorMessage("date range cannot exceed 10 years"), status.InvalidArgument)
+		}
+
 		// Select protocol entries
 		entriesPerDayRows, err := dbw.DB.QueryContext(ctx, `
 			SELECT TO_CHAR(played_at, 'YYYY-MM-DD') AS date, COUNT(*) AS play_count
 			FROM play_protocol_entry
-			WHERE played_at >= $2 AND played_at <= $3
+			WHERE played_at >= $2::date AND played_at < ($3::date + INTERVAL '1 day')
 				AND quiz_id = $1 
 				AND played_at != $4
 			GROUP BY date
 			ORDER BY date
-			`, quizId, input.StartDate, input.EndDate, migrationDate)
+			`, quizId, startDate, endDate, migrationDate)
 		if err != nil {
 			return logAndReturnError(err)
 		}
@@ -158,12 +198,7 @@ func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 			if err != nil {
 				return logAndReturnError(err)
 			}
-
-			date, err := time.Parse("2006-01-02", dateString)
-			if err != nil {
-				return logAndReturnError(err)
-			}
-			entriesPerDayMap[date.Format("2006-01-02")] = playCount
+			entriesPerDayMap[dateString] = playCount
 		}
 		if err := entriesPerDayRows.Err(); err != nil {
 			return logAndReturnError(err)
@@ -171,7 +206,7 @@ func (dbw *DBWrapper) GetMyQuizTrends() usecase.Interactor {
 
 		var entriesPerDay []getMyQuizTrendsResponsePlayProtocolEntry
 		// Iterate through all days in the range and fill missing days
-		for d := input.StartDate; !d.After(input.EndDate); d = d.AddDate(0, 0, 1) {
+		for d := startDate; !d.After(endDate); d = d.AddDate(0, 0, 1) {
 			var playCount *float64
 			var migratedPlayCount *float64
 			var zero float64 = 0
